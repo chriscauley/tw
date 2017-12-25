@@ -1,5 +1,6 @@
-class CanvasObject {
+class CanvasObject extends uR.Object {
   constructor() {
+    super()
   }
   newElement(tagName,attrs,options) {
     var element = document.createElement(tagName);
@@ -47,10 +48,11 @@ class Square extends CanvasObject {
   }
 }
 
-class Piece {
+class Piece extends CanvasObject {
   toString() { return '[object Piece]' }
   constructor(opts) {
-    uR.defaults(this,opts || {
+    super();
+    this.defaults(opts || {
       board: uR.REQUIRED,
       x:0,
       y:0,
@@ -77,41 +79,18 @@ class Piece {
   }
 }
 
-class Controller {
-  constructor(opts) {
-    uR.extend(
-      this,
-      uR.defaults(opts||{},{
-        keyMap: {
-          37: 'left',
-          38: 'up',
-          39: 'right',
-          40: 'down',
-        }
-      })
-    )
-    this.bindKeys();
-  }
-  bindKeys() {
-    document.addEventListener("keydown",this.keydown.bind(this));
-  }
-  keydown(event) {
-    var key = this.keyMap[event.keyCode];
-    key && this.board.keydown(key);
-  }
-}
+var LEVELS = [
+  [[0,0],[0,7],[7,0],[7,7]],
+];
 
 class Board extends CanvasObject {
   constructor(opts) {
     super()
-    uR.extend(
-      this,
-      uR.defaults(opts || {},{
-        width: 8,
-        height: 8,
-        scale: 64,
-      })
-    );
+    this.defaults(opts || {},{
+      width: 8,
+      height: 8,
+      scale: 64,
+    });
 
     var self = this
     this.squares = [];
@@ -122,10 +101,26 @@ class Board extends CanvasObject {
     this.createCanvas();
     this.pieces = [ new Piece({ board: this, x:3, y:3 }) ];
     this.player = this.pieces[0];
-    this.draw();
-    this.contorller = new Controller({ board: this });
+    this.contorller = new Controller({ game: this.game });
     this.bindKeys();
+    this.startLevel(0);
+    this.draw();
   }
+  startLevel(level_number) {
+    var self = this;
+    uR.forEach(LEVELS[level_number],function(level) {
+      self.pieces.push(new Piece({
+        x: level[0],
+        y: level[1],
+        board: self,
+      }));
+    });
+  }
+  onKeyDown(key) {
+    this.key_map[key] && this.key_map[key]();
+    this.draw();
+  }
+  onKeyUp(key) {}
   bindKeys() {
     var key_map = {
       up: function() { this.player.move(0,-1) },
@@ -155,13 +150,17 @@ class Board extends CanvasObject {
     });
   }
   getSquare(x,y) { return this.squares[y] && this.squares[y][x] }
-  keydown(key) {
-    this.key_map[key] && this.key_map[key]();
-    this.draw();
+}
+
+class Game extends uR.Object {
+  constructor() {
+    super()
+    this.board = new Board({
+      game: this,
+    });
   }
 }
 
-
 uR.ready(function() {
-  var board = new Board();
+  window.game = new Game()
 })
