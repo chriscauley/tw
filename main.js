@@ -1,29 +1,3 @@
-class CanvasObject extends uR.Object {
-  constructor() {
-    super()
-  }
-  newElement(tagName,attrs,options) {
-    var element = document.createElement(tagName);
-    if (attrs.parent) {
-      attrs.parent.appendChild(element);
-      delete attrs.parent;
-    }
-
-    element.innerHTML = attrs.innerHTML || "";
-    delete attrs.innerHTML;
-
-    for (var attr in attrs) { element[attr] = attrs[attr]; }
-    if (options) { riot.mount(element,options); }
-    return element;
-  }
-  newCanvas(attrs) {
-    var canvas = this.newElement("canvas",attrs);
-    canvas.ctx = canvas.getContext("2d");
-    if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }
-    return canvas;
-  }
-}
-
 class Square extends CanvasObject {
   constructor(opts) {
     super()
@@ -33,49 +7,15 @@ class Square extends CanvasObject {
     this.canvas = this.newCanvas({
       width: this.scale,
       height: this.scale,
-      parent: document.getElementById("game",)
+      //parent: document.getElementById("game",)
     });
     this.draw();
   }
   draw() {
     this.ctx = this.canvas.getContext('2d');
-    this.ctx.clearRect(0,0,this.scale,this.scale);
+    this.canvas.clear();
     this.ctx.fillStyle = this.bg;
     this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
-    this.bot && this.bot.drawTo(this);
-    this.on && this.on.drawTo(this);
-    this.top && this.top.drawTo(this);
-  }
-}
-
-class Piece extends CanvasObject {
-  toString() { return '[object Piece]' }
-  constructor(opts) {
-    super();
-    this.defaults(opts || {
-      board: uR.REQUIRED,
-      x:0,
-      y:0,
-    });
-    this.move(0,0);
-  }
-  draw() {
-    if (! this.on) { return }
-    var c = this.on.canvas;
-    c.ctx.beginPath();
-    var gradient = c.ctx.createRadialGradient(c.width/2,c.height/2, c.width*3/8, c.width/2,c.height/2, 0);
-    gradient.addColorStop(0, 'transparent');
-    gradient.addColorStop(1, 'green');
-    c.ctx.fillStyle = gradient;
-    c.ctx.fillRect(0, 0, c.width,c.height);
-  }
-  move(dx,dy) {
-    var target = this.board.getSquare(this.x+dx,this.y+dy)
-    if (target) {
-      this.on = target;
-      this.x += dx;
-      this.y += dy;
-    }
   }
 }
 
@@ -86,7 +26,7 @@ var LEVELS = [
 class Board extends CanvasObject {
   constructor(opts) {
     super()
-    this.defaults(opts || {},{
+    this.defaults(opts,{
       width: 8,
       height: 8,
       scale: 64,
@@ -101,7 +41,7 @@ class Board extends CanvasObject {
     this.createCanvas();
     this.pieces = [ new Piece({ board: this, x:3, y:3 }) ];
     this.player = this.pieces[0];
-    this.contorller = new Controller({ game: this.game });
+    this.controller = new Controller({ parent: this });
     this.bindKeys();
     this.startLevel(0);
     this.draw();
@@ -116,11 +56,11 @@ class Board extends CanvasObject {
       }));
     });
   }
-  onKeyDown(key) {
+  keydown(key) {
     this.key_map[key] && this.key_map[key]();
     this.draw();
   }
-  onKeyUp(key) {}
+  keyup(key) {}
   bindKeys() {
     var key_map = {
       up: function() { this.player.move(0,-1) },
@@ -156,7 +96,7 @@ class Game extends uR.Object {
   constructor() {
     super()
     this.board = new Board({
-      game: this,
+      parent: this,
     });
   }
 }

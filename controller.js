@@ -2,7 +2,7 @@ class Controller {
   constructor(opts) {
     uR.extend(
       this,
-      uR.defaults(opts||{},{
+      uR.defaults(opts,{
         code2key: {
           37: 'left',
           38: 'up',
@@ -11,23 +11,21 @@ class Controller {
           32: 'space',
           16: 'shift',
         },
-        game: uR.REQUIRED,
+        parent: uR.REQUIRED,
         is_keyboard: true,
       })
     )
     this.bindKeys();
   }
   bindKeys() {
-    document.addEventListener("keydown",this.onKeyDown.bind(this));
-    document.addEventListener("keyup",this.onKeyUp.bind(this));
+    var self = this;
+    var target = this.target || document;
+    uR.forEach(['mouseover','mouseout','mousemove','mouseclick','mouseup','mousedown'],function(action) {
+      self.parent[action] && target.addEventListener(action,(e) => self.parent[action](e));
+    })
+    uR.forEach(['keydown','keyup'], function(action) {
+      self.parent[action] && target.addEventListener(action,(e) => self.parent[action](self.code2key[e.keyCode]));
+    });
     var letters = 'abcdefghijklmnopqrstuvwxyz';
-  }
-
-  onKeyDown(e) {
-    this.game.board.onKeyDown(this.code2key[e.keyCode]);
-  }
-
-  onKeyUp(e) {
-    this.game.board.onKeyUp(this.code2key[e.keyCode]);
   }
 }
