@@ -1,6 +1,12 @@
+uR.ready(function() {
+  //window.spritemapper = new SpriteMapper();
+  //(new Sprite()).objects.all().forEach(function(s) { s.render() })
+});
+
 class Sprite extends uR.db.Model {
   constructor(opts) {
     opts = opts || {};
+    opts.app_label = "paint";
     opts.schema = [
       { name: 'width', type: 'int' },
       { name: 'height', type: 'int' },
@@ -8,12 +14,20 @@ class Sprite extends uR.db.Model {
       { name: "group", },
     ];
     super(opts);
-    newElement('img',{
-      src: this.dataURL,
-      parent: document.body,
-      width: this.width*10,
-      height: this.height*10
-    });
+  }
+  render() {
+    uR.newElement(
+      'ur-sprite',
+      {
+        parent: document.getElementById('card-box'),
+        innerHTML: uR.newElement('img',{
+          src: this.dataURL,
+          width: this.width*10,
+          height: this.height*10
+        }).outerHTML
+      },
+      {obj:this}
+    );
   }
 }
 
@@ -48,7 +62,7 @@ class SpriteMapper extends CanvasObject {
       name: 'canvas',
       width: img.width,
       height: img.height,
-      parent: document.body,
+      parent: document.getElementById("game"),
     })
     this.scalezoom = 10;
     var zw = this.scale*this.scalezoom;
@@ -57,13 +71,13 @@ class SpriteMapper extends CanvasObject {
       name: 'zoomcanvas',
       width: zw,
       height: zh,
-      parent: document.body,
+      parent: document.getElementById("game"),
     });
     this.newCanvas({
       name: 'clickcanvas',
       width: this.scale,
       height: this.scale,
-      parent: document.body
+      parent: document.getElementById("game")
     });
   }
   loadSprites() {
@@ -80,6 +94,8 @@ class SpriteMapper extends CanvasObject {
       width: this.scale,
       height: this.scale,
     });
+    s.save();
+    s.render();
   }
   mousedown(e) {
     this.addSprite();
@@ -118,7 +134,3 @@ class SpriteMapper extends CanvasObject {
     )
   }
 }
-
-uR.ready(function() {
-  window.spritemapper = new SpriteMapper();
-});

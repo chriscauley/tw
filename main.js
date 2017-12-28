@@ -7,7 +7,7 @@ class Square extends CanvasObject {
     this.canvas = this.newCanvas({
       width: this.scale,
       height: this.scale,
-      //parent: document.getElementById("game",)
+      parent: document.getElementById("game",)
     });
     this.draw();
   }
@@ -49,7 +49,7 @@ class Board extends CanvasObject {
   startLevel(level_number) {
     var self = this;
     uR.forEach(LEVELS[level_number],function(level) {
-      self.pieces.push(new Piece({
+      self.pieces.push(new CountDown({
         x: level[0],
         y: level[1],
         board: self,
@@ -69,7 +69,16 @@ class Board extends CanvasObject {
       right: function() { this.player.move(1,0) },
     }
     this.key_map = {};
-    for (var k in key_map) { this.key_map[k] = key_map[k].bind(this); }
+    function d(f,self) {
+      return function() {
+        f.bind(self)();
+        self.nextTurn()
+      }
+    }
+    for (var k in key_map) { this.key_map[k] = d(key_map[k],this); }
+  }
+  nextTurn() {
+    this.pieces.forEach(function(p) { p.play() });
   }
   eachSquare(func) {
     for (var x=0;x<this.width;x++) {
