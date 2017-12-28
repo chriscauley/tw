@@ -9,47 +9,60 @@ class Piece extends CanvasObject {
     });
     this.move(0,0);
     this.step = 0;
+    this.cx = this.current_square.canvas.width/2;
+    this.cy = this.current_square.canvas.height/2;
+    this.radius = this.current_square.canvas.width*3/8;
+    this.fillStyle = 'gradient';
+    this.outer_color = 'transparent';
+    this.inner_color = 'blue';
   }
   draw() {
     if (! this.current_square) { return }
     var c = this.current_square.canvas;
     c.ctx.beginPath();
-    var center_x = c.width/2;
-    var center_y = c.height/2;
-    var radius = c.width*3/8;
-    var gradient = c.ctx.createRadialGradient(center_x,center_y, radius, center_x,center_y, 0);
-    gradient.addColorStop(0, 'transparent');
-    gradient.addColorStop(1, 'green');
-    c.ctx.fillStyle = gradient;
-    c.ctx.fillRect(0, 0, c.width,c.height);
-    c.ctx.font = '48px serif';
-    c.ctx.textAlign = 'center';
-    c.ctx.fillStyle = "black";
-    c.ctx.textBaseline = 'middle';
-    c.ctx.fillText(this.step, center_x,center_y );
-    c.ctx.strokeStyle = "4px white";
-    c.ctx.beginPath();
-    c.ctx.arc(center_x,center_y, radius, 0, 2 * Math.PI);
-    c.ctx.stroke();
+    if (this.fillStyle == "gradient") {
+      var gradient = c.ctx.createRadialGradient(this.cx,this.cy, this.radius, this.cx,this.cy, 0);
+      gradient.addColorStop(0, this.outer_color);
+      gradient.addColorStop(1, this.inner_color);
+      c.ctx.fillStyle = gradient;
+      c.ctx.fillRect(0,0,c.width,c.height)
+    }
+    else { c.ctx.fillStyle = this.fillStyle; }
+    if (this.strokeStyle) {
+      c.ctx.lineWidth = 5;
+      c.ctx.strokeStyle = this.strokeStyle;
+      c.ctx.beginPath();
+      c.ctx.arc(this.cx,this.cy, this.radius, 0, 2 * Math.PI);
+      c.ctx.stroke();
+      c.ctx.fill()
+    }
+    if (this.text) {
+      c.ctx.font = '48px serif';
+      c.ctx.textAlign = 'center';
+      c.ctx.fillStyle = "white";
+      c.ctx.textBaseline = 'middle';
+      c.ctx.fillText(this.text||0, this.cx,this.cy );
+    }
   }
   move(dx,dy) {
     var target_square = this.board.getSquare(this.x+dx,this.y+dy)
     if (!target_square) { return }
-    if (target_square.piece) {
-      if (!target_square.piece.canMove()) {
-        console.log(target_square.piece)
-        console.log("blocked!"); return;
-      }
+    var replacing = target_square.piece;
+    if (replacing == this) { return }
+    if (replacing && !replacing.canReplace()) {
+      return;
     }
     if (this.current_square) { this.current_square.piece = undefined }
     this.current_square = target_square;
     target_square.piece = this;
     this.x += dx;
     this.y += dy;
+    replacing && replacing.movedOnTo();
   }
   play() {
+    this.step += 1;
   }
-  canMove() {
+  canReplace() {
     return false;
   }
 }
@@ -57,9 +70,20 @@ class Piece extends CanvasObject {
 class CountDown extends Piece {
   constructor(opts) {
     super(opts);
+    this.fillStyle = '#383';
+    this.strokeStyle = "white";
+    this.text = 1;
   }
   play() {
-    this.step += 1;
-    this.step %= 5;
+    super.play();
+    this.text = this.points = this.step%4+1;
+  }
+  canReplace() {
+    return this.step
+  }
+  movedOnTo() {
+    var self = this;
+    this.board.score(this.points);
+    this.board.pieces = this.board.pieces.filter(function(p) { return p !== self; });
   }
 }
