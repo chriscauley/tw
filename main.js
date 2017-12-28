@@ -46,6 +46,9 @@ class Board extends CanvasObject {
     this.startLevel(0);
     this.draw();
   }
+  score(points) {
+    console.log(points);
+  }
   startLevel(level_number) {
     var self = this;
     uR.forEach(LEVELS[level_number],function(level) {
@@ -63,10 +66,11 @@ class Board extends CanvasObject {
   keyup(key) {}
   bindKeys() {
     var key_map = {
-      up: function() { this.player.move(0,-1) },
-      down: function() { this.player.move(0,1) },
-      left: function() { this.player.move(-1,0) },
-      right: function() { this.player.move(1,0) },
+      up: function() { this.player.move(0,-1); },
+      down: function() { this.player.move(0,1); },
+      left: function() { this.player.move(-1,0); },
+      right: function() { this.player.move(1,0); },
+      space: function() { this.player.move(0,0); },
     }
     this.key_map = {};
     function d(f,self) {

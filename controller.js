@@ -24,7 +24,9 @@ class Controller {
       self.parent[action] && target.addEventListener(action,(e) => self.parent[action](e));
     })
     uR.forEach(['keydown','keyup'], function(action) {
-      self.parent[action] && target.addEventListener(action,(e) => self.parent[action](self.code2key[e.keyCode]));
+      self.parent[action] && target.addEventListener(action,function (e) {
+        self.parent[action](self.code2key[e.keyCode]);
+      });
     });
     var letters = 'abcdefghijklmnopqrstuvwxyz';
   }
