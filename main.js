@@ -21,6 +21,7 @@ class Square extends CanvasObject {
 var LEVELS = [
   [
     [CountDown,[[0,0],[0,7],[7,0],[7,7]]],
+    [Blob,[[2,2]]],
   ]
 ];
 

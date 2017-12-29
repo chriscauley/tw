@@ -6,6 +6,7 @@ class Piece extends CanvasObject {
       board: uR.REQUIRED,
       x:0,
       y:0,
+      tasks: [this.wait],
     });
     this.move(0,0);
     this.step = 0;
@@ -15,6 +16,10 @@ class Piece extends CanvasObject {
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
+  }
+  play() {
+    this.tasks[this.step%this.tasks.length]()
+    this.step += 1;
   }
   draw() {
     if (! this.current_square) { return }
@@ -36,14 +41,22 @@ class Piece extends CanvasObject {
       c.ctx.stroke();
       c.ctx.fill()
     }
-    if (this.text) {
-      c.ctx.font = '48px serif';
-      c.ctx.textAlign = 'center';
-      c.ctx.fillStyle = "white";
-      c.ctx.textBaseline = 'middle';
-      c.ctx.fillText(this.text||0, this.cx,this.cy );
+    this.drawText(c);
+  }
+  drawText(c) {
+    if (!this.text) { return }
+    if (!Array.isArray(this.text)) { this.text = [this.text] }
+    for (var i=0;i<this.text.length;i++) {
+      var text = this.text[i];
+      if (!text.display) { text = { display: text } }
+      c.ctx.font = text.font || '48px serif';
+      c.ctx.textAlign = text.align || 'center';
+      c.ctx.fillStyle = text.style || "white";
+      c.ctx.textBaseline = text.baseLine ||'middle';
+      c.ctx.fillText(text.display || "", this.cx,this.cy );
     }
   }
+  wait() {}
   move(dx,dy) {
     var target_square = this.board.getSquare(this.x+dx,this.y+dy)
     if (!target_square) { return }
@@ -59,9 +72,6 @@ class Piece extends CanvasObject {
     this.y += dy;
     replacing && replacing.movedOnTo();
   }
-  play() {
-    this.step += 1;
-  }
   canReplace() {
     return false;
   }
@@ -73,9 +83,9 @@ class CountDown extends Piece {
     this.fillStyle = '#383';
     this.strokeStyle = "white";
     this.text = 1;
+    this.tasks = [this.countdown];
   }
-  play() {
-    super.play();
+  countdown() {
     this.text = this.points = this.step%4+1;
   }
   canReplace() {
@@ -85,5 +95,20 @@ class CountDown extends Piece {
     var self = this;
     this.board.score(this.points);
     this.board.pieces = this.board.pieces.filter(function(p) { return p !== self; });
+  }
+}
+
+class Blob extends Piece {
+  constructor(opts) {
+    super(opts);
+    this.strokeStyle = "green";
+    this.tasks = [
+      this.wait.bind(this),
+      this.bounce.bind(this),
+    ];
+  }
+  bounce() {
+    this.move(0,this.direction?1:-1);
+    this.direction = !this.direction;
   }
 }
