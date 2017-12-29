@@ -9,8 +9,11 @@ class Square extends CanvasObject {
       height: this.scale,
     });
     this.draw();
+    this.dirty = true;
   }
   draw() {
+    if (this.dirty) { return }
+    this.dirty = false;
     this.ctx = this.canvas.getContext('2d');
     this.canvas.clear();
     this.ctx.fillStyle = this.bg;
@@ -102,11 +105,11 @@ class Board extends CanvasObject {
   }
   draw() {
     var s = this.scale;
-    this.eachSquare(function(square) { square && square.draw(); });
-    uR.forEach(this.pieces,function(p){ p.draw() })
     this.eachSquare(function(square,x,y) {
+      square && square.draw();
       square && this.canvas.ctx.drawImage(square.canvas,s*x,s*y);
     });
+    uR.forEach(this.pieces,function(p){ p.draw() })
   }
   createCanvas() {
     this.canvas = this.newCanvas({

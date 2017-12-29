@@ -10,9 +10,7 @@ class Piece extends CanvasObject {
     });
     this.move(0,0);
     this.step = 0;
-    this.cx = this.current_square.canvas.width/2;
-    this.cy = this.current_square.canvas.height/2;
-    this.radius = this.current_square.canvas.width*3/8;
+    this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
@@ -26,8 +24,10 @@ class Piece extends CanvasObject {
   }
   draw() {
     if (! this.current_square) { return }
-    var c = this.current_square.canvas;
+    var c = this.board.canvas;
     c.ctx.beginPath();
+    this.cx = this.board.scale*(this.x+0.5);
+    this.cy = this.board.scale*(this.y+0.5);
     if (this.fillStyle == "gradient") {
       var gradient = c.ctx.createRadialGradient(this.cx,this.cy, this.radius, this.cx,this.cy, 0);
       gradient.addColorStop(0, this.outer_color);
