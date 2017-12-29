@@ -19,6 +19,18 @@ class Piece extends CanvasObject {
     this.getNextMove().bind(this)();
     this.step += 1;
   }
+  drawMoves() {
+    this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
+      var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
+      if (square && square.isOpen()) {
+        var x = square.x;
+        var y = square.y;
+        var s = this.board.scale;
+        this.board.canvas.ctx.fillStyle = "rgba(0,100,0,0.5)";
+        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
+      }
+    })
+  }
   getNextMove() {
     return this.tasks[this.step%this.tasks.length];
   }

@@ -19,6 +19,12 @@ class Square extends CanvasObject {
     this.ctx.fillStyle = this.bg;
     this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
   }
+  isOpen() {
+    return !this.piece || this.piece.canReplace();
+  }
+  canAttack() {
+    
+  }
 }
 
 var LEVELS = [
@@ -40,8 +46,8 @@ class Board extends CanvasObject {
     var self = this
     this.squares = [];
     this.eachSquare(function(_s,x,y) { // _s is undefined;
-      self.squares[x] = self.squares[x] || [];
-      self.squares[x][y] = new Square({x:x,y:y,board:self});
+      self.squares[y] = self.squares[y] || [];
+      self.squares[y][x] = new Square({x:x,y:y,board:self});
     });
     this.createCanvas();
     document.getElementById("game",).style.width = (this.width*this.scale)+"px";
@@ -109,6 +115,7 @@ class Board extends CanvasObject {
       square && square.draw();
       square && this.canvas.ctx.drawImage(square.canvas,s*x,s*y);
     });
+    this.player.drawMoves();
     uR.forEach(this.pieces,function(p){ p.draw() })
   }
   createCanvas() {
