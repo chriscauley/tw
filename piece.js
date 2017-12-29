@@ -18,8 +18,11 @@ class Piece extends CanvasObject {
     this.inner_color = 'blue';
   }
   play() {
-    this.tasks[this.step%this.tasks.length]()
+    this.getNextMove().bind(this)();
     this.step += 1;
+  }
+  getNextMove() {
+    return this.tasks[this.step%this.tasks.length];
   }
   draw() {
     if (! this.current_square) { return }
@@ -43,11 +46,15 @@ class Piece extends CanvasObject {
     }
     this.drawText(c);
   }
+  getText() {
+    this.text = [];
+  }
   drawText(c) {
-    if (!this.text) { return }
-    if (!Array.isArray(this.text)) { this.text = [this.text] }
-    for (var i=0;i<this.text.length;i++) {
-      var text = this.text[i];
+    var text = this.getText();
+    if (!text) { return }
+    if (!Array.isArray(text)) { text = [text] }
+    for (var i=0;i<text.length;i++) {
+      var text = text[i];
       if (!text.display) { text = { display: text } }
       c.ctx.font = text.font || '48px serif';
       c.ctx.textAlign = text.align || 'center';
@@ -82,15 +89,12 @@ class CountDown extends Piece {
     super(opts);
     this.fillStyle = '#383';
     this.strokeStyle = "white";
-    this.text = 1;
     this.tasks = [this.countdown];
   }
   countdown() {
-    this.text = this.points = this.step%4+1;
+    this.points = this.step%4+1;
   }
-  canReplace() {
-    return this.step
-  }
+  getText() { return this.points }
   movedOnTo() {
     var self = this;
     this.board.score(this.points);
@@ -103,12 +107,19 @@ class Blob extends Piece {
     super(opts);
     this.strokeStyle = "green";
     this.tasks = [
-      this.wait.bind(this),
-      this.bounce.bind(this),
+      this.wait,
+      this.bounce,
     ];
+    this.direction = 1;
+  }
+  getText() {
+    if (this.getNextMove().name == "bounce") { return this.direction }
+    return 'w'
   }
   bounce() {
-    this.move(0,this.direction?1:-1);
-    this.direction = !this.direction;
+    var square = this.board.getSquare(this.x,this.y+this.direction);
+    if (square && square.piece) { return; }
+    this.move(0,this.direction);
+    this.direction = this.direction * -1;
   }
 }
