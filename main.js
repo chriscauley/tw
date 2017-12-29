@@ -22,8 +22,8 @@ class Square extends CanvasObject {
   isOpen() {
     return !this.piece || this.piece.canReplace();
   }
-  canAttack() {
-    
+  canBeAttacked() {
+    return this.piece && this.piece.canBeAttacked();
   }
 }
 

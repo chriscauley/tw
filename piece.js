@@ -22,11 +22,16 @@ class Piece extends CanvasObject {
   drawMoves() {
     this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
       var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
-      if (square && square.isOpen()) {
-        var x = square.x;
-        var y = square.y;
-        var s = this.board.scale;
+      if (!square) { return }
+      var x = square.x;
+      var y = square.y;
+      var s = this.board.scale;
+      if (square.isOpen()) {
         this.board.canvas.ctx.fillStyle = "rgba(0,100,0,0.5)";
+        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
+      }
+      if (square.canBeAttacked()) {
+        this.board.canvas.ctx.fillStyle = "rgba(100,0,0,0.5)";
         this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
       }
     })
@@ -94,6 +99,7 @@ class Piece extends CanvasObject {
   canReplace() {
     return false;
   }
+  canBeAttacked() { return true; }
 }
 
 class CountDown extends Piece {
@@ -112,6 +118,8 @@ class CountDown extends Piece {
     this.board.score(this.points);
     this.board.pieces = this.board.pieces.filter(function(p) { return p !== self; });
   }
+  canBeAttacked() { return false; }
+  canReplace() { return true; }
 }
 
 class Blob extends Piece {
