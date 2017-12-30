@@ -131,6 +131,7 @@ class Piece extends CanvasObject {
     if (this.health <= 0) { this.die() }
   }
   die() {
+    this.current_square.addItem(this.item || new Gold({ multiplier: this.max_health }));
     this.board.remove(this);
   }
   attack(target) {
@@ -159,6 +160,12 @@ class CountDown extends Piece {
   }
   canBeAttacked() { return false; }
   canReplace() { return true; }
+}
+
+class GreenBlob extends Piece {
+  constructor(opts) {
+    this.inner_color = 'blue';
+  }
 }
 
 class Blob extends Piece {

@@ -12,18 +12,30 @@ class Square extends CanvasObject {
     this.dirty = true;
   }
   draw() {
-    if (this.dirty) { return }
+    if (!this.dirty) { return }
     this.dirty = false;
     this.ctx = this.canvas.getContext('2d');
     this.canvas.clear();
     this.ctx.fillStyle = this.bg;
     this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+    this.item && this.item.draw(this.canvas);
   }
   isOpen() {
     return !this.piece || this.piece.canReplace();
   }
   canBeAttacked() {
     return this.piece && this.piece.canBeAttacked();
+  }
+  addItem(item) {
+    item.x = this.x;
+    item.y = this.y
+    this.dirty = true;
+    this.item = item;
+    item.square = this;
+  }
+  removeItem() {
+    this.item = undefined;
+    this.dirty = true;
   }
 }
 
@@ -51,8 +63,14 @@ class Board extends CanvasObject {
     });
     this.createCanvas();
     document.getElementById("game",).style.width = (this.width*this.scale)+"px";
-    this.pieces = [ new Piece({ board: this, x:3, y:3, health: 3 }) ];
+    this.pieces = [ new Player({ board: this, x:3, y:3, health: 3 }) ];
     this.player = this.pieces[0];
+    uR.newElement("tw-scores",{
+      parent: document.querySelector("#game"),
+    },{
+      player: this.player,
+      board: this,
+    });
     this.controller = new Controller({ parent: this });
     this.bindKeys();
     this.startLevel(0);
@@ -117,6 +135,7 @@ class Board extends CanvasObject {
     });
     this.player.drawMoves();
     uR.forEach(this.pieces,function(p){ p.draw() })
+    this.ui && this.ui.update();
   }
   createCanvas() {
     this.canvas = this.newCanvas({
