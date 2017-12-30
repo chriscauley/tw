@@ -7,8 +7,10 @@ class Piece extends CanvasObject {
       x:0,
       y:0,
       tasks: [this.wait],
+      health: 1,
     });
     this.move(0,0);
+    this.max_health = this.health;
     this.step = 0;
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
@@ -18,6 +20,32 @@ class Piece extends CanvasObject {
   play() {
     this.getNextMove().bind(this)();
     this.step += 1;
+  }
+  drawHealth(c) {
+    var heart_r = 4;
+    var heart_b = 2;
+    var heart_s = 1;
+    //if (!this.damage) { return; }
+    c.ctx.lineWidth = heart_b;
+    c.ctx.strokeStyle = 'white';
+    c.ctx.fillStyle = "black";
+    var offset = (this.max_health-1)/2;
+    for (var i=0;i<this.max_health;i++) {
+      var dx = 2*(offset-i)*(heart_r+heart_b+heart_s);
+      c.ctx.beginPath();
+      c.ctx.arc(this.cx-dx,this.cy-this.board.scale/2, heart_r, 0, 2 * Math.PI);
+      c.ctx.stroke();
+      c.ctx.fill()
+    }
+    c.ctx.lineWidth = 0;
+    c.ctx.fillStyle = "red";
+    for (var i=0;i<this.health;i++) {
+      var dx = 2*(offset-i)*(heart_r+heart_b+heart_s);
+      c.ctx.beginPath();
+      c.ctx.arc(this.cx-dx,this.cy-this.board.scale/2, heart_r, 0, 2 * Math.PI);
+      c.ctx.stroke();
+      c.ctx.fill()
+    }
   }
   drawMoves() {
     this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
@@ -62,6 +90,7 @@ class Piece extends CanvasObject {
       c.ctx.fill()
     }
     this.drawText(c);
+    this.drawHealth(c)
   }
   getText() {
     this.text = [];
@@ -85,9 +114,10 @@ class Piece extends CanvasObject {
     var target_square = this.board.getSquare(this.x+dx,this.y+dy)
     if (!target_square) { return }
     var replacing = target_square.piece;
-    if (replacing == this) { return }
-    if (replacing && !replacing.canReplace()) {
-      return;
+    if (replacing) {
+      if (replacing == this) { return }
+      if (replacing.canBeAttacked()) { return replacing.takeDamage(1) }
+      if (!replacing.canReplace()) { return; }
     }
     if (this.current_square) { this.current_square.piece = undefined }
     this.current_square = target_square;
@@ -95,6 +125,16 @@ class Piece extends CanvasObject {
     this.x += dx;
     this.y += dy;
     replacing && replacing.movedOnTo();
+  }
+  takeDamage(damage) {
+    this.health -= damage;
+    if (this.health <= 0) { this.die() }
+  }
+  die() {
+    this.board.remove(this);
+  }
+  attack(target) {
+    target.takeDamage(1);
   }
   canReplace() {
     return false;
@@ -114,9 +154,8 @@ class CountDown extends Piece {
   }
   getText() { return this.points }
   movedOnTo() {
-    var self = this;
     this.board.score(this.points);
-    this.board.pieces = this.board.pieces.filter(function(p) { return p !== self; });
+    this.board.remove(this);
   }
   canBeAttacked() { return false; }
   canReplace() { return true; }
@@ -124,6 +163,7 @@ class CountDown extends Piece {
 
 class Blob extends Piece {
   constructor(opts) {
+    opts.health = 2;
     super(opts);
     this.strokeStyle = "green";
     this.tasks = [
@@ -133,12 +173,12 @@ class Blob extends Piece {
     this.direction = 1;
   }
   getText() {
-    if (this.getNextMove().name == "bounce") { return this.direction }
-    return 'w'
+    if (this.getNextMove().name == "bounce") { return this.direction; }
+    return 'w';
   }
   bounce() {
     var square = this.board.getSquare(this.x,this.y+this.direction);
-    if (square && square.piece) { return; }
+    if (square && square.piece) { return this.attack(square.piece); }
     this.move(0,this.direction);
     this.direction = this.direction * -1;
   }

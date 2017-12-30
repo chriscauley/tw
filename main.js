@@ -40,7 +40,7 @@ class Board extends CanvasObject {
     this.defaults(opts,{
       width: 8,
       height: 8,
-      scale: 64,
+      scale: 48,
     });
 
     var self = this
@@ -51,7 +51,7 @@ class Board extends CanvasObject {
     });
     this.createCanvas();
     document.getElementById("game",).style.width = (this.width*this.scale)+"px";
-    this.pieces = [ new Piece({ board: this, x:3, y:3 }) ];
+    this.pieces = [ new Piece({ board: this, x:3, y:3, health: 3 }) ];
     this.player = this.pieces[0];
     this.controller = new Controller({ parent: this });
     this.bindKeys();
@@ -124,6 +124,13 @@ class Board extends CanvasObject {
       width: this.scale*this.height,
       parent: document.getElementById("game")
     });
+  }
+  remove(piece) {
+    this.pieces = this.pieces.filter(function(p) { return p !== piece; });
+    if (piece.current_square) {
+      piece.current_square.piece = undefined;
+      piece.current_square = undefined;
+    }
   }
   getSquare(x,y) { return this.squares[y] && this.squares[y][x] }
 }
