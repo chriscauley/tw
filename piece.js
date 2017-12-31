@@ -47,23 +47,6 @@ class Piece extends CanvasObject {
       c.ctx.fill()
     }
   }
-  drawMoves() {
-    this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
-      var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
-      if (!square) { return }
-      var x = square.x;
-      var y = square.y;
-      var s = this.board.scale;
-      if (square.isOpen()) {
-        this.board.canvas.ctx.fillStyle = "rgba(0,100,0,0.5)";
-        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
-      }
-      if (square.canBeAttacked()) {
-        this.board.canvas.ctx.fillStyle = "rgba(100,0,0,0.5)";
-        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
-      }
-    })
-  }
   getNextMove() {
     return this.tasks[this.step%this.tasks.length];
   }
@@ -125,6 +108,7 @@ class Piece extends CanvasObject {
     this.x += dx;
     this.y += dy;
     replacing && replacing.movedOnTo();
+    if (this.current_square.floor) { this.current_square.floor.trigger(this); }
   }
   takeDamage(damage) {
     this.health -= damage;
@@ -155,7 +139,7 @@ class CountDown extends Piece {
   }
   getText() { return this.points }
   movedOnTo() {
-    this.board.score(this.points);
+    this.board.game.player.addScore(this.points);
     this.board.remove(this);
   }
   canBeAttacked() { return false; }
