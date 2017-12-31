@@ -3,7 +3,7 @@ class Game extends uR.Object {
     super()
     this.bindKeys();
     this.board = new Board({ game: this, });
-    this.player = new Player({ board: this.board, x:3, y:3, health: 3 });
+    this.player = new Player({ game: this, board: this.board, x:3, y:3, health: 3 });
     uR.newElement(
       "tw-scores",
       { parent: document.querySelector("#game") },

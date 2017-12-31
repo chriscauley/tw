@@ -1,6 +1,9 @@
 class Player extends Piece {
   constructor(opts) {
     super(opts);
+    this.defaults(opts,{
+      game: uR.REQUIRED,
+    });
     this.score = 0;
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;

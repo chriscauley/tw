@@ -27,6 +27,12 @@ class Square extends CanvasObject {
   canBeAttacked() {
     return this.piece && this.piece.canBeAttacked();
   }
+  reset() {
+    this.item = undefined;
+    this.piece = undefined;
+    this.floor = undefined;
+    this.dirty = true;
+  }
   setFloor(item) {
     this.floor = item;
     this.dirty = true;

@@ -13,12 +13,19 @@ class Board extends CanvasObject {
       self.squares[y] = self.squares[y] || [];
       self.squares[y][x] = new Square({x:x,y:y,board:self});
     });
+    this.pieces = [];
     this.createCanvas();
     document.getElementById("game",).style.width = (this.width*this.scale+75)+"px";
-    this.pieces = [ ];
+  }
+  reset() {
+    this.pieces = [];
+    this.eachSquare(function(_s,x,y) {
+      _s.reset();
+    });
   }
   loadLevel(level_number) {
     var self = this;
+    self.reset();
     self.level_number = level_number;
     uR.forEach(LEVELS[level_number],function(feature) {
       var feature_class = feature[0];
@@ -31,6 +38,7 @@ class Board extends CanvasObject {
         }))
       })
     });
+    this.game.player.move(0,0);
     this.getSquare(2,1).setFloor(new Stairs());
   }
   eachSquare(func) {
