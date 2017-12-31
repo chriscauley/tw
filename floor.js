@@ -11,7 +11,6 @@ class Stairs extends FloorItem {
   }
   trigger(unit) {
     super.trigger(unit);
-    console.log(unit.board);
     unit.is_player && this.open && unit.game.nextLevel();
   }
   draw(canvas) {

@@ -9,19 +9,20 @@ class Piece extends CanvasObject {
       tasks: [this.wait],
       health: 1,
     });
-    this.move(0,0);
     this.max_health = this.health;
     this.step = 0;
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
+    this.move(0,0);
   }
   play() {
     this.getNextMove().bind(this)();
     this.step += 1;
   }
-  drawHealth(c) {
+  drawHealth() {
+    var c = this.board.canvas;
     var heart_r = 4;
     var heart_b = 2;
     var heart_s = 1;
@@ -73,7 +74,6 @@ class Piece extends CanvasObject {
       c.ctx.fill()
     }
     this.drawText(c);
-    this.drawHealth(c)
   }
   getText() {
     this.text = [];

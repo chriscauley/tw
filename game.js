@@ -3,16 +3,15 @@ class Game extends uR.Object {
     super()
     this.bindKeys();
     this.board = new Board({ game: this, });
-    this.player = new Player({ game: this, board: this.board, x:3, y:3, health: 3 });
+    this.controller = new Controller({ parent: this });
+    this.level_number = -1;
+    this.nextLevel();
     uR.newElement(
       "tw-scores",
       { parent: document.querySelector("#game") },
       { player: this.player, game: this }
     );
     this.board.draw();
-    this.controller = new Controller({ parent: this });
-    this.level_number = -1;
-    this.nextLevel();
   }
   nextLevel() {
     this.level_number++;
