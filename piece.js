@@ -148,6 +148,7 @@ class CountDown extends Piece {
 
 class GreenBlob extends Piece {
   constructor(opts) {
+    super(opts);
     this.inner_color = 'blue';
   }
 }

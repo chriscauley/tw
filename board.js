@@ -2,9 +2,9 @@ class Board extends CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{
-      width: 8,
-      height: 8,
-      scale: 48,
+      width: 12,
+      height: 12,
+      scale: 36,
       enemy_map: {
         C: CountDown,
         B: Blob,
@@ -44,12 +44,12 @@ class Board extends CanvasObject {
     this.game.player.x = start[0];
     this.game.player.y = start[1];
     this.game.player.move(0,0);
-    this.getSquare(exit).setFloor(new Stairs());
+    exit && this.getSquare(exit).setFloor(new Stairs());
   }
   eachSquare(func) {
     func = func.bind(this);
-    for (var x=0;x<this.width;x++) {
-      for (var y=0;y<this.height;y++) {
+    for (var x=0;x<this.squares.length;x++) {
+      for (var y=0;y<this.squares[x].length;y++) {
         var square = this.getSquare(x,y);
         func(square,x,y)
       }
@@ -57,7 +57,10 @@ class Board extends CanvasObject {
   }
   draw() {
     var s = this.scale;
+    var offset_x = (this.game.player.x-this.width/2)*s;
+    var offset_y = (this.game.player.y-this.height/2)*s;
     this.canvas.ctx.clearRect(0,0,this.width*s,this.height*s);
+    this.canvas.ctx.translate(-offset_x,-offset_y)
     this.eachSquare(function(square,x,y) {
       square && square.draw();
       square && this.canvas.ctx.drawImage(square.canvas,s*x,s*y);
@@ -68,6 +71,7 @@ class Board extends CanvasObject {
     uR.forEach(this.pieces,function(p){ p.draw() })
     uR.forEach(this.pieces,function(p){ p.drawHealth() })
     this.game.player.drawHealth(this.canvas);
+    this.canvas.ctx.translate(offset_x,offset_y)
   }
   createCanvas() {
     this.canvas = this.newCanvas({

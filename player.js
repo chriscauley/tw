@@ -7,6 +7,7 @@ class Player extends Piece {
     this.score = 0;
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;
+    this.inner_color = 'orange';
   }
   move(x,y) {
     super.move(x,y);

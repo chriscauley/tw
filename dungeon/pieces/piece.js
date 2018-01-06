@@ -146,7 +146,8 @@ DG.Piece = class Piece {
         this.exits.push([exit[0], exit[1], room]);
     }
 
-    print() {
+    toArray() {
+        var output = [];
         for (let y = 0; y < this.size[1]; y ++) {
             let row ='';
             for (let x = 0; x < this.size[0]; x++) {
@@ -156,7 +157,10 @@ DG.Piece = class Piece {
                     row += this.walls.get([x, y]) ? ' ' : this.id;
                 }
             }
+            output.push(row);
         }
+        return output;
     }
+    print() { return this.toArray().join("\n") }
 }
 })();
