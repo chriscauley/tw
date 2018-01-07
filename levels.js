@@ -18,7 +18,7 @@ var LEVELS = [
 ]
 
 var dungeon = new DG.Dungeon({
-  size: [20, 20],
+  size: [50, 50],
   seed: 'abcd', //omit for generated seed
   rooms: {
     initial: {
@@ -28,8 +28,8 @@ var dungeon = new DG.Dungeon({
       position: [0, 0] //OPTIONAL pos of initial room
     },
     any: {
-      min_size: [2, 2],
-      max_size: [5, 5],
+      min_size: [4, 4],
+      max_size: [10, 10],
       max_exits: 4
     }
   },

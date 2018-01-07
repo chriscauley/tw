@@ -1,4 +1,4 @@
-class Piece extends CanvasObject {
+class Piece extends uR.Object {
   toString() { return '[object Piece]' }
   constructor(opts) {
     super();
@@ -16,6 +16,7 @@ class Piece extends CanvasObject {
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
     this.move(0,0);
+    this.sprite = uR.sprites['blue-flame'];
   }
   play() {
     this.getNextMove().bind(this)();
@@ -54,25 +55,16 @@ class Piece extends CanvasObject {
   draw() {
     if (! this.current_square) { return }
     var c = this.board.canvas;
+    var s = this.board.scale;
     c.ctx.beginPath();
-    this.cx = this.board.scale*(this.x+0.5);
-    this.cy = this.board.scale*(this.y+0.5);
-    if (this.fillStyle == "gradient") {
-      var gradient = c.ctx.createRadialGradient(this.cx,this.cy, this.radius, this.cx,this.cy, 0);
-      gradient.addColorStop(0, this.outer_color);
-      gradient.addColorStop(1, this.inner_color);
-      c.ctx.fillStyle = gradient;
-      c.ctx.fillRect(0,0,c.width,c.height)
-    }
-    else { c.ctx.fillStyle = this.fillStyle; }
-    if (this.strokeStyle) {
-      c.ctx.lineWidth = 5;
-      c.ctx.strokeStyle = this.strokeStyle;
-      c.ctx.beginPath();
-      c.ctx.arc(this.cx,this.cy, this.radius, 0, 2 * Math.PI);
-      c.ctx.stroke();
-      c.ctx.fill()
-    }
+    var img = this.sprite.get(this.dx,this.dy,this.state);
+    c.ctx.drawImage(
+      img.img,
+      img.x, img.y,
+      img.w, img.h,
+      this.x*s, this.y*s,
+      s,s,
+    );
     this.drawText(c);
   }
   getText() {
@@ -107,6 +99,8 @@ class Piece extends CanvasObject {
     target_square.piece = this;
     this.x += dx;
     this.y += dy;
+    this.dx = dx;
+    this.dy = dy;
     replacing && replacing.movedOnTo();
     if (this.current_square.floor) { this.current_square.floor.trigger(this); }
   }

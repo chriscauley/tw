@@ -3,6 +3,10 @@ class CanvasObject extends uR.Object {
     super();
   }
   newCanvas(attrs) {
+    uR.defaults(attrs,{
+      width: this.width,
+      height: this.height,
+    });
     var canvas = uR.newElement("canvas",attrs);
     canvas.ctx = canvas.getContext("2d");
     canvas.ctx.imageSmoothingEnabled= false;
@@ -13,6 +17,13 @@ class CanvasObject extends uR.Object {
         h = canvas.height+2;
       }
       canvas.ctx.clearRect(x,y,w,h);
+    }
+    canvas.circle = function circle(color,x,y,r) {
+      var ctx = canvas.ctx;
+      ctx.beginPath();
+      ctx.fillStyle = color;
+      ctx.arc(x,y,r,0,2*Math.PI)
+      ctx.fill();
     }
     if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }
     return canvas;
