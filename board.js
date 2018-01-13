@@ -2,8 +2,8 @@ class Board extends CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{
-      width: 12,
-      height: 12,
+      W: 12,
+      H: 12,
       scale: 36,
       enemy_map: {
         C: CountDown,
@@ -14,7 +14,7 @@ class Board extends CanvasObject {
     var self = this
     this.pieces = [];
     this.createCanvas();
-    document.getElementById("game",).style.width = (this.width*this.scale+75)+"px";
+    document.getElementById("game",).style.width = (this.W*this.scale)+"px";
   }
   loadLevel(level_number) {
     delete this.squares;
@@ -24,7 +24,10 @@ class Board extends CanvasObject {
     var self = this;
     self.level_number = level_number;
     var start,exit;
+    this.x_max = 0;
+    this.y_max = LEVELS[level_number].length;
     uR.forEach(LEVELS[level_number],function(row,y) {
+      self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(c,x) {
         self.squares[x] = self.squares[x] || [];
         if (c == " ") { return }
@@ -43,6 +46,7 @@ class Board extends CanvasObject {
     });
     this.game.player.x = start[0];
     this.game.player.y = start[1];
+    this.game.player.resetMiniMap();
     this.game.player.move(0,0);
     exit && this.getSquare(exit).setFloor(new Stairs());
   }
@@ -57,9 +61,9 @@ class Board extends CanvasObject {
   }
   draw() {
     var s = this.scale;
-    var offset_x = (this.game.player.x-this.width/2)*s;
-    var offset_y = (this.game.player.y-this.height/2)*s;
-    this.canvas.ctx.clearRect(0,0,this.width*s,this.height*s);
+    var offset_x = (this.game.player.x-this.W/2)*s;
+    var offset_y = (this.game.player.y-this.H/2)*s;
+    this.canvas.ctx.clearRect(0,0,this.W*s,this.H*s);
     this.canvas.ctx.translate(-offset_x,-offset_y)
     this.eachSquare(function(square,x,y) {
       square && square.draw();
@@ -75,8 +79,8 @@ class Board extends CanvasObject {
   }
   createCanvas() {
     this.canvas = this.newCanvas({
-      height: this.scale*this.width,
-      width: this.scale*this.height,
+      height: this.scale*this.H,
+      width: this.scale*this.W,
       parent: document.getElementById("game")
     });
   }
