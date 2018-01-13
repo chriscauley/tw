@@ -3,7 +3,15 @@ class Player extends Piece {
     super(opts);
     this.defaults(opts,{
       game: uR.REQUIRED,
+      torch: [
+        [0,0,1,0,0],
+        [0,1,1,1,0],
+        [1,1,1,1,1],
+        [0,1,1,1,0],
+        [0,0,1,0,0],
+      ],
     });
+    this.resetMiniMap();
     this.score = 0;
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;
@@ -12,6 +20,20 @@ class Player extends Piece {
   move(x,y) {
     super.move(x,y);
     if (this.current_square.item) { this.current_square.item.pickUp(this); }
+    var self = this;
+    uR.forEach(this.torch || [],function(row,tx) {
+      var dx = tx-2;
+      uR.forEach(row,function(on,ty) {
+        if (!on) { return }
+        var dy = ty-2;
+        var square = self.board.getSquare(self.x+dx,self.y+dy);
+        var c = "X";
+        if (square) { c = " "; }
+        if (!dx && !dy) { c = "P"; }
+        try { self.minimap[self.y+dy][self.x+dx] = c; }
+        catch (e) {}
+      });
+    });
   }
   addGold(amount) {
     // eventually this is where item gold will go
@@ -39,6 +61,19 @@ class Player extends Piece {
         this.board.canvas.ctx.fillStyle = "rgba(100,0,0,0.5)";
         this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
       }
-    })
+    });
+  }
+  resetMiniMap() {
+    this.minimap = [];
+    for (var y=0;y<this.board.y_max;y++) {
+      var column = [];
+      for (var x=0; x<this.board.x_max;x++) { column.push(" ") }
+      this.minimap.push(column);
+    }
+  }
+  printMiniMap() {
+    var out = "";
+    uR.forEach(this.minimap || [],function(row) { out += row.join(" ") + "\n" });
+    return out;
   }
 }

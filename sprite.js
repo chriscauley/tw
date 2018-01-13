@@ -35,7 +35,7 @@ class CircleSprite extends SpriteObject {
     this.height = this.H*this.scale;
     this.radius = this.scale*0.4;
     this.getCenter();
-    this.newCanvas({parent: document.body,name: 'canvas'})
+    this.newCanvas({name: 'canvas'})
     this.draw();
   }
   draw() {
@@ -76,7 +76,6 @@ class FlameSprite extends CircleSprite {
       name: 'temp_canvas',
       width: this.scale,
       hegiht: this.scale,
-      parent: document.body,
     });
     this.temp_canvas.ctx.drawImage(this.canvas,0,0)
     var ctx = this.canvas.ctx;
