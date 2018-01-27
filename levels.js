@@ -15,6 +15,16 @@ var LEVELS = [
    "B0B  000",
    "xB0  000",
    "000  00s"],
+  ["000000000",
+   "000000000",
+   "000000000",
+   "000000000",
+   "0000s0000",
+   "000000000",
+   "000000000",
+   "000000000",
+   "000000000",
+  ]
 ]
 
 class Level extends uR.Object {
@@ -35,5 +45,6 @@ class DungeonLevel extends Level {
 }
 
 LEVELS = [
-  (new DungeonLevel({style:'zelda'})).level
+  //(new DungeonLevel({style:'zelda'})).level,
+  LEVELS[2]
 ]
