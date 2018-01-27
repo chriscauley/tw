@@ -16,6 +16,7 @@ class Player extends Piece {
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;
     this.inner_color = 'orange';
+    this.sprite = uR.sprites['blue-flame'];
   }
   move(x,y) {
     super.move(x,y);

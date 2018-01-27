@@ -3,9 +3,12 @@ class SpriteObject extends CanvasObject {
     super(opts);
     uR.sprites = uR.sprites || {};
     uR.sprites[opts.name] = this;
+    this.state_map = {
+      'attacking': 1
+    }
   }
   get(dx,dy,state) {
-    var x = 0, y = 0;
+    var x = 0, y = this.state_map[state] || 0;
     if (dy < 0) { x = 0; } // up
     if (dx > 0) { x = 1; } // right
     if (dy > 0) { x = 2; } // down
@@ -19,7 +22,8 @@ class SpriteObject extends CanvasObject {
     }
   }
   getCenter() {
-    this.cx = this.cx1 = this.cy = this.cy1 = this.scale/2;
+    this.cx = this.cy = this.scale/2;
+    this.cdx = this.cdy = 0;
   }
 }
 
@@ -39,14 +43,20 @@ class CircleSprite extends SpriteObject {
     this.draw();
   }
   draw() {
+    this.canvas.clear();
+    this.drawGradient(this.cx,this.cy,this.colors);
+  }
+  drawGradient(cx,cy,colors) {
     var c = this.canvas;
-    c.clear();
+    var gradient = c.ctx.createRadialGradient(cx,cy, this.radius, cx+this.cdx,cy+this.cdy, 0);
     var self = this;
-    var gradient = c.ctx.createRadialGradient(this.cx,this.cy, this.radius, this.cx1,this.cy1, 0);
-    uR.forEach(this.colors,function(color,i) {
+    uR.forEach(colors,function(color,i) {
       gradient.addColorStop(1-i/self.colors.length,color);
     })
-    gradient.addColorStop(0,"transparent");
+    var last_color = colors[colors.length-1];
+    last_color = tinycolor(last_color).setAlpha(0).toRgbString();
+    console.log(last_color);
+    gradient.addColorStop(0,last_color);
     c.ctx.fillStyle = gradient;
     c.ctx.fillRect(0,0,c.width,c.height);
 
@@ -64,20 +74,22 @@ class CircleSprite extends SpriteObject {
 class FlameSprite extends CircleSprite {
   constructor(opts) {
     opts.W = 4;
+    if (opts.attack_colors) { opts.H = 2 }
     super(opts);
   }
   getCenter() {
     super.getCenter();
-    this.cy1 = this.cy1 - this.radius/2;
+    this.cdy = -this.radius/2;
   }
   draw() {
     super.draw();
     this.newCanvas({
       name: 'temp_canvas',
       width: this.scale,
-      hegiht: this.scale,
+      height: this.scale,
+      id: 'tmp'
     });
-    this.temp_canvas.ctx.drawImage(this.canvas,0,0)
+    this.temp_canvas.ctx.drawImage(this.canvas,0,0);
     var ctx = this.canvas.ctx;
     for (var i=1;i<4;i++) {
       ctx.translate(i*this.scale + this.cx,this.cy);
@@ -85,6 +97,18 @@ class FlameSprite extends CircleSprite {
       ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
       ctx.rotate(-i*Math.PI/2);
       ctx.translate(-(i*this.scale+this.cx),-this.cy);
+    }
+    if (this.attack_colors) {
+      this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
+      this.temp_canvas.clear()
+      this.temp_canvas.ctx.drawImage(this.canvas,0,-this.scale);
+      for (var i=1;i<4;i++) {
+        ctx.translate(i*this.scale + this.cx,this.cy+this.scale);
+        ctx.rotate(i*Math.PI/2);
+        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
+        ctx.rotate(-i*Math.PI/2);
+        ctx.translate(-(i*this.scale+this.cx),-this.cy-this.scale);
+      }
     }
   }
 }
@@ -96,4 +120,13 @@ new CircleSprite({
 new FlameSprite({
   name: "blue-flame",
   colors: ["#008","#88F"]
+});
+new FlameSprite({
+  name: "blue-blob",
+  colors: ["#88F",'#88F',"#008"],
+  attack_colors: ["#F00",'#88F',"#008"],
+});
+new FlameSprite({
+  name: "green-flame",
+  colors: ["#080","#080","#FFF"]
 });
