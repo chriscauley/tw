@@ -3,12 +3,10 @@ class SpriteObject extends CanvasObject {
     super(opts);
     uR.sprites = uR.sprites || {};
     uR.sprites[opts.name] = this;
-    this.state_map = {
-      'attacking': 1
-    }
   }
   get(dx,dy,state) {
-    var x = 0, y = this.state_map[state] || 0;
+    console.log(state);
+    var x = 0, y = state;
     if (dy < 0) { x = 0; } // up
     if (dx > 0) { x = 1; } // right
     if (dy > 0) { x = 2; } // down
@@ -123,10 +121,11 @@ new FlameSprite({
 });
 new FlameSprite({
   name: "blue-blob",
-  colors: ["#88F",'#88F',"#008"],
+  colors: ["#88F",'#008',"#008"],
   attack_colors: ["#F00",'#88F',"#008"],
 });
 new FlameSprite({
-  name: "green-flame",
-  colors: ["#080","#080","#FFF"]
+  name: "yellow-flame",
+  colors: ["#F80","#F80","#000"],
+  attack_colors: ["#F80","#F80","#F00"],
 });

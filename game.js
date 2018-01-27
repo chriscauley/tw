@@ -52,7 +52,7 @@ class Game extends uR.Object {
       while(enemy_count<this.piece_count) {
         var square = board.getSquare(uR.math.randint(0,board.x_max),uR.math.randint(0,board.y_max));
         if (square) {
-          board.pieces.push(new board.enemy_map['B']({x:square.x,y:square.y,board:board}));
+          board.pieces.push(new board.enemy_map['W']({x:square.x,y:square.y,board:board}));
           enemy_count += 1;
         }
       }

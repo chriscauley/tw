@@ -1,4 +1,4 @@
-class Player extends Piece {
+class Player extends BasePiece {
   constructor(opts) {
     super(opts);
     this.defaults(opts,{

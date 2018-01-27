@@ -9,3 +9,21 @@
     this.opts.game.ui = this;
   });
 </tw-scores>
+
+<tw-sprites>
+  <div class={ theme.outer }>
+    <div class={ theme.content }>
+      <div each={ sprites }>
+        <img src={ canvas.toDataURL() } />
+      </div>
+    </div>
+  </div>
+  this.on("mount",function() {
+    var keys = [];
+    for (var key in uR.sprites) { keys.push(key) }
+    keys.sort();
+    this.sprites = [];
+    for (var i=0;i<keys.length;i++) { this.sprites.push(uR.sprites[keys[i]]) }
+    this.update();
+  });
+</tw-sprites>

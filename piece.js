@@ -1,5 +1,5 @@
-class Piece extends uR.Object {
-  toString() { return '[object Piece]' }
+class BasePiece extends uR.Object {
+  toString() { return '[object BasePiece]' }
   constructor(opts) {
     super();
     this.defaults(opts,{
@@ -21,6 +21,10 @@ class Piece extends uR.Object {
   play() {
     this.getNextMove().bind(this)();
     this.step += 1;
+  }
+  flip() {
+    this.dy = -this.dy;
+    this.dx = -this.dx;
   }
   drawHealth() {
     var c = this.board.canvas;
@@ -50,14 +54,17 @@ class Piece extends uR.Object {
     }
   }
   getNextMove() {
-    return this.tasks[this.step%this.tasks.length];
+    return this.tasks[this.getState()];
+  }
+  getState() {
+    return this.step%this.tasks.length;
   }
   draw() {
     if (! this.current_square) { return }
     var c = this.board.canvas;
     var s = this.board.scale;
     c.ctx.beginPath();
-    var img = this.sprite.get(this.dx,this.dy,this.state);
+    var img = this.sprite.get(this.dx,this.dy,this.getState());
     c.ctx.drawImage(
       img.img,
       img.x, img.y,
@@ -121,7 +128,7 @@ class Piece extends uR.Object {
   canBeAttacked() { return true; }
 }
 
-class CountDown extends Piece {
+class CountDown extends BasePiece {
   constructor(opts) {
     super(opts);
     this.fillStyle = '#383';
@@ -140,33 +147,49 @@ class CountDown extends Piece {
   canReplace() { return true; }
 }
 
-class GreenBlob extends Piece {
+class GreenBlob extends BasePiece {
   constructor(opts) {
     super(opts);
     this.inner_color = 'blue';
   }
 }
 
-class Blob extends Piece {
+class Blob extends BasePiece {
   constructor(opts) {
     opts.health = 2;
     super(opts);
     this.strokeStyle = "green";
     this.tasks = [
-      this.turn,
+      this.flip,
       this.bounce,
     ];
     this.sprite = uR.sprites['blue-blob'];
     this.dy = 1;
   }
-  turn() {
-    this.dy = -this.dy;
-    this.state = 'attacking';
-  }
   bounce() {
     var square = this.board.getSquare(this.x,this.y+this.direction);
     if (square && square.piece) { return this.attack(square.piece); }
-    this.state = 0;
     this.move(0,this.dy);
+  }
+}
+
+class Walker extends BasePiece {
+  constructor(opts) {
+    opts.health = 1;
+    super(opts);
+    this.sprite = uR.sprites['yellow-flame'];
+    this.dx = 1;
+    this.dy = 0;
+    this.tasks = [
+      this.wait,
+      this.forwardOrFlip
+    ];
+  }
+  forwardOrFlip() {
+    // walk forward if you can. flip if somthing is in the way
+    var square = this.board.getSquare(this.x+this.dx,this.y+this.dy);
+    if (square && square.piece) { return this.attack(square.piece); }
+    if (!square) { return this.flip(); }
+    this.move(this.dx,this.dy);
   }
 }

@@ -8,6 +8,7 @@ class Board extends CanvasObject {
       enemy_map: {
         C: CountDown,
         B: Blob,
+        W: Walker
       }
     });
 
@@ -99,6 +100,7 @@ class Board extends CanvasObject {
     this.game.onPiecePop();
   }
   getSquare(x,y) {
+    // Return the square at x,y if it exits
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
     return this.squares[x] && this.squares[x][y];
   }
