@@ -16,7 +16,7 @@ class Piece extends uR.Object {
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
     this.move(0,0);
-    this.sprite = uR.sprites['blue-flame'];
+    this.sprite = uR.sprites['red'];
   }
   play() {
     this.getNextMove().bind(this)();
@@ -153,19 +153,20 @@ class Blob extends Piece {
     super(opts);
     this.strokeStyle = "green";
     this.tasks = [
-      this.wait,
+      this.turn,
       this.bounce,
     ];
-    this.direction = 1;
+    this.sprite = uR.sprites['blue-blob'];
+    this.dy = 1;
   }
-  getText() {
-    if (this.getNextMove().name == "bounce") { return this.direction; }
-    return 'w';
+  turn() {
+    this.dy = -this.dy;
+    this.state = 'attacking';
   }
   bounce() {
     var square = this.board.getSquare(this.x,this.y+this.direction);
     if (square && square.piece) { return this.attack(square.piece); }
-    this.move(0,this.direction);
-    this.direction = this.direction * -1;
+    this.state = 0;
+    this.move(0,this.dy);
   }
 }

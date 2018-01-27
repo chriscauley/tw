@@ -44,4 +44,18 @@ class Game extends uR.Object {
   nextTurn() {
     this.board.pieces.forEach(function(p) { p.play() });
   }
+  onPiecePop(piece) {
+    if (!this.board.pieces.length) {
+      this.piece_count = (this.piece_count || 0) + 1;
+      var enemy_count = 0;
+      var board = this.board;
+      while(enemy_count<this.piece_count) {
+        var square = board.getSquare(uR.math.randint(0,board.x_max),uR.math.randint(0,board.y_max));
+        if (square) {
+          board.pieces.push(new board.enemy_map['B']({x:square.x,y:square.y,board:board}));
+          enemy_count += 1;
+        }
+      }
+    }
+  }
 }

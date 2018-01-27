@@ -54,6 +54,7 @@ class Board extends CanvasObject {
     this.game.player.resetMiniMap();
     this.game.player.move(0,0);
     exit && this.getSquare(exit).setFloor(new Stairs());
+    this.game.onPiecePop();
   }
   eachSquare(func) {
     func = func.bind(this);
@@ -91,10 +92,11 @@ class Board extends CanvasObject {
   }
   remove(piece) {
     this.pieces = this.pieces.filter(function(p) { return p !== piece; });
-    if (piece.current_square) {
+    if (piece && piece.current_square) {
       piece.current_square.piece = undefined;
       piece.current_square = undefined;
     }
+    this.game.onPiecePop();
   }
   getSquare(x,y) {
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
