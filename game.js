@@ -46,12 +46,12 @@ class Game extends uR.Object {
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count = (this.piece_count || 0) + 1;
+      this.piece_count = (this.piece_count || 0) + 2;
       var enemy_count = 0;
       var board = this.board;
       while(enemy_count<this.piece_count) {
         var square = board.getSquare(uR.math.randint(0,board.x_max),uR.math.randint(0,board.y_max));
-        if (square) {
+        if (square && !square.piece) {
           board.pieces.push(new board.enemy_map['W']({x:square.x,y:square.y,board:board}));
           enemy_count += 1;
         }

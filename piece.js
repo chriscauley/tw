@@ -8,6 +8,8 @@ class BasePiece extends uR.Object {
       y:0,
       tasks: [this.wait],
       health: 1,
+      damage: 1,
+      team: 0,
     });
     this.max_health = this.health;
     this.step = 0;
@@ -120,8 +122,13 @@ class BasePiece extends uR.Object {
     this.board.remove(this);
   }
   attack(target) {
-    target.takeDamage(1);
+    if (target.team == this.team) {
+      this.assist(target)
+    } else {
+      target.takeDamage(this.damage);
+    }
   }
+  assist(target) { }
   canReplace() {
     return false;
   }
@@ -188,8 +195,9 @@ class Walker extends BasePiece {
   forwardOrFlip() {
     // walk forward if you can. flip if somthing is in the way
     var square = this.board.getSquare(this.x+this.dx,this.y+this.dy);
-    if (square && square.piece) { return this.attack(square.piece); }
-    if (!square) { return this.flip(); }
+    var piece = square && square.piece;
+    if (piece && piece.team != this.team ) { return this.attack(square.piece); }
+    if (!square || piece) { return this.flip(); }
     this.move(this.dx,this.dy);
   }
 }

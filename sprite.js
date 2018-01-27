@@ -5,7 +5,6 @@ class SpriteObject extends CanvasObject {
     uR.sprites[opts.name] = this;
   }
   get(dx,dy,state) {
-    console.log(state);
     var x = 0, y = state;
     if (dy < 0) { x = 0; } // up
     if (dx > 0) { x = 1; } // right
@@ -53,7 +52,6 @@ class CircleSprite extends SpriteObject {
     })
     var last_color = colors[colors.length-1];
     last_color = tinycolor(last_color).setAlpha(0).toRgbString();
-    console.log(last_color);
     gradient.addColorStop(0,last_color);
     c.ctx.fillStyle = gradient;
     c.ctx.fillRect(0,0,c.width,c.height);

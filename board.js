@@ -47,6 +47,7 @@ class Board extends CanvasObject {
       game: this.game,
       board: this,
       health: 3,
+      team: 1, // #! TODO this is where competative multiplayer happens
       x: start[0],
       y: start[1],
     });
