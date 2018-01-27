@@ -35,8 +35,13 @@ class Board extends CanvasObject {
         if (c == 's') { start = [x,y] }
         if (c == 'x') { exit = [x,y] }
         self.enemy_map[c] && self.pieces.push(new self.enemy_map[c]({ x: x, y: y, board: self}));
-      })
+      });
     });
+
+    // determine whether or not board scrolls with movement
+    this.x_offset_mult = (this.x_max > this.W)?this.scale:0;
+    this.y_offset_mult = (this.y_max > this.H)?this.scale:0;
+
     this.game.player = this.game.player || new Player({
       game: this.game,
       board: this,
@@ -61,8 +66,8 @@ class Board extends CanvasObject {
   }
   draw() {
     var s = this.scale;
-    var offset_x = (this.game.player.x-this.W/2)*s;
-    var offset_y = (this.game.player.y-this.H/2)*s;
+    var offset_x = (this.game.player.x-this.W/2)*this.x_offset_mult;
+    var offset_y = (this.game.player.y-this.H/2)*this.y_offset_mult;
     this.canvas.ctx.clearRect(0,0,this.W*s,this.H*s);
     this.canvas.ctx.translate(-offset_x,-offset_y)
     this.eachSquare(function(square,x,y) {
