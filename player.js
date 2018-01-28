@@ -1,5 +1,7 @@
 class Player extends BasePiece {
   constructor(opts) {
+    opts.gold_per_touch = Infinity;
+    opts.gold_levels = [Infinity];
     super(opts);
     this.defaults(opts,{
       game: uR.REQUIRED,
@@ -10,6 +12,7 @@ class Player extends BasePiece {
         [0,1,1,1,0],
         [0,0,1,0,0],
       ],
+      gold_levels: [],
     });
     this.resetMiniMap();
     this.score = 0;
@@ -40,6 +43,8 @@ class Player extends BasePiece {
   }
   addScore(points) {
     this.score += points;
+  }
+  die() {
   }
   draw() {
     super.draw()

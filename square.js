@@ -1,7 +1,9 @@
 class Square extends CanvasObject {
   constructor(opts) {
     super()
-    uR.extend(this,opts);
+    this.defaults(opts,{
+      gold: 0,
+    });
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
     this.canvas = this.newCanvas({
@@ -18,6 +20,7 @@ class Square extends CanvasObject {
     this.canvas.clear();
     this.ctx.fillStyle = this.bg;
     this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+    this.drawGold();
     this.item && this.item.draw(this.canvas);
     this.floor && this.floor.draw(this.canvas);
   }
@@ -47,5 +50,33 @@ class Square extends CanvasObject {
   removeItem() {
     this.item = undefined;
     this.dirty = true;
+  }
+  addGold(opts) {
+    this.gold += Math.round(opts.range*Math.random())+opts.base;
+    this.dirty = true;
+  }
+  removeGold(amount) {
+    this.dirty = true;
+    amount = Math.min(this.gold,amount);
+    this.gold -= amount;
+    return amount;
+  }
+  drawGold(opts) {
+    if (!this.gold) { return }
+    var ctx = this.canvas.ctx;
+    var s = game.board.scale;
+    var img = uR.sprites.gold.get(0,0);
+    var v = this.gold*1;
+    while(v--) {
+      var dx = (0.5-Math.random())*s/2;
+      var dy = (0.5-Math.random())*s/2;
+      ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        0+dx,0+dy,
+        s,s,
+      );
+    }
   }
 }

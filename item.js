@@ -20,12 +20,11 @@ class Gold extends Item {
   constructor(opts) {
     super(opts)
     this.defaults(opts,{
-      min: 1,
-      max: 5,
-      multiplier: 1,
+      base: 1,
+      range: 5,
     });
     // note this slightly favors intermediate values, not min and max. For now this is fine.
-    this.value = Math.round((this.max-this.min)*Math.random()*this.multiplier)+this.min;
+    this.value = Math.round(this.range*Math.random())+this.base;
     this.sprite = uR.sprites.gold;
   }
   pickUp(unit) {

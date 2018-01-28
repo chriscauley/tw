@@ -12,6 +12,8 @@ class BasePiece extends uR.Object {
       team: 0,
       gold: 0,
       gold_per_touch: 1,
+      level: 0,
+      gold_levels: [ 4, 8, 12, 20 ], // gold to get to next level
     });
     this.max_health = this.health;
     this.step = 0;
@@ -119,13 +121,15 @@ class BasePiece extends uR.Object {
     replacing && replacing.movedOnTo();
     if (this.current_square.floor) { this.current_square.floor.trigger(this); }
     if (this.current_square.item) { this.touchItem(this.current_square.item); }
+    this.takeGold(this.current_square);
   }
   takeDamage(damage) {
     this.health -= damage;
     if (this.health <= 0) { this.die() }
   }
   die() {
-    this.current_square.addItem(this.item || new Gold({ multiplier: this.max_health }));
+    this.item && this.current_square.addItem(this.item);
+    this.current_square.addGold({ range: this.level+2, base: this.gold || 1 })
     this.board.remove(this);
   }
   attack(target) {
@@ -143,9 +147,20 @@ class BasePiece extends uR.Object {
   touchItem(item) {
     item.touch(this);
   }
-  addGold(amount) {
-    // eventually this is where item gold will go
-    this.gold += amount;
+  restat() {
+    var gold_to_next = this.gold_levels[this.level];
+    if (gold_to_next && this.gold > gold_to_next) {
+      this.level ++;
+      this.max_health ++;
+      this.health ++;
+      this.damage++;
+    }
+  }
+  takeGold(square) {
+    // requires gold on square and not already at max_level
+    if (!square.gold || !this.gold_levels[this.level]) { return }
+    this.gold += square.removeGold(this.gold_per_touch);
+    this.restat();
   }
 }
 
