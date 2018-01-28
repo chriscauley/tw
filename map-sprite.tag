@@ -134,3 +134,20 @@ class SpriteMapper extends CanvasObject {
     )
   }
 }
+
+<tw-sprite>
+  <div class={ theme.outer }>
+    <div class={ theme.inner }>
+      <yield/>
+    </div>
+    <div class="card-action">
+      <a class="fa fa-trash" onclick={ delete }></a>
+    </div>
+  </div>
+
+  delete(e) {
+    this.opts.obj.delete();
+    this.unmount();
+  }
+
+</tw-sprite>
