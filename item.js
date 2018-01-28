@@ -26,16 +26,33 @@ class Gold extends Item {
     });
     // note this slightly favors intermediate values, not min and max. For now this is fine.
     this.value = Math.round((this.max-this.min)*Math.random()*this.multiplier)+this.min;
+    this.sprite = uR.sprites.gold;
   }
-  pickUp(player) {
-    player.gold += this.value;
-    super.pickUp(player);
+  pickUp(unit) {
+    unit.addGold(this.value);
+    super.pickUp(unit);
+  }
+  touch(unit) {
+    var amount_taken = Math.min(this.value,unit.gold_per_touch);
+    if (this.value < unit.gold_per_touch) { this.pickUp(unit); }
+    else { this.value -= amount_taken; unit.addGold(this.value); }
+    this.square.dirty = true;
   }
   draw(canvas) {
     var ctx = canvas.ctx;
-    ctx.fillStyle = "yellow";
-    ctx.beginPath();
-    ctx.arc(canvas.width/2,canvas.height/2,5,0,Math.PI*2)
-    ctx.fill();
+    var s = game.board.scale;
+    var img = this.sprite.get(0,0);
+    var v = this.value*1;
+    while(v--) {
+      var dx = (0.5-Math.random())*s/2;
+      var dy = (0.5-Math.random())*s/2;
+      ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        0+dx,0+dy,
+        s,s,
+      );
+    }
   }
 }

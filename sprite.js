@@ -1,11 +1,21 @@
 class SpriteObject extends CanvasObject {
   constructor(opts) {
     super(opts);
+    this.defaults(opts,{
+      scale: 64,
+      W: 1,
+      H: 1,
+    })
+    this.width = this.W*this.scale;
+    this.height = this.H*this.scale;
     uR.sprites = uR.sprites || {};
     uR.sprites[opts.name] = this;
+    this.newCanvas({name: 'canvas'});
   }
   get(dx,dy,state) {
-    var x = 0, y = state;
+    var x = 0, y = state || 0;
+    dx = dx || 0;
+    dy = dy || 0;
     if (dy < 0) { x = 0; } // up
     if (dx > 0) { x = 1; } // right
     if (dy > 0) { x = 2; } // down
@@ -27,18 +37,21 @@ class SpriteObject extends CanvasObject {
 class CircleSprite extends SpriteObject {
   constructor(opts) {
     super(opts);
-    this.defaults(opts,{
-      scale: 64,
-      W: 1,
-      H: 1,
-    })
-    this.width = this.W*this.scale;
-    this.height = this.H*this.scale;
     this.radius = this.scale*0.4;
     this.getCenter();
-    this.newCanvas({name: 'canvas'})
     this.draw();
   }
+  draw() {
+    this.canvas.clear();
+    var ctx = this.canvas.ctx;
+    ctx.fillStyle = this.fillStyle;
+    ctx.beginPath();
+    ctx.arc(this.canvas.width/2,this.canvas.height/2,5,0,Math.PI*2)
+    ctx.fill();
+  }
+}
+
+class GradientSprite extends CircleSprite {
   draw() {
     this.canvas.clear();
     this.drawGradient(this.cx,this.cy,this.colors);
@@ -67,7 +80,7 @@ class CircleSprite extends SpriteObject {
   }
 }
 
-class FlameSprite extends CircleSprite {
+class FlameSprite extends GradientSprite {
   constructor(opts) {
     opts.W = 4;
     if (opts.attack_colors) { opts.H = 2 }
@@ -110,6 +123,11 @@ class FlameSprite extends CircleSprite {
 }
 
 new CircleSprite({
+  fillStyle: 'gold',
+  name: 'gold'
+});
+
+new GradientSprite({
   name: "red",
   colors: ["red","red"]
 });

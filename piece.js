@@ -10,6 +10,8 @@ class BasePiece extends uR.Object {
       health: 1,
       damage: 1,
       team: 0,
+      gold: 0,
+      gold_per_touch: 1,
     });
     this.max_health = this.health;
     this.step = 0;
@@ -112,6 +114,7 @@ class BasePiece extends uR.Object {
     this.dy = dy;
     replacing && replacing.movedOnTo();
     if (this.current_square.floor) { this.current_square.floor.trigger(this); }
+    if (this.current_square.item) { this.touchItem(this.current_square.item); }
   }
   takeDamage(damage) {
     this.health -= damage;
@@ -133,6 +136,13 @@ class BasePiece extends uR.Object {
     return false;
   }
   canBeAttacked() { return true; }
+  touchItem(item) {
+    item.touch(this);
+  }
+  addGold(amount) {
+    // eventually this is where item gold will go
+    this.gold += amount;
+  }
 }
 
 class CountDown extends BasePiece {

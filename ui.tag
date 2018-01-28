@@ -3,11 +3,17 @@
   <div>Gold: { player.gold }</div>
   <div>Score: { player.score }</div>
   <pre class="minimap">{ player.printMiniMap() }</pre>
+  <div class="admin">
+    <button onclick={ showSprites }>show sprites</button>
+  </div>
 
   this.on("mount",function() {
     this.player = this.opts.player;
     this.opts.game.ui = this;
   });
+  showSprites() {
+    uR.alertElement('tw-sprites');
+  }
 </tw-scores>
 
 <tw-sprites>

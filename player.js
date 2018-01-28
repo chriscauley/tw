@@ -18,9 +18,11 @@ class Player extends BasePiece {
     this.inner_color = 'orange';
     this.sprite = uR.sprites['blue-flame'];
   }
+  touchItem(item) {
+    item.pickUp(this);
+  }
   move(x,y) {
     super.move(x,y);
-    if (this.current_square.item) { this.current_square.item.pickUp(this); }
     var self = this;
     uR.forEach(this.torch || [],function(row,tx) {
       var dx = tx-2;
@@ -35,10 +37,6 @@ class Player extends BasePiece {
         catch (e) {}
       });
     });
-  }
-  addGold(amount) {
-    // eventually this is where item gold will go
-    this.gold += amount;
   }
   addScore(points) {
     this.score += points;
