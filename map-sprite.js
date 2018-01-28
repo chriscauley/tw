@@ -17,7 +17,7 @@ class Sprite extends uR.db.Model {
   }
   render() {
     uR.newElement(
-      'ur-sprite',
+      'tw-sprite',
       {
         parent: document.getElementById('card-box'),
         innerHTML: uR.newElement('img',{
