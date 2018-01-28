@@ -40,7 +40,7 @@ class BasePiece extends uR.Object {
     this.dy = -this.dy;
     this.dx = -this.dx;
   }
-  turn(direction) {
+  _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
     if (this.dx && this.dy) {
       throw "Turning not implementd for diagonals!";
@@ -53,7 +53,7 @@ class BasePiece extends uR.Object {
 
     // if dx is string, look in the direction relative to piece
     if (dx == "left" || dx == "right") {
-      return this.look(this.turn(dx));
+      return this.look(this._turn(dx));
     }
     if (dx == "back") { return this.look(-this.dx,-this.dy); }
 
@@ -276,5 +276,34 @@ class Walker extends BasePiece {
     if (piece && piece.team != this.team ) { return this.attack(square.piece); }
     if (!square || piece) { return this.flip(); }
     this.move(this.dx,this.dy);
+  }
+}
+
+class WallFlower extends BasePiece {
+  constructor(opts) {
+    super(opts);
+    this.sprite = uR.sprites['green-flame'];
+    this.tasks = [
+      this.wait,
+      this.forwardOrTurn,
+    ];
+  }
+  forwardOrTurn() {
+    var square = this.look();
+    var piece = square && square.piece;
+    if (piece && piece.team != this.team ) { return this.attack(square.piece); }
+    if (!square || piece) { return this.turnRandomly(); }
+    this.move(this.dx,this.dy);
+  }
+  turnRandomly() {
+    // turns left or right if the square is empty. If no empty square, turn randomly
+    var directions = ['left','right'];
+    var square,direction;
+    while (directions.length) {
+      var d = directions[(Math.random()>0.5)?'pop':'shift']();
+      square = this.look(d);
+      if (square && !square.piece) { break; }
+    }
+    [this.dx,this.dy] = this._turn(d);
   }
 }

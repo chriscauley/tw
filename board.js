@@ -8,7 +8,8 @@ class Board extends CanvasObject {
       enemy_map: {
         C: CountDown,
         B: Blob,
-        W: Walker
+        W: Walker,
+        WF: WallFlower,
       }
     });
 
