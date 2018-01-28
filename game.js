@@ -28,7 +28,7 @@ class Game extends uR.Object {
   }
   gameover() {
     this.is_gameover = true;
-    uR.alertElement("tw-gameover");
+    uR.alertElement("tw-gameover",{game: this});
   }
   keydown(key) {
     if (this.is_gameover) { return this.restart() }

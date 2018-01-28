@@ -23,6 +23,9 @@
       <p>Press any key to restart</p>
     </div>
   </div>
+  this.on("unmount",function() {
+    this.opts.game.restart();
+  });
 </tw-gameover>
 
 <tw-sprites>
