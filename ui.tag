@@ -16,6 +16,15 @@
   }
 </tw-scores>
 
+<tw-gameover>
+  <div class={ theme.outer }>
+    <div class={ theme.content }>
+      <h1>Game over!</h1>
+      <p>Press any key to restart</p>
+    </div>
+  </div>
+</tw-gameover>
+
 <tw-sprites>
   <div class={ theme.outer }>
     <div class={ theme.content }>

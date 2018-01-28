@@ -45,6 +45,7 @@ class Player extends BasePiece {
     this.score += points;
   }
   die() {
+    this.game.gameover();
   }
   draw() {
     super.draw()

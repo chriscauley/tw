@@ -4,6 +4,17 @@ class Game extends uR.Object {
     this.bindKeys();
     this.board = new Board({ game: this, });
     this.controller = new Controller({ parent: this });
+    this.restart()
+  }
+  nextLevel() {
+    this.level_number++;
+    this.board.loadLevel(this.level_number);
+  }
+  restart() {
+    var mask = document.querySelector("[ur-mask]");
+    mask && mask.click();
+    this.piece_count = 2;
+    this.ui && this.ui.unmount();
     this.level_number = -1;
     this.nextLevel();
     uR.newElement(
@@ -11,13 +22,16 @@ class Game extends uR.Object {
       { parent: document.querySelector("#game") },
       { player: this.player, game: this }
     );
+    this.player.health = this.player.max_health;
     this.board.draw();
+    this.is_gameover = false;
   }
-  nextLevel() {
-    this.level_number++;
-    this.board.loadLevel(this.level_number);
+  gameover() {
+    this.is_gameover = true;
+    uR.alertElement("tw-gameover");
   }
   keydown(key) {
+    if (this.is_gameover) { return this.restart() }
     this.key_map[key] && this.key_map[key]();
     this.board.draw();
     this.ui && this.ui.update();
@@ -46,7 +60,7 @@ class Game extends uR.Object {
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count = (this.piece_count || 0) + 2;
+      this.piece_count += 2;
       var enemy_count = 0;
       var board = this.board;
       while(enemy_count<this.piece_count) {
