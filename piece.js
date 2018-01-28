@@ -32,29 +32,33 @@ class BasePiece extends uR.Object {
   }
   drawHealth() {
     var c = this.board.canvas;
-    var heart_r = 4;
-    var heart_b = 2;
-    var heart_s = 1;
-    //if (!this.damage) { return; }
-    c.ctx.lineWidth = heart_b;
-    c.ctx.strokeStyle = 'white';
-    c.ctx.fillStyle = "black";
-    var offset = (this.max_health-1)/2;
-    for (var i=0;i<this.max_health;i++) {
-      var dx = 2*(offset-i)*(heart_r+heart_b+heart_s);
-      c.ctx.beginPath();
-      c.ctx.arc(this.cx-dx,this.cy-this.board.scale/2, heart_r, 0, 2 * Math.PI);
-      c.ctx.stroke();
-      c.ctx.fill()
+    var s = this.board.scale;
+    var x0 = this.x*s;
+    var y0 = this.y*s;
+    var img = uR.sprites.health.get();
+    var full = this.health*1;
+    var empty = this.max_health-full;
+    var dx = 0;
+    while(full--) {
+      c.ctx.drawImage(
+        img.img,
+        img.x,img.y,
+        img.w,img.h,
+        x0+dx*s/4,y0,
+        img.w,img.h
+      )
+      dx += 1;
     }
-    c.ctx.lineWidth = 0;
-    c.ctx.fillStyle = "red";
-    for (var i=0;i<this.health;i++) {
-      var dx = 2*(offset-i)*(heart_r+heart_b+heart_s);
-      c.ctx.beginPath();
-      c.ctx.arc(this.cx-dx,this.cy-this.board.scale/2, heart_r, 0, 2 * Math.PI);
-      c.ctx.stroke();
-      c.ctx.fill()
+    var img = uR.sprites.empty_health.get();
+    while(empty--) {
+      c.ctx.drawImage(
+        img.img,
+        img.x,img.y,
+        img.w,img.h,
+        x0+dx*s/4,y0,
+        img.w,img.h
+      )
+      dx += 1;
     }
   }
   getNextMove() {

@@ -36,6 +36,9 @@ class SpriteObject extends CanvasObject {
 
 class CircleSprite extends SpriteObject {
   constructor(opts) {
+    uR.defaults(opts,{
+      lineWidth: 1,
+    })
     super(opts);
     this.radius = this.scale*0.4;
     this.getCenter();
@@ -45,9 +48,12 @@ class CircleSprite extends SpriteObject {
     this.canvas.clear();
     var ctx = this.canvas.ctx;
     ctx.fillStyle = this.fillStyle;
+    ctx.strokeStyle = this.strokeStyle;
+    ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
     ctx.arc(this.canvas.width/2,this.canvas.height/2,5,0,Math.PI*2)
     ctx.fill();
+    this.strokeStyle && ctx.stroke();
   }
 }
 
@@ -126,7 +132,18 @@ new CircleSprite({
   fillStyle: 'gold',
   name: 'gold'
 });
-
+new CircleSprite({
+  fillStyle: 'red',
+  strokeStyle: 'white',
+  name: 'health',
+  scale: 10,
+});
+new CircleSprite({
+  fillStyle: 'black',
+  strokeStyle: 'white',
+  name: 'empty_health',
+  scale: 10,
+});
 new GradientSprite({
   name: "red",
   colors: ["red","red"]
