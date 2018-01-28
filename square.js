@@ -3,6 +3,7 @@ class Square extends CanvasObject {
     super()
     this.defaults(opts,{
       gold: 0,
+      board: uR.REQUIRED,
     });
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
@@ -64,19 +65,21 @@ class Square extends CanvasObject {
   drawGold(opts) {
     if (!this.gold) { return }
     var ctx = this.canvas.ctx;
-    var s = game.board.scale;
+    var s = this.board.scale;
     var img = uR.sprites.gold.get(0,0);
     var v = this.gold*1;
-    while(v--) {
-      var dx = (0.5-Math.random())*s/2;
-      var dy = (0.5-Math.random())*s/2;
-      ctx.drawImage(
-        img.img,
-        img.x, img.y,
-        img.w, img.h,
-        0+dx,0+dy,
-        s,s,
-      );
-    }
+    ctx.drawImage(
+      img.img,
+      img.x, img.y,
+      img.w, img.h,
+      0,0,
+      s,s,
+    );
+    var text = {}; // #! TODO: this needs to be dynamic and in options
+    ctx.font = text.font || (s/4)+'px serif';
+    ctx.textAlign = text.align || 'center';
+    ctx.fillStyle = text.style || "black";
+    ctx.textBaseline = text.baseLine ||'middle';
+    ctx.fillText(this.gold, s/2,s/2 );
   }
 }

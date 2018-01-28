@@ -38,9 +38,10 @@ class CircleSprite extends SpriteObject {
   constructor(opts) {
     uR.defaults(opts,{
       lineWidth: 1,
+      radius: 0.4
     })
     super(opts);
-    this.radius = this.scale*0.4;
+    this.radius = this.scale*this.radius;
     this.getCenter();
     this.draw();
   }
@@ -51,7 +52,7 @@ class CircleSprite extends SpriteObject {
     ctx.strokeStyle = this.strokeStyle;
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
-    ctx.arc(this.canvas.width/2,this.canvas.height/2,5,0,Math.PI*2)
+    ctx.arc(this.canvas.width/2,this.canvas.height/2,this.radius,0,Math.PI*2)
     ctx.fill();
     this.strokeStyle && ctx.stroke();
   }
@@ -76,7 +77,7 @@ class GradientSprite extends CircleSprite {
     c.ctx.fillRect(0,0,c.width,c.height);
 
     if (this.strokeStyle) {
-      c.ctx.lineWidth = 5;
+      c.ctx.lineWidth = this.lineWidth;
       c.ctx.strokeStyle = this.strokeStyle;
       c.ctx.beginPath();
       c.ctx.arc(this.cx,this.cy, this.radius, 0, 2 * Math.PI);
@@ -130,7 +131,8 @@ class FlameSprite extends GradientSprite {
 
 new CircleSprite({
   fillStyle: 'gold',
-  name: 'gold'
+  name: 'gold',
+  radius: 0.3
 });
 new CircleSprite({
   fillStyle: 'red',

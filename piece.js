@@ -13,7 +13,7 @@ class BasePiece extends uR.Object {
       gold: 0,
       gold_per_touch: 1,
       level: 0,
-      gold_levels: [ 4, 8, 12, 20 ], // gold to get to next level
+      gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
     });
     this.max_health = this.health;
     this.step = 0;
@@ -83,6 +83,26 @@ class BasePiece extends uR.Object {
       s,s,
     );
     this.drawText(c);
+    if (this.gold) { // && this.game.config.show_gold) {
+      var s = this.board.scale;
+      var img = uR.sprites.gold.get(0,0);
+      var v = this.gold*1;
+      var gx = (1/2+this.x)*s, gy = (1/2+this.y)*s;
+      c.ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        gx,gy,
+        s/2,s/2
+      );
+      var text = {}; // #! TODO: this needs to be dynamic and in options
+      c.ctx.font = text.font || (s/4)+'px serif';
+      c.ctx.textAlign = text.align || 'center';
+      c.ctx.fillStyle = text.style || "black";
+      c.ctx.textBaseline = text.baseLine ||'middle';
+      c.ctx.fontWeight = 'bold';
+      c.ctx.fillText(this.gold, gx+s/4, gy+s/4);
+    }
   }
   getText() {
     this.text = [];
@@ -154,6 +174,7 @@ class BasePiece extends uR.Object {
       this.max_health ++;
       this.health ++;
       this.damage++;
+      this.gold_per_touch++;
     }
   }
   takeGold(square) {
