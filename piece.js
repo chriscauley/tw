@@ -1,11 +1,18 @@
 class BasePiece extends uR.Object {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
+    // randomly point unit up/down/left/right
+    var _d = Math.random();
+    var dx = 0, dy = 0;
+    if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
+    else { dy = (_d>0.75)?1:-1 }
     super();
     this.defaults(opts,{
       board: uR.REQUIRED,
       x:0,
       y:0,
+      dx: dx,
+      dy: dy,
       tasks: [this.wait],
       health: 1,
       damage: 1,
@@ -15,6 +22,7 @@ class BasePiece extends uR.Object {
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
     });
+
     this.max_health = this.health;
     this.step = 0;
     this.radius = this.board.scale*3/8;
@@ -136,8 +144,10 @@ class BasePiece extends uR.Object {
     target_square.piece = this;
     this.x += dx;
     this.y += dy;
-    this.dx = dx;
-    this.dy = dy;
+    if (dx||dy) { // if they didn't move, don't change direction
+      this.dx = dx;
+      this.dy = dy;
+    }
     replacing && replacing.movedOnTo();
     if (this.current_square.floor) { this.current_square.floor.trigger(this); }
     if (this.current_square.item) { this.touchItem(this.current_square.item); }
@@ -221,7 +231,6 @@ class Blob extends BasePiece {
       this.bounce,
     ];
     this.sprite = uR.sprites['blue-blob'];
-    this.dy = 1;
   }
   bounce() {
     var square = this.board.getSquare(this.x,this.y+this.direction);
@@ -235,8 +244,6 @@ class Walker extends BasePiece {
     opts.health = 1;
     super(opts);
     this.sprite = uR.sprites['yellow-flame'];
-    this.dx = 1;
-    this.dy = 0;
     this.tasks = [
       this.wait,
       this.forwardOrFlip
