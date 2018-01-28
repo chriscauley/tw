@@ -38,7 +38,7 @@ class BasePiece extends uR.Object {
     var x0 = this.x*s;
     var y0 = this.y*s;
     var img = uR.sprites.health.get();
-    var full = this.health*1;
+    var full = Math.max(this.health,0);
     var empty = this.max_health-full;
     var dx = 0;
     while(full--) {
