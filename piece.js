@@ -40,6 +40,26 @@ class BasePiece extends uR.Object {
     this.dy = -this.dy;
     this.dx = -this.dx;
   }
+  turn(direction) {
+    // left and right are [dx,dy] to make it go in that direction
+    if (this.dx && this.dy) {
+      throw "Turning not implementd for diagonals!";
+    }
+    return (direction == "left")?[this.dy,-this.dx]:[-this.dy,this.dx];
+  }
+  look(dx,dy) { //#! TODO: distance
+    if (dx === undefined) { return this.look(this.dx,this.dy); } // no arguments means look forward
+    if (Array.isArray(dx)) { [dx,dy] = dx } // array means it's [dx,dy]
+
+    // if dx is string, look in the direction relative to piece
+    if (dx == "left" || dx == "right") {
+      return this.look(this.turn(dx));
+    }
+    if (dx == "back") { return this.look(-this.dx,-this.dy); }
+
+    // two arguments returns the square
+    return this.board.getSquare(this.x+dx,this.y+dy);
+  }
   drawHealth() {
     var c = this.board.canvas;
     var s = this.board.scale;
@@ -131,7 +151,7 @@ class BasePiece extends uR.Object {
   }
   wait() {}
   move(dx,dy) {
-    var target_square = this.board.getSquare(this.x+dx,this.y+dy)
+    var target_square = this.look(dx,dy);
     if (!target_square) { return }
     var replacing = target_square.piece;
     if (replacing) {
@@ -233,7 +253,7 @@ class Blob extends BasePiece {
     this.sprite = uR.sprites['blue-blob'];
   }
   bounce() {
-    var square = this.board.getSquare(this.x,this.y+this.direction);
+    var square = this.look();
     if (square && square.piece) { return this.attack(square.piece); }
     this.move(0,this.dy);
   }
@@ -251,7 +271,7 @@ class Walker extends BasePiece {
   }
   forwardOrFlip() {
     // walk forward if you can. flip if somthing is in the way
-    var square = this.board.getSquare(this.x+this.dx,this.y+this.dy);
+    var square = this.look();
     var piece = square && square.piece;
     if (piece && piece.team != this.team ) { return this.attack(square.piece); }
     if (!square || piece) { return this.flip(); }
