@@ -23,6 +23,7 @@ class Game extends uR.Object {
       { player: this.player, game: this }
     );
     this.player.health = this.player.max_health;
+    this.player.gold = 0;
     this.board.draw();
     this.is_gameover = false;
   }
@@ -63,10 +64,11 @@ class Game extends uR.Object {
       this.piece_count += 2;
       var enemy_count = 0;
       var board = this.board;
+      var choice = uR.random.choice;
       while(enemy_count<this.piece_count) {
-        var square = board.getSquare(uR.math.randint(0,board.x_max),uR.math.randint(0,board.y_max));
-        if (square && !square.piece) {
-          board.pieces.push(new board.enemy_map['WF']({x:square.x,y:square.y,board:board}));
+        var sq = choice(choice(this.board.squares));
+        if (sq && !sq.piece) {
+          board.pieces.push(new board.enemy_map[choice(['WF','W'])]({x:sq.x,y:sq.y,board:board}));
           enemy_count += 1;
         }
       }

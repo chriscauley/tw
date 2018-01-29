@@ -167,5 +167,5 @@ new FlameSprite({
 new FlameSprite({
   name: "green-flame",
   colors: ["#0F8","#0F8","#000"],
-  attack: ["#0F8","#0F8","#F00"],
+  attack_colors: ["#0F8","#0F0","#F00"],
 });
