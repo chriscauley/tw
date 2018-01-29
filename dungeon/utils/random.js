@@ -1,6 +1,6 @@
 DG.Random = class Random {
     constructor(seed) {
-        this.rng = DG.rng.create(seed);  
+        this.rng = uR.rng.create(seed);  
     }
 
     int(min, max) {

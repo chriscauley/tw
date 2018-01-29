@@ -2,7 +2,7 @@ class BasePiece extends uR.Object {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
-    var _d = Math.random();
+    var _d = uR.random();
     var dx = 0, dy = 0;
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
@@ -300,7 +300,7 @@ class WallFlower extends BasePiece {
     var directions = ['left','right'];
     var square,direction;
     while (directions.length) {
-      var d = directions[(Math.random()>0.5)?'pop':'shift']();
+      var d = directions[(uR.random()>0.5)?'pop':'shift']();
       square = this.look(d);
       if (square && !square.piece) { break; }
     }

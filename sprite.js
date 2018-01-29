@@ -157,15 +157,15 @@ new FlameSprite({
 new FlameSprite({
   name: "blue-blob",
   colors: ["#88F",'#008',"#008"],
-  attack_colors: ["#F00",'#88F',"#008"],
+  attack_colors: ["#400",'#88F',"#008"],
 });
 new FlameSprite({
   name: "yellow-flame",
   colors: ["#F80","#F80","#000"],
-  attack_colors: ["#F80","#F80","#F00"],
+  attack_colors: ["#F80","#F80","#400"],
 });
 new FlameSprite({
   name: "green-flame",
   colors: ["#0F8","#0F8","#000"],
-  attack_colors: ["#0F8","#0F0","#F00"],
+  attack_colors: ["#0F8","#0F0","#400"],
 });

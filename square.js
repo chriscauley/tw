@@ -53,7 +53,7 @@ class Square extends CanvasObject {
     this.dirty = true;
   }
   addGold(opts) {
-    this.gold += Math.round(opts.range*Math.random())+opts.base;
+    this.gold += Math.round(opts.range*uR.random())+opts.base;
     this.dirty = true;
   }
   removeGold(amount) {

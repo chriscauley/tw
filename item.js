@@ -24,7 +24,7 @@ class Gold extends Item {
       range: 5,
     });
     // note this slightly favors intermediate values, not min and max. For now this is fine.
-    this.value = Math.round(this.range*Math.random())+this.base;
+    this.value = Math.round(this.range*uR.random())+this.base;
     this.sprite = uR.sprites.gold;
   }
   pickUp(unit) {
@@ -43,8 +43,8 @@ class Gold extends Item {
     var img = this.sprite.get(0,0);
     var v = this.value*1;
     while(v--) {
-      var dx = (0.5-Math.random())*s/2;
-      var dy = (0.5-Math.random())*s/2;
+      var dx = (0.5-uR.random())*s/2;
+      var dy = (0.5-uR.random())*s/2;
       ctx.drawImage(
         img.img,
         img.x, img.y,
