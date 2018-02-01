@@ -34,7 +34,6 @@ class Game extends uR.Object {
   keydown(key) {
     if (this.is_gameover) { return this.restart() }
     this.key_map[key] && this.key_map[key]();
-    this.board.draw();
     this.ui && this.ui.update();
   }
   keyup(key) {}
