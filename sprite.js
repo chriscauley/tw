@@ -90,7 +90,7 @@ class GradientSprite extends CircleSprite {
 class FlameSprite extends GradientSprite {
   constructor(opts) {
     opts.W = 4;
-    if (opts.attack_colors) { opts.H = 2 }
+    opts.H = 2;
     super(opts);
   }
   getCenter() {
@@ -114,17 +114,20 @@ class FlameSprite extends GradientSprite {
       ctx.rotate(-i*Math.PI/2);
       ctx.translate(-(i*this.scale+this.cx),-this.cy);
     }
-    if (this.attack_colors) {
-      this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
-      this.temp_canvas.clear()
-      this.temp_canvas.ctx.drawImage(this.canvas,0,-this.scale);
-      for (var i=1;i<4;i++) {
-        ctx.translate(i*this.scale + this.cx,this.cy+this.scale);
-        ctx.rotate(i*Math.PI/2);
-        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
-        ctx.rotate(-i*Math.PI/2);
-        ctx.translate(-(i*this.scale+this.cx),-this.cy-this.scale);
-      }
+    if (!this.attack_colors) {
+      this.attack_colors = this.colors.slice();
+      this.attack_colors.pop();
+      this.attack_colors.push("#800");
+    }
+    this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
+    this.temp_canvas.clear()
+    this.temp_canvas.ctx.drawImage(this.canvas,0,-this.scale);
+    for (var i=1;i<4;i++) {
+      ctx.translate(i*this.scale + this.cx,this.cy+this.scale);
+      ctx.rotate(i*Math.PI/2);
+      ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
+      ctx.rotate(-i*Math.PI/2);
+      ctx.translate(-(i*this.scale+this.cx),-this.cy-this.scale);
     }
   }
 }
@@ -157,15 +160,12 @@ new FlameSprite({
 new FlameSprite({
   name: "blue-blob",
   colors: ["#88F",'#008',"#008"],
-  attack_colors: ["#400",'#88F',"#008"],
 });
 new FlameSprite({
   name: "yellow-flame",
   colors: ["#F80","#F80","#000"],
-  attack_colors: ["#F80","#F80","#400"],
 });
 new FlameSprite({
   name: "green-flame",
   colors: ["#0F8","#0F8","#000"],
-  attack_colors: ["#0F8","#0F0","#400"],
 });
