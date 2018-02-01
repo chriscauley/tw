@@ -2,9 +2,8 @@ class Board extends CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{
-      W: 12,
-      H: 12,
-      scale: 36,
+      W: 11,
+      H: 11,
       enemy_map: {
         C: CountDown,
         B: Blob,
@@ -12,6 +11,7 @@ class Board extends CanvasObject {
         WF: WallFlower,
       }
     });
+    this.scale = Math.min(window.innerWidth/this.W,window.innerHeight/this.H)
 
     var self = this
     this.pieces = [];
