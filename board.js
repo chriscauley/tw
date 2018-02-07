@@ -17,15 +17,15 @@ class Board extends CanvasObject {
     this.pieces = [];
     this.createCanvas();
     document.getElementById("game",).style.width = (this.W*this.scale)+"px";
+    this.tick = this.tick.bind(this);
     this.tick();
     this.dirty = true;
+    this.__tick = 0;
   }
   tick() {
-    this._f = this.f||0;
     cancelAnimationFrame(this.animation_frame);
-    if (this._f>100) { return }
-    this.draw();
-    this.animation_frame = requestAnimationFrame(this.tick.bind(this));
+    (this.__tick++)%2 && this.draw();
+    this.animation_frame = requestAnimationFrame(this.tick);
   }
   loadLevel(level_number) {
     delete this.squares;
