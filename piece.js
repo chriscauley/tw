@@ -1,4 +1,4 @@
-class BasePiece extends uR.Object {
+class BasePiece extends CanvasObject {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -17,10 +17,14 @@ class BasePiece extends uR.Object {
       health: 1,
       damage: 1,
       team: 0,
-      gold: 0,
       gold_per_touch: 1,
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
+    });
+    this.newCanvas({
+      width: this.board.scale,
+      height: this.board.scale,
+      name: 'ui_canvas',
     });
 
     this.max_health = this.health;
@@ -31,6 +35,8 @@ class BasePiece extends uR.Object {
     this.inner_color = 'blue';
     this.move(0,0);
     this.sprite = uR.sprites['red'];
+    this.restat();
+    this.ui_dirty = this.dirty = true;
   }
   play() {
     this.getNextMove().bind(this)();
@@ -60,11 +66,12 @@ class BasePiece extends uR.Object {
     // two arguments returns the square
     return this.board.getSquare(this.x+dx,this.y+dy);
   }
-  drawHealth() {
-    var c = this.board.canvas;
+  _drawHealth() {
+    var c = this.ui_canvas;
+    this.ui_canvas.clear();
     var s = this.board.scale;
-    var x0 = this.x*s;
-    var y0 = this.y*s;
+    var x0 = 0;
+    var y0 = 0;
     var img = uR.sprites.health.get();
     var full = Math.max(this.health,0);
     var empty = this.max_health-full;
@@ -90,32 +97,11 @@ class BasePiece extends uR.Object {
       )
       dx += 1;
     }
-  }
-  getNextMove() {
-    return this.tasks[this.getState()];
-  }
-  getState() {
-    return this.step%this.tasks.length;
-  }
-  draw() {
-    if (! this.current_square) { return }
-    var c = this.board.canvas;
-    var s = this.board.scale;
-    c.ctx.beginPath();
-    var img = this.sprite.get(this.dx,this.dy,this.getState());
-    c.ctx.drawImage(
-      img.img,
-      img.x, img.y,
-      img.w, img.h,
-      this.x*s, this.y*s,
-      s,s,
-    );
-    this.drawText(c);
     if (this.gold) { // && this.game.config.show_gold) {
       var s = this.board.scale;
       var img = uR.sprites.gold.get(0,0);
       var v = this.gold*1;
-      var gx = (1/2+this.x)*s, gy = (1/2+this.y)*s;
+      var gx = s/2, gy = s/2;
       c.ctx.drawImage(
         img.img,
         img.x, img.y,
@@ -131,6 +117,39 @@ class BasePiece extends uR.Object {
       c.ctx.fontWeight = 'bold';
       c.ctx.fillText(this.gold, gx+s/4, gy+s/4);
     }
+    this.ui_dirty = false;
+  }
+  drawHealth() {
+    if (this.ui_dirty) { this._drawHealth() }
+    this.board.canvas.ctx.drawImage(
+      this.ui_canvas,
+      this.x*this.board.scale,this.y*this.board.scale
+    )
+  }
+  getNextMove() {
+    return this.tasks[this.getState()];
+  }
+  getState() {
+    return this.step%this.tasks.length;
+  }
+  draw() {
+    if (!this.current_square) { return }
+    var c = this.board.canvas;
+    var s = this.board.scale;
+    var ease = this.getEasing();
+    var draw_x = s*(this.x+this.animation_dx*ease);
+    var draw_y = s*(this.y+this.animation_dy*ease);
+    c.ctx.beginPath();
+    var img = this.sprite.get(this.dx,this.dy,this.getState());
+    c.ctx.drawImage(
+      img.img,
+      img.x, img.y,
+      img.w, img.h,
+      draw_x,draw_y,
+      s,s,
+    );
+    this.drawText(c);
+    this.dirty = true//!!ease; // item is dirty if transition is done
   }
   getText() {
     this.text = [];
@@ -156,7 +175,11 @@ class BasePiece extends uR.Object {
     var replacing = target_square.piece;
     if (replacing) {
       if (replacing == this) { return }
-      if (replacing.canBeAttacked()) { return replacing.takeDamage(1) }
+      if (replacing.canBeAttacked()) {
+        this.dx = dx;
+        this.dy = dy;
+        return replacing.takeDamage(1)
+      }
       if (!replacing.canReplace()) { return; }
     }
     if (this.current_square) { this.current_square.piece = undefined }
@@ -172,14 +195,19 @@ class BasePiece extends uR.Object {
     if (this.current_square.floor) { this.current_square.floor.trigger(this); }
     if (this.current_square.item) { this.touchItem(this.current_square.item); }
     this.takeGold(this.current_square);
+    this.animation_dx = -dx;
+    this.animation_dy = -dy;
+    this.animation_t0 = new Date().valueOf();
+    this.dirty = true;
   }
   takeDamage(damage) {
+    this.ui_dirty = true;
     this.health -= damage;
     if (this.health <= 0) { this.die() }
   }
   die() {
     this.item && this.current_square.addItem(this.item);
-    this.current_square.addGold({ range: this.level+2, base: this.gold || 1 })
+    this.current_square.addGold({ range: this.level+2, base: 2 * this.gold || 1 })
     this.board.remove(this);
   }
   attack(target) {
@@ -211,7 +239,7 @@ class BasePiece extends uR.Object {
     // requires gold on square and not already at max_level
     if (!square.gold || !this.gold_levels[this.level]) { return }
     this.gold += square.removeGold(this.gold_per_touch);
-    this.restat();
+    this.ui_dirty = true;
   }
 }
 

@@ -1,6 +1,7 @@
 class CanvasObject extends uR.Object {
   constructor() {
     super();
+    this.animation_t0=new Date().valueOf();
   }
   newCanvas(attrs) {
     uR.defaults(attrs,{
@@ -33,5 +34,10 @@ class CanvasObject extends uR.Object {
       src:src,
       onload: callback,
     });
+  }
+  getEasing() {
+    var animation_time = 200;
+    var dt = new Date().valueOf() - this.animation_t0;
+    return Math.max(0,animation_time - dt)/animation_time;
   }
 }
