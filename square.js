@@ -11,7 +11,6 @@ class Square extends CanvasObject {
       width: this.scale,
       height: this.scale,
     });
-    this.draw();
     this.dirty = true;
   }
   draw() {

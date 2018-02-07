@@ -67,7 +67,9 @@ class Game extends uR.Object {
       while(enemy_count<this.piece_count) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new board.enemy_map[choice(['WF','W'])]({x:sq.x,y:sq.y,board:board}));
+          board.pieces.push(new board.enemy_map[choice(['WF','W'])]({
+            x:sq.x,y:sq.y,board:board,gold: this.piece_count,
+          }));
           enemy_count += 1;
         }
       }

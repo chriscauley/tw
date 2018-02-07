@@ -227,12 +227,15 @@ class BasePiece extends CanvasObject {
   }
   restat() {
     var gold_to_next = this.gold_levels[this.level];
-    if (gold_to_next && this.gold > gold_to_next) {
-      this.level ++;
-      this.max_health ++;
-      this.health ++;
-      this.damage++;
-      this.gold_per_touch++;
+    while (gold_to_next) {
+      gold_to_next = this.gold_levels[this.level];
+      if (this.gold > gold_to_next) {
+        this.level ++;
+        this.max_health ++;
+        this.health ++;
+        this.damage++;
+        this.gold_per_touch++;
+      } else { break }
     }
   }
   takeGold(square) {
