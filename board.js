@@ -2,8 +2,8 @@ class Board extends CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{
-      W: 11,
-      H: 11,
+      W: 10,
+      H: 10,
       enemy_map: {
         C: CountDown,
         B: Blob,
@@ -11,7 +11,7 @@ class Board extends CanvasObject {
         WF: WallFlower,
       }
     });
-    this.scale = Math.min(window.innerWidth/this.W,window.innerHeight/this.H)
+    this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
 
     var self = this
     this.pieces = [];
@@ -80,8 +80,8 @@ class Board extends CanvasObject {
   draw() {
     if (!this.game.player) { return }
     var s = this.scale;
-    var offset_x = (this.game.player.x-this.W/2)*this.x_offset_mult;
-    var offset_y = (this.game.player.y-this.H/2)*this.y_offset_mult;
+    var offset_x = (this.game.player.x-this.W/2)*this.x_offset_mult-0.5*s;
+    var offset_y = (this.game.player.y-this.H/2)*this.y_offset_mult-0.5*s;
     var floor_dirty = true;
     this.eachSquare(function(square,x,y) {
       floor_dirty = (square && square.draw()) || floor_dirty;
