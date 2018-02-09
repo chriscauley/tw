@@ -13,7 +13,7 @@ class Game extends uR.Object {
   restart() {
     var mask = document.querySelector("[ur-mask]");
     mask && mask.click();
-    this.piece_count = 2;
+    this.piece_count = 0;
     this.ui && this.ui.unmount();
     this.level_number = -1;
     this.nextLevel();
@@ -56,17 +56,18 @@ class Game extends uR.Object {
   }
   nextTurn() {
     this.board.pieces.forEach(function(p) { p.play() });
+    this.player.play();
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count += 2;
+      this.piece_count += 1;
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;
       while(enemy_count<this.piece_count) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new board.enemy_map[choice(['WF','W'])]({
+          board.pieces.push(new board.enemy_map[choice(['W'])]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;

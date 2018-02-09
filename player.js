@@ -2,6 +2,7 @@ class Player extends BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
     opts.gold_levels = [Infinity];
+    opts.intervals = [0,4];
     super(opts);
     this.defaults(opts,{
       game: uR.REQUIRED,
@@ -14,6 +15,7 @@ class Player extends BasePiece {
       ],
       gold_levels: [],
     });
+    this.move = this.move.bind(this);
     this.resetMiniMap();
     this.score = 0;
     this.defaults(opts,{ gold: 0 });
@@ -24,9 +26,25 @@ class Player extends BasePiece {
   touchItem(item) {
     item.pickUp(this);
   }
-  move(x,y) {
-    super.move(x,y);
+  move(e,dx,dy) {
+    var advance = true;
+    if (e.ctrlKey) {
+      if (this.steps[1] < this.intervals[1]) { console.log("fail"); return true; }
+      this.steps[1] = -1
+      advance = false;
+    }
+    var out = { turn: [dx,dy] };
+    var square = this.look(dx,dy);
+    if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
+    if (square && !square.piece) { out.move = [dx,dy] }
+    this.applyMove(out);
+    this.ui_dirty = true;
+    return advance;
+  }
+  applyMove(opts) {
+    super.applyMove(opts);
     var self = this;
+    var [dx,dy] = [this.dx,this.dy];
     uR.forEach(this.torch || [],function(row,tx) {
       var dx = tx-2;
       uR.forEach(row,function(on,ty) {

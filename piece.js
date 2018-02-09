@@ -13,13 +13,14 @@ class BasePiece extends CanvasObject {
       y:0,
       dx: dx,
       dy: dy,
-      tasks: [this.wait],
+      tasks: [],
       health: 1,
       damage: 1,
       team: 0,
       gold_per_touch: 1,
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
+      intervals: [ 1, 4 ], // how often piece moves, zero indexed
     });
     this.newCanvas({
       width: this.board.scale,
@@ -28,30 +29,73 @@ class BasePiece extends CanvasObject {
     });
 
     this.max_health = this.health;
-    this.step = 0;
+    this.steps = uR.zeros(this.intervals);
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
-    this.move(0,0);
+    this.applyMove();
     this.sprite = uR.sprites['red'];
     this.restat();
     this.ui_dirty = this.dirty = true;
   }
+  BOOM () { console.log("BOOM!"); return { turn: [this.dx,this.dy] } }//debug only
+  applyMove(opts) {
+    opts = opts || { move: [0,0] } //null move
+    var d,dx,dy;
+    if (opts.damage) {
+      [dx,dy,d] = opts.damage;
+      var square = this.look(dx,dy);
+      square && square.piece && square.piece.takeDamage(d);
+    }
+    if (opts.move) {
+      [dx,dy] = opts.move;
+      var square = this.look(dx,dy);
+      if (square && !square.piece) {
+        if (this.current_square) { this.current_square.piece = undefined; }
+        this.current_square = square;
+        square.piece = this;
+        square.floor && square.floor.trigger(this);
+        square.item && this.touchItem(square.item);
+        this.takeGold(square);
+        this.animation_dx = -dx;
+        this.animation_dy = -dy;
+        this.animation_t0 = new Date().valueOf();
+        [this.x,this.y] = [square.x,square.y];
+      }
+    }
+    if (opts.turn) {
+      [dx,dy] = opts.turn;
+    }
+    if (dx || dy ) { // anything happened
+      [this.dx,this.dy] = [dx,dy]
+      this.dirty = true;
+      return true;
+    }
+  }
   play() {
-    this.getNextMove().bind(this)();
-    this.step += 1;
+    var self = this;
+    uR.forEach(this.steps,function(step,i) {
+      if (step >= self.intervals[i]) {
+        var move = self.getNextMove(i);
+        if (move && self.applyMove(move)) { self.steps[i] = -1; }
+      }
+    });
+    uR.forEach(this.steps,(s,i) => self.steps[i]++);
+    self.ui_dirty = true;
   }
   flip() {
-    this.dy = -this.dy;
-    this.dx = -this.dx;
+    return { turn: [-this.dx,-this.dy] }
+  }
+  superStep(_step) {
+    return this.getNextMove(_step-1);
   }
   _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
     if (this.dx && this.dy) {
       throw "Turning not implementd for diagonals!";
     }
-    return (direction == "left")?[this.dy,-this.dx]:[-this.dy,this.dx];
+    return {turn: (direction == "left")?[this.dy,-this.dx]:[-this.dy,this.dx] };
   }
   look(dx,dy) { //#! TODO: distance
     if (dx === undefined) { return this.look(this.dx,this.dy); } // no arguments means look forward
@@ -66,68 +110,76 @@ class BasePiece extends CanvasObject {
     // two arguments returns the square
     return this.board.getSquare(this.x+dx,this.y+dy);
   }
-  _drawHealth() {
-    var c = this.ui_canvas;
+  stamp(x0,y0,dx,img) {
+    img = uR.sprites.get(img);
+    dx++;
+    while(dx--) {
+      this.ctx.drawImage(
+        img.img,
+        img.x,img.y,
+        img.w,img.h,
+        x0+(dx-1)*this.s,y0,
+        this.s,this.s
+      )
+    }
+  }
+  _drawUI() {
     this.ui_canvas.clear();
-    var s = this.board.scale;
-    var x0 = 0;
-    var y0 = 0;
-    var img = uR.sprites.health.get();
-    var full = Math.max(this.health,0);
-    var empty = this.max_health-full;
-    var dx = 0;
-    while(full--) {
-      c.ctx.drawImage(
-        img.img,
-        img.x,img.y,
-        img.w,img.h,
-        x0+dx*s/4,y0,
-        img.w,img.h
-      )
-      dx += 1;
-    }
-    var img = uR.sprites.empty_health.get();
-    while(empty--) {
-      c.ctx.drawImage(
-        img.img,
-        img.x,img.y,
-        img.w,img.h,
-        x0+dx*s/4,y0,
-        img.w,img.h
-      )
-      dx += 1;
-    }
-    if (this.gold) { // && this.game.config.show_gold) {
-      var s = this.board.scale;
-      var img = uR.sprites.gold.get(0,0);
-      var v = this.gold*1;
-      var gx = s/2, gy = s/2;
-      c.ctx.drawImage(
-        img.img,
-        img.x, img.y,
-        img.w, img.h,
-        gx,gy,
-        s/2,s/2
-      );
-      var text = {}; // #! TODO: this needs to be dynamic and in options
-      c.ctx.font = text.font || (s/4)+'px serif';
-      c.ctx.textAlign = text.align || 'center';
-      c.ctx.fillStyle = text.style || "black";
-      c.ctx.textBaseline = text.baseLine ||'middle';
-      c.ctx.fontWeight = 'bold';
-      c.ctx.fillText(this.gold, gx+s/4, gy+s/4);
+    this.ctx = this.ui_canvas.ctx;
+    this.s = this.board.scale/4;
+    this.stamp(0,0,this.max_health,'black');
+    this.stamp(0,0,Math.max(this.health,0),'red');
+
+    var _i = this.intervals.length;
+    while (_i--) {
+      var empty = this.intervals[_i];
+      var y = this.s*(3-_i);
+      if (empty) {
+        this.stamp(0,y,empty,'#008');
+        this.stamp(0,y,Math.min(this.steps[_i],empty),'#00F');
+      } else { this.stamp(0,y,1,'#F00') }
     }
     this.ui_dirty = false;
   }
-  drawHealth() {
-    if (this.ui_dirty) { this._drawHealth() }
+  drawSteps(c) {
+    c.ctx.drawImage();
+  }
+  drawGold(c) {
+    if (!this.gold) { return } // && !this.game.config.show_gold) { return }
+    var s = this.board.scale;
+    var img = uR.sprites.gold.get(0,0);
+    var v = this.gold*1;
+    var gx = s/2, gy = s/2;
+    c.ctx.drawImage(
+      img.img,
+      img.x, img.y,
+      img.w, img.h,
+      gx,gy,
+      s/2,s/2
+    );
+    var text = {}; // #! TODO: this needs to be dynamic and in options
+    c.ctx.font = text.font || (s/4)+'px serif';
+    c.ctx.textAlign = text.align || 'center';
+    c.ctx.fillStyle = text.style || "black";
+    c.ctx.textBaseline = text.baseLine ||'middle';
+    c.ctx.fontWeight = 'bold';
+    c.ctx.fillText(this.gold, gx+s/4, gy+s/4);
+  }
+  drawUI() {
+    if (this.ui_dirty) { this._drawUI() }
     this.board.canvas.ctx.drawImage(
       this.ui_canvas,
       this.x*this.board.scale,this.y*this.board.scale
     )
   }
-  getNextMove() {
-    return this.tasks[this.getState()];
+  getNextMove(_step) {
+    var tasks = this.tasks[_step] || [];
+    var _i = 0;
+    while(_i<tasks.length) {
+      var output = tasks[_i].bind(this)(_step); // if any task returns an output, we're doing that
+      if (output) { return output }
+      _i++;
+    }
   }
   getState() {
     return this.step%this.tasks.length;
@@ -169,37 +221,6 @@ class BasePiece extends CanvasObject {
     }
   }
   wait() {}
-  move(dx,dy) {
-    var target_square = this.look(dx,dy);
-    if (!target_square) { return }
-    var replacing = target_square.piece;
-    if (replacing) {
-      if (replacing == this) { return }
-      if (replacing.canBeAttacked()) {
-        this.dx = dx;
-        this.dy = dy;
-        return replacing.takeDamage(1)
-      }
-      if (!replacing.canReplace()) { return; }
-    }
-    if (this.current_square) { this.current_square.piece = undefined }
-    this.current_square = target_square;
-    target_square.piece = this;
-    this.x += dx;
-    this.y += dy;
-    if (dx||dy) { // if they didn't move, don't change direction
-      this.dx = dx;
-      this.dy = dy;
-    }
-    replacing && replacing.movedOnTo();
-    if (this.current_square.floor) { this.current_square.floor.trigger(this); }
-    if (this.current_square.item) { this.touchItem(this.current_square.item); }
-    this.takeGold(this.current_square);
-    this.animation_dx = -dx;
-    this.animation_dy = -dy;
-    this.animation_t0 = new Date().valueOf();
-    this.dirty = true;
-  }
   takeDamage(damage) {
     this.ui_dirty = true;
     this.health -= damage;
@@ -286,7 +307,7 @@ class Blob extends BasePiece {
   bounce() {
     var square = this.look();
     if (square && square.piece) { return this.attack(square.piece); }
-    this.move(0,this.dy);
+    //this.move(0,this.dy);
   }
 }
 
@@ -296,17 +317,15 @@ class Walker extends BasePiece {
     super(opts);
     this.sprite = uR.sprites['yellow-flame'];
     this.tasks = [
-      this.wait,
-      this.forwardOrFlip
+      [ this.forward, this.flip ],
+      [ this.superStep ]
     ];
   }
-  forwardOrFlip() {
-    // walk forward if you can. flip if somthing is in the way
+  forward() {
     var square = this.look();
     var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return this.attack(square.piece); }
-    if (!square || piece) { return this.flip(); }
-    this.move(this.dx,this.dy);
+    if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
+    if (square && !piece) { return { move: [this.dx,this.dy ] } }
   }
 }
 
@@ -315,16 +334,9 @@ class WallFlower extends BasePiece {
     super(opts);
     this.sprite = uR.sprites['green-flame'];
     this.tasks = [
-      this.wait,
-      this.forwardOrTurn,
+      [ this.forward,this.turnRandomly],
+      [ this.BOOM ],
     ];
-  }
-  forwardOrTurn() {
-    var square = this.look();
-    var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return this.attack(square.piece); }
-    if (!square || piece) { return this.turnRandomly(); }
-    this.move(this.dx,this.dy);
   }
   turnRandomly() {
     // turns left or right if the square is empty. If no empty square, turn randomly
@@ -335,6 +347,6 @@ class WallFlower extends BasePiece {
       square = this.look(d);
       if (square && !square.piece) { break; }
     }
-    [this.dx,this.dy] = this._turn(d);
+    return this._turn(d);
   }
 }
