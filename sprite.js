@@ -8,7 +8,15 @@ class SpriteObject extends CanvasObject {
     })
     this.width = this.W*this.scale;
     this.height = this.H*this.scale;
-    uR.sprites = uR.sprites || {};
+    uR.sprites = uR.sprites || {
+      get: function (color) {
+        return (uR.sprites[color] || new CircleSprite({
+          fillStyle: color,
+          name: color,
+          radius: 0.3
+        })).get();
+      }
+    };
     uR.sprites[opts.name] = this;
     this.newCanvas({name: 'canvas'});
   }
@@ -153,6 +161,11 @@ new GradientSprite({
   name: "red",
   colors: ["red","red"]
 });
+new FlameSprite({
+  name: 'black-hole',
+  colors: ['#000','#AAA',"#000",'#AAA',"#000",'#AAA',"#000"]
+});
+
 new FlameSprite({
   name: "blue-flame",
   colors: ["#008","#88F"]

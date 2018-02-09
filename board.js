@@ -64,7 +64,7 @@ class Board extends CanvasObject {
     this.game.player.x = start[0];
     this.game.player.y = start[1];
     this.game.player.resetMiniMap();
-    this.game.player.move(0,0);
+    this.game.player.applyMove();
     exit && this.getSquare(exit).setFloor(new Stairs());
     this.game.onPiecePop();
   }
@@ -105,8 +105,8 @@ class Board extends CanvasObject {
     this.game.player.drawMoves();
     this.game.player.draw();
     uR.forEach(this.pieces,function(p){ p.draw() })
-    uR.forEach(this.pieces,function(p){ p.drawHealth(); })
-    this.game.player.drawHealth();
+    uR.forEach(this.pieces,function(p){ p.drawUI(); })
+    this.game.player.drawUI();
     this.canvas.ctx.translate(offset_x,offset_y);
   }
   createCanvas() {
