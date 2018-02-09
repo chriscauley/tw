@@ -25,7 +25,8 @@ class Controller {
     })
     uR.forEach(['keydown','keyup'], function(action) {
       self.parent[action] && target.addEventListener(action,function (e) {
-        self.parent[action](self.code2key[e.keyCode]);
+        e._key = self.code2key[e.keyCode];
+        self.parent[action](e);
       });
     });
     var letters = 'abcdefghijklmnopqrstuvwxyz';

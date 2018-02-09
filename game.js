@@ -31,26 +31,25 @@ class Game extends uR.Object {
     this.is_gameover = true;
     uR.alertElement("tw-gameover",{game: this});
   }
-  keydown(key) {
+  keydown(e) {
     if (this.is_gameover) { return this.restart() }
-    this.key_map[key] && this.key_map[key]();
+    this.key_map[e._key] && this.key_map[e._key](e);
     this.ui && this.ui.update();
   }
   keyup(key) {}
   bindKeys() {
     var key_map = {
-      up: function() { this.player.move(0,-1); },
-      down: function() { this.player.move(0,1); },
-      left: function() { this.player.move(-1,0); },
-      right: function() { this.player.move(1,0); },
-      space: function() { this.player.move(0,0); },
+      up: (e) => this.player.move(e,0,-1),
+      down: (e) => this.player.move(e,0,1),
+      left: (e) => this.player.move(e,-1,0),
+      right: (e) => this.player.move(e,1,0),
+      space: (e) => this.player.move(e,0,0),
     }
     this.key_map = {};
     function d(f,self) {
       f = f.bind(self);
-      return function() {
-        f();
-        self.nextTurn();
+      return function(e) {
+        f(e) && self.nextTurn();
       }
     }
     for (var k in key_map) { this.key_map[k] = d(key_map[k],this); }
