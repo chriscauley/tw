@@ -1,6 +1,9 @@
 class Game extends uR.Object {
   constructor() {
     super()
+    this.config = uR.storage.getSettings("GAME_CONFIG",{
+      piece_increase: 1,
+    });
     this.bindKeys();
     this.board = new Board({ game: this, });
     this.controller = new Controller({ parent: this });
@@ -61,7 +64,7 @@ class Game extends uR.Object {
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count += 2;
+      this.piece_count += 1*this.config.piece_increase;
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;

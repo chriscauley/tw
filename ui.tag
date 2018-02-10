@@ -5,6 +5,7 @@
   <pre class="minimap">{ player.printMiniMap() }</pre>
   <div class="admin">
     <button onclick={ showSprites }>show sprites</button>
+    <button onclick={ editSettings }>settings</button>
   </div>
 
   this.on("mount",function() {
@@ -13,6 +14,18 @@
   });
   showSprites() {
     uR.alertElement('tw-sprites');
+  }
+  editSettings() {
+    var opts = {
+      schema: [],
+      initial: this.opts.game.config,
+      submit: function (riot_tag) {
+        uR.storage.set("GAME_CONFIG",riot_tag.getData());
+        riot_tag.unmount();
+      },
+    }
+    for (var key in opts.initial) { opts.schema.push(key); }
+    uR.alertElement("ur-form",opts);
   }
 </tw-scores>
 

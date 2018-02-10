@@ -20,7 +20,7 @@ class BasePiece extends CanvasObject {
       gold_per_touch: 1,
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
-      intervals: [ 1, 4 ], // how often piece moves, zero indexed
+      intervals: [ 1, 3 ], // how often piece moves, zero indexed
     });
     this.animations = [];
     this.newCanvas({
@@ -359,7 +359,7 @@ class Walker extends BasePiece {
   constructor(opts) {
     opts.health = 1;
     super(opts);
-    this.sprite = uR.sprites['yellow-flame'];
+    this.sprite = uR.sprites['bloob'];
     this.tasks = [
       [ this.forward, this.flip ],
       [ this.doubleForward ]
@@ -370,6 +370,9 @@ class Walker extends BasePiece {
     var piece = square && square.piece;
     if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
     if (square && !piece) { return { move: [this.dx,this.dy ] } }
+  }
+  getState() {
+    return this.steps;
   }
 }
 
