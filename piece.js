@@ -68,7 +68,7 @@ class BasePiece extends CanvasObject {
       [dx,dy] = opts.turn;
     }
     if (dx || dy ) { // anything happened
-      [this.dx,this.dy] = [dx,dy]
+      [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)]
       this.dirty = true;
       return true;
     }
@@ -106,20 +106,37 @@ class BasePiece extends CanvasObject {
   }
   play() {
     var self = this;
-    uR.forEach(this.steps,function(step,i) {
-      if (step >= self.intervals[i]) {
-        var move = self.getNextMove(i);
-        if (move && self.applyMove(move)) { self.steps[i] = -1; }
+    var _si = this.steps.length;
+    while (_si--) {
+      var step = this.steps[_si];
+      if (step >= self.intervals[_si]) {
+        var move = self.getNextMove(_si);
+        if (move && self.applyMove(move)) { self.steps[_si] = -1; break; }
       }
-    });
+    }
     uR.forEach(this.steps,(s,i) => self.steps[i]++);
     self.ui_dirty = true;
   }
   flip() {
     return { turn: [-this.dx,-this.dy] }
   }
-  superStep(_step) {
-    return this.getNextMove(_step-1);
+  doubleForward(dx,dy) {
+    if (dx == undefined || dy == undefined) {
+      dx = this.dx; dy = this.dy;
+    }
+    var s1 = this.look(dx,dy);
+    var s2 = this.look(dx*2,dy*2);
+    if (!s1) { return } //against wall
+    if (s1.piece) {
+      if (s1.piece.team == this.team) { return } // can't attack team mate
+      return { damage: [dx,dy,this.damage+2] }
+    }
+    if (!s2) { return { move: [dx,dy] } } // one away from wall
+    if (s2.piece) {
+      if (s2.piece.team == this.team) { return }
+      return { move: [dx,dy], damage: [dx*2,dy*2,this.damage] }
+    }
+    return { move: [dx*2,dy*2] }
   }
   _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
@@ -167,7 +184,7 @@ class BasePiece extends CanvasObject {
       var y = this.s*(3-_i);
       if (empty) {
         this.stamp(0,y,empty,'#008');
-        this.stamp(0,y,Math.min(this.steps[_i],empty),'#00F');
+        this.stamp(0,y,Math.min(this.steps[_i],empty),'#88F');
       } else { this.stamp(0,y,1,'#F00') }
     }
     this.ui_dirty = false;
@@ -345,7 +362,7 @@ class Walker extends BasePiece {
     this.sprite = uR.sprites['yellow-flame'];
     this.tasks = [
       [ this.forward, this.flip ],
-      [ this.superStep ]
+      [ this.doubleForward ]
     ];
   }
   forward() {

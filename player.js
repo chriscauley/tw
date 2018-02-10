@@ -27,19 +27,20 @@ class Player extends BasePiece {
     item.pickUp(this);
   }
   move(e,dx,dy) {
-    var advance = true;
-    if (e.ctrlKey) {
-      if (this.steps[1] < this.intervals[1]) { console.log("fail"); return true; }
-      this.steps[1] = -1
-      advance = false;
-    }
     var out = { turn: [dx,dy] };
-    var square = this.look(dx,dy);
-    if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
-    if (square && !square.piece) { out.move = [dx,dy] }
+    if (e.ctrlKey) {
+      if (this.steps[1] < this.intervals[1]) { console.log("fail"); } // spell wasn't ready
+      else { out = this.doubleForward(dx,dy) || out; }
+      this.steps[1] = -1;
+    }
+    else {
+      var square = this.look(dx,dy);
+      if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
+      if (square && !square.piece) { out.move = [dx,dy] }
+    }
     this.applyMove(out);
     this.ui_dirty = true;
-    return advance;
+    return true;
   }
   applyMove(opts) {
     super.applyMove(opts);

@@ -2,7 +2,7 @@ class SpriteObject extends CanvasObject {
   constructor(opts) {
     super(opts);
     this.defaults(opts,{
-      scale: 64,
+      scale: 128,
       W: 1,
       H: 1,
     })
