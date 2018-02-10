@@ -55,12 +55,13 @@ class Game extends uR.Object {
     for (var k in key_map) { this.key_map[k] = d(key_map[k],this); }
   }
   nextTurn() {
-    this.board.pieces.forEach(function(p) { p.play() });
+    this.tnow = new Date().valueOf();
+    this.board.pieces.forEach((p) => p.play());
     this.player.play();
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count += 1;
+      this.piece_count += 2;
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;

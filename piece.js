@@ -22,6 +22,7 @@ class BasePiece extends CanvasObject {
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
       intervals: [ 1, 4 ], // how often piece moves, zero indexed
     });
+    this.animations = [];
     this.newCanvas({
       width: this.board.scale,
       height: this.board.scale,
@@ -41,6 +42,7 @@ class BasePiece extends CanvasObject {
   }
   BOOM () { console.log("BOOM!"); return { turn: [this.dx,this.dy] } }//debug only
   applyMove(opts) {
+    this.animations = [];
     opts = opts || { move: [0,0] } //null move
     var d,dx,dy;
     if (opts.damage) {
@@ -58,10 +60,8 @@ class BasePiece extends CanvasObject {
         square.floor && square.floor.trigger(this);
         square.item && this.touchItem(square.item);
         this.takeGold(square);
-        this.animation_dx = -dx;
-        this.animation_dy = -dy;
-        this.animation_t0 = new Date().valueOf();
         [this.x,this.y] = [square.x,square.y];
+        this.newAnimation('move',this.x,this.y,-dx,-dy,new Date().valueOf());
       }
     }
     if (opts.turn) {
@@ -72,6 +72,37 @@ class BasePiece extends CanvasObject {
       this.dirty = true;
       return true;
     }
+  }
+  newAnimation(type,x,y,dx,dy) {
+    this.animations.push({
+      type:type,
+      x:x,y:y,
+      dx:dx,dy:dy,
+      t0:new Date().valueOf()
+    });
+  }
+  doAnimations(c) {
+    var self = this;
+    var s = this.board.scale;
+    var now = new Date().valueOf();
+    var dirty = [];
+    uR.forEach(this.animations,function(a,_ai) {
+      var dt = now - a.t0; // progress through current animation
+      var ease = self.getEasing(dt);
+      if (!ease) { dirty.push(_ai); return }
+      var draw_x = s*(a.x+a.dx*ease);
+      var draw_y = s*(a.y+a.dy*ease);
+      var img = self.sprite.get(self.dx,self.dy,self.getState());
+      c.ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        draw_x,draw_y,
+        s,s,
+      );
+    });
+    while (dirty.length) { this.animations.splice(dirty.pop(),1) }
+    return this.animations.length;
   }
   play() {
     var self = this;
@@ -188,20 +219,16 @@ class BasePiece extends CanvasObject {
     if (!this.current_square) { return }
     var c = this.board.canvas;
     var s = this.board.scale;
-    var ease = this.getEasing();
-    var draw_x = s*(this.x+this.animation_dx*ease);
-    var draw_y = s*(this.y+this.animation_dy*ease);
-    c.ctx.beginPath();
+    this.dirty = this.doAnimations(c);
+    if (this.dirty) { return }
     var img = this.sprite.get(this.dx,this.dy,this.getState());
     c.ctx.drawImage(
       img.img,
       img.x, img.y,
       img.w, img.h,
-      draw_x,draw_y,
+      this.x*s,this.y*s,
       s,s,
     );
-    this.drawText(c);
-    this.dirty = true//!!ease; // item is dirty if transition is done
   }
   getText() {
     this.text = [];
