@@ -93,6 +93,22 @@ class GradientSprite extends CircleSprite {
       c.ctx.fill()
     }
   }
+  doRotations() {
+    var ctx = this.canvas.ctx;
+    for (var y=0;y<this.H;y++) {
+      this.temp_canvas.clear()
+      this.temp_canvas.ctx.drawImage(this.canvas,0,-this.scale);
+      for (var x=1;x<4;x++) {
+        var dx = x*this.scale + this.cx
+        var dy = this.cy+this.scale*y;
+        ctx.translate(dx,dy);
+        ctx.rotate(x*Math.PI/2);
+        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
+        ctx.rotate(-x*Math.PI/2);
+        ctx.translate(-dx,-dy);
+      }
+    }
+  }
 }
 
 class FlameSprite extends GradientSprite {
@@ -113,30 +129,13 @@ class FlameSprite extends GradientSprite {
       height: this.scale,
       id: 'tmp'
     });
-    this.temp_canvas.ctx.drawImage(this.canvas,0,0);
-    var ctx = this.canvas.ctx;
-    for (var i=1;i<4;i++) {
-      ctx.translate(i*this.scale + this.cx,this.cy);
-      ctx.rotate(i*Math.PI/2);
-      ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
-      ctx.rotate(-i*Math.PI/2);
-      ctx.translate(-(i*this.scale+this.cx),-this.cy);
-    }
     if (!this.attack_colors) {
       this.attack_colors = this.colors.slice();
       this.attack_colors.pop();
       this.attack_colors.push("#800");
     }
     this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
-    this.temp_canvas.clear()
-    this.temp_canvas.ctx.drawImage(this.canvas,0,-this.scale);
-    for (var i=1;i<4;i++) {
-      ctx.translate(i*this.scale + this.cx,this.cy+this.scale);
-      ctx.rotate(i*Math.PI/2);
-      ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
-      ctx.rotate(-i*Math.PI/2);
-      ctx.translate(-(i*this.scale+this.cx),-this.cy-this.scale);
-    }
+    this.doRotations()
   }
 }
 
