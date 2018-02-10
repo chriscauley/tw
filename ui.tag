@@ -11,20 +11,23 @@
   this.on("mount",function() {
     this.player = this.opts.player;
     this.opts.game.ui = this;
+    this.game = this.opts.game;
   });
   showSprites() {
     uR.alertElement('tw-sprites');
   }
   editSettings() {
+    var self = this;
     var opts = {
-      schema: [],
-      initial: this.opts.game.config,
+      schema: this.game.config.getSchema(),
+      initial: {},
       submit: function (riot_tag) {
-        uR.storage.set("GAME_CONFIG",riot_tag.getData());
+        console.log(riot_tag.getData());
+        self.game.config.update(riot_tag.getData());
         riot_tag.unmount();
       },
     }
-    for (var key in opts.initial) { opts.schema.push(key); }
+    uR.forEach(game.config.keys,(key)=> { opts.initial[key] = game.config.get(key) });
     uR.alertElement("ur-form",opts);
   }
 </tw-scores>

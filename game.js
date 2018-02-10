@@ -1,9 +1,7 @@
 class Game extends uR.Object {
   constructor() {
     super()
-    this.config = uR.storage.getSettings("GAME_CONFIG",{
-      piece_increase: 1,
-    });
+    this.config = new uR.Storage("GAME_CONFIG");
     this.bindKeys();
     this.board = new Board({ game: this, });
     this.controller = new Controller({ parent: this });
@@ -64,14 +62,14 @@ class Game extends uR.Object {
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count += 1*this.config.piece_increase;
+      this.piece_count += (1*this.config.getDefault("piece_increase",1,"integer"));
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;
       while(enemy_count<this.piece_count) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new board.enemy_map[choice(['W'])]({
+          board.pieces.push(new board.enemy_map[choice(['W','WF'])]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;
