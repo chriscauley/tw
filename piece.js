@@ -40,7 +40,6 @@ class BasePiece extends CanvasObject {
     this.restat();
     this.ui_dirty = this.dirty = true;
   }
-  BOOM () { console.log("BOOM!"); return { turn: [this.dx,this.dy] } }//debug only
   applyMove(opts) {
     this.animations = [];
     opts = opts || { move: [0,0] } //null move
@@ -92,7 +91,7 @@ class BasePiece extends CanvasObject {
       if (!ease) { dirty.push(_ai); return }
       var draw_x = s*(a.x+a.dx*ease);
       var draw_y = s*(a.y+a.dy*ease);
-      var img = self.sprite.get(self.dx,self.dy,self.getState());
+      var img = self.sprite.get(self);
       c.ctx.drawImage(
         img.img,
         img.x, img.y,
@@ -119,6 +118,12 @@ class BasePiece extends CanvasObject {
   }
   flip() {
     return { turn: [-this.dx,-this.dy] }
+  }
+  forward() {
+    var square = this.look();
+    var piece = square && square.piece;
+    if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
+    if (square && !piece) { return { move: [this.dx,this.dy ] } }
   }
   doubleForward(dx,dy) {
     if (dx == undefined || dy == undefined) {
@@ -229,16 +234,13 @@ class BasePiece extends CanvasObject {
       _i++;
     }
   }
-  getState() {
-    return this.step%this.tasks.length;
-  }
   draw() {
     if (!this.current_square) { return }
     var c = this.board.canvas;
     var s = this.board.scale;
     this.dirty = this.doAnimations(c);
     if (this.dirty) { return }
-    var img = this.sprite.get(this.dx,this.dy,this.getState());
+    var img = this.sprite.get(this);
     c.ctx.drawImage(
       img.img,
       img.x, img.y,
@@ -365,12 +367,6 @@ class Walker extends BasePiece {
       [ this.doubleForward ]
     ];
   }
-  forward() {
-    var square = this.look();
-    var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
-    if (square && !piece) { return { move: [this.dx,this.dy ] } }
-  }
   getState() {
     return this.steps;
   }
@@ -379,10 +375,10 @@ class Walker extends BasePiece {
 class WallFlower extends BasePiece {
   constructor(opts) {
     super(opts);
-    this.sprite = uR.sprites['green-flame'];
+    this.sprite = uR.sprites['doop'];
     this.tasks = [
       [ this.forward,this.turnRandomly],
-      [ this.BOOM ],
+      [ this.doubleForward ],
     ];
   }
   turnRandomly() {
@@ -396,4 +392,8 @@ class WallFlower extends BasePiece {
     }
     return this._turn(d);
   }
+  getState() {
+    return this.steps;
+  }
 }
+

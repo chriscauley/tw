@@ -1,3 +1,13 @@
+uR.sprites = uR.sprites || {
+  config: new uR.Storage("sprites"),
+  get: function (color) {
+    return (uR.sprites[color] || new CircleSprite({
+      fillStyle: color,
+      name: color,
+      radius: 0.3
+    })).get();
+  }
+};
 class SpriteObject extends CanvasObject {
   constructor(opts) {
     super(opts);
@@ -8,22 +18,20 @@ class SpriteObject extends CanvasObject {
     })
     this.width = this.W*this.scale;
     this.height = this.H*this.scale;
-    uR.sprites = uR.sprites || {
-      get: function (color) {
-        return (uR.sprites[color] || new CircleSprite({
-          fillStyle: color,
-          name: color,
-          radius: 0.3
-        })).get();
-      }
-    };
     if (opts.name) { uR.sprites[opts.name] = this; }
     this.newCanvas({name: 'canvas'});
   }
-  get(dx,dy,y) {
+  get(obj) {
+    obj = obj || {};
+    var mult = 1;
+    var y = 0;
+    uR.forEach(obj.steps || [],function(s,i) {
+      y += s*mult;
+      mult = obj.intervals[i]+1;
+    });
     var x = 0, y = y || 0;
-    dx = dx || 0;
-    dy = dy || 0;
+    var dx = obj.dx || 0;
+    var dy = obj.dy || 0;
     if (dy < 0) { x = 0; } // up
     if (dx > 0) { x = 1; } // right
     if (dy > 0) { x = 2; } // down
@@ -143,22 +151,28 @@ class TwoCrystalSprite extends GradientSprite {
   constructor(opts) {
     opts.W = 4;
     opts.H = 8;
-    super(opts)
+    opts.r1 = opts.r1 || 1;
+    function _d(_name,value) {
+      return uR.sprites.config.getDefault(opts.name+"_"+_name,tinycolor(value).toHexString(),"color")
+    }
+    uR.extend(opts,{
+      c0: _d("color_0",opts.colors[0]),
+      c0_active: _d("color_0_active", "#FFFF88"),
+      c1: _d("color_1",opts.colors[1]),
+      c1_active: _d("color_1_active","#880000")
+    })
+    super(opts);
   }
   getCenter() {
     super.getCenter();
-    var c1 = tinycolor(this.colors[0]);
-    var c2 = tinycolor(this.colors[1]);
+    var c0 = tinycolor(this.c0);
+    var c1 = tinycolor(this.c1);
     var _d = -20;
     this.colors = [
-      [ c1.toRgbString() ],
-      [ c2.toRgbString(), c2.darken(_d).toRgbString(), c2.darken(-_d).toRgbString() ]
+      [ c0.toRgbString() ],
+      [ c1.toRgbString(), c1.darken(_d).toRgbString(), c1.darken(-_d).toRgbString() ]
     ];
     this.cdy = -this.radius/2;
-  }
-  get(dx,dy,state) {
-    var y = state[0]+state[1]*2;
-    return super.get(dx,dy,y);
   }
   draw() {
     this.canvas.clear();
@@ -168,23 +182,21 @@ class TwoCrystalSprite extends GradientSprite {
       height: this.scale,
       id: 'tmp'
     });
-    var red_a = "#FF8"
-    var red1 = "#800";
-    var red2 = tinycolor(red1).darken(20).toRgbString();
+    var red2 = tinycolor(this.c1_active).darken(20).toRgbString();
     for (var state_a=0;state_a<1+this.colors[0].length;state_a++) {
       for (var state_b=0;state_b<1+this.colors[1].length;state_b++) {
         var colors_a = this.colors[0].slice();
         var colors_b = this.colors[1].slice();
         var h = (colors_a.length+1)*state_b + state_a;
 
-        if (state_a) { colors_a[colors_a.length-state_a] = red_a; }
+        if (state_a) { colors_a[colors_a.length-state_a] = this.c0_active; }
         colors_a.unshift("transparent");
-        if (state_b == 3) { colors_b = ["#FF8",colors_b[1],red1]; }
-        else if (state_b) { colors_b[colors_b.length-state_b] = red1; }
-        this.drawGradient(this.cx,this.cy+h*this.scale,colors_a,{
+        if (state_b == 3) { colors_b = ["#FF8",colors_b[1],this.c1_active]; }
+        else if (state_b) { colors_b[colors_b.length-state_b] = this.c1_active; }
+        this.drawGradient(this.cx,this.cy+h*this.scale,colors_a,{ // outer ring
           radius: this.scale/2-2,
         });
-        this.drawGradient(this.cx,this.cy+h*this.scale-10,colors_b,);
+        this.drawGradient(this.cx,this.cy+h*this.scale-10,colors_b,); //inner ring
       }
     }
     this.doRotations();
@@ -192,8 +204,14 @@ class TwoCrystalSprite extends GradientSprite {
 }
 
 new TwoCrystalSprite({
-  colors: ['#261A26','#060d2a'],
+  colors: ['#f61A26','#060d2a'],
   name: 'bloob'
+});
+
+new TwoCrystalSprite({
+  colors: ['black','#cad'],
+  r1: 0.8,
+  name: 'doop'
 });
 
 new CircleSprite({

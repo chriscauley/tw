@@ -5,29 +5,38 @@
   <pre class="minimap">{ player.printMiniMap() }</pre>
   <div class="admin">
     <button onclick={ showSprites }>show sprites</button>
-    <button onclick={ editSettings }>settings</button>
+    <div each={ settings }>
+      <button onclick={ editSettings }>{ name }</button>
+    </div>
   </div>
 
   this.on("mount",function() {
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
+    this.settings = [
+      { name: "Game Config", config: this.game.config },
+      { name: "Sprite Colors", config: uR.sprites.config }
+    ]
+    this.update();
   });
   showSprites() {
     uR.alertElement('tw-sprites');
   }
-  editSettings() {
+  editSettings(e) {
     var self = this;
+    var name = e.item.name;
+    var config = e.item.config;
     var opts = {
-      schema: this.game.config.getSchema(),
+      schema: config.getSchema(),
       initial: {},
       submit: function (riot_tag) {
-        console.log(riot_tag.getData());
-        self.game.config.update(riot_tag.getData());
-        riot_tag.unmount();
+        config.update(riot_tag.getData());
       },
+      autosubmit: true,
+      onUnmount: function() { window.location.reload() }
     }
-    uR.forEach(game.config.keys,(key)=> { opts.initial[key] = game.config.get(key) });
+    uR.forEach(config.keys,(key)=> { opts.initial[key] = config.get(key) });
     uR.alertElement("ur-form",opts);
   }
 </tw-scores>
