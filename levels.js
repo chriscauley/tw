@@ -26,9 +26,25 @@ var LEVELS = [
    "000000000",
   ]
 ]
-
 class Level extends uR.Object {
+  constructor(opts) {
+    super(opts);
+    this.defaults(opts ||{},{
+      W:8,
+      H:5,
+    });
+  }
+}
 
+class RectRoom extends Level {
+  constructor(opts) {
+    super(opts);
+    this.H = this.H*1;
+    this.W = this.W*1;
+    this.level = [];
+    for (var y=0;y<this.H;y++) { this.level.push(uR.zeros(this.W)) }
+    this.level[Math.floor(this.H/2)][Math.floor(this.W/2)] = "s";
+  }
 }
 
 class DungeonLevel extends Level {
@@ -46,5 +62,10 @@ class DungeonLevel extends Level {
 
 LEVELS = [
   //(new DungeonLevel({style:'zelda'})).level,
-  LEVELS[2]
+  //LEVELS[2]
+  new RectRoom().level
 ]
+
+uR.level = {
+  RectRoom: RectRoom,
+}

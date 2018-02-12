@@ -72,7 +72,8 @@ class Game extends uR.Object {
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;
-      while(enemy_count<this.piece_count) {
+      var iter = 0;
+      while(enemy_count<this.piece_count && iter<100) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
           board.pieces.push(new board.enemy_map[choice(['W','WF'])]({
@@ -80,6 +81,7 @@ class Game extends uR.Object {
           }));
           enemy_count += 1;
         }
+        iter ++;
       }
     }
   }

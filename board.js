@@ -28,6 +28,8 @@ class Board extends CanvasObject {
     this.animation_frame = requestAnimationFrame(this.tick);
   }
   loadLevel(level_number) {
+    //var level = LEVELS[level_number];
+    var level = new RectRoom(this.game.config.getData()).level;
     delete this.squares;
     delete this.pieces;
     this.squares = [];
@@ -36,12 +38,12 @@ class Board extends CanvasObject {
     self.level_number = level_number;
     var start,exit;
     this.x_max = 0;
-    this.y_max = LEVELS[level_number].length;
-    uR.forEach(LEVELS[level_number],function(row,y) {
+    this.y_max = level.length;
+    uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(c,x) {
         self.squares[x] = self.squares[x] || [];
-        if (c == " ") { return }
+        if (c === " ") { return }
         var square = self.squares[x][y] = new Square({x:x,y:y,board:self});
         if (c == 's') { start = [x,y] }
         if (c == 'x') { exit = [x,y] }
