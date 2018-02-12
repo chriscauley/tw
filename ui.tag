@@ -14,17 +14,24 @@
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
-    this.settings = [
-      { name: "Game Config", config: this.game.config },
-      { name: "Sprite Colors", config: uR.sprites.config }
-    ]
     this.update();
+  });
+  this.on("update",function() {
+    this.settings = [
+      { name: "Game Config", config: this.opts.game.config },
+    ]
+    for (let key of uR.sprites.keys) {
+      var sprite = uR.sprites[key];
+      if (!sprite.config.keys.length) { continue }
+      sprite.draw();
+      this.settings.push({ name: "Sprite - " + sprite.name, config: sprite.config });
+    }
   });
   showSprites() {
     uR.alertElement('tw-sprites');
   }
   editSettings(e) {
-    var self = this;
+    var self = this,dirty;
     var name = e.item.name;
     var config = e.item.config;
     var opts = {
@@ -32,9 +39,10 @@
       initial: {},
       submit: function (riot_tag) {
         config.update(riot_tag.getData());
+        dirty = true;
       },
       autosubmit: true,
-      onUnmount: function() { window.location.reload() }
+      onUnmount: function() { dirty && window.location.reload() }
     }
     uR.forEach(config.keys,(key)=> { opts.initial[key] = config.get(key) });
     uR.alertElement("ur-form",opts);
@@ -62,11 +70,8 @@
     </div>
   </div>
   this.on("mount",function() {
-    var keys = [];
-    for (var key in uR.sprites) { keys.push(key) }
-    keys.sort();
     this.sprites = [];
-    for (var i=0;i<keys.length;i++) { this.sprites.push(uR.sprites[keys[i]]) }
+    for (let key of uR.sprites.keys) { uR.sprites[key].draw(); this.sprites.push(uR.sprites[key]); }
     this.update();
   });
 </tw-sprites>
