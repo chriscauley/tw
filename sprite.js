@@ -1,5 +1,5 @@
 uR.sprites = uR.sprites || {
-  config: new uR.Storage("sprites"),
+  keys: new Set(),
   get: function (color) {
     return (uR.sprites[color] || new CircleSprite({
       fillStyle: color,
@@ -15,21 +15,30 @@ class SpriteObject extends CanvasObject {
       scale: 128,
       W: 1,
       H: 1,
-    })
+    });
+    this.dirty = true;
     this.width = this.W*this.scale;
     this.height = this.H*this.scale;
-    if (opts.name) { uR.sprites[opts.name] = this; }
+    if (opts.name) {
+      this.config = new uR.Storage("_sprites_"+opts.name);
+      uR.sprites[opts.name] = this;
+      uR.sprites.keys.add(opts.name);
+    }
     this.newCanvas({name: 'canvas'});
   }
-  get(obj) {
-    obj = obj || {};
-    var mult = 1;
+  _getY(obj) {
     var y = 0;
+    var mult = 1;
     uR.forEach(obj.steps || [],function(s,i) {
       y += s*mult;
       mult = obj.intervals[i]+1;
     });
-    var x = 0, y = y || 0;
+    return y;
+  }
+  get(obj) {
+    this.draw();
+    obj = obj || {};
+    var x = 0, y = this._getY(obj) || 0;
     var dx = obj.dx || 0;
     var dy = obj.dy || 0;
     if (dy < 0) { x = 0; } // up
@@ -48,6 +57,13 @@ class SpriteObject extends CanvasObject {
     this.cx = this.cy = this.scale/2;
     this.cdx = this.cdy = 0;
   }
+  draw() {
+    if (!this.dirty) { return; }
+    this.getCenter();
+    this.canvas.clear();
+    this._draw();
+    this.dirty = false;
+  }
 }
 
 class CircleSprite extends SpriteObject {
@@ -58,11 +74,8 @@ class CircleSprite extends SpriteObject {
     })
     super(opts);
     this.radius = this.scale*this.radius;
-    this.getCenter();
-    this.draw();
   }
-  draw() {
-    this.canvas.clear();
+  _draw() {
     var ctx = this.canvas.ctx;
     ctx.fillStyle = this.fillStyle;
     ctx.strokeStyle = this.strokeStyle;
@@ -75,7 +88,7 @@ class CircleSprite extends SpriteObject {
 }
 
 class GradientSprite extends CircleSprite {
-  draw() {
+  _draw() {
     this.canvas.clear();
     typeof this.colors[0] == "string" && this.drawGradient(this.cx,this.cy,this.colors);
   }
@@ -129,8 +142,7 @@ class FlameSprite extends GradientSprite {
     super.getCenter();
     this.cdy = -this.radius/2;
   }
-  draw() {
-    super.draw();
+  _draw() {
     this.newCanvas({
       name: 'temp_canvas',
       width: this.scale,
@@ -142,8 +154,16 @@ class FlameSprite extends GradientSprite {
       this.attack_colors.pop();
       this.attack_colors.push("#800");
     }
+    this.drawGradient(this.cx,this.cy,this.colors);
     this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
     this.doRotations()
+  }
+  _getY(obj) {
+    var _si = obj.steps.length;
+    while (_si--) {
+      if (obj.steps[_si] < obj.intervals[_si]) { return 0; }
+    }
+    return 1;
   }
 }
 
@@ -152,19 +172,17 @@ class TwoCrystalSprite extends GradientSprite {
     opts.W = 4;
     opts.H = 8;
     opts.r1 = opts.r1 || 1;
-    function _d(_name,value) {
-      return uR.sprites.config.getDefault(opts.name+"_"+_name,tinycolor(value).toHexString(),"color")
-    }
-    uR.extend(opts,{
-      c0: _d("color_0",opts.colors[0]),
-      c0_active: _d("color_0_active", "#FFFF88"),
-      c1: _d("color_1",opts.colors[1]),
-      c1_active: _d("color_1_active","#880000")
-    })
     super(opts);
   }
   getCenter() {
     super.getCenter();
+    this.config.setSchema([
+      { name: 'c0', _default: this.colors[0], type: "color" },
+      { name: 'c0_active', _default: "#FFFF88", type: "color" },
+      { name: 'c1', _default: this.colors[1], type: "color" },
+      { name: 'c1_active', _default: "#880000", type: "color" },
+    ]);
+    uR.extend(this,this.config.getData());
     var c0 = tinycolor(this.c0);
     var c1 = tinycolor(this.c1);
     var _d = -20;
@@ -174,8 +192,7 @@ class TwoCrystalSprite extends GradientSprite {
     ];
     this.cdy = -this.radius/2;
   }
-  draw() {
-    this.canvas.clear();
+  _draw() {
     this.newCanvas({
       name: 'temp_canvas',
       width: this.scale,
