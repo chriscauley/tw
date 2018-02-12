@@ -11,22 +11,34 @@ var babel = require('gulp-babel');
 var PROJECT_NAME = "tw";
 
 var JS_FILES = [
-  "pallet.js",
-  "canvas.js",
-  "font.js",
-  "item.js",
 
+  "dungeon/const.js",
+  "dungeon/templates.js",
+  "dungeon/utils/index.js",
+  "dungeon/utils/array2d.js",
+  "dungeon/utils/random.js",
+  "dungeon/utils/rectangle.js",
+  "dungeon/pieces/piece.js",
+  "dungeon/pieces/room.js",
+  "dungeon/pieces/corridor.js",
+  "dungeon/generators/generator.js",
+  "dungeon/generators/dungeon.js",
+  "pallet.js",
+  "font.js",
   "controller.js",
-  "board.js",
-  "square.js",
+  "canvas.js",
+  "sprite.js",
+  "item.js",
   "floor.js",
-  "levels.js",
-  "map-sprite.js",
   "piece.js",
   "player.js",
+  "square.js",
+  "board.js",
   "game.js",
+  "levels.js",
   "main.js",
   "ui.tag",
+  "map-sprite.tag",
 ];
 
 gulp.task('build-js', function () {
