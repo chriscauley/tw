@@ -31,21 +31,7 @@
     uR.alertElement('tw-sprites');
   }
   editSettings(e) {
-    var self = this,dirty;
-    var name = e.item.name;
-    var config = e.item.config;
-    var opts = {
-      schema: config.getSchema(),
-      initial: {},
-      submit: function (riot_tag) {
-        config.update(riot_tag.getData());
-        dirty = true;
-      },
-      autosubmit: true,
-      onUnmount: function() { dirty && window.location.reload() }
-    }
-    uR.forEach(config.keys,(key)=> { opts.initial[key] = config.get(key) });
-    uR.alertElement("ur-form",opts);
+    e.item.config.openEditor();
   }
 </tw-scores>
 
