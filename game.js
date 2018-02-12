@@ -1,7 +1,13 @@
 class Game extends uR.Object {
   constructor() {
-    super()
+    super();
     this.config = new uR.Storage("GAME_CONFIG");
+    this.config.setSchema([
+      { name: "W", type: "integer", value: 5 },
+      { name: "H", type: "integer", value: 5 },
+      { name: "piece_increase", type: "integer", value: 1 },
+    ]);
+    uR.extend(this,this.config.getData());
     this.bindKeys();
     this.board = new Board({ game: this, });
     this.controller = new Controller({ parent: this });
@@ -62,7 +68,7 @@ class Game extends uR.Object {
   }
   onPiecePop(piece) {
     if (!this.board.pieces.length) {
-      this.piece_count += (1*this.config.getDefault("piece_increase",1,"integer"));
+      this.piece_count += 1*this.config.get('piece_increase');
       var enemy_count = 0;
       var board = this.board;
       var choice = uR.random.choice;
