@@ -11,7 +11,7 @@ class Moves extends CanvasObject {
     if (this.dx && Math.sign(dx) == this.dx) { return this.forward(); }
     if (this.dy && Math.sign(dy) == this.dy) { return this.forward(); }
     if (Math.abs(dx) < Math.abs(dy)) {
-      if ( !this.dy ) { console.log(1); return { move: [0,Math.sign(dy)] } }
+      if ( !this.dy ) { return { move: [0,Math.sign(dy)] } }
       if ( Math.sign(dy) != this.dy ) { return this.flip(); } // facing away from enemy
       return this.forward();
     } else {

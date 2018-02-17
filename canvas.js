@@ -20,11 +20,13 @@ class CanvasObject extends uR.Object {
       }
       canvas.ctx.clearRect(x,y,w,h);
     }
-    canvas.circle = function circle(color,x,y,r) {
+    canvas.circle = function circle(x,y,r,start,end) {
+      start = start || 0;
+      end = (end==undefined)?2*Math.PI:end;
       var ctx = canvas.ctx;
       ctx.beginPath();
-      ctx.fillStyle = color;
-      ctx.arc(x,y,r,0,2*Math.PI)
+      ctx.moveTo(x,y);
+      ctx.arc(x,y,r,start,end)
       ctx.fill();
     }
     if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }

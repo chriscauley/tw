@@ -53,7 +53,6 @@ class SpriteObject extends CanvasObject {
     if (dx < 0) { x = 3; } // left
     x = Math.min(x,this.W-1);
     y = Math.min(y,this.H-1);
-    if (obj.following) { y += this.H/2; }
     return {
       img: this.canvas,
       x: x*this.scale, y: y*this.scale,
@@ -225,6 +224,50 @@ class TwoCrystalSprite extends GradientSprite {
   }
 }
 
+class PacSprite extends GradientSprite {
+  constructor(opts) {
+    opts.H=3;
+    super(opts);
+  }
+  _getY(obj) {
+    if (!obj.following) { return 0; }
+    return obj.steps[0]+1;
+  }
+  _draw() {
+    super._draw();
+    var ctx = this.canvas.ctx;
+    var c = this.canvas
+    var mouth_r = this.radius;
+    var eye = {
+      x: 1/4,
+      y: 1/2,
+      w: 1/20,
+      h: 1/6,
+    };
+    function mouth(y,open) {
+      c.circle(s/2,(y+1/2)*s,mouth_r,0-Math.PI/2,Math.PI/(open?4:12)-Math.PI/2)
+    }
+    var s = this.scale;
+    ctx.drawImage(this.canvas,0,this.scale)
+    ctx.drawImage(this.canvas,0,this.scale*2);
+    ctx.fillStyle = "black";
+    mouth(0);
+    mouth(1);
+    ctx.fillRect(
+      eye.x*s,eye.y*s,
+      eye.w*s,eye.h*s,
+    )
+    eye.y += 1;
+    eye.r = eye.h/2;
+    eye.x += eye.r;
+    ctx.fillStyle = "white";
+    c.circle(eye.x*s,eye.y*s, eye.r*s);
+    c.circle(eye.x*s,(eye.y+1)*s, eye.r*s);
+    ctx.fillStyle = "red";
+    mouth(2,1);
+  }
+}
+
 class GradientWithEyes extends FlameSprite {
   constructor(opts) {
     opts.H = 4;
@@ -260,7 +303,7 @@ class GradientWithEyes extends FlameSprite {
   }
 }
 
-new GradientWithEyes({
+new PacSprite({
   colors: ['#383','green'],
   name:'googly-eyes'
 })
