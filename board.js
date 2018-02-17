@@ -64,6 +64,7 @@ class Board extends CanvasObject {
       x: start[0],
       y: start[1],
     });
+    this.pieces.push(this.game.player);
     this.game.player.x = start[0];
     this.game.player.y = start[1];
     this.game.player.resetMiniMap();
@@ -104,9 +105,6 @@ class Board extends CanvasObject {
     this.canvas.clear()
     this.canvas.ctx.drawImage(this.floor_canvas,0,0);
     this.canvas.ctx.translate(-offset_x,-offset_y);
-    uR.forEach(this.pieces,function(p){ p.draw() })
-    this.game.player.drawMoves();
-    this.game.player.draw();
     uR.forEach(this.pieces,function(p){ p.draw() })
     uR.forEach(this.pieces,function(p){ p.drawUI(); })
     this.game.player.drawUI();

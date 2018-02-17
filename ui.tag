@@ -51,7 +51,9 @@
   <div class={ theme.outer }>
     <div class={ theme.content }>
       <div each={ sprites }>
+        <h2>{ name }</h2>
         <img src={ canvas.toDataURL() } />
+        <hr/>
       </div>
     </div>
   </div>

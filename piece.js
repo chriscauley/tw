@@ -21,6 +21,7 @@ class BasePiece extends Moves {
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
       intervals: [ 1, 3 ], // how often piece moves, zero indexed
+      sight: 3, // how far it can see
     });
     this.animations = [];
     this.newCanvas({
@@ -341,3 +342,17 @@ class WallFlower extends BasePiece {
   }
 }
 
+class GooglyEyes extends BasePiece {
+  constructor(opts) {
+    opts.intervals = [1];
+    super(opts);
+    this.sprite = uR.sprites['googly-eyes'];
+    this.tasks = [
+      [this.follow,this.findEnemy],
+    ]
+  }
+  getState() {
+    console.log([this.steps[0],1*!!this.following]);
+    return [this.steps[0],1*!!this.following];
+  }
+}

@@ -4,7 +4,7 @@ uR.sprites = uR.sprites || {
     return (uR.sprites[color] || new CircleSprite({
       fillStyle: color,
       name: color,
-      radius: 0.3
+      radius: 0.5
     })).get();
   }
 };
@@ -25,6 +25,12 @@ class SpriteObject extends CanvasObject {
       uR.sprites.keys.add(opts.name);
     }
     this.newCanvas({name: 'canvas'});
+    this.newCanvas({
+      name: 'temp_canvas',
+      width: this.scale,
+      height: this.scale,
+      id: 'tmp'
+    });
   }
   _getY(obj) {
     var y = 0;
@@ -47,6 +53,7 @@ class SpriteObject extends CanvasObject {
     if (dx < 0) { x = 3; } // left
     x = Math.min(x,this.W-1);
     y = Math.min(y,this.H-1);
+    if (obj.following) { y += this.H/2; }
     return {
       img: this.canvas,
       x: x*this.scale, y: y*this.scale,
@@ -85,9 +92,20 @@ class CircleSprite extends SpriteObject {
     ctx.fill();
     this.strokeStyle && ctx.stroke();
   }
+  draw() {
+    if (!this.dirty) { return }
+    super.draw();
+    this.doRotations();
+  }
+  doRotations() {}
 }
 
 class GradientSprite extends CircleSprite {
+  constructor(opts) {
+    opts.W = opts.W || 4;
+    opts.H = opts.H || 2;
+    super(opts);
+  }
   _draw() {
     this.canvas.clear();
     typeof this.colors[0] == "string" && this.drawGradient(this.cx,this.cy,this.colors);
@@ -133,11 +151,6 @@ class GradientSprite extends CircleSprite {
 }
 
 class FlameSprite extends GradientSprite {
-  constructor(opts) {
-    opts.W = 4;
-    opts.H = 2;
-    super(opts);
-  }
   getCenter() {
     super.getCenter();
     this.cdy = -this.radius/2;
@@ -156,7 +169,6 @@ class FlameSprite extends GradientSprite {
     }
     this.drawGradient(this.cx,this.cy,this.colors);
     this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
-    this.doRotations()
   }
   _getY(obj) {
     var _si = obj.steps.length;
@@ -193,12 +205,6 @@ class TwoCrystalSprite extends GradientSprite {
     this.cdy = -this.radius/2;
   }
   _draw() {
-    this.newCanvas({
-      name: 'temp_canvas',
-      width: this.scale,
-      height: this.scale,
-      id: 'tmp'
-    });
     var red2 = tinycolor(this.c1_active).darken(20).toRgbString();
     for (var state_a=0;state_a<1+this.colors[0].length;state_a++) {
       for (var state_b=0;state_b<1+this.colors[1].length;state_b++) {
@@ -216,9 +222,48 @@ class TwoCrystalSprite extends GradientSprite {
         this.drawGradient(this.cx,this.cy+h*this.scale-10,colors_b,); //inner ring
       }
     }
-    this.doRotations();
   }
 }
+
+class GradientWithEyes extends FlameSprite {
+  constructor(opts) {
+    opts.H = 4;
+    super(opts);
+  }
+  _draw() {
+    super._draw();
+    var ctx = this.canvas.ctx;
+    ctx.drawImage(
+      this.canvas,
+      0,this.scale*this.H/2
+    )
+    for (var y=0;y<this.H;y++) {
+      var color = (y<this.H/2)?'gray':'black';
+      var img = uR.sprites.get(color);
+      var s = this.scale;
+      var d = s/3; // diameter
+      ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        s/2,y*s,
+        d,d
+      )
+      ctx.drawImage(
+        img.img,
+        img.x, img.y,
+        img.w, img.h,
+        s/2-d,y*s,
+        d,d
+      )
+    }
+  }
+}
+
+new GradientWithEyes({
+  colors: ['#383','green'],
+  name:'googly-eyes'
+})
 
 new TwoCrystalSprite({
   colors: ['#f61A26','#060d2a'],
