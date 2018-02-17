@@ -6,6 +6,7 @@ class Game extends uR.Object {
       { name: "W", type: "integer", value: 5 },
       { name: "H", type: "integer", value: 5 },
       { name: "piece_increase", type: "integer", value: 1 },
+      { name: "active_pieces", choices: ['c','v','w','wf','ge'], value: ['GE'], type: "checkbox" },
     ]);
     uR.extend(this,this.config.getData());
     this.bindKeys();
@@ -67,7 +68,7 @@ class Game extends uR.Object {
     this.player.play();
   }
   onPiecePop(piece) {
-    if (!this.board.pieces.length) {
+    if (this.board.pieces.length == 1) { // only the player
       this.piece_count += 1*this.config.get('piece_increase');
       var enemy_count = 0;
       var board = this.board;
@@ -76,7 +77,7 @@ class Game extends uR.Object {
       while(enemy_count<this.piece_count && iter<100) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new board.enemy_map[choice(['W','WF'])]({
+          board.pieces.push(new board.enemy_map[choice(this.config.get('active_pieces'))]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;

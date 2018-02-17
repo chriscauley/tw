@@ -5,10 +5,11 @@ class Board extends CanvasObject {
       W: 10,
       H: 10,
       enemy_map: {
-        C: CountDown,
-        B: Blob,
-        W: Walker,
-        WF: WallFlower,
+        c: CountDown,
+        b: Blob,
+        w: Walker,
+        wf: WallFlower,
+        ge: GooglyEyes,
       }
     });
     this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
