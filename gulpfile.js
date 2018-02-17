@@ -30,6 +30,7 @@ var JS_FILES = [
   "sprite.js",
   "item.js",
   "floor.js",
+  "moves.js",
   "piece.js",
   "player.js",
   "square.js",

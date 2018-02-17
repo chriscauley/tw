@@ -1,4 +1,4 @@
-class BasePiece extends CanvasObject {
+class BasePiece extends Moves {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -116,53 +116,6 @@ class BasePiece extends CanvasObject {
     uR.forEach(this.steps,(s,i) => self.steps[i]++);
     self.ui_dirty = true;
   }
-  flip() {
-    return { turn: [-this.dx,-this.dy] }
-  }
-  forward() {
-    var square = this.look();
-    var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
-    if (square && !piece) { return { move: [this.dx,this.dy ] } }
-  }
-  doubleForward(dx,dy) {
-    if (dx == undefined || dy == undefined) {
-      dx = this.dx; dy = this.dy;
-    }
-    var s1 = this.look(dx,dy);
-    var s2 = this.look(dx*2,dy*2);
-    if (!s1) { return } //against wall
-    if (s1.piece) {
-      if (s1.piece.team == this.team) { return } // can't attack team mate
-      return { damage: [dx,dy,this.damage+2] }
-    }
-    if (!s2) { return { move: [dx,dy] } } // one away from wall
-    if (s2.piece) {
-      if (s2.piece.team == this.team) { return }
-      return { move: [dx,dy], damage: [dx*2,dy*2,this.damage] }
-    }
-    return { move: [dx*2,dy*2] }
-  }
-  _turn(direction) {
-    // left and right are [dx,dy] to make it go in that direction
-    if (this.dx && this.dy) {
-      throw "Turning not implementd for diagonals!";
-    }
-    return {turn: (direction == "left")?[this.dy,-this.dx]:[-this.dy,this.dx] };
-  }
-  look(dx,dy) { //#! TODO: distance
-    if (dx === undefined) { return this.look(this.dx,this.dy); } // no arguments means look forward
-    if (Array.isArray(dx)) { [dx,dy] = dx } // array means it's [dx,dy]
-
-    // if dx is string, look in the direction relative to piece
-    if (dx == "left" || dx == "right") {
-      return this.look(this._turn(dx));
-    }
-    if (dx == "back") { return this.look(-this.dx,-this.dy); }
-
-    // two arguments returns the square
-    return this.board.getSquare(this.x+dx,this.y+dy);
-  }
   stamp(x0,y0,dx,img) {
     img = uR.sprites.get(img);
     dx++;
@@ -266,7 +219,6 @@ class BasePiece extends CanvasObject {
       c.ctx.fillText(text.display || "", this.cx,this.cy );
     }
   }
-  wait() {}
   takeDamage(damage) {
     this.ui_dirty = true;
     this.health -= damage;
@@ -320,9 +272,6 @@ class CountDown extends BasePiece {
     this.strokeStyle = "white";
     this.tasks = [this.countdown];
   }
-  countdown() {
-    this.points = this.step%4+1;
-  }
   getText() { return this.points }
   movedOnTo() {
     this.board.game.player.addScore(this.points);
@@ -349,11 +298,6 @@ class Blob extends BasePiece {
       this.bounce,
     ];
     this.sprite = uR.sprites['blue-blob'];
-  }
-  bounce() {
-    var square = this.look();
-    if (square && square.piece) { return this.attack(square.piece); }
-    //this.move(0,this.dy);
   }
 }
 
