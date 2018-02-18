@@ -20,7 +20,7 @@ class SpriteObject extends CanvasObject {
     this.width = this.W*this.scale;
     this.height = this.H*this.scale;
     if (opts.name) {
-      this.config = new uR.Storage("_sprites_"+opts.name);
+      this.config = new uR.Config("_sprites_"+opts.name);
       uR.sprites[opts.name] = this;
       uR.sprites.keys.add(opts.name);
     }

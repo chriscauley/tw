@@ -1,11 +1,12 @@
 class Game extends uR.Object {
   constructor() {
     super();
-    this.config = new uR.Storage("GAME_CONFIG");
+    this.config = new uR.Config("GAME_CONFIG");
     this.config.setSchema([
       { name: "W", type: "integer", value: 5 },
       { name: "H", type: "integer", value: 5 },
       { name: "piece_increase", type: "integer", value: 1 },
+      { name: "show_intervals", type: "boolean", value: false },
       { name: "active_pieces", choices: ['c','v','w','wf','ge'], value: ['GE'], type: "checkbox" },
     ]);
     uR.extend(this,this.config.getData());

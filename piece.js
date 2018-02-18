@@ -138,7 +138,8 @@ class BasePiece extends Moves {
     this.stamp(0,0,Math.max(this.health,0),'red');
 
     var _i = this.intervals.length;
-    while (_i--) {
+    var show_intervals = this.board.game && this.board.game.config.get("show_intervals");
+    while (show_intervals && _i--) {
       var empty = this.intervals[_i];
       var y = this.s*(3-_i);
       if (empty) {
