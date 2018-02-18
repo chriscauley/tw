@@ -1,6 +1,6 @@
 class Moves extends CanvasObject {
-  flip() {
-    return { turn: [-this.dx,-this.dy] }
+  flip(move) {
+    return { turn: [-this.dx,-this.dy], move: move && [-this.dx,-this.dy] }
   }
   follow() {
     if (!this.following) { return }
@@ -11,14 +11,14 @@ class Moves extends CanvasObject {
     if (this.dx && Math.sign(dx) == this.dx) { return this.forward(); }
     if (this.dy && Math.sign(dy) == this.dy) { return this.forward(); }
     if (Math.abs(dx) < Math.abs(dy)) {
-      if ( !this.dy ) { return { move: [0,Math.sign(dy)] } }
-      if ( Math.sign(dy) != this.dy ) { return this.flip(); } // facing away from enemy
-      return this.forward();
+      if ( !this.dy ) { move = { turn: [0,Math.sign(dy)] } }
+      else if ( Math.sign(dy) != this.dy ) { move = this.flip(); } // facing away from enemy
     } else {
-      if ( !this.dx ) { return { move: [Math.sign(dx),0] } }
-      if ( Math.sign(dx) != this.dx ) { return this.flip(); } // facing away from enemy
-      return this.forward();
+      if ( !this.dx ) { move = { turn: [Math.sign(dx),0] } }
+      else if ( Math.sign(dx) != this.dx ) { move = this.flip(); } // facing away from enemy
     }
+    this.applyMove(move);
+    return this.forward();
   }
   forward() {
     var square = this.look();

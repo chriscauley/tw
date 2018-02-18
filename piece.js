@@ -313,9 +313,6 @@ class Walker extends BasePiece {
       [ this.doubleForward ]
     ];
   }
-  getState() {
-    return this.steps;
-  }
 }
 
 class WallFlower extends BasePiece {
@@ -338,9 +335,6 @@ class WallFlower extends BasePiece {
     }
     return this._turn(d);
   }
-  getState() {
-    return this.steps;
-  }
 }
 
 class GooglyEyes extends BasePiece {
@@ -351,9 +345,5 @@ class GooglyEyes extends BasePiece {
     this.tasks = [
       [this.follow,this.findEnemy],
     ]
-  }
-  getState() {
-    console.log([this.steps[0],1*!!this.following]);
-    return [this.steps[0],1*!!this.following];
   }
 }
