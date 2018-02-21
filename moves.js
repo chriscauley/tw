@@ -17,8 +17,8 @@ class Moves extends CanvasObject {
       if ( !this.dx ) { move = { turn: [Math.sign(dx),0] } }
       else if ( Math.sign(dx) != this.dx ) { move = this.flip(); } // facing away from enemy
     }
-    this.applyMove(move);
-    return this.forward();
+    move.chain = this.forward;
+    return move;
   }
   forward() {
     var square = this.look();

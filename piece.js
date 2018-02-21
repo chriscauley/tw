@@ -70,6 +70,7 @@ class BasePiece extends Moves {
     if (dx || dy ) { // anything happened
       [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)]
       this.dirty = true;
+      opts.chain && this.applyMove(opts.chain.bind(this)());
       return true;
     }
   }

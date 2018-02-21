@@ -3,7 +3,6 @@ var gulp = require('gulp');
 var concat = require("gulp-concat");
 var less = require('gulp-less');
 var sourcemaps = require("gulp-sourcemaps");
-var through = require('through2');
 var uglify = require('gulp-uglify');
 var util = require('gulp-util');
 var babel = require('gulp-babel');
