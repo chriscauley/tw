@@ -1,7 +1,22 @@
-uR.ready(function() {
-  //window.spritemapper = new SpriteMapper();
-  //(new Sprite()).objects.all().forEach(function(s) { s.render() })
-});
+uR.openSpriteMapper = function() {
+  window.spritemapper = new SpriteMapper();
+  (new Sprite()).objects.all().forEach(function(s) { s.render() })
+};
+
+<tw-sprite-mapper>
+  <div></div>
+</tw-sprite-mapper>
+
+class SpriteSheet extends uR.db.Model {
+  constructor(opts) {
+    opts = opts || {};
+    opts.app_label = "paint";
+    opts.schema = [
+      { name: 'path' },
+    ]
+    super(opts);
+  }
+}
 
 class Sprite extends uR.db.Model {
   constructor(opts) {
@@ -31,13 +46,21 @@ class Sprite extends uR.db.Model {
   }
 }
 
+uR.db.register("sprite",[Sprite,SpriteSheet]);
+
+uR.ready(function() {
+  uR.forEach(['16_colors_14.png','zelda/underworld.png'],function(path) {
+    SpriteSheet.objects.getOrCreate({ path: path });
+  });
+});
+
 class SpriteMapper extends CanvasObject {
   constructor(opts) {
     super();
     var self = this;
     this.defaults(opts,{
-      bg:"sprites/zelda/underworld.png",
-      scale: 16,
+      bg:"_sprites/16_colors_14.png",
+      scale: 32,
       spacer: 8,
       offset: 8,
     });
@@ -127,7 +150,7 @@ class SpriteMapper extends CanvasObject {
     
     this.zoomcanvas.ctx.drawImage(
       this.canvas,
-      this.hover_px-this.spacer, this.hover_py-this.spacer,// sx,sy
+                                    this.hover_px-this.spacer, this.hover_py-this.spacer,// sx,sy
       this.scale+this.spacer*2, this.scale+this.spacer*2,// sw,sh
       0,0, // dx,dy
       this.zoomcanvas.width,this.zoomcanvas.height// dw,dh
