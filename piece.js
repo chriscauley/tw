@@ -31,7 +31,7 @@ class BasePiece extends Moves {
     });
 
     this.max_health = this.health;
-    this.steps = uR.zeros(this.intervals);
+    this.steps = uR.math.zeros(this.intervals);
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
