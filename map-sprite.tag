@@ -1,10 +1,21 @@
-uR.openSpriteMapper = function() {
-  window.spritemapper = new SpriteMapper();
-  (new Sprite()).objects.all().forEach(function(s) { s.render() })
-};
-
 <tw-sprite-mapper>
-  <div></div>
+  <div class={ theme.outer }>
+    <div class={ theme.content } id="sprite-mapper-inner" style="min-height: 750px;"></div>
+  </div>
+
+  <script>
+  this.on("mount",function() {
+    this.sheet = uR.db.sprite.SpriteSheet.objects.get(this.opts.matches[1]);
+    this.update();
+    this.schema = [
+      { name: "W", type: "int" },
+      { name: "H", type: "int" },
+    ];
+    new SpriteMapper({
+      bg: "_sprites/"+this.sheet.path,
+      parent: this.root.querySelector("#sprite-mapper-inner"),
+    });
+  });
 </tw-sprite-mapper>
 
 class SpriteSheet extends uR.db.Model {
@@ -13,9 +24,14 @@ class SpriteSheet extends uR.db.Model {
     opts.app_label = "paint";
     opts.schema = [
       { name: 'path' },
+      { name: "background-color", type: "color" },
     ]
     super(opts);
   }
+  __str() {
+    return "SS: "+ this.path
+  }
+  getAdminExtra() { return this.id && `<a href="#!/sprite-mapper/${this.id}/">Open in Sprite Mapper</a>` }
 }
 
 class Sprite extends uR.db.Model {
@@ -23,22 +39,25 @@ class Sprite extends uR.db.Model {
     opts = opts || {};
     opts.app_label = "paint";
     opts.schema = [
+      'name',
       { name: 'width', type: 'int' },
       { name: 'height', type: 'int' },
+      { name: 'x', type: 'int' },
+      { name: 'y', type: 'int' },
       "dataURL",
-      { name: "group", },
+      { name: "spritesheet", type: 'fk', to: 'sprite.SpriteSheet' },
     ];
     super(opts);
   }
-  render() {
+  render(parent) {
     uR.newElement(
       'tw-sprite',
       {
-        parent: document.getElementById('card-box'),
+        parent: parent,
         innerHTML: uR.newElement('img',{
           src: this.dataURL,
-          width: this.width*10,
-          height: this.height*10
+          width: this.width*2,
+          height: this.height*2
         }).outerHTML
       },
       {obj:this}
@@ -47,6 +66,10 @@ class Sprite extends uR.db.Model {
 }
 
 uR.db.register("sprite",[Sprite,SpriteSheet]);
+
+uR.router.add({
+  "#!/sprite-mapper/(\\d+)/": uR.router.routeElement('tw-sprite-mapper')
+});
 
 uR.ready(function() {
   uR.forEach(['16_colors_14.png','zelda/underworld.png'],function(path) {
@@ -63,6 +86,7 @@ class SpriteMapper extends CanvasObject {
       scale: 32,
       spacer: 8,
       offset: 8,
+      parent: uR.REQUIRED,
     });
 
     this.loadImage(this.bg,function(a,b) {
@@ -83,9 +107,12 @@ class SpriteMapper extends CanvasObject {
   buildCanvases(img) {
     this.newCanvas({
       name: 'canvas',
-      width: img.width,
-      height: img.height,
-      parent: document.getElementById("game"),
+      width: Math.min(500,img.width),
+      height: Math.min(500,img.height),
+      x_max: img.width,
+      y_max: img.height,
+      parent: this.parent,
+      bg: img,
     })
     this.scalezoom = 10;
     var zw = this.scale*this.scalezoom;
@@ -94,13 +121,13 @@ class SpriteMapper extends CanvasObject {
       name: 'zoomcanvas',
       width: zw,
       height: zh,
-      parent: document.getElementById("game"),
+      parent: this.parent,
     });
     this.newCanvas({
       name: 'clickcanvas',
       width: this.scale,
       height: this.scale,
-      parent: document.getElementById("game")
+      parent: this.parent,
     });
   }
   loadSprites() {
@@ -118,7 +145,7 @@ class SpriteMapper extends CanvasObject {
       height: this.scale,
     });
     s.save();
-    s.render();
+    s.render(this.parent);
   }
   mousedown(e) {
     this.addSprite();
@@ -131,7 +158,6 @@ class SpriteMapper extends CanvasObject {
   draw() {
     var ctx = this.canvas.ctx;
     this.canvas.clear();
-    ctx.drawImage(this.bg_img,0,0);
     var s = this.scale;
     // for (var x=0;x<this.w;x++) {
     //   for (var y=0;y<this.h;y++) {
@@ -150,7 +176,7 @@ class SpriteMapper extends CanvasObject {
     
     this.zoomcanvas.ctx.drawImage(
       this.canvas,
-                                    this.hover_px-this.spacer, this.hover_py-this.spacer,// sx,sy
+      this.hover_px-this.spacer, this.hover_py-this.spacer,// sx,sy
       this.scale+this.spacer*2, this.scale+this.spacer*2,// sw,sh
       0,0, // dx,dy
       this.zoomcanvas.width,this.zoomcanvas.height// dw,dh
