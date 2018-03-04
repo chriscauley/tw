@@ -10,6 +10,8 @@ class CanvasObject extends uR.Object {
       height: this.height,
     });
     var canvas = uR.newElement("canvas",attrs);
+    canvas.scrollX = 0;
+    canvas.scrollY = 0
     canvas.ctx = canvas.getContext("2d");
     canvas.ctx.imageSmoothingEnabled= false;
     canvas.clear = function clear(x,y,w,h) {
@@ -19,6 +21,16 @@ class CanvasObject extends uR.Object {
         h = canvas.height+2;
       }
       canvas.ctx.clearRect(x,y,w,h);
+      if (attrs.bg) {
+        canvas.ctx.drawImage(
+          attrs.bg, //image
+          canvas.scrollX,canvas.scrollY, //sx, sy
+          canvas.width,canvas.height, //sw,sh
+          0,0, //dx,dy
+          canvas.width,canvas.height, //dw,dh
+        )
+      }
+      canvas.dirty = false;
     }
     canvas.circle = function circle(x,y,r,start,end) {
       start = start || 0;
@@ -30,6 +42,49 @@ class CanvasObject extends uR.Object {
       ctx.fill();
     }
     if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }
+    if (attrs.x_max && attrs.y_max && (attrs.x_max > attrs.width || attrs.y_max > attrs.height)) {// needs scroll
+      var animation_frame, __tick=0
+      canvas.tick = function() {
+        cancelAnimationFrame(animation_frame);
+        (__tick++ && canvas.dirty)%5 && canvas.clear();
+        animation_frame = requestAnimationFrame(canvas.tick);
+      }
+      canvas.addEventListener("mousewheel",function(e) {
+        e.preventDefault();
+        canvas.scrollX = uR.math.between(0,canvas.scrollX+e.deltaX,attrs.x_max-canvas.width);
+        canvas.scrollY = uR.math.between(0,canvas.scrollY+e.deltaY,attrs.y_max-canvas.height);
+        canvas.dirty = true;
+        canvas.tick();
+      })
+    }
+    return canvas;
+  }
+  getEasing(t0) {
+    return Math.max(0,this._ta - t0)/this._ta;
+  }
+}
+
+class PaintObject extends CanvasObject {
+  constructor(attrs={}) {
+    super(attrs)
+  }
+  newCanvas(opts) {
+    var canvas = super.newCanvas(opts);
+    canvas.replaceColor = function(c1,c2) {
+      var tc1 = tinycolor(c1);
+      var tc2 = tinycolor(c2);
+      var image_data = canvas.getContext("2d").getImageData(0,0,canvas.width,canvas.height);
+      var _id = image_data.data;
+      for (var i=0;i<_id.length;i+=4) {
+        if (_id[i] == tc1._r && _id[i+1] == tc1._g && _id[i+2] == tc1._b) {
+          _id[i] = tc2._r;
+          _id[i+1] = tc2._g;
+          _id[i+2] = tc2._b;
+          _id[i+3] = tc2._a;
+        }
+      }
+      canvas.ctx.putImageData(image_data,0,0);
+    }
     return canvas;
   }
   loadImage(src,callback) {
@@ -37,8 +92,5 @@ class CanvasObject extends uR.Object {
       src:src,
       onload: callback,
     });
-  }
-  getEasing(t0) {
-    return Math.max(0,this._ta - t0)/this._ta;
   }
 }
