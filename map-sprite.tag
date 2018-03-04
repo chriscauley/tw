@@ -1,6 +1,12 @@
 <tw-sprite-mapper>
   <div class={ theme.outer }>
-    <div class={ theme.content } id="sprite-mapper-inner" style="min-height: 750px;"></div>
+    <div class={ theme.content } style="min-height: 750px;">
+      <div id="sprite-mapper-inner"></div>
+      <div each={ sprite in sprites } class="card" style="float: left;" title={ sprite.id }>
+        <img src={ sprite.dataURL } />
+        <a onclick={ parent.delete } class="fa fa-trash"></a>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -11,11 +17,22 @@
       { name: "W", type: "int" },
       { name: "H", type: "int" },
     ];
-    new SpriteMapper({
+    this.mapper = new SpriteMapper({
       bg: "_sprites/"+this.sheet.path,
+      spritesheet: this.sheet,
       parent: this.root.querySelector("#sprite-mapper-inner"),
+      tag: this,
     });
+    window.mapper = this.mapper
+    this.update()
   });
+  this.on("update",function() {
+    this.sprites = Sprite.objects.filter({ spritesheet: this.sheet });
+  });
+  delete(e) {
+  console.log(e.item);
+    e.item.sprite.delete()
+  }
 </tw-sprite-mapper>
 
 class SpriteSheet extends uR.db.Model {
@@ -49,20 +66,6 @@ class Sprite extends uR.db.Model {
     ];
     super(opts);
   }
-  render(parent) {
-    uR.newElement(
-      'tw-sprite',
-      {
-        parent: parent,
-        innerHTML: uR.newElement('img',{
-          src: this.dataURL,
-          width: this.width*2,
-          height: this.height*2
-        }).outerHTML
-      },
-      {obj:this}
-    );
-  }
 }
 
 uR.db.register("sprite",[Sprite,SpriteSheet]);
@@ -77,26 +80,27 @@ uR.ready(function() {
   });
 });
 
-class SpriteMapper extends CanvasObject {
+class SpriteMapper extends PaintObject {
   constructor(opts) {
     super();
     var self = this;
+    this.tag = opts.tag;
     this.defaults(opts,{
-      bg:"_sprites/16_colors_14.png",
+      bg: uR.required,
       scale: 32,
       spacer: 8,
       offset: 8,
       parent: uR.REQUIRED,
     });
 
-    this.loadImage(this.bg,function(a,b) {
+    this.loadImage(this.bg,function() {
       self.buildCanvases(this);
       self.pw = this.width;
       self.ph = this.height;
       self.bg_img = this;
       self.w = Math.floor(self.pw / self.scale);
       self.h = Math.floor(self.ph / self.scale);
-        self.controller = new Controller({
+      self.controller = new Controller({
         parent: self,
         target: self.canvas,
       });
@@ -107,14 +111,14 @@ class SpriteMapper extends CanvasObject {
   buildCanvases(img) {
     this.newCanvas({
       name: 'canvas',
-      width: Math.min(500,img.width),
-      height: Math.min(500,img.height),
+      width: Math.min(300,img.width),
+      height: Math.min(300,img.height),
       x_max: img.width,
       y_max: img.height,
       parent: this.parent,
       bg: img,
     })
-    this.scalezoom = 10;
+    this.scalezoom = 5;
     var zw = this.scale*this.scalezoom;
     var zh = zw;
     this.newCanvas({
@@ -124,28 +128,29 @@ class SpriteMapper extends CanvasObject {
       parent: this.parent,
     });
     this.newCanvas({
-      name: 'clickcanvas',
+      name: 'cropcanvas',
       width: this.scale,
       height: this.scale,
-      parent: this.parent,
     });
   }
   loadSprites() {
-    this.sprites = uR.storage.get('sprites') || [];
+    this.sprites = Sprite.objects.filter({spritesheet:this.spritesheet})
   }
   addSprite() {
-    this.clickcanvas.ctx.drawImage(
+    this.cropcanvas.ctx.drawImage(
       this.bg_img,
-      this.hover_px,this.hover_py,this.scale,this.scale,
+      this.hover_px+this.canvas.scrollX,this.hover_py+this.canvas.scrollY,this.scale,this.scale,
       0,0,this.scale,this.scale,
     )
     var s = new Sprite({
-      dataURL: this.clickcanvas.toDataURL(),
+      dataURL: this.cropcanvas.toDataURL(),
       width: this.scale,
       height: this.scale,
+      spritesheet: this.spritesheet,
     });
     s.save();
-    s.render(this.parent);
+    this.sprites.push(s);
+    this.tag.update();
   }
   mousedown(e) {
     this.addSprite();
@@ -186,17 +191,19 @@ class SpriteMapper extends CanvasObject {
 
 <tw-sprite>
   <div class={ theme.outer }>
-    <div class={ theme.inner }>
-      <yield/>
+    <div class={ theme.content }>
+      <img src={ sprite.dataURL } />
     </div>
     <div class="card-action">
-      <a class="fa fa-trash" onclick={ delete }></a>
+      <a class="fa fa-trash" onclick={ _delete }></a>
     </div>
   </div>
 
-  delete(e) {
-    this.opts.obj.delete();
+  this.on("mount",function(){
+    console.log(this);
+  });
+  _delete(e) {
+    this.sprite.delete();
     this.unmount();
   }
-
 </tw-sprite>
