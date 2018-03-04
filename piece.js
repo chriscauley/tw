@@ -29,6 +29,7 @@ class BasePiece extends Moves {
       height: this.board.scale,
       name: 'ui_canvas',
     });
+    this.ds = this.board.scale/10; // scale the image down a little
 
     this.max_health = this.health;
     this.steps = uR.math.zeros(this.intervals);
@@ -98,8 +99,8 @@ class BasePiece extends Moves {
         img.img,
         img.x, img.y,
         img.w, img.h,
-        draw_x,draw_y,
-        s,s,
+        draw_x+self.ds,draw_y+self.ds,
+        s-2*self.ds,s-2*self.ds,
       );
     });
     while (dirty.length) { this.animations.splice(dirty.pop(),1) }
@@ -201,8 +202,8 @@ class BasePiece extends Moves {
       img.img,
       img.x, img.y,
       img.w, img.h,
-      this.x*s,this.y*s,
-      s,s,
+      this.x*s+this.ds,this.y*s+this.ds,
+      s-2*this.ds,s-2*this.ds,
     );
   }
   getText() {
@@ -255,7 +256,6 @@ class BasePiece extends Moves {
         this.level ++;
         this.max_health ++;
         this.health ++;
-        this.damage++;
         this.gold_per_touch++;
       } else { break }
     }
@@ -342,7 +342,7 @@ class GooglyEyes extends BasePiece {
   constructor(opts) {
     opts.intervals = [1];
     super(opts);
-    this.sprite = uR.sprites['googly-eyes'];
+    this.sprite = uR.sprites['skeleton'];
     this.tasks = [
       [this.follow,this.findEnemy],
     ]
