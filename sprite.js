@@ -8,7 +8,7 @@ uR.sprites = uR.sprites || {
     })).get();
   }
 };
-class SpriteObject extends CanvasObject {
+class SpriteObject extends PaintObject {
   constructor(opts) {
     super(opts);
     this.defaults(opts,{
@@ -70,7 +70,70 @@ class SpriteObject extends CanvasObject {
     this._draw();
     this.dirty = false;
   }
+  drawGradient(cx,cy,colors,opts) {
+    opts = uR.defaults(opts || {},this);
+    var c = opts.canvas;
+    var gradient = c.ctx.createRadialGradient(cx,cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
+    uR.forEach(colors,function(color,i) {
+      gradient.addColorStop(1.01-(i+1)/colors.length,color);
+    })
+    var last_color = colors[colors.length-1];
+    last_color = tinycolor(last_color).setAlpha(0).toRgbString();
+    gradient.addColorStop(0,last_color);
+    c.ctx.fillStyle = gradient;
+    c.ctx.fillRect(0,0,c.width,c.height);
+
+    if (opts.strokeStyle) {
+      c.ctx.lineWidth = opts.lineWidth;
+      c.ctx.strokeStyle = opts.strokeStyle;
+      c.ctx.beginPath();
+      c.ctx.arc(cx,cy, opts.radius, 0, 2 * Math.PI);
+      c.ctx.stroke();
+      c.ctx.fill()
+    }
+  }
 }
+
+class DBSprite extends SpriteObject {
+  constructor(opts={}) {
+    uR.defaults(opts,{
+      W: 1,
+      H: 2,
+      sprite_id: uR.REQUIRED,
+      color: "red",
+      scale: 32,
+    });
+    super(opts);
+    var sprite = Sprite.objects.get(this.sprite_id);
+    var self = this;
+    this.loadImage(sprite.dataURL,function () {
+      var ctx = self.canvas.ctx;
+      ctx.drawImage(this, 0, 0);
+      self.canvas.replaceColor("#30346d","transparent");
+      var ca = tinycolor(self.color);
+      ca.setAlpha(0);
+      ca = ca.toHex8String()
+      self.drawGradient(self.scale/2,self.scale/2+self.scale,[self.color,ca],{cdx:0,cdy:0,radius: self.scale/2});
+      ctx.drawImage(self.canvas, 0, self.scale);
+    })
+  }
+  _draw() {}
+}
+
+uR.ready(function() {
+  new DBSprite({
+    name: 'skeleton',
+    sprite_id: 1
+  });
+  new DBSprite({
+    name: 'zombie',
+    sprite_id: 2
+  });
+  new DBSprite({
+    name: 'orc',
+    sprite_id: 3
+  });
+});
 
 class CircleSprite extends SpriteObject {
   constructor(opts) {
@@ -108,28 +171,6 @@ class GradientSprite extends CircleSprite {
   _draw() {
     this.canvas.clear();
     typeof this.colors[0] == "string" && this.drawGradient(this.cx,this.cy,this.colors);
-  }
-  drawGradient(cx,cy,colors,opts) {
-    opts = uR.defaults(opts || {},this);
-    var c = opts.canvas;
-    var gradient = c.ctx.createRadialGradient(cx,cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
-    uR.forEach(colors,function(color,i) {
-      gradient.addColorStop(1.01-(i+1)/colors.length,color);
-    })
-    var last_color = colors[colors.length-1];
-    last_color = tinycolor(last_color).setAlpha(0).toRgbString();
-    gradient.addColorStop(0,last_color);
-    c.ctx.fillStyle = gradient;
-    c.ctx.fillRect(0,0,c.width,c.height);
-
-    if (opts.strokeStyle) {
-      c.ctx.lineWidth = opts.lineWidth;
-      c.ctx.strokeStyle = opts.strokeStyle;
-      c.ctx.beginPath();
-      c.ctx.arc(cx,cy, opts.radius, 0, 2 * Math.PI);
-      c.ctx.stroke();
-      c.ctx.fill()
-    }
   }
   doRotations() {
     var ctx = this.canvas.ctx;
