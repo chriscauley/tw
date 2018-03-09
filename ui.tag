@@ -10,11 +10,10 @@
     </div>
   </div>
 
-  this.on("mount",function() {
+  this.on("before-mount",function() {
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
-    this.update();
   });
   this.on("update",function() {
     this.settings = [
