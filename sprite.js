@@ -98,7 +98,7 @@ class DBSprite extends SpriteObject {
   constructor(opts={}) {
     uR.defaults(opts,{
       W: 1,
-      H: 2,
+      H: 3,
       sprite_id: uR.REQUIRED,
       color: "red",
       scale: 32,
@@ -108,14 +108,22 @@ class DBSprite extends SpriteObject {
     var self = this;
     this.loadImage(sprite.dataURL,function () {
       var ctx = self.canvas.ctx;
-      ctx.drawImage(this, 0, 0);
-      self.canvas.replaceColor("#30346d","transparent");
-      var ca = tinycolor(self.color);
-      ca.setAlpha(0);
-      ca = ca.toHex8String()
+      self.temp_canvas.ctx.drawImage(this,0,0)
+      self.temp_canvas.replaceColor("#30346d","transparent");
+      var ca = tinycolor(self.color).setAlpha(0).toHex8String();
+      var c2 = tinycolor("black").toHex8String();
+      var c2a = tinycolor("black").setAlpha(0).toHex8String();
       self.drawGradient(self.scale/2,self.scale/2+self.scale,[self.color,ca],{cdx:0,cdy:0,radius: self.scale/2});
-      ctx.drawImage(self.canvas, 0, self.scale);
+      self.drawGradient(self.scale/2,self.scale/2+self.scale*2,[c2,c2a],{cdx:0,cdy:0,radius: self.scale/2});
+      ctx.drawImage(self.temp_canvas, 0, 0);
+      ctx.drawImage(self.temp_canvas, 0, self.scale);
+      ctx.drawImage(self.temp_canvas, 0, self.scale*2);
     })
+  }
+  _getY(obj) {
+    if (!obj.following) { return 0; }
+    if (obj.steps[0]) { return 1; }
+    return 2;
   }
   _draw() {}
 }

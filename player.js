@@ -1,3 +1,30 @@
+class Combo extends uR.Object {
+  constructor(opts={},interval=0) {
+    super(opts);
+    this.interval = interval;
+    this.fails = 0;
+    this.streak = 0;
+    this.max = 0;
+  }
+  step() {
+    this.fails = 0;
+    this.streak ++;
+    this.max = Math.max(this.streak,this.max);
+  }
+  break() {
+    this.streak = 0;
+  }
+}
+
+class DamageCombo extends Combo {
+  apply(move={}) {
+    if (move.damage) { this.step(); }
+    else if (++this.fails > this.interval) {
+      this.break()
+    }
+  }
+}
+
 class Player extends BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
@@ -15,6 +42,12 @@ class Player extends BasePiece {
       ],
       gold_levels: [],
     });
+    this.combos = [
+      new DamageCombo({},0),
+      new DamageCombo({},1),
+      new DamageCombo({},2),
+      new DamageCombo({},3),
+    ]
     this.move = this.move.bind(this);
     this.resetMiniMap();
     this.score = 0;
@@ -44,6 +77,7 @@ class Player extends BasePiece {
   }
   applyMove(opts) {
     super.applyMove(opts);
+    this.combos && this.combos.map((c) => c.apply(opts));
     var self = this;
     var [dx,dy] = [this.dx,this.dy];
     uR.forEach(this.torch || [],function(row,tx) {
