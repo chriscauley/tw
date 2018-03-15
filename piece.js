@@ -198,6 +198,14 @@ class BasePiece extends Moves {
     this.dirty = this.doAnimations(c);
     if (this.dirty) { return }
     var img = this.sprite.get(this);
+    var team_img = uR.sprites.wedge("blue").get(this);
+    c.ctx.drawImage(
+      team_img.img,
+      team_img.x, team_img.y,
+      team_img.w, team_img.h,
+      this.x*s,this.y*s,
+      s,s,
+    );
     c.ctx.drawImage(
       img.img,
       img.x, img.y,
@@ -311,7 +319,6 @@ class Walker extends BasePiece {
     this.sprite = uR.sprites['bloob'];
     this.tasks = [
       [ this.forward, this.flip ],
-      [ this.doubleForward ]
     ];
   }
 }
@@ -319,10 +326,9 @@ class Walker extends BasePiece {
 class WallFlower extends BasePiece {
   constructor(opts) {
     super(opts);
-    this.sprite = uR.sprites['doop'];
+    this.sprite = uR.sprites['fly'];
     this.tasks = [
       [ this.forward,this.turnRandomly],
-      [ this.doubleForward ],
     ];
   }
   turnRandomly() {

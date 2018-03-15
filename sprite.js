@@ -6,7 +6,10 @@ uR.sprites = uR.sprites || {
       name: color,
       radius: 0.5
     })).get();
-  }
+  },
+  wedge: function (color) {
+    return uR.sprites["_wedge_"+color] || new WedgeSprite(color);
+  },
 };
 class SpriteObject extends PaintObject {
   constructor(opts) {
@@ -72,6 +75,13 @@ class SpriteObject extends PaintObject {
   }
   drawGradient(cx,cy,colors,opts) {
     opts = uR.defaults(opts || {},this);
+    opts = uR.defaults(opts,{
+      cdy: 0,
+      cdx: 0,
+      radius: this.scale/2,
+      theta0: 0,
+      theta1: 2*Math.PI,
+    })
     var c = opts.canvas;
     var gradient = c.ctx.createRadialGradient(cx,cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
     uR.forEach(colors,function(color,i) {
@@ -81,15 +91,31 @@ class SpriteObject extends PaintObject {
     last_color = tinycolor(last_color).setAlpha(0).toRgbString();
     gradient.addColorStop(0,last_color);
     c.ctx.fillStyle = gradient;
-    c.ctx.fillRect(0,0,c.width,c.height);
+    c.ctx.beginPath();
 
     if (opts.strokeStyle) {
       c.ctx.lineWidth = opts.lineWidth;
       c.ctx.strokeStyle = opts.strokeStyle;
-      c.ctx.beginPath();
-      c.ctx.arc(cx,cy, opts.radius, 0, 2 * Math.PI);
-      c.ctx.stroke();
-      c.ctx.fill()
+    }
+    c.ctx.moveTo(cx,cy);
+    c.ctx.arc(cx,cy, opts.radius, opts.theta0,opts.theta1)
+    c.ctx.fill()
+    opts.strokeStyle && c.ctx.stroke();
+  }
+  doRotations() {
+    var ctx = this.canvas.ctx;
+    for (var y=0;y<this.H;y++) {
+      this.temp_canvas.clear()
+      this.temp_canvas.ctx.drawImage(this.canvas,0,-y*this.scale);
+      for (var x=1;x<4;x++) {
+        var dx = x*this.scale + this.cx
+        var dy = this.cy+this.scale*y;
+        ctx.translate(dx,dy);
+        ctx.rotate(x*Math.PI/2);
+        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
+        ctx.rotate(-x*Math.PI/2);
+        ctx.translate(-dx,-dy);
+      }
     }
   }
 }
@@ -107,17 +133,10 @@ class DBSprite extends SpriteObject {
     var sprite = Sprite.objects.get(this.sprite_id);
     var self = this;
     this.loadImage(sprite.dataURL,function () {
-      var ctx = self.canvas.ctx;
       self.temp_canvas.ctx.drawImage(this,0,0)
       self.temp_canvas.replaceColor("#30346d","transparent");
-      var ca = tinycolor(self.color).setAlpha(0).toHex8String();
-      var c2 = tinycolor("black").toHex8String();
-      var c2a = tinycolor("black").setAlpha(0).toHex8String();
-      self.drawGradient(self.scale/2,self.scale/2+self.scale,[self.color,ca],{cdx:0,cdy:0,radius: self.scale/2});
-      self.drawGradient(self.scale/2,self.scale/2+self.scale*2,[c2,c2a],{cdx:0,cdy:0,radius: self.scale/2});
-      ctx.drawImage(self.temp_canvas, 0, 0);
-      ctx.drawImage(self.temp_canvas, 0, self.scale);
-      ctx.drawImage(self.temp_canvas, 0, self.scale*2);
+      self.dirty = true;
+      self.draw();
     })
   }
   _getY(obj) {
@@ -125,8 +144,38 @@ class DBSprite extends SpriteObject {
     if (obj.steps[0]) { return 1; }
     return 2;
   }
-  _draw() {}
+  _draw() {
+    var ctx = this.canvas.ctx;
+    var ca = tinycolor(this.color).setAlpha(0).toHex8String();
+    var c2 = tinycolor("black").toHex8String();
+    var c2a = tinycolor("black").setAlpha(0).toHex8String();
+    this.drawGradient(this.scale/2,this.scale/2+this.scale,[this.color,ca],{cdx:0,cdy:0,radius: this.scale/2});
+    this.drawGradient(this.scale/2,this.scale/2+this.scale*2,[c2,c2a],{cdx:0,cdy:0,radius: this.scale/2});
+    ctx.drawImage(this.temp_canvas, 0, 0);
+    ctx.drawImage(this.temp_canvas, 0, this.scale);
+    ctx.drawImage(this.temp_canvas, 0, this.scale*2);
+  }
 }
+
+class WedgeSprite extends SpriteObject {
+  constructor(opts={}) {
+    if (typeof opts == "string") { opts = { color: opts } }
+    opts.W = 4;
+    opts.H = 1;
+    super(opts);
+  }
+  _draw() {
+    var colors = ['transparent',this.color,this.color,'transparent']
+    this.drawGradient(this.cx,this.cy,colors,{theta0:-3*Math.PI/4,theta1:-Math.PI/4});
+    this.doRotations();
+  }
+}
+
+uR.sprites.wedge("red");
+uR.sprites.wedge("blue");
+uR.sprites.wedge("green");
+uR.sprites.wedge("purple");
+
 
 uR.ready(function() {
   new DBSprite({
@@ -140,6 +189,14 @@ uR.ready(function() {
   new DBSprite({
     name: 'orc',
     sprite_id: 3
+  });
+  new DBSprite({
+    name: 'death',
+    sprite_id: 4
+  });
+  new DBSprite({
+    name: 'fly',
+    sprite_id: 5
   });
 });
 
@@ -167,7 +224,6 @@ class CircleSprite extends SpriteObject {
     super.draw();
     this.doRotations();
   }
-  doRotations() {}
 }
 
 class GradientSprite extends CircleSprite {
@@ -179,22 +235,6 @@ class GradientSprite extends CircleSprite {
   _draw() {
     this.canvas.clear();
     typeof this.colors[0] == "string" && this.drawGradient(this.cx,this.cy,this.colors);
-  }
-  doRotations() {
-    var ctx = this.canvas.ctx;
-    for (var y=0;y<this.H;y++) {
-      this.temp_canvas.clear()
-      this.temp_canvas.ctx.drawImage(this.canvas,0,-y*this.scale);
-      for (var x=1;x<4;x++) {
-        var dx = x*this.scale + this.cx
-        var dy = this.cy+this.scale*y;
-        ctx.translate(dx,dy);
-        ctx.rotate(x*Math.PI/2);
-        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
-        ctx.rotate(-x*Math.PI/2);
-        ctx.translate(-dx,-dy);
-      }
-    }
   }
 }
 
