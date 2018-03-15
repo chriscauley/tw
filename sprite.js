@@ -171,12 +171,6 @@ class WedgeSprite extends SpriteObject {
   }
 }
 
-uR.sprites.wedge("red");
-uR.sprites.wedge("blue");
-uR.sprites.wedge("green");
-uR.sprites.wedge("purple");
-
-
 uR.ready(function() {
   new DBSprite({
     name: 'skeleton',

@@ -41,6 +41,8 @@ class BasePiece extends Moves {
     this.sprite = uR.sprites['red'];
     this.restat();
     this.ui_dirty = this.dirty = true;
+    this.team_color = ['red','green','blue'][this.team];
+    this.team_sprite = uR.sprites.wedge(this.team_color);
   }
   applyMove(opts) {
     this.animations = [];
@@ -198,7 +200,7 @@ class BasePiece extends Moves {
     this.dirty = this.doAnimations(c);
     if (this.dirty) { return }
     var img = this.sprite.get(this);
-    var team_img = uR.sprites.wedge("blue").get(this);
+    var team_img = this.team_sprite.get(this);
     c.ctx.drawImage(
       team_img.img,
       team_img.x, team_img.y,
