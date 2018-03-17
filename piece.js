@@ -44,6 +44,7 @@ class BasePiece extends Moves {
     this.team_color = ['red','green','blue'][this.team];
     this.team_sprite = uR.sprites.wedge(this.team_color);
   }
+  isAwake() { return true; }
   applyMove(opts) {
     this.animations = [];
     opts = opts || { move: [0,0] } //null move
@@ -315,10 +316,11 @@ class Blob extends BasePiece {
 }
 
 class Walker extends BasePiece {
-  constructor(opts) {
+  constructor(opts={}) {
     opts.health = 1;
+    opts.intervals = [0];
     super(opts);
-    this.sprite = uR.sprites['bloob'];
+    this.sprite = uR.sprites['zombie'];
     this.tasks = [
       [ this.forward, this.flip ],
     ];
@@ -326,7 +328,8 @@ class Walker extends BasePiece {
 }
 
 class WallFlower extends BasePiece {
-  constructor(opts) {
+  constructor(opts={}) {
+    opts.intervals = [0];
     super(opts);
     this.sprite = uR.sprites['fly'];
     this.tasks = [
@@ -355,4 +358,5 @@ class GooglyEyes extends BasePiece {
       [this.follow,this.findEnemy],
     ]
   }
+  isAwake() { return this.following }
 }

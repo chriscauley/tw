@@ -140,7 +140,7 @@ class DBSprite extends SpriteObject {
     })
   }
   _getY(obj) {
-    if (!obj.following) { return 0; }
+    if (!obj.isAwake()) { return 0; }
     if (obj.steps[0]) { return 1; }
     return 2;
   }
@@ -165,7 +165,7 @@ class WedgeSprite extends SpriteObject {
     super(opts);
   }
   _draw() {
-    var colors = ['transparent',this.color,this.color,'transparent']
+    var colors = ['transparent','transparent',this.color];
     this.drawGradient(this.cx,this.cy,colors,{theta0:-3*Math.PI/4,theta1:-Math.PI/4});
     this.doRotations();
   }
