@@ -12,6 +12,8 @@ class CanvasObject extends uR.Object {
     var canvas = uR.newElement("canvas",attrs);
     canvas.scrollX = 0;
     canvas.scrollY = 0
+    canvas.x_max = attrs.x_max;
+    canvas.y_max = attrs.y_max;
     canvas.ctx = canvas.getContext("2d");
     canvas.ctx.imageSmoothingEnabled= false;
     canvas.clear = function clear(x,y,w,h) {
@@ -24,7 +26,7 @@ class CanvasObject extends uR.Object {
       if (attrs.bg) {
         canvas.ctx.drawImage(
           attrs.bg, //image
-          canvas.scrollX,canvas.scrollY, //sx, sy
+          this.scrollX,this.scrollY, //sx, sy
           canvas.width,canvas.height, //sw,sh
           0,0, //dx,dy
           canvas.width,canvas.height, //dw,dh
@@ -42,22 +44,34 @@ class CanvasObject extends uR.Object {
       ctx.fill();
     }
     if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }
-    if (attrs.x_max && attrs.y_max && (attrs.x_max > attrs.width || attrs.y_max > attrs.height)) {// needs scroll
-      var animation_frame, __tick=0
-      canvas.tick = function() {
-        cancelAnimationFrame(animation_frame);
-        (__tick++ && canvas.dirty)%5 && canvas.clear();
-        animation_frame = requestAnimationFrame(canvas.tick);
-      }
-      canvas.addEventListener("mousewheel",function(e) {
-        e.preventDefault();
-        canvas.scrollX = uR.math.between(0,canvas.scrollX+e.deltaX,attrs.x_max-canvas.width);
-        canvas.scrollY = uR.math.between(0,canvas.scrollY+e.deltaY,attrs.y_max-canvas.height);
-        canvas.dirty = true;
-        canvas.tick();
-      })
+    if (attrs.controller) {
+      this.controller = new Controller({
+      parent: this,
+        target: canvas,
+      });
+    }
+    var animation_frame, __tick=0
+    canvas.tick = function() {
+      cancelAnimationFrame(animation_frame);
+      (__tick++ && canvas.dirty)%5 && canvas.clear();
+      animation_frame = requestAnimationFrame(canvas.tick);
     }
     return canvas;
+  }
+  mousewheel(e) {
+    var target = e.target;
+    e.preventDefault();
+    target.scrollX = uR.math.between(0,target.scrollX+e.deltaX,target.x_max-target.width);
+    target.scrollY = uR.math.between(0,target.scrollY+e.deltaY,target.y_max-target.height);
+    target.dirty = true;
+    target.tick();
+  }
+  mousemove(e) {
+    var target = e.target;
+    target.imgX = Math.ceil(e.offsetX+target.scrollX);
+    target.imgY = Math.ceil(e.offsetY+target.scrollY);
+    target.mouseX = e.offsetX;
+    target.mouseY = e.offsetY;
   }
   getEasing(t0) {
     return Math.max(0,this._ta - t0)/this._ta;

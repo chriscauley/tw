@@ -20,9 +20,10 @@ class Controller {
   bindKeys() {
     var self = this;
     var target = this.target || document;
-    uR.forEach(['mouseover','mouseout','mousemove','mouseclick','mouseup','mousedown'],function(action) {
-      self.parent[action] && target.addEventListener(action,(e) => self.parent[action](e));
-    })
+    var actions = ['mouseover','mouseout','mousemove','mouseclick','mouseup','mousedown','mousewheel'];
+    for (let action of actions) {
+      this.parent[action] && target.addEventListener(action,(e) => this.parent[action](e));
+    }
     uR.forEach(['keydown','keyup'], function(action) {
       self.parent[action] && target.addEventListener(action,function (e) {
         e._key = self.code2key[e.keyCode];

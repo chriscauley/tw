@@ -30,7 +30,6 @@
     this.sprites = Sprite.objects.filter({ spritesheet: this.sheet });
   });
   delete(e) {
-  console.log(e.item);
     e.item.sprite.delete()
   }
 </tw-sprite-mapper>
@@ -100,10 +99,6 @@ class SpriteMapper extends PaintObject {
       self.bg_img = this;
       self.w = Math.floor(self.pw / self.scale);
       self.h = Math.floor(self.ph / self.scale);
-      self.controller = new Controller({
-        parent: self,
-        target: self.canvas,
-      });
       self.loadSprites();
       self.draw();
     });
@@ -117,8 +112,9 @@ class SpriteMapper extends PaintObject {
       y_max: img.height,
       parent: this.parent,
       bg: img,
+      controller: true,
     })
-    this.scalezoom = 5;
+    this.scalezoom = 8;
     var zw = this.scale*this.scalezoom;
     var zh = zw;
     this.newCanvas({
@@ -136,10 +132,10 @@ class SpriteMapper extends PaintObject {
   loadSprites() {
     this.sprites = Sprite.objects.filter({spritesheet:this.spritesheet})
   }
-  addSprite() {
+  mousedown(e) {
     this.cropcanvas.ctx.drawImage(
-      this.bg_img,
-      this.hover_px+this.canvas.scrollX,this.hover_py+this.canvas.scrollY,this.scale,this.scale,
+      this.canvas,
+      this.canvas.mouseX,this.canvas.mouseY,this.scale,this.scale,
       0,0,this.scale,this.scale,
     )
     var s = new Sprite({
@@ -152,36 +148,25 @@ class SpriteMapper extends PaintObject {
     this.sprites.push(s);
     this.tag.update();
   }
-  mousedown(e) {
-    this.addSprite();
-  }
   mousemove(e) {
-    this.hover_px = Math.ceil(e.offsetX);
-    this.hover_py = Math.ceil(e.offsetY);
+    super.mousemove(e);
     this.draw();
   }
   draw() {
     var ctx = this.canvas.ctx;
     this.canvas.clear();
     var s = this.scale;
-    // for (var x=0;x<this.w;x++) {
-    //   for (var y=0;y<this.h;y++) {
-    //     ctx.globalAlpha = (y%2-x%2)?0.7:0.2;
-    //     ctx.fillStyle = "#111";
-    //     ctx.fillRect(this.offset+x*(s+this.spacer),this.offset+y*(s+this.spacer),s,s);
-    //   }
-    // }
     this.canvas.ctx.globalAlpha = 1;
-    this.canvas.ctx.strokeStyle = 'rgba(0,0,0,0.5)';
     this.canvas.ctx.translate(-0.5,-0.5);
-    this.canvas.ctx.strokeRect(this.hover_px,this.hover_py,s+1,s+1);
+    this.canvas.ctx.strokeStyle = 'rgba(0,0,0,1)';
+    this.canvas.ctx.strokeRect(this.canvas.mouseX,this.canvas.mouseY,s+1,s+1);
     this.canvas.ctx.translate(0.5,0.5);
+
     this.zoomcanvas.clear()
-    var scale2 = 5;
     
     this.zoomcanvas.ctx.drawImage(
       this.canvas,
-      this.hover_px-this.spacer, this.hover_py-this.spacer,// sx,sy
+      this.canvas.mouseX-this.spacer, this.canvas.mouseY-this.spacer,// sx,sy
       this.scale+this.spacer*2, this.scale+this.spacer*2,// sw,sh
       0,0, // dx,dy
       this.zoomcanvas.width,this.zoomcanvas.height// dw,dh
@@ -200,7 +185,6 @@ class SpriteMapper extends PaintObject {
   </div>
 
   this.on("mount",function(){
-    console.log(this);
   });
   _delete(e) {
     this.sprite.delete();
