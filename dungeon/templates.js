@@ -23,3 +23,27 @@ DG.TEMPLATES['zelda'] = {
   max_interconnect_length: 1,
   interconnects: 0,
 }
+
+DG.TEMPLATES['basic'] = {
+  size: [55,55],
+  seed: "zelda",
+  rooms: {
+    initial: {
+      min_size: [3, 3],
+      max_size: [3, 3],
+      max_exits: 1,
+    },
+    any: {
+      min_size: [5,8],
+      max_size: [5,8],
+      max_exits: 1,
+    },
+  },
+  max_corridor_length: 5,
+  min_corridor_length: 3,
+  corridor_density: 0,
+  symmetric_rooms: true,
+  room_count: 3,
+  max_interconnect_length: 5,
+  interconnects: 0,
+}

@@ -37,7 +37,7 @@ class Board extends CanvasObject {
     this.pieces = [];
     var self = this;
     self.level_number = level_number;
-    var start,exit;
+    var start = [2,2],exit;
     this.x_max = 0;
     this.y_max = level.length;
     uR.forEach(level,function(row,y) {
@@ -51,7 +51,6 @@ class Board extends CanvasObject {
         self.enemy_map[c] && self.pieces.push(new self.enemy_map[c]({ x: x, y: y, board: self}));
       });
     });
-
     // determine whether or not board scrolls with movement
     this.x_offset_mult = (this.x_max > this.W)?this.scale:0;
     this.y_offset_mult = (this.y_max > this.H)?this.scale:0;

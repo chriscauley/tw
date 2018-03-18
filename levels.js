@@ -43,7 +43,6 @@ class RectRoom extends Level {
     this.W = this.W*1;
     this.level = [];
     for (var y=0;y<this.H;y++) { this.level.push(uR.math.zeros(this.W)) }
-    this.level[Math.floor(this.H/2)][Math.floor(this.W/2)] = "s";
   }
 }
 
@@ -61,11 +60,13 @@ class DungeonLevel extends Level {
 }
 
 LEVELS = [
-  //(new DungeonLevel({style:'zelda'})).level,
+  
   //LEVELS[2]
-  new RectRoom().level
+  //new RectRoom().level
 ]
 
 uR.level = {
   RectRoom: RectRoom,
+  //zelda: new DungeonLevel({style:'zelda'}),
+  //basic: new DungeonLevel({style:'basic'}),
 }

@@ -172,26 +172,29 @@ class WedgeSprite extends SpriteObject {
 }
 
 uR.ready(function() {
-  new DBSprite({
-    name: 'skeleton',
-    sprite_id: 1
-  });
-  new DBSprite({
-    name: 'zombie',
-    sprite_id: 2
-  });
-  new DBSprite({
-    name: 'orc',
-    sprite_id: 3
-  });
-  new DBSprite({
-    name: 'death',
-    sprite_id: 4
-  });
-  new DBSprite({
-    name: 'fly',
-    sprite_id: 5
-  });
+  var sprites = [
+    'skeleton',
+    'zombie',
+    'orc',
+    'death',
+    'fly',
+    'ground1',
+    'ground2',
+    'ground_cracks',
+    'ground_cracks2',
+    'ground_lock',
+    'ground_cracks3',
+    'ground_hole',
+    'ground_stairs',
+    'grave',
+    'warrior',
+    'small_bat',
+    'large_bat',
+  ];
+  sprites.map((name,i) => new DBSprite({
+    name: name,
+    sprite_id: i+1,
+  }));
 });
 
 class CircleSprite extends SpriteObject {
