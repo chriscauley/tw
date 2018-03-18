@@ -31,6 +31,7 @@ class Player extends BasePiece {
     opts.gold_levels = [Infinity];
     opts.intervals = [0,4];
     super(opts);
+    this.last_move = { x: 0, y:0, t:0 };
     this.defaults(opts,{
       game: uR.REQUIRED,
       torch: [
@@ -73,6 +74,13 @@ class Player extends BasePiece {
     }
     this.applyMove(out);
     this.ui_dirty = true;
+    if (out.move) {
+      this.last_move = {
+        x: out.move[0],
+        y: out.move[1],
+        t: new Date().valueOf(),
+      }
+    }
     return true;
   }
   applyMove(opts) {

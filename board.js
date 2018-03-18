@@ -13,6 +13,8 @@ class Board extends CanvasObject {
       }
     });
     this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
+    this.W = Math.floor(window.innerWidth/this.scale);
+    this.H = Math.floor(window.innerHeight/this.scale);
 
     var self = this
     this.pieces = [];
@@ -52,8 +54,10 @@ class Board extends CanvasObject {
       });
     });
     // determine whether or not board scrolls with movement
-    this.x_offset_mult = (this.x_max > this.W)?this.scale:0;
-    this.y_offset_mult = (this.y_max > this.H)?this.scale:0;
+    this.min_offset_x = -0.5;
+    this.max_offset_x = Math.max(0,this.x_max+0.5-window.innerWidth/this.scale);
+    this.min_offset_y = -0.5;
+    this.max_offset_y = Math.max(0,this.y_max+0.5-window.innerHeight/this.scale);
 
     this.game.player = this.game.player || new Player({
       game: this.game,
@@ -83,8 +87,11 @@ class Board extends CanvasObject {
   draw() {
     if (!this.game.player) { return }
     var s = this.scale;
-    var offset_x = (this.game.player.x-this.W/2)*this.x_offset_mult-0.5*s;
-    var offset_y = (this.game.player.y-this.H/2)*this.y_offset_mult-0.5*s;
+    var ease = this.getEasing(new Date() - this.game.player.last_move.t);
+    var ease_x = (this.game.player.last_move.x)*ease-1;
+    var ease_y = (this.game.player.last_move.y)*ease-1;
+    var offset_x = s*uR.math.between(this.min_offset_x,this.game.player.x-this.W/2-0.5-ease_x,this.max_offset_x);
+    var offset_y = s*uR.math.between(this.min_offset_y,this.game.player.y-this.H/2-0.5-ease_y,this.max_offset_y);
     var floor_dirty = true;
     this.eachSquare(function(square,x,y) {
       floor_dirty = (square && square.draw()) || floor_dirty;
