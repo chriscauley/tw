@@ -4,13 +4,6 @@ class Board extends CanvasObject {
     this.defaults(opts,{
       W: 10,
       H: 10,
-      enemy_map: {
-        c: CountDown,
-        b: Blob,
-        w: Walker,
-        wf: WallFlower,
-        ge: GooglyEyes,
-      }
     });
     this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
     this.W = Math.floor(window.innerWidth/this.scale);
@@ -50,7 +43,7 @@ class Board extends CanvasObject {
         var square = self.squares[x][y] = new Square({x:x,y:y,board:self});
         if (c == 's') { start = [x,y] }
         if (c == 'x') { exit = [x,y] }
-        self.enemy_map[c] && self.pieces.push(new self.enemy_map[c]({ x: x, y: y, board: self}));
+        uR.enemy_map[c] && self.pieces.push(new uR.enemy_map[c]({ x: x, y: y, board: self}));
       });
     });
     // determine whether or not board scrolls with movement
