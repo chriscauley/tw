@@ -2,12 +2,16 @@ class Game extends uR.Object {
   constructor() {
     super();
     this.config = new uR.Config("GAME_CONFIG");
+    var PIECE_CHOICES = [];
+    for (var key in uR.enemy_map) {
+      PIECE_CHOICES.push([key,uR.enemy_map[key].name]);
+    }
     this.config.setSchema([
       { name: "W", type: "integer", value: 5 },
       { name: "H", type: "integer", value: 5 },
       { name: "piece_increase", type: "integer", value: 1 },
       { name: "show_intervals", type: "boolean", value: false },
-      { name: "active_pieces", choices: ['c','v','w','wf','ge'], value: ['GE'], type: "checkbox" },
+      { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
     ]);
     uR.extend(this,this.config.getData());
     this.bindKeys();
@@ -78,7 +82,7 @@ class Game extends uR.Object {
       while(enemy_count<this.piece_count && iter<100) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new board.enemy_map[choice(this.config.get('active_pieces'))]({
+          board.pieces.push(new uR.enemy_map[choice(this.config.get('active_pieces'))]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;

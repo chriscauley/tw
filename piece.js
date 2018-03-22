@@ -375,3 +375,12 @@ class GooglyEyes extends BasePiece {
   }
   isAwake() { return this.following }
 }
+
+uR.enemy_map = {
+  c: CountDown,
+  b: Blob,
+  w: Walker,
+  wf: WallFlower,
+  ge: GooglyEyes,
+  g: Grave,
+}
