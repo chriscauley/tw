@@ -23,6 +23,7 @@ class BasePiece extends Moves {
       intervals: [ 1, 3 ], // how often piece moves, zero indexed
       sight: 3, // how far it can see
     });
+    this.setSight(this.sight);
     this.animations = [];
     this.newCanvas({
       width: this.board.scale,
@@ -276,6 +277,20 @@ class BasePiece extends Moves {
     if (!square.gold || !this.gold_levels[this.level]) { return }
     this.gold += square.removeGold(this.gold_per_touch);
     this.ui_dirty = true;
+  }
+  setSight(value) {
+    this.sight = value;
+    this.visibility = [];
+    var x,y,dy;
+    for (x=-this.sight; x<=this.sight; x++) {
+      dy = this.sight-Math.abs(x);
+      for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
+    }
+  }
+  getVisibleSquares() {
+    var indexes = [];
+    for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
+    return this.board.getSquares(indexes);
   }
 }
 
