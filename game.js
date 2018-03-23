@@ -21,6 +21,7 @@ class Game extends uR.Object {
     this.makeUnits();
     this.makeUI();
     this.controller = new Controller({ parent: this });
+    this.turn = 0;
   }
   nextLevel() {
     this.level_number++;
@@ -80,6 +81,7 @@ class Game extends uR.Object {
   }
   nextTurn() {
     this.tnow = new Date().valueOf();
+    this.turn++;
     this.board.pieces.forEach((p) => p.play());
     this.player.play();
   }

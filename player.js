@@ -60,7 +60,7 @@ class Player extends BasePiece {
   touchItem(item) {
     item.pickUp(this);
   }
-  move(e,dx,dy) {
+  getMove(e,dx,dy) {
     var out = { turn: [dx,dy] };
     if (e.ctrlKey) {
       if (this.steps[1] < this.intervals[1]) { console.log("fail"); } // spell wasn't ready
@@ -72,6 +72,10 @@ class Player extends BasePiece {
       if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
       if (square && !square.piece) { out.move = [dx,dy] }
     }
+    return out;
+  }
+  move(e,dx,dy) {
+    var out = this.getMove(e,dx,dy);
     this.applyMove(out);
     this.ui_dirty = true;
     if (out.move) {
@@ -113,21 +117,24 @@ class Player extends BasePiece {
     this.drawMoves()
   }
   drawMoves() {
-    this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
-      var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
-      if (!square) { return }
-      var x = square.x;
-      var y = square.y;
-      var s = this.board.scale;
-      if (square.isOpen()) {
-        this.board.canvas.ctx.fillStyle = "rgba(0,100,0,0.5)";
-        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
-      }
-      if (square.canBeAttacked()) {
-        this.board.canvas.ctx.fillStyle = "rgba(100,0,0,0.5)";
-        this.board.canvas.ctx.fillRect(x*s,y*s,s,s);
-      }
-    });
+    var s = this.board.scale;
+    if (this.game.turn != this.last_turn_drawn) {
+      this._moves = [];
+      this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
+        var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
+        if (!square) { return }
+        if (square.isOpen()) {
+          this._moves.push(["rgba(0,100,0,0.5)",square.x,square.y]);
+        } else if (square.canBeAttacked() && square.piece.team != this.team) {
+          this._moves.push(["rgba(100,0,0,0.5)",square.x,square.y]);
+        }
+      });
+      this.last_turn_drawn = this.game.turn;
+    }
+    for (var move of this._moves) {
+      this.board.canvas.ctx.fillStyle = move[0];
+      this.board.canvas.ctx.fillRect(move[1]*s,move[2]*s,s,s);
+    }
   }
   resetMiniMap() {
     this.minimap = [];
