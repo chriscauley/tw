@@ -32,13 +32,13 @@ class BasePiece extends Moves {
     });
     this.ds = this.board.scale/10; // scale the image down a little
 
+    this.show_health = true;
     this.max_health = this.health;
     this.steps = uR.math.zeros(this.intervals);
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
-    this.applyMove();
     this.sprite = uR.sprites['red'];
     this.restat();
     this.ui_dirty = this.dirty = true;
@@ -72,7 +72,7 @@ class BasePiece extends Moves {
     if (opts.turn) {
       [dx,dy] = opts.turn;
     }
-    if (dx || dy ) { // anything happened
+    if (dx || dy || opts.done ) { // anything happened
       [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)]
       this.dirty = true;
       opts.chain && this.applyMove(opts.chain.bind(this)());
@@ -140,9 +140,10 @@ class BasePiece extends Moves {
     this.ui_canvas.clear();
     this.ctx = this.ui_canvas.ctx;
     this.s = this.board.scale/4;
-    this.stamp(0,0,this.max_health,'black');
-    this.stamp(0,0,Math.max(this.health,0),'red');
-
+    if (this.show_health && this.current_square) {
+      this.stamp(0,0,this.max_health,'black');
+      this.stamp(0,0,Math.max(this.health,0),'red');
+    }
     var _i = this.intervals.length;
     var show_intervals = this.board.game && this.board.game.config.get("show_intervals");
     while (show_intervals && _i--) {
@@ -203,7 +204,7 @@ class BasePiece extends Moves {
     if (this.dirty) { return }
     var img = this.sprite.get(this);
     var team_img = this.team_sprite.get(this);
-    c.ctx.drawImage(
+    (this.dx || this.dy) && c.ctx.drawImage(
       team_img.img,
       team_img.x, team_img.y,
       team_img.w, team_img.h,
@@ -374,6 +375,35 @@ class GooglyEyes extends BasePiece {
     ]
   }
   isAwake() { return this.following }
+}
+
+class Grave extends BasePiece {
+  constructor(opts) {
+    opts.sight = 1;
+    super(opts);
+    this.dx = this.dy = 0; // has no direction
+    this.sprite = uR.sprites['grave'];
+    this.intervals = [4];
+    this.pieces = ['wf','ge']
+    this.tasks = [
+      [this.spawnPiece]
+    ];
+  }
+  spawnPiece() {
+    var squares = this.getVisibleSquares();
+    uR.random.shuffle(squares);
+    for (var sq of squares) {
+      if (!sq.piece) {
+        this.board.addPieces(new uR.enemy_map[uR.random.choice(this.pieces)]({
+          x:sq.x,
+          y:sq.y,
+          board: this.board,
+          team: this.team,
+        }));
+        return { done: true }
+      }
+    }
+  }
 }
 
 uR.enemy_map = {
