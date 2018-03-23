@@ -16,12 +16,22 @@ class Game extends uR.Object {
     uR.extend(this,this.config.getData());
     this.bindKeys();
     this.board = new Board({ game: this, });
+    this.nextLevel();
+    this.makeTeams();
+    this.makeUnits();
+    this.makeUI();
     this.controller = new Controller({ parent: this });
-    this.restart()
   }
   nextLevel() {
     this.level_number++;
     this.board.loadLevel(this.level_number);
+  }
+  makeUI() {
+    uR.newElement(
+      "tw-scores",
+      { parent: document.querySelector("#game") },
+      { player: this.player, game: this }
+    );
   }
   restart() {
     var mask = document.querySelector("[ur-mask]");
@@ -30,15 +40,16 @@ class Game extends uR.Object {
     this.ui && this.ui.unmount();
     this.level_number = -1;
     this.nextLevel();
-    uR.newElement(
-      "tw-scores",
-      { parent: document.querySelector("#game") },
-      { player: this.player, game: this }
-    );
     this.player.health = this.player.max_health;
     this.player.gold = 0;
     this.board.draw();
     this.is_gameover = false;
+  }
+  makeTeams() {
+    this.teams = [];
+    for (var i=0;i<2;i++) {
+      this.teams.push(new Team({game: this}))
+    }
   }
   gameover() {
     this.is_gameover = true;
@@ -71,6 +82,25 @@ class Game extends uR.Object {
     this.tnow = new Date().valueOf();
     this.board.pieces.forEach((p) => p.play());
     this.player.play();
+  }
+  makeUnits() {
+    var start = this.board.start;
+    this.player = new Player({
+      game: this,
+      board: this.board,
+      health: 3,
+      team: 1, // #! TODO this is where competative multiplayer happens
+      x: start[0],
+      y: start[1],
+    });
+    this.board.pieces.push(this.player);
+    this.player.x = start[0]+1;
+    this.player.y = start[1];
+    this.player.resetMiniMap();
+    this.player.applyMove();
+    for (var team of this.teams) {
+      this.board.addPieces(team.makeUnits());
+    }
   }
   onPiecePop(piece) {
     if (this.board.pieces.length == 1) { // only the player

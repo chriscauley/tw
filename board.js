@@ -46,27 +46,13 @@ class Board extends CanvasObject {
         uR.enemy_map[c] && self.pieces.push(new uR.enemy_map[c]({ x: x, y: y, board: self}));
       });
     });
+    this.start = start;
+    this.exit = exit;
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
     this.max_offset_x = Math.max(0,this.x_max+0.5-window.innerWidth/this.scale);
     this.min_offset_y = -0.5;
     this.max_offset_y = Math.max(0,this.y_max+0.5-window.innerHeight/this.scale);
-
-    this.game.player = this.game.player || new Player({
-      game: this.game,
-      board: this,
-      health: 3,
-      team: 1, // #! TODO this is where competative multiplayer happens
-      x: start[0],
-      y: start[1],
-    });
-    this.pieces.push(this.game.player);
-    this.game.player.x = start[0];
-    this.game.player.y = start[1];
-    this.game.player.resetMiniMap();
-    this.game.player.applyMove();
-    exit && this.getSquare(exit).setFloor(new Stairs());
-    this.game.onPiecePop();
   }
   eachSquare(func) {
     func = func.bind(this);
