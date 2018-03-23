@@ -63,6 +63,16 @@ class Board extends CanvasObject {
       }
     }
   }
+  mousedown(e) {
+    const x = Math.floor((event.offsetX + this.offset_x)/this.scale);
+    const y = Math.floor((event.offsetY + this.offset_y)/this.scale);
+    const sq = this.getSquare(x,y)
+    if (sq) {
+      console.log(sq);
+      sq.piece && console.log(sq.piece);
+      sq.piece && sq.piece.following && console.log('following',sq.piece.following);
+    }
+  }
   draw() {
     if (!this.game.player) { return }
     var s = this.scale;
@@ -89,17 +99,18 @@ class Board extends CanvasObject {
     if (!this.dirty) { return }
     this.canvas.clear()
     this.canvas.ctx.drawImage(this.floor_canvas,0,0);
-    this.canvas.ctx.translate(-offset_x,-offset_y);
+    this.canvas.ctx.translate(-this.offset_x,-this.offset_y);
     uR.forEach(this.pieces,function(p){ p.draw() })
     uR.forEach(this.pieces,function(p){ p.drawUI(); })
     this.game.player.drawUI();
-    this.canvas.ctx.translate(offset_x,offset_y);
+    this.canvas.ctx.translate(this.offset_x,this.offset_y);
   }
   createCanvas() {
     this.canvas = this.newCanvas({
       height: this.scale*this.H,
       width: this.scale*this.W,
-      parent: document.getElementById("game")
+      parent: document.getElementById("game"),
+      controller: true,
     });
     this.floor_canvas = this.newCanvas({
       height: this.scale*this.H,
