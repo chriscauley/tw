@@ -35,6 +35,7 @@ var JS_FILES = [
   "square.js",
   "board.js",
   "game.js",
+  "team.js",
   "levels.js",
   "main.js",
   "ui.tag",
