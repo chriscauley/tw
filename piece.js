@@ -245,6 +245,7 @@ class BasePiece extends Moves {
     this.item && this.current_square.addItem(this.item);
     this.current_square.addGold({ range: this.level+2, base: 2 * this.gold || 1 })
     this.board.remove(this);
+    this.is_dead = true;
   }
   attack(target) {
     if (target.team == this.team) {
