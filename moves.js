@@ -6,6 +6,7 @@ class Moves extends CanvasObject {
     if (!this.following) { return }
     var dx = this.following.x - this.x; //how far in each direction
     var dy = this.following.y - this.y;
+    if (Math.abs(dx) + Math.abs(dy) > this.sight*2) { this.following = undefined; return }
 
     var move = {};
     if (this.dx && Math.sign(dx) == this.dx) { return this.forward(); }

@@ -75,12 +75,12 @@ class Board extends CanvasObject {
   }
   draw() {
     if (!this.game.player) { return }
-    var s = this.scale;
+    const s = this.scale;
     var ease = this.getEasing(new Date() - this.game.player.last_move.t);
     var ease_x = (this.game.player.last_move.x)*ease-1;
     var ease_y = (this.game.player.last_move.y)*ease-1;
-    var offset_x = s*uR.math.between(this.min_offset_x,this.game.player.x-this.W/2-0.5-ease_x,this.max_offset_x);
-    var offset_y = s*uR.math.between(this.min_offset_y,this.game.player.y-this.H/2-0.5-ease_y,this.max_offset_y);
+    this.offset_x = s*uR.math.between(this.min_offset_x,this.game.player.x-this.W/2-0.5-ease_x,this.max_offset_x);
+    this.offset_y = s*uR.math.between(this.min_offset_y,this.game.player.y-this.H/2-0.5-ease_y,this.max_offset_y);
     var floor_dirty = true;
     this.eachSquare(function(square,x,y) {
       floor_dirty = (square && square.draw()) || floor_dirty;
@@ -88,7 +88,7 @@ class Board extends CanvasObject {
     if (floor_dirty) {
       this.floor_canvas.clear();
       this.eachSquare(function(square,x,y) {
-        square && this.floor_canvas.ctx.drawImage(square.canvas,s*x-offset_x,s*y-offset_y);
+        square && this.floor_canvas.ctx.drawImage(square.canvas,s*x-this.offset_x,s*y-this.offset_y);
       });
     }
     var dirty = floor_dirty || this.game.player.dirty;
@@ -129,5 +129,17 @@ class Board extends CanvasObject {
     // Return the square at x,y if it exits
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
     return this.squares[x] && this.squares[x][y];
+  }
+  getSquares(list) {
+    var self = this;
+    return list.map((xy) => self.getSquare(xy)).filter((s) => s)
+  }
+  addPieces(pieces) {
+    if (!Array.isArray(pieces)) { pieces = [].slice.apply(arguments); }
+    for (var piece of pieces) {
+      this.pieces.push(piece);
+      piece.current_square = this.getSquare(piece.x,piece.y);
+      piece.current_square.piece = piece;
+    }
   }
 }
