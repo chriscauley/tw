@@ -1,18 +1,21 @@
+uR.tw = {game_config: new uR.Config("GAME_CONFIG")};
+uR.ready(function() {
+  var PIECE_CHOICES = [];
+  for (var key in uR.enemy_map) {
+    PIECE_CHOICES.push([key,uR.enemy_map[key].name]);
+  }
+  uR.tw.game_config.setSchema([
+    { name: "W", type: "integer", value: 5 },
+    { name: "H", type: "integer", value: 5 },
+    { name: "piece_increase", type: "integer", value: 1 },
+    { name: "show_intervals", type: "boolean", value: false },
+    { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
+  ]);
+});
 class Game extends uR.Object {
   constructor() {
     super();
-    this.config = new uR.Config("GAME_CONFIG");
-    var PIECE_CHOICES = [];
-    for (var key in uR.enemy_map) {
-      PIECE_CHOICES.push([key,uR.enemy_map[key].name]);
-    }
-    this.config.setSchema([
-      { name: "W", type: "integer", value: 5 },
-      { name: "H", type: "integer", value: 5 },
-      { name: "piece_increase", type: "integer", value: 1 },
-      { name: "show_intervals", type: "boolean", value: false },
-      { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
-    ]);
+    this.config = uR.tw.game_config;
     uR.extend(this,this.config.getData());
     this.bindKeys();
     this.board = new Board({ game: this, });
@@ -123,4 +126,4 @@ class Game extends uR.Object {
       }
     }
   }
-}
+};

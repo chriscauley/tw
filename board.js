@@ -139,7 +139,7 @@ class Board extends CanvasObject {
     for (var piece of pieces) {
       this.pieces.push(piece);
       piece.current_square = this.getSquare(piece.x,piece.y);
-      piece.current_square.piece = piece;
+      if (piece.current_square) { piece.current_square.piece = piece; }
     }
   }
 }
