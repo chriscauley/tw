@@ -1,4 +1,4 @@
-class BasePiece extends Moves {
+class BasePiece extends tW.mixins.Sight(Moves) {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -280,20 +280,6 @@ class BasePiece extends Moves {
     this.gold += square.removeGold(this.gold_per_touch);
     this.ui_dirty = true;
   }
-  setSight(value) {
-    this.sight = value;
-    this.visibility = [];
-    var x,y,dy;
-    for (x=-this.sight; x<=this.sight; x++) {
-      dy = this.sight-Math.abs(x);
-      for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
-    }
-  }
-  getVisibleSquares() {
-    var indexes = [];
-    for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
-    return this.board.getSquares(indexes);
-  }
 }
 
 class CountDown extends BasePiece {
@@ -375,7 +361,7 @@ class GooglyEyes extends BasePiece {
       [this.follow,this.findEnemy],
     ]
   }
-  isAwake() { return this.following }
+  isAwake() { return this.following; }
 }
 
 class Grave extends BasePiece {

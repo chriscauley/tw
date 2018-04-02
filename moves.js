@@ -99,3 +99,30 @@ class Moves extends CanvasObject {
     //this.move(0,this.dy);
   }
 }
+
+tW.mixins = {
+  Sight: (superclass) => class extends superclass {
+    constructor(opts={}) {
+      super(opts);
+      this.defaults(opts,{sight:1});
+      this.setSight();
+    }
+    setSight(value) {
+      this.sight = value || this.sight; // NB: Can never be 1
+      this.visibility = [];
+      var x,y,dy;
+      for (x=-this.sight; x<=this.sight; x++) {
+        dy = this.sight-Math.abs(x);
+        for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
+      }
+    }
+    getVisibleSquares() {
+      var indexes = [];
+      for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
+      return this.board.getSquares(indexes);
+    }
+    getRandomSquare() {
+      uR.random.choice(this.getVisibleSquares());
+    }
+  }
+}
