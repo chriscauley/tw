@@ -11,6 +11,7 @@ var PROJECT_NAME = "tw";
 
 var JS_FILES = [
 
+  "main.js",
   "dungeon/const.js",
   "dungeon/templates.js",
   "dungeon/utils/index.js",
@@ -37,7 +38,6 @@ var JS_FILES = [
   "game.js",
   "team.js",
   "levels.js",
-  "main.js",
   "ui.tag",
   "map-sprite.tag",
 ];

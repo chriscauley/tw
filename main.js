@@ -1,3 +1,5 @@
+window.tW = {};
+
 uR.ready(function() {
   uR.admin.start();
   uR.router.start();
