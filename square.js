@@ -5,6 +5,7 @@ class Square extends CanvasObject {
       gold: 0,
       board: uR.REQUIRED,
     });
+    this.sprite = uR.sprites["ground"+((this.x%2-this.y%2)?"1":"2")]
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
     this.canvas = this.newCanvas({
@@ -18,8 +19,14 @@ class Square extends CanvasObject {
     this.dirty = false;
     this.ctx = this.canvas.getContext('2d');
     this.canvas.clear();
-    this.ctx.fillStyle = this.bg;
-    this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+    var img = this.sprite.get(this);
+    this.ctx.drawImage(
+      img.img,
+      img.x, img.y,
+      img.w, img.h,
+      0,0,
+      this.scale,this.scale,
+    )
     this.drawGold();
     this.item && this.item.draw(this.canvas);
     this.floor && this.floor.draw(this.canvas);
