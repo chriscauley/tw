@@ -72,8 +72,8 @@ class BasePiece extends tW.mixins.Sight(Moves) {
     if (opts.turn) {
       [dx,dy] = opts.turn;
     }
+    if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (dx || dy || opts.done ) { // anything happened
-      [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)]
       this.dirty = true;
       opts.chain && this.applyMove(opts.chain.bind(this)());
       return true;
@@ -243,7 +243,7 @@ class BasePiece extends tW.mixins.Sight(Moves) {
   }
   die() {
     this.item && this.current_square.addItem(this.item);
-    this.current_square.addGold({ range: this.level+2, base: 2 * this.gold || 1 })
+    this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.board.remove(this);
     this.is_dead = true;
   }
@@ -393,6 +393,52 @@ class Grave extends BasePiece {
   }
 }
 
+class Projectile extends BasePiece {
+  constructor(opts={}) {
+    uR.defaults(opts,{
+      parent: uR.REQUIRED,
+      board: opts.parent.board,
+      gold: 0,
+      gold_per_touch: 0,
+    });
+    super(opts)
+    this.intervals = [0];
+    this.defaults({
+      dx: this.parent.dx,
+      dy: this.parent.dy
+    });
+    this.defaults({
+      x: this.parent.x + this.dx,
+      y: this.parent.y + this.dy,
+    });
+    this.tasks = [
+      [this.forward,this.burnout],
+    ];
+  }
+  applyMove(opts) {
+    super.applyMove(opts);
+    opts.damage && this.die();
+  }
+}
+
+class Fireball extends Projectile {
+  constructor(opts={}) {
+    super(opts)
+    this.sprite = uR.sprites.fireball;
+  }
+}
+
+class Spitter extends BasePiece {
+  constructor(opts={}) {
+    uR.defaults(opts,{
+      intervals: [3],
+    });
+    super(opts);
+    this.sprite = uR.sprites['spitter'];
+    this.tasks = [ [ this.throwFireball ] ];
+  }
+}
+
 uR.enemy_map = {
   c: CountDown,
   b: Blob,
@@ -400,4 +446,5 @@ uR.enemy_map = {
   wf: WallFlower,
   ge: GooglyEyes,
   g: Grave,
+  sp: Spitter,
 }

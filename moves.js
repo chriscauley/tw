@@ -98,31 +98,48 @@ class Moves extends CanvasObject {
     if (square && square.piece) { return this.attack(square.piece); }
     //this.move(0,this.dy);
   }
+  throwFireball(dx,dy) {
+    var square = this.look();
+    if (square && square.piece && square.piece.team != this.team) {
+      return { damage: [this.dx,this.dy,this.damage] }
+    }
+    this.board.addPieces(new Fireball({
+      parent: this,
+      dx: this.dx,
+      dy: this.dy,
+      damage: this.damage,
+      x: this.x+this.dx,
+      y: this.y+this.dy,
+    }))
+    return { done: true };
+  }
+  burnout() {
+    this.die();
+    return { done: true };
+  }
 }
-
-tW.mixins = {
-  Sight: (superclass) => class extends superclass {
-    constructor(opts={}) {
-      super(opts);
-      this.defaults(opts,{sight:1});
-      this.setSight();
+tW.mixins = {};
+tW.mixins.Sight = (superclass) => class extends superclass {
+  constructor(opts={}) {
+    super(opts);
+    this.defaults(opts,{sight:1});
+    this.setSight();
+  }
+  setSight(value) {
+    this.sight = value || this.sight; // NB: Can never be 1
+    this.visibility = [];
+    var x,y,dy;
+    for (x=-this.sight; x<=this.sight; x++) {
+      dy = this.sight-Math.abs(x);
+      for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
     }
-    setSight(value) {
-      this.sight = value || this.sight; // NB: Can never be 1
-      this.visibility = [];
-      var x,y,dy;
-      for (x=-this.sight; x<=this.sight; x++) {
-        dy = this.sight-Math.abs(x);
-        for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
-      }
-    }
-    getVisibleSquares() {
-      var indexes = [];
-      for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
-      return this.board.getSquares(indexes);
-    }
-    getRandomSquare() {
-      uR.random.choice(this.getVisibleSquares());
-    }
+  }
+  getVisibleSquares() {
+    var indexes = [];
+    for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
+    return this.board.getSquares(indexes);
+  }
+  getRandomSquare() {
+    uR.random.choice(this.getVisibleSquares());
   }
 }

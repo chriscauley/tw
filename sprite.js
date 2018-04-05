@@ -133,15 +133,17 @@ class DBSprite extends SpriteObject {
     var sprite = Sprite.objects.get(this.sprite_id);
     var self = this;
     this.loadImage(sprite.dataURL,function () {
-      self.temp_canvas.ctx.drawImage(this,0,0)
+      if (opts.rotations) {
+        self.temp_canvas.ctx.drawImage(this,0,0)
+      }
       self.temp_canvas.replaceColor("#30346d","transparent");
       self.dirty = true;
       self.draw();
     })
   }
   _getY(obj) {
-    if (!obj.isAwake()) { return 0; }
-    if (obj.steps[0]) { return 1; }
+    if (obj.isAwake && !obj.isAwake()) { return 0; }
+    if (obj.steps && obj.steps[0]) { return 1; }
     return 2;
   }
   _draw() {
@@ -184,16 +186,19 @@ uR.ready(function() {
     'large_bat',
     'ground1',
     'ground2',
+    'ground_lock',
+    'ground_stairs',
+    'fireball',
+    'spitter',
     // 'ground_cracks',
     // 'ground_cracks2',
-    // 'ground_lock',
     // 'ground_cracks3',
     // 'ground_hole',
-    // 'ground_stairs',
   ];
   sprites.map((name,i) => new DBSprite({
     name: name,
     sprite_id: i+1,
+    rotations: name == "fireball",
   }));
 });
 

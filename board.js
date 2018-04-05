@@ -20,7 +20,7 @@ class Board extends CanvasObject {
   }
   tick() {
     cancelAnimationFrame(this.animation_frame);
-    (this.__tick++)%2 && this.draw();
+    (this.__tick++)%4 && this.draw();
     this.animation_frame = requestAnimationFrame(this.tick);
   }
   loadLevel(level_number) {
