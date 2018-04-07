@@ -59,6 +59,11 @@ class Player extends BasePiece {
     this.energy = 10;
     new tW.equipment.SprintBoots().equip(this);
   }
+  getHealthArray() {
+    var array = uR.math.zeros(this.max_health);
+    for (var i=0;i<this.health; i++) { array[i] = 1; }
+    return array;
+  }
   equipItem(item) {
     item.player = this;
     this.equipment[item.slot] = item;

@@ -1,5 +1,7 @@
 <tw-scores>
-  <div>Health: { player.health }</div>
+  <div class="health">
+    <i class="fa fa-heart { h?'red':'' }" each={ h in health }></i>
+  </div>
   <div>Gold: { player.gold }</div>
   <div>Score: { player.score }</div>
   <!--<pre class="minimap">{ player.printMiniMap() }</pre>-->
@@ -19,7 +21,9 @@
     this.opts.game.ui = this;
     this.game = this.opts.game;
   });
+  this.on("mount",function() { this.update() });
   this.on("update",function() {
+    this.health = this.player.getHealthArray();
     this.settings = [
       { name: "Game Config", config: this.opts.game.config },
     ]
