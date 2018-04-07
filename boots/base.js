@@ -8,9 +8,8 @@ tW.equipment.BaseEquipment = class BaseEquipment extends uR.Object {
   canEquip(player) { return player.level >= this.min_level }
   canUse(dx,dy) {
     var costs = this.getCost();
-    for (var key in cost) {
-      var cost = this.player[key] + costs;
-      if (cost < 0 || cost > this.player['max_'+key]) { return false; }
+    for (var key in costs) {
+      if (!this.player[key].canAdd(costs[key])) { return false; }
     }
     return true;
   }
@@ -34,8 +33,8 @@ tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment 
     super(opts);
   }
   getMove(dx,dy) {
-    var move = { move: [0,0], done: true }
-    if (!super.canUse(dx,dy)) { return move }
+    var move = { resources: this.getCost() };
+    if (!this.canUse(dx,dy)) { return move; }
     for (var i=1; i<=this.distance;i++) {
       var square = this.player.look(i*dx,i*dy);
       if (!square || !square.isOpen()) { break }
