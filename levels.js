@@ -47,6 +47,7 @@ class RectRoom extends Level {
     for (var y=0;y<this.H;y++) { this.level.push(uR.math.zeros(this.W)) }
     this.level[this.half_wh][this.half_wh] = "s";
     this.level[this.H-this.half_wh][this.W-this.half_wh] = "e";
+    this.level[3][6] = " ";
   }
 }
 

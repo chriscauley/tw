@@ -28,7 +28,6 @@ class DamageCombo extends Combo {
 class Player extends BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
-    opts.gold_levels = [Infinity];
     opts.intervals = [0,4];
     super(opts);
     this.last_move = { x: 0, y:0, t:0 };
@@ -56,18 +55,27 @@ class Player extends BasePiece {
     this.is_player = true;
     this.inner_color = 'orange';
     this.sprite = uR.sprites['blue-flame'];
+    this.equipment = {};
+    this.energy = 10;
+    new tW.equipment.SprintBoots().equip(this);
+  }
+  equipItem(item) {
+    item.player = this;
+    this.equipment[item.slot] = item;
   }
   touchItem(item) {
     item.pickUp(this);
   }
   getMove(e,dx,dy) {
     var out = { turn: [dx,dy] };
-    if (e.ctrlKey) {
+    if (e.ctrlKey && this.intervals[1]) {
+      //out = this.doSpecial();
       if (this.steps[1] < this.intervals[1]) { console.log("fail"); } // spell wasn't ready
       else { out = this.doubleForward(dx,dy) || out; }
       this.steps[1] = -1;
-    }
-    else {
+    } else if (e.shiftKey && this.equipment.feet) {
+      return this.equipment.feet.getMove(dx,dy);
+    } else {
       var square = this.look(dx,dy);
       if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
       if (square && !square.piece) { out.move = [dx,dy] }

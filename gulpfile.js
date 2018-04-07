@@ -40,6 +40,8 @@ var JS_FILES = [
   "levels.js",
   "ui.tag",
   "map-sprite.tag",
+
+  "boots/base.js",
 ];
 
 gulp.task('build-js', function () {

@@ -1,0 +1,46 @@
+tW.equipment = {};
+tW.equipment.BaseEquipment = class BaseEquipment extends uR.Object {
+  constructor (opts={}) {
+    uR.defaults(opts, { min_level: 0, resources: {}})
+    super(opts);
+    this.defaults(opts);
+  }
+  canEquip(player) { return player.level >= this.min_level }
+  canUse(dx,dy) {
+    var costs = this.getCost();
+    for (var key in cost) {
+      var cost = this.player[key] + costs;
+      if (cost < 0 || cost > this.player['max_'+key]) { return false; }
+    }
+    return true;
+  }
+  equip(player) {
+    if (!this.canEquip(player)) { throw "Unable to equip " + this; }
+    this.player = player;
+    this.player.equipItem(this);
+  }
+  getCost() {
+    return this.resources
+  }
+}
+
+tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment {
+  constructor(opts={}) {
+    uR.defaults(opts,{
+      distance: 2,
+      resources: { energy: -1 },
+      slot: 'feet',
+    });
+    super(opts);
+  }
+  getMove(dx,dy) {
+    var move = { move: [0,0], done: true }
+    if (!super.canUse(dx,dy)) { return move }
+    for (var i=1; i<=this.distance;i++) {
+      var square = this.player.look(i*dx,i*dy);
+      if (!square || !square.isOpen()) { break }
+      move.move = [i*dx,i*dy];
+    }
+    return move;
+  }
+}
