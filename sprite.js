@@ -205,12 +205,16 @@ uR.ready(function() {
     // 'ground_cracks3',
     // 'ground_hole',
   ];
-  sprites.map((name,i) => new DBSprite({
-    name: name,
-    sprite_id: i+1,
-    rotations: name == "fireball",
-    vflip: name == "fireball",
-  }));
+  try {
+    sprites.map((name,i) => new DBSprite({
+      name: name,
+      sprite_id: i+1,
+      rotations: name == "fireball",
+      vflip: name == "fireball",
+    }));
+  } catch (e) {
+    console.error(e);
+  }
 });
 
 class CircleSprite extends SpriteObject {
