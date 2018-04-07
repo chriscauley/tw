@@ -7,6 +7,8 @@ uR.ready(function() {
   uR.tw.game_config.setSchema([
     { name: "W", type: "integer", value: 5 },
     { name: "H", type: "integer", value: 5 },
+    { name: "base_units", type: "integer", value: 1 },
+    { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
     { name: "show_intervals", type: "boolean", value: false },
     { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
@@ -25,6 +27,7 @@ class Game extends uR.Object {
     this.makeUI();
     this.controller = new Controller({ parent: this });
     this.turn = 0;
+    this.piece_count = this.config.get("piece_count");
   }
   nextLevel() {
     this.level_number++;
@@ -106,6 +109,7 @@ class Game extends uR.Object {
     for (var team of this.teams) {
       this.board.addPieces(team.makeUnits());
     }
+    this.onPiecePop();
   }
   onPiecePop(piece) {
     if (this.board.pieces.length == 1) { // only the player
@@ -117,7 +121,7 @@ class Game extends uR.Object {
       while(enemy_count<this.piece_count && iter<100) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.pieces.push(new uR.enemy_map[choice(this.config.get('active_pieces'))]({
+          board.addPieces(new uR.enemy_map[choice(this.config.get('active_pieces'))]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;
