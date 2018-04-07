@@ -129,13 +129,22 @@ class DBSprite extends SpriteObject {
       color: "red",
       scale: 32,
     });
+    if (opts.rotations) { opts.W = 4; }
     super(opts);
     var sprite = Sprite.objects.get(this.sprite_id);
     var self = this;
     this.loadImage(sprite.dataURL,function () {
-      if (opts.rotations) {
-        self.temp_canvas.ctx.drawImage(this,0,0)
+      self.temp_canvas.ctx.save()
+      if (opts.hflip) {
+        self.temp_canvas.ctx.translate(self.scale, 0);
+        self.temp_canvas.ctx.scale(-1, 1);
       }
+      if (opts.vflip) {
+        self.temp_canvas.ctx.translate(0,self.scale);
+        self.temp_canvas.ctx.scale(1, -1);
+      }
+      self.temp_canvas.ctx.drawImage(this,0,0)
+      self.temp_canvas.ctx.restore();
       self.temp_canvas.replaceColor("#30346d","transparent");
       self.dirty = true;
       self.draw();
@@ -156,6 +165,7 @@ class DBSprite extends SpriteObject {
     ctx.drawImage(this.temp_canvas, 0, 0);
     ctx.drawImage(this.temp_canvas, 0, this.scale);
     ctx.drawImage(this.temp_canvas, 0, this.scale*2);
+    this.rotations && this.doRotations();
   }
 }
 
@@ -199,6 +209,7 @@ uR.ready(function() {
     name: name,
     sprite_id: i+1,
     rotations: name == "fireball",
+    vflip: name == "fireball",
   }));
 });
 
