@@ -2,6 +2,8 @@
   <div class="health">
     <i class="fa fa-heart { h?'red':'' }" each={ h in health }></i>
   </div>
+  <div class="energy">
+    <i data-energy={ e } each={ e,i in energy }></i>
   <div>Gold: { player.gold }</div>
   <div>Score: { player.score }</div>
   <!--<pre class="minimap">{ player.printMiniMap() }</pre>-->
@@ -24,6 +26,7 @@
   this.on("mount",function() { this.update() });
   this.on("update",function() {
     this.health = this.player.getHealthArray();
+    this.energy = this.player.energy.getArray();
     this.settings = [
       { name: "Game Config", config: this.opts.game.config },
     ]

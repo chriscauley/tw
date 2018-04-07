@@ -29,8 +29,29 @@ tw-scores {
   }
 }
 
-.health {
+@empty: gray;
+tw-scores {
+  .health, .energy {
+    margin-bottom: 1rem;
+    width: 6*3.5rem;
+  }
+}
+tw-scores .health {
   font-size: 3rem;
-  .fa { color: gray; padding: 0 0.25rem; text-shadow: 3px 3px black; }
+  .fa { color: @empty; line-height: 1; padding: 0 0.25rem; text-shadow: 3px 3px black; }
   .fa.red { color: red; }
+}
+
+tw-scores .energy {
+  i {
+    border: 1.5rem solid blue;
+    border-radius: 100%;
+    display: inline-block;
+    margin: 0 0.25rem;
+    transform: rotate(45deg);
+  }
+  [data-energy="0"] { border-color: @empty; }
+  [data-energy="0.25"] { border-color: blue @empty @empty @empty; }
+  [data-energy="0.5"] { border-color: blue blue @empty @empty; }
+  [data-energy="0.75"] { border-color: blue blue blue @empty; }
 }
