@@ -89,7 +89,6 @@ class Game extends uR.Object {
     this.tnow = new Date().valueOf();
     this.turn++;
     this.board.pieces.forEach((p) => p.play());
-    this.player.play();
   }
   makeUnits() {
     var start = this.board.start;

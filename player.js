@@ -41,6 +41,8 @@ class Player extends BasePiece {
         [0,0,1,0,0],
       ],
       gold_levels: [],
+      max_energy: 3,
+      energy_interval: 4,
     });
     this.combos = [
       new DamageCombo({},0),
@@ -56,7 +58,10 @@ class Player extends BasePiece {
     this.inner_color = 'orange';
     this.sprite = uR.sprites['blue-flame'];
     this.equipment = {};
-    this.energy = 10;
+    this.energy = new Counter({
+      max: this.max_energy,
+      interval: this.energy_interval,
+    });
     new tW.equipment.SprintBoots().equip(this);
   }
   getHealthArray() {
@@ -105,7 +110,12 @@ class Player extends BasePiece {
     this.combos && this.combos.map((c) => c.apply(opts));
     var self = this;
     var [dx,dy] = [this.dx,this.dy];
-    uR.forEach(this.torch || [],function(row,tx) {
+    if (opts && opts.resources) { // maybe put in pieces.js BasePiece instead
+      for (var key in opts.resources) {
+        this[key].add(opts.resources[key]);
+      }
+    }
+    uR.forEach(this.torch || [],function(row,tx) { // should be in update minimap method
       var dx = tx-2;
       uR.forEach(row,function(on,ty) {
         if (!on) { return }
@@ -128,6 +138,8 @@ class Player extends BasePiece {
   draw() {
     super.draw()
     this.drawMoves()
+  }
+  drawUI() {
   }
   drawMoves() {
     var s = this.board.scale;
@@ -161,5 +173,56 @@ class Player extends BasePiece {
     var out = "";
     uR.forEach(this.minimap || [],function(row) { out += row.join(" ") + "\n" });
     return out;
+  }
+  play(opts) {
+    super.play(opts)
+    this.energy.tick();
+  }
+}
+
+class Counter extends uR.Object {
+  constructor(opts={}) {
+    super(opts);
+    this.defaults(opts,{
+      min: 0,
+      max: 1,
+      interval: 1,
+      value: 0,
+      step: 0,
+    });
+  }
+  tick(num=1) {
+    if (this.value == this.max) { return }
+    if (this._used) { this._used = false; return; }
+    this.step += num;
+    while (this.step >= this.interval) {
+      this.value += 1;
+      this.step -= this.interval;
+    }
+    if (this.value >= this.max) {
+      this.value = this.max;
+      this.step = 0;
+    }
+  }
+  getBinaryArray() {
+    var out = uR.math.zeros(this.max);
+    for (var i=0;i<this.value;i++) { out[i] = 1 }
+    return out;
+  }
+  getArray() {
+    var out = this.getBinaryArray()
+    if (this.value != this.max) { out[this.value] = this.step/this.interval }
+    return out;
+  }
+  minus(num=1) { this.add(-num); }
+  add(num=1) {
+    this.value += num;
+    if (this.value > this.max) { this.value = this.max; this.step = 0; }
+    if (this.value < this.min) { this.value = this.min; this.step = 0; }
+    this._used = true;
+  }
+  canAdd(num=1) {
+    var result = this.value + num;
+    return !(result > this.max || result < this.min);
   }
 }
