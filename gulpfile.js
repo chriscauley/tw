@@ -40,7 +40,7 @@ var JS_FILES = [
   "ui.tag",
   "map-sprite.tag",
 
-  "boots/base.js",
+  "equipment/base.js",
 ];
 
 gulp.task('build-js', function () {
