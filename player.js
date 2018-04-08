@@ -1,4 +1,6 @@
-class Combo extends uR.Object {
+tW.utils = {};
+tW.player = {};
+tW.utils.Combo = class Combo extends uR.Object {
   constructor(opts={},interval=0) {
     super(opts);
     this.interval = interval;
@@ -16,16 +18,63 @@ class Combo extends uR.Object {
   }
 }
 
-class DamageCombo extends Combo {
+class DamageCombo extends tW.utils.Combo {
   apply(move={}) {
     if (move.damage) { this.step(); }
     else if (++this.fails > this.interval) {
-      this.break()
+      this.break();
     }
   }
 }
 
-class Player extends BasePiece {
+tW.utils.Counter = class Counter extends uR.Object {
+  constructor(opts={}) {
+    super(opts);
+    this.defaults(opts,{
+      min: 0,
+      max: 1,
+      interval: 1,
+      value: 0,
+      step: 0,
+    });
+  }
+  tick(num=1) {
+    if (this.value == this.max) { return }
+    if (this._used) { this._used = false; return; }
+    this.step += num;
+    while (this.step >= this.interval) {
+      this.value += 1;
+      this.step -= this.interval;
+    }
+    if (this.value >= this.max) {
+      this.value = this.max;
+      this.step = 0;
+    }
+  }
+  getBinaryArray() {
+    var out = uR.math.zeros(this.max);
+    for (var i=0;i<this.value;i++) { out[i] = 1 }
+    return out;
+  }
+  getArray() {
+    var out = this.getBinaryArray()
+    if (this.value != this.max) { out[this.value] = this.step/this.interval }
+    return out;
+  }
+  minus(num=1) { this.add(-num); }
+  add(num=1) {
+    this.value += num;
+    if (this.value > this.max) { this.value = this.max; this.step = 0; }
+    if (this.value < this.min) { this.value = this.min; this.step = 0; }
+    this._used = true;
+  }
+  canAdd(num=1) {
+    var result = this.value + num;
+    return !(result > this.max || result < this.min);
+  }
+}
+
+tW.player.Player = class Player extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
     opts.intervals = [0,4];
@@ -45,10 +94,10 @@ class Player extends BasePiece {
       energy_interval: 4,
     });
     this.combos = [
-      new DamageCombo({},0),
-      new DamageCombo({},1),
-      new DamageCombo({},2),
-      new DamageCombo({},3),
+      // new DamageCombo({},0),
+      // new DamageCombo({},1),
+      // new DamageCombo({},2),
+      // new DamageCombo({},3),
     ]
     this.move = this.move.bind(this);
     this.resetMiniMap();
@@ -58,7 +107,7 @@ class Player extends BasePiece {
     this.inner_color = 'orange';
     this.sprite = uR.sprites['blue-flame'];
     this.equipment = {};
-    this.energy = new Counter({
+    this.energy = new tW.utils.Counter({
       max: this.max_energy,
       interval: this.energy_interval,
     });
@@ -177,52 +226,5 @@ class Player extends BasePiece {
   play(opts) {
     super.play(opts)
     this.energy.tick();
-  }
-}
-
-class Counter extends uR.Object {
-  constructor(opts={}) {
-    super(opts);
-    this.defaults(opts,{
-      min: 0,
-      max: 1,
-      interval: 1,
-      value: 0,
-      step: 0,
-    });
-  }
-  tick(num=1) {
-    if (this.value == this.max) { return }
-    if (this._used) { this._used = false; return; }
-    this.step += num;
-    while (this.step >= this.interval) {
-      this.value += 1;
-      this.step -= this.interval;
-    }
-    if (this.value >= this.max) {
-      this.value = this.max;
-      this.step = 0;
-    }
-  }
-  getBinaryArray() {
-    var out = uR.math.zeros(this.max);
-    for (var i=0;i<this.value;i++) { out[i] = 1 }
-    return out;
-  }
-  getArray() {
-    var out = this.getBinaryArray()
-    if (this.value != this.max) { out[this.value] = this.step/this.interval }
-    return out;
-  }
-  minus(num=1) { this.add(-num); }
-  add(num=1) {
-    this.value += num;
-    if (this.value > this.max) { this.value = this.max; this.step = 0; }
-    if (this.value < this.min) { this.value = this.min; this.step = 0; }
-    this._used = true;
-  }
-  canAdd(num=1) {
-    var result = this.value + num;
-    return !(result > this.max || result < this.min);
   }
 }

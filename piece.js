@@ -1,4 +1,5 @@
-class BasePiece extends tW.mixins.Sight(Moves) {
+tW.pieces = {}
+tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(Moves) {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -282,7 +283,7 @@ class BasePiece extends tW.mixins.Sight(Moves) {
   }
 }
 
-class CountDown extends BasePiece {
+tW.pieces.CountDown = class CountDown extends tW.pieces.BasePiece {
   constructor(opts) {
     super(opts);
     this.fillStyle = '#383';
@@ -298,14 +299,14 @@ class CountDown extends BasePiece {
   canReplace() { return true; }
 }
 
-class GreenBlob extends BasePiece {
+tW.pieces.GreenBlob = class GreenBlob extends tW.pieces.BasePiece {
   constructor(opts) {
     super(opts);
     this.inner_color = 'blue';
   }
 }
 
-class Blob extends BasePiece {
+tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.health = 2;
     super(opts);
@@ -318,7 +319,7 @@ class Blob extends BasePiece {
   }
 }
 
-class Walker extends BasePiece {
+tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.health = 1;
     opts.intervals = [0];
@@ -330,7 +331,7 @@ class Walker extends BasePiece {
   }
 }
 
-class WallFlower extends BasePiece {
+tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.intervals = [0];
     super(opts);
@@ -352,7 +353,7 @@ class WallFlower extends BasePiece {
   }
 }
 
-class GooglyEyes extends BasePiece {
+tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.intervals = [1];
     super(opts);
@@ -364,7 +365,7 @@ class GooglyEyes extends BasePiece {
   isAwake() { return this.following; }
 }
 
-class Grave extends BasePiece {
+tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.sight = 1;
     super(opts);
@@ -393,7 +394,7 @@ class Grave extends BasePiece {
   }
 }
 
-class Projectile extends BasePiece {
+tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
   constructor(opts={}) {
     uR.defaults(opts,{
       parent: uR.REQUIRED,
@@ -421,14 +422,14 @@ class Projectile extends BasePiece {
   }
 }
 
-class Fireball extends Projectile {
+tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
     super(opts)
     this.sprite = uR.sprites.fireball;
   }
 }
 
-class Spitter extends BasePiece {
+tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
   constructor(opts={}) {
     uR.defaults(opts,{
       intervals: [3],
@@ -440,11 +441,11 @@ class Spitter extends BasePiece {
 }
 
 uR.enemy_map = {
-  c: CountDown,
-  b: Blob,
-  w: Walker,
-  wf: WallFlower,
-  ge: GooglyEyes,
-  g: Grave,
-  sp: Spitter,
+  c: tW.pieces.CountDown,
+  b: tW.pieces.Blob,
+  w: tW.pieces.Walker,
+  wf: tW.pieces.WallFlower,
+  ge: tW.pieces.GooglyEyes,
+  g: tW.pieces.Grave,
+  sp: tW.pieces.Spitter,
 }

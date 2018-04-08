@@ -92,7 +92,7 @@ tW.Game = class Game extends uR.Object {
   }
   makeUnits() {
     var start = this.board.start;
-    this.player = new Player({
+    this.player = new tW.player.Player({
       game: this,
       board: this.board,
       health: 3,

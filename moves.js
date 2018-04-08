@@ -103,7 +103,7 @@ class Moves extends CanvasObject {
     if (square && square.piece && square.piece.team != this.team) {
       return { damage: [this.dx,this.dy,this.damage] }
     }
-    this.board.addPieces(new Fireball({
+    this.board.addPieces(new tW.pieces.Fireball({
       parent: this,
       dx: this.dx,
       dy: this.dy,
