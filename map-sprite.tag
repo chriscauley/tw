@@ -58,8 +58,9 @@ class Sprite extends uR.db.Model {
       'name',
       { name: 'width', type: 'int' },
       { name: 'height', type: 'int' },
-      { name: 'x', type: 'int' },
-      { name: 'y', type: 'int' },
+      { name: 'sx', type: 'int', label: 'Source X' },
+      { name: 'sy', type: 'int', label: 'Source Y' },
+      { name: 'orientation', choices: ['up','down','left','right'], type: 'select', initial: 'up' },
       "dataURL",
       { name: "spritesheet", type: 'fk', to: 'sprite.SpriteSheet' },
     ];
