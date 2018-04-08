@@ -11,7 +11,7 @@ uR.sprites = uR.sprites || {
     return uR.sprites["_wedge_"+color] || new WedgeSprite(color);
   },
 };
-class SpriteObject extends PaintObject {
+class SpriteObject extends uR.canvas.PaintObject {
   constructor(opts) {
     super(opts);
     this.defaults(opts,{

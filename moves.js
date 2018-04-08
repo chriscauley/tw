@@ -1,4 +1,4 @@
-class Moves extends CanvasObject {
+class Moves extends uR.canvas.CanvasObject {
   flip(move) {
     return { turn: [-this.dx,-this.dy], move: move && [-this.dx,-this.dy] }
   }

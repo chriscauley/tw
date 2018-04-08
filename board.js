@@ -1,4 +1,4 @@
-tW.Board = class Board extends CanvasObject {
+tW.Board = class Board extends uR.canvas.CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{

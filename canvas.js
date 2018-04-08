@@ -1,4 +1,6 @@
-class CanvasObject extends uR.Object {
+uR.canvas = {};
+
+uR.canvas.CanvasObject = class CanvasObject extends uR.Object {
   constructor() {
     super();
     this.animations = [];
@@ -78,7 +80,7 @@ class CanvasObject extends uR.Object {
   }
 }
 
-class PaintObject extends CanvasObject {
+uR.canvas.PaintObject = class PaintObject extends uR.canvas.CanvasObject {
   constructor(attrs={}) {
     super(attrs)
   }

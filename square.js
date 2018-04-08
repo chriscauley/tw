@@ -1,4 +1,4 @@
-class Square extends CanvasObject {
+class Square extends uR.canvas.CanvasObject {
   constructor(opts) {
     super()
     this.defaults(opts,{

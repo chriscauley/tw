@@ -80,7 +80,7 @@ uR.ready(function() {
   });
 });
 
-class SpriteMapper extends PaintObject {
+class SpriteMapper extends uR.canvas.PaintObject {
   constructor(opts) {
     super();
     var self = this;
