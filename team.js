@@ -1,4 +1,5 @@
-class Team extends uR.Object {
+tW.team = {};
+tW.team.Team = class Team extends uR.Object {
   constructor(opts={}) {
     super(opts);
     this.defaults(opts,{

@@ -55,7 +55,7 @@ tW.Game = class Game extends uR.Object {
   makeTeams() {
     this.teams = [];
     for (var i=0;i<2;i++) {
-      this.teams.push(new Team({game: this}))
+      this.teams.push(new tW.team.Team({game: this}))
     }
   }
   gameover() {
