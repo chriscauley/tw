@@ -1,4 +1,6 @@
-class Item extends uR.Object {
+tW.item = {};
+
+tW.item.Item = class Item extends uR.Object {
   toString() { return '[object Item]' }
   constructor(opts) {
     super(opts);
@@ -16,7 +18,7 @@ class Item extends uR.Object {
   }
 }
 
-class Gold extends Item {
+tW.item.Gold = class Gold extends tW.item.Item {
   constructor(opts) {
     super(opts)
     this.defaults(opts,{

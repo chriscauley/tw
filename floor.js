@@ -1,5 +1,5 @@
 tW.floor = {};
-tW.floor.FloorItem = class FloorItem extends Item {
+tW.floor.FloorItem = class FloorItem extends tW.item.Item {
   trigger(player) {
 
   }
