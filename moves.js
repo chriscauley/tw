@@ -1,4 +1,6 @@
-class Moves extends uR.canvas.CanvasObject {
+tW.moves = {};
+
+tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   flip(move) {
     return { turn: [-this.dx,-this.dy], move: move && [-this.dx,-this.dy] }
   }
@@ -118,6 +120,7 @@ class Moves extends uR.canvas.CanvasObject {
     return { done: true };
   }
 }
+
 tW.mixins = {};
 tW.mixins.Sight = (superclass) => class extends superclass {
   constructor(opts={}) {

@@ -25,8 +25,8 @@
     this.settings = [
       { name: "Game Config", config: this.opts.game.config },
     ]
-    for (let key of uR.sprites.keys) {
-      var sprite = uR.sprites[key];
+    for (let key of tW.sprites.keys) {
+      var sprite = tW.sprites[key];
       if (!sprite.config.keys.length) { continue }
       sprite.draw();
       this.settings.push({ name: "Sprite - " + sprite.name, config: sprite.config });
@@ -64,7 +64,7 @@
   </div>
   this.on("mount",function() {
     this.sprites = [];
-    for (let key of uR.sprites.keys) { uR.sprites[key].draw(); this.sprites.push(uR.sprites[key]); }
+    for (let key of tW.sprites.keys) { tW.sprites[key].draw(); this.sprites.push(tW.sprites[key]); }
     this.update();
   });
 </tw-sprites>

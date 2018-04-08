@@ -1,5 +1,5 @@
 tW.pieces = {}
-tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(Moves) {
+tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -40,11 +40,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(Moves) {
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
     this.inner_color = 'blue';
-    this.sprite = uR.sprites['red'];
+    this.sprite = tW.sprites['red'];
     this.restat();
     this.ui_dirty = this.dirty = true;
     this.team_color = ['red','green','blue'][this.team];
-    this.team_sprite = uR.sprites.wedge(this.team_color);
+    this.team_sprite = tW.sprites.wedge(this.team_color);
   }
   isAwake() { return true; }
   applyMove(opts) {
@@ -125,7 +125,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(Moves) {
     self.ui_dirty = true;
   }
   stamp(x0,y0,dx,img) {
-    img = uR.sprites.get(img);
+    img = tW.sprites.get(img);
     dx++;
     while(dx--) {
       this.ctx.drawImage(
@@ -163,7 +163,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(Moves) {
   drawGold(c) {
     if (!this.gold) { return } // && !this.game.config.show_gold) { return }
     var s = this.board.scale;
-    var img = uR.sprites.gold.get(0,0);
+    var img = tW.sprites.gold.get(0,0);
     var v = this.gold*1;
     var gx = s/2, gy = s/2;
     c.ctx.drawImage(
@@ -315,7 +315,7 @@ tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
       this.flip,
       this.bounce,
     ];
-    this.sprite = uR.sprites['blue-blob'];
+    this.sprite = tW.sprites['blue-blob'];
   }
 }
 
@@ -324,7 +324,7 @@ tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
     opts.health = 1;
     opts.intervals = [0];
     super(opts);
-    this.sprite = uR.sprites['zombie'];
+    this.sprite = tW.sprites['zombie'];
     this.tasks = [
       [ this.forward, this.flip ],
     ];
@@ -335,7 +335,7 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.intervals = [0];
     super(opts);
-    this.sprite = uR.sprites['fly'];
+    this.sprite = tW.sprites['fly'];
     this.tasks = [
       [ this.forward,this.turnRandomly],
     ];
@@ -357,7 +357,7 @@ tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.intervals = [1];
     super(opts);
-    this.sprite = uR.sprites['skeleton'];
+    this.sprite = tW.sprites['skeleton'];
     this.tasks = [
       [this.follow,this.findEnemy],
     ]
@@ -370,7 +370,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     opts.sight = 1;
     super(opts);
     this.dx = this.dy = 0; // has no direction
-    this.sprite = uR.sprites['grave'];
+    this.sprite = tW.sprites['grave'];
     this.intervals = [4];
     this.pieces = ['wf','ge']
     this.tasks = [
@@ -425,7 +425,7 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
 tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
     super(opts)
-    this.sprite = uR.sprites.fireball;
+    this.sprite = tW.sprites.fireball;
   }
 }
 
@@ -435,7 +435,7 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
       intervals: [3],
     });
     super(opts);
-    this.sprite = uR.sprites['spitter'];
+    this.sprite = tW.sprites['spitter'];
     this.tasks = [ [ this.throwFireball ] ];
   }
 }

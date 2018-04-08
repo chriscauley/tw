@@ -1,17 +1,17 @@
-uR.sprites = uR.sprites || {
+tW.sprites = tW.sprites || {
   keys: new Set(),
   get: function (color) {
-    return (uR.sprites[color] || new CircleSprite({
+    return (tW.sprites[color] || new tW.sprites.CircleSprite({
       fillStyle: color,
       name: color,
       radius: 0.5
     })).get();
   },
   wedge: function (color) {
-    return uR.sprites["_wedge_"+color] || new WedgeSprite(color);
+    return tW.sprites["_wedge_"+color] || new tW.sprites.WedgeSprite(color);
   },
 };
-class SpriteObject extends uR.canvas.PaintObject {
+tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
   constructor(opts) {
     super(opts);
     this.defaults(opts,{
@@ -24,8 +24,8 @@ class SpriteObject extends uR.canvas.PaintObject {
     this.height = this.H*this.scale;
     if (opts.name) {
       this.config = new uR.Config("_sprites_"+opts.name);
-      uR.sprites[opts.name] = this;
-      uR.sprites.keys.add(opts.name);
+      tW.sprites[opts.name] = this;
+      tW.sprites.keys.add(opts.name);
     }
     this.newCanvas({name: 'canvas'});
     this.newCanvas({
@@ -120,7 +120,7 @@ class SpriteObject extends uR.canvas.PaintObject {
   }
 }
 
-class DBSprite extends SpriteObject {
+tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
   constructor(opts={}) {
     uR.defaults(opts,{
       W: 1,
@@ -169,7 +169,7 @@ class DBSprite extends SpriteObject {
   }
 }
 
-class WedgeSprite extends SpriteObject {
+tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
   constructor(opts={}) {
     if (typeof opts == "string") { opts = { color: opts } }
     opts.W = 4;
@@ -206,7 +206,7 @@ uR.ready(function() {
     // 'ground_hole',
   ];
   try {
-    sprites.map((name,i) => new DBSprite({
+    sprites.map((name,i) => new tW.sprites.DBSprite({
       name: name,
       sprite_id: i+1,
       rotations: name == "fireball",
@@ -217,7 +217,7 @@ uR.ready(function() {
   }
 });
 
-class CircleSprite extends SpriteObject {
+tW.sprites.CircleSprite = class CircleSprite extends tW.sprites.SpriteObject {
   constructor(opts) {
     uR.defaults(opts,{
       lineWidth: 1,
@@ -243,7 +243,7 @@ class CircleSprite extends SpriteObject {
   }
 }
 
-class GradientSprite extends CircleSprite {
+tW.sprites.GradientSprite = class GradientSprite extends tW.sprites.CircleSprite {
   constructor(opts) {
     opts.W = opts.W || 4;
     opts.H = opts.H || 2;
@@ -255,7 +255,7 @@ class GradientSprite extends CircleSprite {
   }
 }
 
-class FlameSprite extends GradientSprite {
+tW.sprites.FlameSprite = class FlameSprite extends tW.sprites.GradientSprite {
   getCenter() {
     super.getCenter();
     this.cdy = -this.radius/2;
@@ -284,7 +284,7 @@ class FlameSprite extends GradientSprite {
   }
 }
 
-class TwoCrystalSprite extends GradientSprite {
+tW.sprites.TwoCrystalSprite = class TwoCrystalSprite extends tW.sprites.GradientSprite {
   constructor(opts) {
     opts.W = 4;
     opts.H = 8;
@@ -330,7 +330,7 @@ class TwoCrystalSprite extends GradientSprite {
   }
 }
 
-class PacSprite extends GradientSprite {
+tW.sprites.PacSprite = class PacSprite extends tW.sprites.GradientSprite {
   constructor(opts) {
     opts.H=3;
     super(opts);
@@ -374,7 +374,7 @@ class PacSprite extends GradientSprite {
   }
 }
 
-class GradientWithEyes extends FlameSprite {
+tW.sprites.GradientWithEyes = class GradientWithEyes extends tW.sprites.FlameSprite {
   constructor(opts) {
     opts.H = 4;
     super(opts);
@@ -388,7 +388,7 @@ class GradientWithEyes extends FlameSprite {
     )
     for (var y=0;y<this.H;y++) {
       var color = (y<this.H/2)?'gray':'black';
-      var img = uR.sprites.get(color);
+      var img = tW.sprites.get(color);
       var s = this.scale;
       var d = s/3; // diameter
       ctx.drawImage(
@@ -409,62 +409,62 @@ class GradientWithEyes extends FlameSprite {
   }
 }
 
-new PacSprite({
+new tW.sprites.PacSprite({
   colors: ['#383','green'],
   name:'googly-eyes'
 })
 
-new TwoCrystalSprite({
+new tW.sprites.TwoCrystalSprite({
   colors: ['#f61A26','#060d2a'],
   name: 'bloob'
 });
 
-new TwoCrystalSprite({
+new tW.sprites.TwoCrystalSprite({
   colors: ['black','#cad'],
   r1: 0.8,
   name: 'doop'
 });
 
-new CircleSprite({
+new tW.sprites.CircleSprite({
   fillStyle: 'gold',
   name: 'gold',
   radius: 0.3
 });
-new CircleSprite({
+new tW.sprites.CircleSprite({
   fillStyle: 'red',
   strokeStyle: 'white',
   name: 'health',
   scale: 10,
 });
-new CircleSprite({
+new tW.sprites.CircleSprite({
   fillStyle: 'black',
   strokeStyle: 'white',
   name: 'empty_health',
   scale: 10,
 });
-new GradientSprite({
+new tW.sprites.GradientSprite({
   name: "red",
   colors: ["red","red"]
 });
 
-new FlameSprite({
+new tW.sprites.FlameSprite({
   name: 'black-hole',
   colors: ['#000','#AAA',"#000",'#AAA',"#000",'#AAA',"#000"]
 });
-new FlameSprite({
+new tW.sprites.FlameSprite({
   name: "blue-flame",
   colors: ["#008","#88F"]
 });
-new FlameSprite({
+new tW.sprites.FlameSprite({
   name: "blue-blob",
   colors: ["#88F",'#008',"#008"],
 });
 var c = tinycolor("#091442");
-new FlameSprite({
+new tW.sprites.FlameSprite({
   name: "yellow-flame",
   colors: ["#F80","#F80","#000"],
 });
-new FlameSprite({
+new tW.sprites.FlameSprite({
   name: "green-flame",
   colors: ["#0F8","#0F8","#000"],
 });

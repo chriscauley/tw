@@ -5,7 +5,7 @@ class Square extends uR.canvas.CanvasObject {
       gold: 0,
       board: uR.REQUIRED,
     });
-    this.sprite = uR.sprites["ground"+((this.x%2-this.y%2)?"1":"2")]
+    this.sprite = tW.sprites["ground"+((this.x%2-this.y%2)?"1":"2")]
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
     this.canvas = this.newCanvas({
@@ -72,7 +72,7 @@ class Square extends uR.canvas.CanvasObject {
     if (!this.gold) { return }
     var ctx = this.canvas.ctx;
     var s = this.board.scale;
-    var img = uR.sprites.gold.get(0,0);
+    var img = tW.sprites.gold.get(0,0);
     var v = this.gold*1;
     ctx.drawImage(
       img.img,

@@ -27,7 +27,7 @@ tW.item.Gold = class Gold extends tW.item.Item {
     });
     // note this slightly favors intermediate values, not min and max. For now this is fine.
     this.value = Math.round(this.range*uR.random())+this.base;
-    this.sprite = uR.sprites.gold;
+    this.sprite = tW.sprites.gold;
   }
   pickUp(unit) {
     unit.addGold(this.value);

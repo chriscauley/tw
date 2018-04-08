@@ -105,7 +105,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;
     this.inner_color = 'orange';
-    this.sprite = uR.sprites['blue-flame'];
+    this.sprite = tW.sprites['blue-flame'];
     this.equipment = {};
     this.energy = new tW.utils.Counter({
       max: this.max_energy,
