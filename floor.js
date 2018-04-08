@@ -1,10 +1,11 @@
-class FloorItem extends Item {
+tW.floor = {};
+tW.floor.FloorItem = class FloorItem extends Item {
   trigger(player) {
 
   }
 }
 
-class Stairs extends FloorItem {
+tW.floor.Stairs = class Stairs extends tW.floor.FloorItem {
   constructor() {
     super();
     this.open = true;
