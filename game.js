@@ -121,7 +121,10 @@ tW.Game = class Game extends uR.Object {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
           board.addPieces(new tW.enemy_map[choice(this.config.get('active_pieces'))]({
-            x:sq.x,y:sq.y,board:board,gold: this.piece_count,
+            x: sq.x,
+            y: sq.y,
+            board: board,
+            gold: 0//this.piece_count,
           }));
           enemy_count += 1;
         }

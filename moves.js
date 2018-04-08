@@ -102,7 +102,9 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   }
   throwFireball(dx,dy) {
     var square = this.look();
-    if (square && square.piece && square.piece.team != this.team) {
+    if (!square) { console.log("no square"); return } // no square to target
+    if (square.piece) {
+      if (square.piece.team == this.team) { return } // don't attack friends
       return { damage: [this.dx,this.dy,this.damage] }
     }
     this.board.addPieces(new tW.pieces.Fireball({
