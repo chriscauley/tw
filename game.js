@@ -14,13 +14,13 @@ uR.ready(function() {
     { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
   ]);
 });
-class Game extends uR.Object {
+tW.Game = class Game extends uR.Object {
   constructor() {
     super();
     this.config = uR.tw.game_config;
     uR.extend(this,this.config.getData());
     this.bindKeys();
-    this.board = new Board({ game: this, });
+    this.board = new tW.Board({ game: this, });
     this.nextLevel();
     this.makeTeams();
     this.makeUnits();
