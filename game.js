@@ -1,8 +1,8 @@
 uR.tw = {game_config: new uR.Config("GAME_CONFIG")};
 uR.ready(function() {
   var PIECE_CHOICES = [];
-  for (var key in uR.enemy_map) {
-    PIECE_CHOICES.push([key,uR.enemy_map[key].name]);
+  for (var key in tW.enemy_map) {
+    PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
   }
   uR.tw.game_config.setSchema([
     { name: "W", type: "integer", value: 5 },
@@ -120,7 +120,7 @@ tW.Game = class Game extends uR.Object {
       while(enemy_count<this.piece_count && iter<100) {
         var sq = choice(choice(this.board.squares));
         if (sq && !sq.piece) {
-          board.addPieces(new uR.enemy_map[choice(this.config.get('active_pieces'))]({
+          board.addPieces(new tW.enemy_map[choice(this.config.get('active_pieces'))]({
             x:sq.x,y:sq.y,board:board,gold: this.piece_count,
           }));
           enemy_count += 1;

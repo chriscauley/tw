@@ -43,7 +43,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         if (c == 's') { start = [x,y] }
         if (c == 'x') { exit = [x,y] }
-        uR.enemy_map[c] && self.pieces.push(new uR.enemy_map[c]({ x: x, y: y, board: self}));
+        tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
       });
     });
     this.start = start;

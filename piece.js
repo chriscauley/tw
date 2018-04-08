@@ -382,7 +382,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     uR.random.shuffle(squares);
     for (var sq of squares) {
       if (!sq.piece) {
-        this.board.addPieces(new uR.enemy_map[uR.random.choice(this.pieces)]({
+        this.board.addPieces(new tW.enemy_map[uR.random.choice(this.pieces)]({
           x:sq.x,
           y:sq.y,
           board: this.board,
@@ -440,7 +440,7 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
   }
 }
 
-uR.enemy_map = {
+tW.enemy_map = {
   c: tW.pieces.CountDown,
   b: tW.pieces.Blob,
   w: tW.pieces.Walker,

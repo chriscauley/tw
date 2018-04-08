@@ -1,3 +1,4 @@
+tW.square = {};
 tW.square.Square = class Square extends uR.canvas.CanvasObject {
   constructor(opts) {
     super()
