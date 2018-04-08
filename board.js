@@ -25,7 +25,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
   }
   loadLevel(level_number) {
     //var level = LEVELS[level_number];
-    var level = new RectRoom(this.game.config.getData()).level;
+    var level = new tW.level.RectRoom(this.game.config.getData()).level;
     delete this.squares;
     delete this.pieces;
     this.squares = [];

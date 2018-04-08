@@ -1,4 +1,5 @@
-var LEVELS = [
+tW.level = {}
+tW.level.LEVELS = [
   ["  x000  ",
    "  0000  ",
    "00B00000",
@@ -26,7 +27,7 @@ var LEVELS = [
    "000000000",
   ]
 ]
-class Level extends uR.Object {
+tW.level.Level = class Level extends uR.Object {
   constructor(opts) {
     super(opts);
     this.defaults(opts ||{},{
@@ -36,7 +37,7 @@ class Level extends uR.Object {
   }
 }
 
-class RectRoom extends Level {
+tW.level.RectRoom = class RectRoom extends tW.level.Level {
   constructor(opts) {
     super(opts);
     this.H = this.H*1;
@@ -51,7 +52,7 @@ class RectRoom extends Level {
   }
 }
 
-class DungeonLevel extends Level {
+tW.level.Dungeon = class Dungeon extends tW.level.Level {
   constructor(opts) {
     if (opts.style && DG.TEMPLATES[opts.style]) {
       uR.defaults(opts,DG.TEMPLATES[opts.style]);
@@ -64,14 +65,7 @@ class DungeonLevel extends Level {
   }
 }
 
-LEVELS = [
-  
-  //LEVELS[2]
-  //new RectRoom().level
-]
-
-uR.level = {
-  RectRoom: RectRoom,
-  //zelda: new DungeonLevel({style:'zelda'}),
-  //basic: new DungeonLevel({style:'basic'}),
-}
+uR.extend(tW.level,{
+  //zelda: new tW.level.Dungeon({style:'zelda'}),
+  //basic: new tW.level.Dungeon({style:'basic'}),
+})
