@@ -4,19 +4,14 @@
   </div>
   <div class="energy">
     <i data-energy={ e } each={ e,i in energy }></i>
-  <div>Gold: { player.gold }</div>
-  <div>Score: { player.score }</div>
-  <!--<pre class="minimap">{ player.printMiniMap() }</pre>-->
-  <div class="combos">
-    <h4>Combos</h4>
-    <div each={ c in player.combos }>{ c.interval }: { c.streak } (max: { c.max })</div>
   </div>
-  <div class="admin">
-    <button onclick={ showSprites }>show sprites</button>
-    <div each={ settings }>
-      <button onclick={ editSettings }>{ name }</button>
-    </div>
-  </div>
+  <!-- <div>Gold: { player.gold }</div> -->
+  <!-- <div>Score: { player.score }</div> -->
+  <!-- <\!--<pre class="minimap">{ player.printMiniMap() }</pre>-\-> -->
+  <!-- <div class="combos"> -->
+  <!--   <h4>Combos</h4> -->
+  <!--   <div each={ c in player.combos }>{ c.interval }: { c.streak } (max: { c.max })</div> -->
+  <!-- </div> -->
 
   this.on("before-mount",function() {
     this.player = this.opts.player;
