@@ -40,7 +40,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       uR.forEach(row,function(c,x) {
         self.squares[x] = self.squares[x] || [];
         if (c === " ") { return }
-        var square = self.squares[x][y] = new Square({x:x,y:y,board:self});
+        var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         if (c == 's') { start = [x,y] }
         if (c == 'x') { exit = [x,y] }
         uR.enemy_map[c] && self.pieces.push(new uR.enemy_map[c]({ x: x, y: y, board: self}));
