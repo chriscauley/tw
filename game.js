@@ -25,7 +25,7 @@ tW.Game = class Game extends uR.Object {
     this.makeTeams();
     this.makeUnits();
     this.makeUI();
-    this.controller = new Controller({ parent: this });
+    this.controller = new uR.controller.Controller({ parent: this });
     this.turn = 0;
     this.piece_count = this.config.get("piece_count");
   }

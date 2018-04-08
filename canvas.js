@@ -47,7 +47,7 @@ uR.canvas.CanvasObject = class CanvasObject extends uR.Object {
     }
     if (attrs.name && !this[attrs.name]) { this[attrs.name] = canvas; }
     if (attrs.controller) {
-      this.controller = new Controller({
+      this.controller = new uR.controller.Controller({
       parent: this,
         target: canvas,
       });

@@ -1,4 +1,6 @@
-class Controller {
+uR.controller = {};
+
+uR.controller.Controller = class Controller {
   constructor(opts) {
     uR.extend(
       this,
