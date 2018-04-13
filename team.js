@@ -17,7 +17,7 @@ tW.team.Team = class Team extends uR.Object {
     var square = this.game.board.getSquare(this.start);
     for (var i=0;i<uR.tw.game_config.get("base_units");i++) {
       this.pieces = [
-        new Grave({
+        new tW.pieces.Grave({
           x: this.start[0],
           y: this.start[1],
           board: this.game.board,

@@ -1,6 +1,6 @@
 <tw-sprite-mapper>
   <div class={ theme.outer }>
-    <div class={ theme.content } style="min-height: 750px;">
+    <div class={ theme.content } style="min-height: 375px;">
       <div id="sprite-mapper-inner"></div>
       <div each={ sprite in sprites } class="card" style="float: left;" title={ sprite.id }>
         <img src={ sprite.dataURL } />

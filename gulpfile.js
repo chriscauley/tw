@@ -66,7 +66,7 @@ gulp.task('build-css', function () {
 var build_tasks = ['build-js', 'build-css',];
 gulp.task('watch', build_tasks, function () {
   gulp.watch(JS_FILES, ['build-js']);
-  gulp.watch(["less/*.less",], ['build-css']);
+  gulp.watch(["base.less","less/*.less",], ['build-css']);
 });
 
 gulp.task('default', build_tasks);

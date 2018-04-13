@@ -77,8 +77,8 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     if (!this.game.player) { return }
     const s = this.scale;
     var ease = this.getEasing(new Date() - this.game.player.last_move.t);
-    var ease_x = (this.game.player.last_move.x)*ease-1;
-    var ease_y = (this.game.player.last_move.y)*ease-1;
+    var ease_x = (this.game.player.last_move.dx)*ease-1;
+    var ease_y = (this.game.player.last_move.dy)*ease-1;
     this.offset_x = s*uR.math.between(this.min_offset_x,this.game.player.x-this.W/2-0.5-ease_x,this.max_offset_x);
     this.offset_y = s*uR.math.between(this.min_offset_y,this.game.player.y-this.H/2-0.5-ease_y,this.max_offset_y);
     var floor_dirty = true;
