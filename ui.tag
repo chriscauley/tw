@@ -5,6 +5,14 @@
   <div class="energy">
     <i data-energy={ e } each={ e,i in energy }></i>
   </div>
+  <div class="logs" ref="logs">
+    <div each={ log,i in player.logs }>
+      { log.key }
+      <span if={ log.damage }>
+        <img src={ sword } />
+        { log.damage.piece.constructor.name }</span>
+    </div>
+  </div>
   <!-- <div>Gold: { player.gold }</div> -->
   <!-- <div>Score: { player.score }</div> -->
   <!-- <\!--<pre class="minimap">{ player.printMiniMap() }</pre>-\-> -->
@@ -22,22 +30,26 @@
   this.on("update",function() {
     this.health = this.player.getHealthArray();
     this.energy = this.player.energy.getArray();
-    this.settings = [
-      { name: "Game Config", config: this.opts.game.config },
-    ]
-    for (let key of tW.sprites.keys) {
-      var sprite = tW.sprites[key];
-      if (!sprite.config.keys.length) { continue }
-      sprite.draw();
-      this.settings.push({ name: "Sprite - " + sprite.name, config: sprite.config });
-    }
+    this.sword = tW.sprites.get("sword").img.toDataURL();
+    // this.settings = [
+    //   { name: "Game Config", config: this.opts.game.config },
+    // ]
+    // for (let key of tW.sprites.keys) {
+    //   var sprite = tW.sprites[key];
+    //   if (!sprite.config.keys.length) { continue }
+    //   sprite.draw();
+    //   this.settings.push({ name: "Sprite - " + sprite.name, config: sprite.config });
+    // }
   });
-  showSprites() {
-    uR.alertElement('tw-sprites');
-  }
-  editSettings(e) {
-    e.item.config.openEditor();
-  }
+  this.on("updated",function() {
+    this.refs.logs.scroll(0,this.refs.logs.scrollHeight);
+  });
+  // showSprites() {
+  //   uR.alertElement('tw-sprites');
+  // }
+  // editSettings(e) {
+  //   e.item.config.openEditor();
+  // }
 </tw-scores>
 
 <tw-gameover>

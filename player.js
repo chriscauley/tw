@@ -79,7 +79,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     opts.gold_per_touch = Infinity;
     opts.intervals = [0,4];
     super(opts);
-    this.last_move = { x: 0, y:0, t:0 };
+    this.last_move = { dx: 0, dy:0, t:0 };
     this.defaults(opts,{
       game: uR.REQUIRED,
       torch: [
@@ -112,6 +112,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       interval: this.energy_interval,
     });
     new tW.equipment.SprintBoots().equip(this);
+    this.logs = [];
   }
   getHealthArray() {
     var array = uR.math.zeros(this.max_health);
@@ -136,20 +137,25 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       return this.equipment.feet.getMove(dx,dy);
     } else {
       var square = this.look(dx,dy);
-      if (square && square.piece && square.piece.team != this.team) { out.damage = [dx,dy,this.damage] }
+      if (square && square.piece && square.piece.team != this.team) {
+        out.damage = [dx,dy,this.damage];
+        out.damage.piece = square.piece;
+      }
       if (square && !square.piece) { out.move = [dx,dy] }
     }
     return out;
   }
   move(e,dx,dy) {
     var out = this.getMove(e,dx,dy);
+    out.key = e.key;
     this.applyMove(out);
     this.ui_dirty = true;
     if (out.move) {
       this.last_move = {
-        x: out.move[0],
-        y: out.move[1],
+        dx: out.move[0],
+        dy: out.move[1],
         t: new Date().valueOf(),
+        damage: out.damage,
       }
     }
     return true;
@@ -177,6 +183,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
         catch (e) {}
       });
     });
+    opts && this.logs.push(opts);
   }
   addScore(points) {
     this.score += points;

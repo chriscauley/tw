@@ -17,9 +17,12 @@ img {
 }
 
 tw-scores {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
   position: absolute;
   right: 0;
+  text-align: right;
   top: 0;
   .minimap {
     border: 1px black solid;
@@ -30,25 +33,28 @@ tw-scores {
 }
 
 @empty: gray;
+@s: 2rem;
 tw-scores {
-  text-align: right;
   .health, .energy {
-    margin-bottom: 1rem;
-    width: 6*3.5rem;
+    margin-bottom: @s/2;
+    width: 6*@s;
+  }
+  .logs {
+    overflow: scroll;
   }
 }
 tw-scores .health {
-  font-size: 3rem;
-  .fa { color: @empty; line-height: 1; padding: 0 0.25rem; text-shadow: 3px 3px black; }
+  font-size: @s;
+  .fa { color: @empty; line-height: 1; padding: 0 @s/10; text-shadow: 3px 3px black; }
   .fa.red { color: red; }
 }
 
 tw-scores .energy {
   i {
-    border: 1.5rem solid blue;
+    border: @s/2 solid blue;
     border-radius: 100%;
     display: inline-block;
-    margin: 0 0.25rem;
+    margin: 0 @s/10;
     transform: rotate(45deg);
   }
   [data-energy="0"] { border-color: @empty; }
