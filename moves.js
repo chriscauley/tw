@@ -131,7 +131,7 @@ tW.mixins.Sight = (superclass) => class extends superclass {
     this.setSight();
   }
   setSight(value) {
-    this.sight = value || this.sight; // NB: Can never be 1
+    this.sight = value || this.sight; // NB: Can never be 0
     this.visibility = [];
     var x,y,dy;
     for (x=-this.sight; x<=this.sight; x++) {
