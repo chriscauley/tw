@@ -24,8 +24,6 @@ var JS_FILES = [
   "dungeon/generators/generator.js",
   "dungeon/generators/dungeon.js",
   "pallet.js",
-  "controller.js",
-  "canvas/index.js",
   "sprite.js",
   "item.js",
   "floor.js",
