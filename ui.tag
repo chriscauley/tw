@@ -1,6 +1,6 @@
 <tw-scores>
   <div class="health">
-    <i class="fa fa-heart { h?'red':'' }" each={ h in health }></i>
+    <i class="fa fa-heart { red:h }" each={ h in health }></i>
   </div>
   <div class="energy">
     <i data-energy={ e } each={ e,i in energy }></i>

@@ -4,22 +4,31 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <link href="base.less" rel="stylesheet/less" type="text/css"></link>
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"\>
+    <!-- <link href="//beta.unrest.io/uc/uc-built.css" rel="stylesheet"></link>-->
   </head>
 
   <div id="main">
     <div id="game"></div>
     <div id="card-box"></div>
   </div>
-  <link href="http://static.unrest.io/.dist/unrest-built.css" rel="stylesheet"></link>
-  <link href="http://static.unrest.io/.dist/admin-built.css" rel="stylesheet"></link>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"\>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.2.1/riot+compiler.min.js"></script>
+  <link href="//beta.unrest.io/unrest-built.css" rel="stylesheet"></link>
+  <link href="//beta.unrest.io/admin-built.css" rel="stylesheet"></link>
+  <script src="//beta.unrest.io/vendor-built.js?"></script>
+  <script src="//beta.unrest.io/unrest_full-built.js?"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
-  <script src="http://static.unrest.io/.dist/unrest-built.js"></script>
-  <script src="http://static.unrest.io/.dist/admin-built.js"></script>
-  <script src="http://static.unrest.io/.dist/canvas-built.js"></script>
-  <script src="http://static.unrest.io/.dist/controller-built.js"></script>
-  <script src="http://static.unrest.io/lib/random-seed.js"></script>
+  <script src="//beta.unrest.io/lib/random-seed.js"></script>
+  <!--
+  <script src="//beta.unrest.io/uc/vendor-built.js"></script>
+  <script src="//beta.unrest.io/uc/uc-built.js"></script>
+  <script src="{% static "data.js" %}"></script>
+  <script src="{% static "tests.js" %}"></script>
+  <script>
+    var KLOGGER_SELECTOR="#main";
+    var DUMMY_USERS = {{ DUMMY_USERS|safe }};
+  </script>
+  -->
   <script>uR.auth.reset = function() { return };</script>
   <script src=".dist/tw-built.js"></script>
 </html>
