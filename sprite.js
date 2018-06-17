@@ -201,6 +201,7 @@ uR.ready(function() {
     'fireball',
     'spitter',
     'sword',
+    'beholder',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',

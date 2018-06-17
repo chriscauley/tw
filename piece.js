@@ -372,7 +372,6 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     this.dx = this.dy = 0; // has no direction
     this.sprite = tW.sprites['grave'];
     this.intervals = [4];
-    this.pieces = ['wf','ge']
     this.tasks = [
       [this.spawnPiece]
     ];
@@ -380,9 +379,10 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   spawnPiece() {
     var squares = this.getVisibleSquares();
     uR.random.shuffle(squares);
+    var pieces = this.pieces || uR.tw.game_config.get("active_pieces");
     for (var sq of squares) {
       if (!sq.piece) {
-        this.board.addPieces(new tW.enemy_map[uR.random.choice(this.pieces)]({
+        this.board.addPieces(new tW.enemy_map[uR.random.choice(pieces)]({
           x:sq.x,
           y:sq.y,
           board: this.board,
@@ -440,9 +440,21 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
   }
 }
 
+tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece) {
+  constructor(opts={}) {
+    uR.defaults(opts,{intervals: [0]});
+    super(opts);
+    this.sprite = tW.sprites['beholder'];
+    this.tasks = [
+      [ this.checkCharge, this.doCharge ]
+    ];
+  }
+}
+
 tW.enemy_map = {
   c: tW.pieces.CountDown,
   b: tW.pieces.Blob,
+  be: tW.pieces.Beholder,
   w: tW.pieces.Walker,
   wf: tW.pieces.WallFlower,
   ge: tW.pieces.GooglyEyes,
