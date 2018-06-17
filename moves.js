@@ -139,12 +139,68 @@ tW.mixins.Sight = (superclass) => class extends superclass {
       for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
     }
   }
-  getVisibleSquares() {
+  getVisibleSquares(visibility) {
+    visibility = visibility || this.visibility;
     var indexes = [];
-    for (var dxdy of this.visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
+    for (var dxdy of visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
     return this.board.getSquares(indexes);
   }
   getRandomSquare() {
     uR.random.choice(this.getVisibleSquares());
+  }
+}
+
+tW.mixins.TunnelVision = (superclass) => class extends superclass {
+  constructor(opts={}) {
+    super(opts);
+    this.defaults(opts,{tunnel_sight: 3});
+    this.setTunnelSight();
+  }
+  setTunnelSight(value) {
+    this.sight = value || this.sight; // NB: Can never be 0
+    this.tunnel_directions = [[],[],[],[]];
+    for (let dxy=1; dxy<=this.tunnel_sight; dxy++) {
+      this.tunnel_directions[0].push([dxy,0]); // right
+      this.tunnel_directions[1].push([-dxy,0]); // left
+      this.tunnel_directions[2].push([0,dxy]); // down
+      this.tunnel_directions[3].push([0,-dxy]); // up
+    }
+  }
+}
+
+tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(superclass) {
+  checkCharge() {
+    if (this.charging_deltas) { return }
+    var piece,square
+    for (let deltas of this.tunnel_directions) {
+      for (let delta of deltas) {
+        square = this.look(delta);
+        piece = square && square.piece;
+         // don't charge if no square or if ally or neutral is blocking
+        if (!square || piece && piece.team == this.team) { break }
+        if (piece) {
+          this.charging_deltas = deltas;
+          return { done: true }
+        }
+      }
+    }
+  }
+  doCharge() {
+    if (!this.charging_deltas) { return }
+    var charging_deltas = this.charging_deltas;
+    this.charging_deltas = undefined;
+    var last = [0,0], square, piece;
+    for (var delta of charging_deltas) {
+      square = this.look(delta)
+      piece = square && square.piece;
+      if (!square || piece) {
+        var move = { move: last };
+        if (piece && this.team != piece.team) { move.damage = delta.concat([this.damage]) }
+        return move;
+      }
+      last = delta;
+    }
+    // all squares are empty, charge to end
+    return { move: last }
   }
 }
