@@ -39,16 +39,22 @@ tW.level.Level = class Level extends uR.Object {
 
 tW.level.RectRoom = class RectRoom extends tW.level.Level {
   constructor(opts) {
+    function parseWH(n) {
+      if (typeof(n) == "string") {
+        var [lo,hi] = n.split("-");
+        return uR.randint(lo,hi||lo);
+      }
+      return n*1
+    }
     super(opts);
-    this.H = this.H*1;
-    this.W = this.W*1;
+    this.H = parseWH(this.H);
+    this.W = parseWH(this.W);
     this.min_wh = Math.min(this.H,this.W);
     this.half_wh = Math.floor(this.min_wh/2);
     this.level = [];
     for (var y=0;y<this.H;y++) { this.level.push(uR.math.zeros(this.W)) }
     this.level[this.half_wh][this.half_wh] = "s";
     this.level[this.H-this.half_wh][this.W-this.half_wh] = "e";
-    this.level[3][6] = " ";
   }
 }
 

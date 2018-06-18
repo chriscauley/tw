@@ -13,6 +13,8 @@ tW.team.Team = class Team extends uR.Object {
     this.pieces = [];
   }
   makeUnits() {
+    return this.pieces;
+    if (this.number == 1) { return this.pieces }
     // this should probably be it's own class
     var square = this.game.board.getSquare(this.start);
     for (var i=0;i<uR.tw.game_config.get("base_units");i++) {
