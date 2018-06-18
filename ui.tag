@@ -10,7 +10,8 @@
       { log.key }
       <span if={ log.damage }>
         <img src={ sword } />
-        { log.damage.piece.constructor.name }</span>
+        { log.damage.piece.constructor.name }
+      </span>
     </div>
   </div>
   <!-- <div>Gold: { player.gold }</div> -->
@@ -26,11 +27,13 @@
     this.opts.game.ui = this;
     this.game = this.opts.game;
   });
-  this.on("mount",function() { this.update() });
+  this.on("mount",function() {
+    this.update();
+  });
   this.on("update",function() {
+    this.sword = this.sword || tW.sprites.sword.dataURL;
     this.health = this.player.getHealthArray();
     this.energy = this.player.energy.getArray();
-    this.sword = tW.sprites.get("sword").img.toDataURL();
     // this.settings = [
     //   { name: "Game Config", config: this.opts.game.config },
     // ]

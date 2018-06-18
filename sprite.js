@@ -143,9 +143,11 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
         self.temp_canvas.ctx.translate(0,self.scale);
         self.temp_canvas.ctx.scale(1, -1);
       }
-      self.temp_canvas.ctx.drawImage(this,0,0)
+      self.raw_image = document.createElement("canvas");
+      self.temp_canvas.ctx.drawImage(this,0,0);
       self.temp_canvas.ctx.restore();
       self.temp_canvas.replaceColor("#30346d","transparent");
+      self.dataURL = self.temp_canvas.toDataURL();
       self.dirty = true;
       self.draw();
     })
