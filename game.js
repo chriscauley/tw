@@ -5,8 +5,8 @@ uR.ready(function() {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
   }
   uR.tw.game_config.setSchema([
-    { name: "W", type: "integer", value: 5 },
-    { name: "H", type: "integer", value: 5 },
+    { name: "W", value: 5 },
+    { name: "H", value: 5 },
     { name: "base_units", type: "integer", value: 1 },
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },

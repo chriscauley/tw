@@ -40,11 +40,11 @@ tW.level.Level = class Level extends uR.Object {
 tW.level.RectRoom = class RectRoom extends tW.level.Level {
   constructor(opts) {
     function parseWH(n) {
-      if (typeof(n) == "string") {
+      if (typeof(n) == "string" && n.indexOf("-") != -1) {
         var [lo,hi] = n.split("-");
-        return uR.randint(lo,hi||lo);
+        return uR.randint(parseInt(lo),parseInt(hi));
       }
-      return n*1
+      return parseInt(n);
     }
     super(opts);
     this.H = parseWH(this.H);
