@@ -163,14 +163,23 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
   }
   _draw() {
     var ctx = this.canvas.ctx;
-    var ca = tinycolor(this.color).setAlpha(0).toHex8String();
-    var c2 = tinycolor("black").toHex8String();
-    var c2a = tinycolor("black").setAlpha(0).toHex8String();
-    this.drawGradient(this.scale/2,this.scale/2+this.scale,[this.color,ca],{cdx:0,cdy:0,radius: this.scale/2});
-    this.drawGradient(this.scale/2,this.scale/2+this.scale*2,[c2,c2a],{cdx:0,cdy:0,radius: this.scale/2});
     ctx.drawImage(this.temp_canvas, 0, 0);
-    ctx.drawImage(this.temp_canvas, 0, this.scale);
-    ctx.drawImage(this.temp_canvas, 0, this.scale*2);
+    if (this.is_piece) {
+      for (var color of ["red","black"]) {
+        this.canvas_names.push(color+"_halo");
+        var c = this.newCanvas({
+          name: color+"_halo",
+          width: this.scale,
+          height: this.scale,
+        })
+        var tc = tinycolor(color);
+        this.drawGradient({
+          canvas: c,
+          colors: [tc.toHex8String(),tc.setAlpha(0).toHex8String()],
+        })
+        c.getContext("2d").drawImage(this.temp_canvas,0,0);
+      }
+    }
     this.rotations && this.doRotations();
   }
 }
@@ -213,12 +222,21 @@ uR.ready(function() {
     // 'ground_cracks3',
     // 'ground_hole',
   ];
+  var not_pieces = [
+    'fireball',
+    'ground1',
+    'ground2',
+    'ground_lock',
+    'ground_stairs',
+    'sword',
+  ];
   try {
     sprites.map((name,i) => new tW.sprites.DBSprite({
       name: name,
       sprite_id: i+1,
       rotations: name == "fireball",
       vflip: name == "fireball",
+      is_piece: not_pieces.indexOf(name) == -1,
     }));
   } catch (e) {
     console.error(e);
