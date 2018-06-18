@@ -73,17 +73,21 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     this._draw();
     this.dirty = false;
   }
-  drawGradient(cx,cy,colors,opts) {
-    opts = uR.defaults(opts || {},this);
+  drawGradient(opts={}) {
+    opts = uR.defaults(opts,this);
     opts = uR.defaults(opts,{
+      cx: this.cx,
+      cy: this.cy,
       cdy: 0,
       cdx: 0,
-      radius: this.scale/2,
+      colors: this.colors,
+      radius: this.cx,
       theta0: 0,
       theta1: 2*Math.PI,
     })
+    var colors = opts.colors;
     var c = opts.canvas;
-    var gradient = c.ctx.createRadialGradient(cx,cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
+    var gradient = c.ctx.createRadialGradient(opts.cx,opts.cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
     uR.forEach(colors,function(color,i) {
       gradient.addColorStop(1.01-(i+1)/colors.length,color);
     })
@@ -97,8 +101,8 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
       c.ctx.lineWidth = opts.lineWidth;
       c.ctx.strokeStyle = opts.strokeStyle;
     }
-    c.ctx.moveTo(cx,cy);
-    c.ctx.arc(cx,cy, opts.radius, opts.theta0,opts.theta1)
+    c.ctx.moveTo(opts.cx,opts.cy);
+    c.ctx.arc(opts.cx,opts.cy, opts.radius, opts.theta0,opts.theta1)
     c.ctx.fill()
     opts.strokeStyle && c.ctx.stroke();
   }
@@ -180,7 +184,7 @@ tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
   }
   _draw() {
     var colors = ['transparent','transparent',this.color];
-    this.drawGradient(this.cx,this.cy,colors,{theta0:-3*Math.PI/4,theta1:-Math.PI/4});
+    this.drawGradient({colors: colors, theta0:-3*Math.PI/4,theta1:-Math.PI/4});
     this.doRotations();
   }
 }
@@ -255,7 +259,7 @@ tW.sprites.GradientSprite = class GradientSprite extends tW.sprites.CircleSprite
   }
   _draw() {
     this.canvas.clear();
-    typeof this.colors[0] == "string" && this.drawGradient(this.cx,this.cy,this.colors);
+    typeof this.colors[0] == "string" && this.drawGradient();
   }
 }
 
@@ -276,8 +280,8 @@ tW.sprites.FlameSprite = class FlameSprite extends tW.sprites.GradientSprite {
       this.attack_colors.pop();
       this.attack_colors.push("#800");
     }
-    this.drawGradient(this.cx,this.cy,this.colors);
-    this.drawGradient(this.cx,this.cy+this.scale,this.attack_colors);
+    this.drawGradient();
+    this.drawGradient({cy: this.cy+this.scale, colors: this.attack_colors});
   }
   _getY(obj) {
     var _si = obj.steps.length;
@@ -325,10 +329,8 @@ tW.sprites.TwoCrystalSprite = class TwoCrystalSprite extends tW.sprites.Gradient
         colors_a.unshift("transparent");
         if (state_b == 3) { colors_b = ["#FF8",colors_b[1],this.c1_active]; }
         else if (state_b) { colors_b[colors_b.length-state_b] = this.c1_active; }
-        this.drawGradient(this.cx,this.cy+h*this.scale,colors_a,{ // outer ring
-          radius: this.scale/2-2,
-        });
-        this.drawGradient(this.cx,this.cy+h*this.scale-10,colors_b,); //inner ring
+        this.drawGradient({ cy: this.cy+h*this.scale,colors: colors_a, radius: this.scale/2-2 }); // outer ring
+        this.drawGradient({ cy: this.cy+h*this.scale-10,colors; colors_b }); //inner ring
       }
     }
   }
