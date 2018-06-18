@@ -10,8 +10,8 @@ uR.ready(function() {
     { name: "base_units", type: "integer", value: 1 },
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
-    { name: "show_intervals", type: "boolean", value: false },
-    { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox" },
+    { name: "show_intervals", type: "boolean", value: false, required: false},
+    { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox", required: false },
   ]);
 });
 tW.Game = class Game extends uR.Object {
