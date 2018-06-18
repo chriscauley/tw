@@ -25,6 +25,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       sight: 3, // how far it can see
     });
     this.setSight(this.sight);
+    this.is_sleeping = true;
     this.animations = [];
     this.newCanvas({
       width: this.board.scale,
