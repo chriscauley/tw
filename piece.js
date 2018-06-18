@@ -70,11 +70,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
         this.newAnimation('move',this.x,this.y,-dx,-dy,new Date().valueOf());
       }
     }
-    if (opts.turn) {
-      [dx,dy] = opts.turn;
-    }
     if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
-    if (dx || dy || opts.done ) { // anything happened
+    if (opts.turn) {
+      [this.dx,this.dy] = [Math.sign(opts.turn[0]),Math.sign(opts.turn[1])];
+    }
+    if (dx || dy || opts.done || opts.turn ) { // anything happened
       this.dirty = true;
       opts.chain && this.applyMove(opts.chain.bind(this)());
       return true;
@@ -448,6 +448,7 @@ tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece
     this.tasks = [
       [ this.checkCharge, this.doCharge ]
     ];
+    this.dx = this.dy = 0;
   }
 }
 

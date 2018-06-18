@@ -180,7 +180,7 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
         if (!square || piece && piece.team == this.team) { break }
         if (piece) {
           this.charging_deltas = deltas;
-          return { done: true }
+          return { turn: deltas[0] }
         }
       }
     }
@@ -194,13 +194,13 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
       square = this.look(delta)
       piece = square && square.piece;
       if (!square || piece) {
-        var move = { move: last };
+        var move = { move: last, turn: [0,0] };
         if (piece && this.team != piece.team) { move.damage = delta.concat([this.damage]) }
         return move;
       }
       last = delta;
     }
     // all squares are empty, charge to end
-    return { move: last }
+    return { move: last, turn: [0,0] }
   }
 }
