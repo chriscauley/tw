@@ -28,6 +28,7 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
       tW.sprites.keys.add(opts.name);
     }
     this.newCanvas({name: 'canvas'});
+    this.canvas_names = ["canvas"];
     this.newCanvas({
       name: 'temp_canvas',
       width: this.scale,
@@ -47,18 +48,19 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
   get(obj) {
     this.draw();
     obj = obj || {};
-    var x = 0, y = this._getY(obj) || 0;
     var dx = obj.dx || 0;
     var dy = obj.dy || 0;
-    if (dy < 0) { x = 0; } // up
-    if (dx > 0) { x = 1; } // right
-    if (dy > 0) { x = 2; } // down
-    if (dx < 0) { x = 3; } // left
-    x = Math.min(x,this.W-1);
-    y = Math.min(y,this.H-1);
+    var canvas_set = this;
+    if (dy < 0) { canvas_set = canvas_set.up || canvas_set }
+    else if (dx > 0) { canvas_set = canvas_set.right || canvas_set }
+    else if (dy > 0) { canvas_set = canvas_set.down || canvas_set }
+    else if (dx < 0) { canvas_set = canvas_set.left || canvas_set }
+
+    var canvas;
+    if (obj.getHalo) { canvas = obj.getHalo(canvas_set) }
     return {
-      img: this.canvas,
-      x: x*this.scale, y: y*this.scale,
+      img: canvas || canvas_set.canvas,
+      x: 0, y: 0,
       w: this.scale, h: this.scale
     }
   }
@@ -87,7 +89,12 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     })
     var colors = opts.colors;
     var c = opts.canvas;
-    var gradient = c.ctx.createRadialGradient(opts.cx,opts.cy, opts.radius, cx+opts.cdx,cy+opts.cdy, 0);
+    var gradient = c.ctx.createRadialGradient(
+      opts.cx,opts.cy, // center x,y
+      opts.radius,
+      opts.cx+opts.cdx,opts.cy+opts.cdy, // direction to point gradient
+      0
+    );
     uR.forEach(colors,function(color,i) {
       gradient.addColorStop(1.01-(i+1)/colors.length,color);
     })
@@ -107,18 +114,26 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     opts.strokeStyle && c.ctx.stroke();
   }
   doRotations() {
-    var ctx = this.canvas.ctx;
-    for (var y=0;y<this.H;y++) {
-      this.temp_canvas.clear()
-      this.temp_canvas.ctx.drawImage(this.canvas,0,-y*this.scale);
-      for (var x=1;x<4;x++) {
-        var dx = x*this.scale + this.cx
-        var dy = this.cy+this.scale*y;
-        ctx.translate(dx,dy);
-        ctx.rotate(x*Math.PI/2);
-        ctx.drawImage(this.temp_canvas,-this.cx,-this.cy);
-        ctx.rotate(-x*Math.PI/2);
-        ctx.translate(-dx,-dy);
+
+    var directions = ['up','right','down','left'];
+    this.temp_canvas.clear()
+    this.temp_canvas.ctx.drawImage(this.canvas,0,0);
+    var dx = this.scale/2;
+    var dy = this.scale/2;
+    for (var id=0;id<directions.length;id++) {
+      var dir = directions[id];
+      this[dir] = {};
+      for (var c_name of this.canvas_names) {
+        var c = this[dir][c_name] = this.newCanvas({
+          name: dir+"."+c_name,
+          id: dir+"."+c_name,
+          width: this.scale,
+          height: this.scale,
+        });
+
+        c.ctx.translate(dx,dy);
+        c.ctx.rotate(id*Math.PI/2);
+        c.ctx.drawImage(this.temp_canvas,-dx,-dy);
       }
     }
   }
@@ -187,8 +202,12 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
 tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
   constructor(opts={}) {
     if (typeof opts == "string") { opts = { color: opts } }
-    opts.W = 4;
-    opts.H = 1;
+    uR.defaults(opts,{
+      color: uR.REQUIRED,
+      W: 4,
+      H: 1,
+      name: "_wedge_"+opts.color,
+    })
     super(opts);
   }
   _draw() {
@@ -348,7 +367,7 @@ tW.sprites.TwoCrystalSprite = class TwoCrystalSprite extends tW.sprites.Gradient
         if (state_b == 3) { colors_b = ["#FF8",colors_b[1],this.c1_active]; }
         else if (state_b) { colors_b[colors_b.length-state_b] = this.c1_active; }
         this.drawGradient({ cy: this.cy+h*this.scale,colors: colors_a, radius: this.scale/2-2 }); // outer ring
-        this.drawGradient({ cy: this.cy+h*this.scale-10,colors; colors_b }); //inner ring
+        this.drawGradient({ cy: this.cy+h*this.scale-10,colors: colors_b }); //inner ring
       }
     }
   }

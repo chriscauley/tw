@@ -185,6 +185,7 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
       }
     }
   }
+  isActionReady() { return !!this.charging_deltas }
   doCharge() {
     if (!this.charging_deltas) { return }
     var charging_deltas = this.charging_deltas;

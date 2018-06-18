@@ -25,7 +25,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       sight: 3, // how far it can see
     });
     this.setSight(this.sight);
-    this.is_sleeping = true;
     this.animations = [];
     this.newCanvas({
       width: this.board.scale,
@@ -47,6 +46,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.team_color = ['red','green','blue'][this.team];
     this.team_sprite = tW.sprites.wedge(this.team_color);
   }
+  getHalo(canvas_set) {
+    if (!this.isAwake()) { return canvas_set.black_halo; }
+    if (this.isActionReady()) { return canvas_set.red_halo; }
+  }
+  isActionReady() { return this.steps[0] >= this.intervals[0]; }
   isAwake() { return true; }
   applyMove(opts) {
     this.animations = [];
