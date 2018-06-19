@@ -39,7 +39,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
-    this.inner_color = 'blue';
     this.sprite = tW.sprites['red'];
     this.restat();
     this.ui_dirty = this.dirty = true;
@@ -321,7 +320,6 @@ tW.pieces.CountDown = class CountDown extends tW.pieces.BasePiece {
 tW.pieces.GreenBlob = class GreenBlob extends tW.pieces.BasePiece {
   constructor(opts) {
     super(opts);
-    this.inner_color = 'blue';
   }
 }
 

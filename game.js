@@ -47,8 +47,7 @@ tW.Game = class Game extends uR.Object {
     this.ui && this.ui.unmount();
     this.level_number = -1;
     this.nextLevel();
-    this.player.health = this.player.max_health;
-    this.player.gold = 0;
+    this.player.reset()
     this.board.draw();
     this.is_gameover = false;
   }

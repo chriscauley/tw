@@ -1,31 +1,5 @@
 tW.utils = {};
 tW.player = {};
-tW.utils.Combo = class Combo extends uR.Object {
-  constructor(opts={},interval=0) {
-    super(opts);
-    this.interval = interval;
-    this.fails = 0;
-    this.streak = 0;
-    this.max = 0;
-  }
-  step() {
-    this.fails = 0;
-    this.streak ++;
-    this.max = Math.max(this.streak,this.max);
-  }
-  break() {
-    this.streak = 0;
-  }
-}
-
-class DamageCombo extends tW.utils.Combo {
-  apply(move={}) {
-    if (move.damage) { this.step(); }
-    else if (++this.fails > this.interval) {
-      this.break();
-    }
-  }
-}
 
 tW.utils.Counter = class Counter extends uR.Object {
   constructor(opts={}) {
@@ -92,19 +66,17 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       gold_levels: [],
       max_energy: 3,
       energy_interval: 4,
+      gold: 0,
     });
-    this.combos = [
-      // new DamageCombo({},0),
-      // new DamageCombo({},1),
-      // new DamageCombo({},2),
-      // new DamageCombo({},3),
-    ]
     this.move = this.move.bind(this);
-    this.resetMiniMap();
-    this.defaults(opts,{ gold: 0 });
     this.is_player = true;
-    this.inner_color = 'orange';
     this.sprite = tW.sprites['blue-flame'];
+    this.reset();
+  }
+  reset() {
+    this.health = this.max_health;
+    this.gold = 0;
+    this.resetMiniMap();
     this.equipment = {};
     this.energy = new tW.utils.Counter({
       max: this.max_energy,
