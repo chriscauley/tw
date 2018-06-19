@@ -457,6 +457,9 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
     super(opts);
     this.sprite = tW.sprites['spitter'];
     this.tasks = [ [ this.throwFireball ] ];
+    for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
+      if (!this.look(dxdy)) { this.dx = -dxdy[0]; this.dy = -dxdy[1]; }
+    }
   }
 }
 
