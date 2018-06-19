@@ -29,6 +29,8 @@ tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment 
       distance: 2,
       resources: { energy: -1 },
       slot: 'feet',
+      damage: 1,
+      kill_dash: true
     });
     super(opts);
   }
@@ -37,7 +39,12 @@ tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment 
     if (!this.canUse(dx,dy)) { return move; }
     for (var i=1; i<=this.distance;i++) {
       var square = this.player.look(i*dx,i*dy);
-      if (!square || !square.isOpen()) { break }
+      if (!square) { break }
+      if (!square.isOpen()) {
+        if (square.piece && square.piece.team != this.player.team) { move.damage = [i*dx,i*dy,this.damage]; }
+        if (this.kill_dash) { move.move = [i*dx,i*dy]; }
+        break;
+      }
       move.move = [i*dx,i*dy];
     }
     return move;
