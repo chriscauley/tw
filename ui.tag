@@ -5,15 +5,25 @@
   <div class="energy">
     <i data-energy={ e } each={ e,i in energy }></i>
   </div>
+  <div class="totals">
+    <h3 if={ totals.length }>Totals</h3>
+    <div each={ total,i in  totals }>{ total.name }: { total.value }</div>
+  </div>
+  <div class="combos">
+    <h3 if={ combos.length }>Combos</h3>
+    <div each={ combo,i in  combos }>{ combo.name }: { combo.value }</div>
+  </div>
+  <!--
   <div class="logs" ref="logs">
-    <div each={ log,i in player.logs }>
+    <div each={ log,i in player.score.log }>
       { log.key }
       <span if={ log.damage }>
         <img src={ sword } />
-        { log.damage.piece.constructor.name }
+        { log.damage.name }
       </span>
     </div>
   </div>
+  -->
   <!-- <div>Gold: { player.gold }</div> -->
   <!-- <div>Score: { player.score }</div> -->
   <!-- <\!--<pre class="minimap">{ player.printMiniMap() }</pre>-\-> -->
@@ -26,6 +36,7 @@
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
+    this.totals = this.combos = [];
   });
   this.on("mount",function() {
     this.update();
@@ -34,22 +45,23 @@
     this.sword = this.sword || tW.sprites.sword.dataURL;
     this.health = this.player.getHealthArray();
     this.energy = this.player.energy.getArray();
-    // this.settings = [
-    //   { name: "Game Config", config: this.opts.game.config },
-    // ]
-    // for (let key of tW.sprites.keys) {
-    //   var sprite = tW.sprites[key];
-    //   if (!sprite.config.keys.length) { continue }
-    //   sprite.draw();
-    //   this.settings.push({ name: "Sprite - " + sprite.name, config: sprite.config });
-    // }
+    var score = this.player.score;
+    this.combos = [];
+    this.totals = [];
+    if (!score) { return }
+    for (var key of score.keys) {
+      if (score.totals[key]) {
+        this.totals.push({ name: key, value: score.totals[key] })
+      }
+      if (score.combos[key] > 1) {
+        this.combos.push({ name: key, value: score.combos[key] })
+      }
+    }
   });
   this.on("updated",function() {
-    this.refs.logs.scroll(0,this.refs.logs.scrollHeight);
+    //this.refs.logs.scroll(0,this.refs.logs.scrollHeight);
   });
-  // showSprites() {
-  //   uR.alertElement('tw-sprites');
-  // }
+  // showSprites() { uR.alertElement('tw-sprites'); }
   // editSettings(e) {
   //   e.item.config.openEditor();
   // }
