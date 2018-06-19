@@ -124,7 +124,8 @@ tW.Game = class Game extends uR.Object {
             x: sq.x,
             y: sq.y,
             board: board,
-            gold: 0//this.piece_count,
+            gold: 0,
+            health: 2,
           }));
           enemy_count += 1;
         }

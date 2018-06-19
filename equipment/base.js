@@ -30,7 +30,7 @@ tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment 
       resources: { energy: -1 },
       slot: 'feet',
       damage: 1,
-      kill_dash: true
+      // kill_dash: true // broken, see #! TODO below
     });
     super(opts);
   }
@@ -42,7 +42,8 @@ tW.equipment.SprintBoots = class SprintBoots extends tW.equipment.BaseEquipment 
       if (!square) { break }
       if (!square.isOpen()) {
         if (square.piece && square.piece.team != this.player.team) { move.damage = [i*dx,i*dy,this.damage]; }
-        if (this.kill_dash) { move.move = [i*dx,i*dy]; }
+        // #! TODO the following doesn't work if the enemy doesn't die
+        //if (this.kill_dash) { move.move = [i*dx,i*dy]; }
         break;
       }
       move.move = [i*dx,i*dy];

@@ -108,7 +108,7 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
       return { damage: [this.dx,this.dy,this.damage] }
     }
     this.board.addPieces(new tW.pieces.Fireball({
-      parent: this,
+      parent_piece: this,
       dx: this.dx,
       dy: this.dy,
       damage: this.damage,

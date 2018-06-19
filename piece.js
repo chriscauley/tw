@@ -82,13 +82,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
         [this.x,this.y] = [square.x,square.y];
         this.newAnimation('move',this.x,this.y,-opts.move[0],-opts.move[1],new Date().valueOf());
         opts.done = true;
+        [dx,dy] = opts.move
       }
     }
-    if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
+
     if (opts.turn) {
       opts.done = true;
-      [this.dx,this.dy] = [Math.sign(opts.turn[0]),Math.sign(opts.turn[1])];
+      [dx,dy] = opts.turn;
     }
+    if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (opts.done) { // anything happened
       this.dirty = true;
       result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
@@ -414,20 +416,20 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
 tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
   constructor(opts={}) {
     uR.defaults(opts,{
-      parent: uR.REQUIRED,
-      board: opts.parent.board,
+      parent_piece: uR.REQUIRED,
+      board: opts.parent_piece.board,
       gold: 0,
       gold_per_touch: 0,
     });
     super(opts)
     this.intervals = [0];
     this.defaults({
-      dx: this.parent.dx,
-      dy: this.parent.dy
+      dx: this.parent_piece.dx,
+      dy: this.parent_piece.dy
     });
     this.defaults({
-      x: this.parent.x + this.dx,
-      y: this.parent.y + this.dy,
+      x: this.parent_piece.x + this.dx,
+      y: this.parent_piece.y + this.dy,
     });
     this.tasks = [
       [this.forward,this.burnout],
