@@ -100,6 +100,7 @@ tW.Game = class Game extends uR.Object {
       x: start[0],
       y: start[1],
     });
+    this.score = this.player.score = new Score({ game: this, player: this.player });
     this.board.pieces.push(this.player);
     this.player.x = start[0]+1;
     this.player.y = start[1];

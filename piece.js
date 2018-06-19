@@ -52,18 +52,26 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   }
   isActionReady() { return this.steps[0] >= this.intervals[0]; }
   isAwake() { return true; }
-  applyMove(opts) {
+  applyMove(opts={}) {
+    var result = {
+      damages: [],
+      digs: [],
+      loots: [],
+      moves: [],
+      kills: [],
+    };
     this.animations = [];
-    opts = opts || { move: [0,0] } //null move
     var d,dx,dy;
     if (opts.damage) {
       [dx,dy,d] = opts.damage;
       var square = this.look(dx,dy);
-      square && square.piece && square.piece.takeDamage(d);
+      var damage = square && square.piece && square.piece.takeDamage(d);
+      damage.count && result.damages.push(damage);
+      damage.kill && result.kills.push(damage);
+      opts.done = true;
     }
     if (opts.move) {
-      [dx,dy] = opts.move;
-      var square = this.look(dx,dy);
+      var square = this.look(opts.move);
       if (square && !square.piece) {
         if (this.current_square) { this.current_square.piece = undefined; }
         this.current_square = square;
@@ -71,18 +79,21 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
         square.floor && square.floor.trigger(this);
         square.item && this.touchItem(square.item);
         this.takeGold(square);
+        result.moves.push(opts.move);
         [this.x,this.y] = [square.x,square.y];
-        this.newAnimation('move',this.x,this.y,-dx,-dy,new Date().valueOf());
+        this.newAnimation('move',this.x,this.y,-opts.move[0],-opts.move[1],new Date().valueOf());
+        opts.done = true;
       }
     }
     if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (opts.turn) {
+      opts.done = true;
       [this.dx,this.dy] = [Math.sign(opts.turn[0]),Math.sign(opts.turn[1])];
     }
-    if (dx || dy || opts.done || opts.turn ) { // anything happened
+    if (opts.done) { // anything happened
       this.dirty = true;
-      opts.chain && this.applyMove(opts.chain.bind(this)());
-      return true;
+      result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
+      return result;
     }
   }
   newAnimation(type,x,y,dx,dy) {
@@ -121,13 +132,14 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     var _si = this.steps.length;
     while (_si--) {
       var step = this.steps[_si];
-      if (step >= self.intervals[_si]) {
-        var move = self.getNextMove(_si);
-        if (move && self.applyMove(move)) { self.steps[_si] = -1; break; }
+      if (step >= this.intervals[_si]) {
+        var move = this.getNextMove(_si);
+        move = move && this.applyMove(move);
+        if (move) { this.steps[_si] = -1; break; }
       }
     }
-    uR.forEach(this.steps,(s,i) => self.steps[i]++);
-    self.ui_dirty = true;
+    uR.forEach(this.steps,(s,i) => this.steps[i]++);
+    this.ui_dirty = true;
   }
   stamp(x0,y0,dx,img) {
     img = tW.sprites.get(img);
@@ -243,9 +255,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     }
   }
   takeDamage(damage) {
+    var result = { count: Math.min(this.health,damage) };
     this.ui_dirty = true;
-    this.health -= damage;
-    if (this.health <= 0) { this.die() }
+    this.health -= result.count;
+    if (this.health <= 0) { this.die(); result.kill = true }
+    return result;
   }
   die() {
     this.item && this.current_square.addItem(this.item);
@@ -422,8 +436,9 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
     ];
   }
   applyMove(opts) {
-    super.applyMove(opts);
-    opts.damage && this.die();
+    var move = super.applyMove(opts);
+    move.damage && this.die();
+    return move;
   }
 }
 

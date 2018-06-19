@@ -101,7 +101,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     ]
     this.move = this.move.bind(this);
     this.resetMiniMap();
-    this.score = 0;
     this.defaults(opts,{ gold: 0 });
     this.is_player = true;
     this.inner_color = 'orange';
@@ -112,7 +111,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       interval: this.energy_interval,
     });
     new tW.equipment.SprintBoots().equip(this);
-    this.logs = [];
   }
   getHealthArray() {
     var array = uR.math.zeros(this.max_health);
@@ -161,8 +159,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return true;
   }
   applyMove(opts) {
-    super.applyMove(opts);
-    this.combos && this.combos.map((c) => c.apply(opts));
+    var result = super.applyMove(opts);
+    this.combos && this.combos.map((c) => c.apply(result));
     var self = this;
     var [dx,dy] = [this.dx,this.dy];
     if (opts && opts.resources) { // maybe put in pieces.js BasePiece instead
@@ -183,7 +181,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
         catch (e) {}
       });
     });
-    opts && this.logs.push(opts);
+    result && this.score.apply(result);
+    return result;
   }
   addScore(points) {
     this.score += points;
