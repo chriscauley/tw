@@ -50,9 +50,9 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.exit = exit;
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
-    this.max_offset_x = Math.max(0,this.x_max+0.5-window.innerWidth/this.scale);
+    this.max_offset_x = Math.max(-0.5,this.x_max+0.5-window.innerWidth/this.scale);
     this.min_offset_y = -0.5;
-    this.max_offset_y = Math.max(0,this.y_max+0.5-window.innerHeight/this.scale);
+    this.max_offset_y = Math.max(-0.5,this.y_max+0.5-window.innerHeight/this.scale);
   }
   eachSquare(func) {
     func = func.bind(this);
