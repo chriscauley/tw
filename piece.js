@@ -10,6 +10,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     super();
     this.defaults(opts,{
       board: uR.REQUIRED,
+      sprite: uR.REQUIRED,
       x:0,
       y:0,
       dx: dx,
@@ -327,6 +328,7 @@ tW.pieces.GreenBlob = class GreenBlob extends tW.pieces.BasePiece {
 
 tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
   constructor(opts) {
+    opts.sprite = tW.sprites['blue-blob'];
     opts.health = 2;
     super(opts);
     this.strokeStyle = "green";
@@ -334,16 +336,15 @@ tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
       this.flip,
       this.bounce,
     ];
-    this.sprite = tW.sprites['blue-blob'];
   }
 }
 
 tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
   constructor(opts={}) {
+    opts.sprite = tW.sprites['zombie'];
     opts.health = 1;
     opts.intervals = [0];
     super(opts);
-    this.sprite = tW.sprites['zombie'];
     this.tasks = [
       [ this.forward, this.flip ],
     ];
@@ -353,8 +354,8 @@ tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
 tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.intervals = [0];
+    opts.sprite = tW.sprites['fly'];
     super(opts);
-    this.sprite = tW.sprites['fly'];
     this.tasks = [
       [ this.forward,this.turnRandomly],
     ];
@@ -375,8 +376,8 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
 tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.intervals = [1];
+    opts.sprite = tW.sprites['skeleton'];
     super(opts);
-    this.sprite = tW.sprites['skeleton'];
     this.tasks = [
       [this.follow,this.findEnemy],
     ]
@@ -387,9 +388,9 @@ tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
 tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.sight = 1;
+    opts.sprite = tW.sprites['grave'];
     super(opts);
     this.dx = this.dy = 0; // has no direction
-    this.sprite = tW.sprites['grave'];
     this.intervals = [4];
     this.tasks = [
       [this.spawnPiece]
@@ -444,8 +445,8 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
 
 tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
+    opts.sprite = tW.sprites.fireball;
     super(opts)
-    this.sprite = tW.sprites.fireball;
   }
 }
 
@@ -454,8 +455,8 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
     uR.defaults(opts,{
       intervals: [3],
     });
+    opts.sprite = tW.sprites['spitter'];
     super(opts);
-    this.sprite = tW.sprites['spitter'];
     this.tasks = [ [ this.throwFireball ] ];
     for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
       if (!this.look(dxdy)) { this.dx = -dxdy[0]; this.dy = -dxdy[1]; }
@@ -465,9 +466,9 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
 
 tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece) {
   constructor(opts={}) {
+    opts.sprite = tW.sprites['beholder'];
     uR.defaults(opts,{intervals: [0]});
     super(opts);
-    this.sprite = tW.sprites['beholder'];
     this.tasks = [
       [ this.checkCharge, this.doCharge ]
     ];

@@ -52,6 +52,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
     opts.intervals = [0,4];
+    opts.sprite = tW.sprites['blue-flame'];
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0 };
     this.defaults(opts,{
@@ -70,7 +71,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     });
     this.move = this.move.bind(this);
     this.is_player = true;
-    this.sprite = tW.sprites['blue-flame'];
     this.reset();
   }
   reset() {

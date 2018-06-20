@@ -143,12 +143,11 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
   constructor(opts={}) {
     uR.defaults(opts,{
       W: 1,
-      H: 3,
+      H: 1,
       sprite_id: uR.REQUIRED,
       color: "red",
       scale: 32,
     });
-    if (opts.rotations) { opts.W = 4; }
     super(opts);
     var sprite = Sprite.objects.get(this.sprite_id);
     var self = this;
@@ -204,7 +203,7 @@ tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
     if (typeof opts == "string") { opts = { color: opts } }
     uR.defaults(opts,{
       color: uR.REQUIRED,
-      W: 4,
+      W: 1,
       H: 1,
       name: "_wedge_"+opts.color,
     })
@@ -236,6 +235,7 @@ uR.ready(function() {
     'spitter',
     'sword',
     'beholder',
+    'skull',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',
@@ -248,6 +248,7 @@ uR.ready(function() {
     'ground_lock',
     'ground_stairs',
     'sword',
+    'skull',
   ];
   try {
     sprites.map((name,i) => new tW.sprites.DBSprite({
@@ -290,8 +291,6 @@ tW.sprites.CircleSprite = class CircleSprite extends tW.sprites.SpriteObject {
 
 tW.sprites.GradientSprite = class GradientSprite extends tW.sprites.CircleSprite {
   constructor(opts) {
-    opts.W = opts.W || 4;
-    opts.H = opts.H || 2;
     super(opts);
   }
   _draw() {
@@ -419,7 +418,6 @@ tW.sprites.PacSprite = class PacSprite extends tW.sprites.GradientSprite {
 
 tW.sprites.GradientWithEyes = class GradientWithEyes extends tW.sprites.FlameSprite {
   constructor(opts) {
-    opts.H = 4;
     super(opts);
   }
   _draw() {
