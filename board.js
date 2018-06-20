@@ -81,9 +81,11 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var ease_y = (this.game.player.last_move.dy)*ease-1;
     this.offset_x = s*uR.math.between(this.min_offset_x,this.game.player.x-this.W/2-0.5-ease_x,this.max_offset_x);
     this.offset_y = s*uR.math.between(this.min_offset_y,this.game.player.y-this.H/2-0.5-ease_y,this.max_offset_y);
-    var floor_dirty = true;
+    var floor_dirty = false;
     this.eachSquare(function(square,x,y) {
-      floor_dirty = (square && square.draw()) || floor_dirty;
+      if (!square) { return }
+      floor_dirty = square.dirty || floor_dirty;
+      square.draw();
     });
     if (floor_dirty) {
       this.floor_canvas.clear();
@@ -91,10 +93,11 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         square && this.floor_canvas.ctx.drawImage(square.canvas,s*x-this.offset_x,s*y-this.offset_y);
       });
     }
-    var dirty = floor_dirty || this.game.player.dirty;
-    !dirty && uR.forEach([this.pieces,this.player],function(group) {
-      group && uR.forEach(group,function(i) { dirty = dirty || i.dirty; });
-    })
+    var dirty = floor_dirty || true;
+    for (var piece of this.pieces) {
+      if (dirty) { break }
+      dirty = dirty || piece.dirty;
+    }
     this.dirty = dirty;
     if (!this.dirty) { return }
     this.canvas.clear()
