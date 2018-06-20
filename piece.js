@@ -71,7 +71,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (opts.damage) {
       [dx,dy,d] = opts.damage;
       var square = this.look(dx,dy);
-      var damage = square && square.piece && square.piece.takeDamage(d);
+      var damage = square && square.piece && square.piece.takeDamage(d,this.sprites.damage);
       damage.count && result.damages.push(damage);
       damage.kill && result.kills.push(damage);
       animation = ['bounce',{ dx: dx, dy: dy }];
@@ -113,7 +113,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       ds: this.ds, //shrink factor
     });
     if (type == "bounce") { opts.easing = (dt) => (dt < 0.5)?dt:1-dt; }
-    var sprite = this.sprites[type];
+    var sprite = opts.sprite || this.sprites[type];
     if (sprite) {
       if (opts.dx || opts.dy) {
         self.animating++;
@@ -249,7 +249,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       c.ctx.fillText(text.display || "", this.cx,this.cy );
     }
   }
-  takeDamage(damage) {
+  takeDamage(damage,sprite) {
     var result = { count: Math.min(this.health,damage) };
     this.ui_dirty = true;
     this.health -= result.count;
@@ -257,7 +257,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       this.newAnimation("die");
       this.die();
       result.kill = true;
-    } else if (result.count) { this.newAnimation("damage") }
+    } else if (result.count) { this.newAnimation("damage",{ sprite: sprite }) }
     return result;
   }
   die() {
@@ -435,7 +435,7 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
   }
   applyMove(opts) {
     var move = super.applyMove(opts);
-    move.damage && this.die();
+    move.damages.length && this.die();
     return move;
   }
 }
@@ -444,6 +444,8 @@ tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
     opts.sprite = tW.sprites.fireball;
     super(opts)
+    this.sprites.bounce = undefined;
+    this.sprites.damage = tW.sprites['explode'];
   }
 }
 
@@ -458,6 +460,8 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
     for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
       if (!this.look(dxdy)) { this.dx = -dxdy[0]; this.dy = -dxdy[1]; }
     }
+    this.sprites.bounce = undefined;
+    this.sprites.damage = tW.sprites['explode'];
   }
 }
 
