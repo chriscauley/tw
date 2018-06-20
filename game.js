@@ -25,7 +25,7 @@ tW.Game = class Game extends uR.Object {
     this.makeTeams();
     this.makeUnits();
     this.makeUI();
-    this.controller = new uR.controller.Controller({ parent: this });
+    this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
     this.turn = 0;
     this.piece_count = this.config.get("piece_count");
   }
@@ -61,6 +61,9 @@ tW.Game = class Game extends uR.Object {
     this.is_gameover = true;
     uR.alertElement("tw-gameover",{game: this});
   }
+  mousedown(e) {
+    this.board.mousedown(e)
+  }
   keydown(e) {
     if (this.is_gameover) { return this.restart() }
     this.key_map[e._key] && this.key_map[e._key](e);
@@ -79,7 +82,10 @@ tW.Game = class Game extends uR.Object {
     function d(f,self) {
       f = f.bind(self);
       return function(e) {
-        f(e) && self.nextTurn();
+        if(f(e)) {
+          self.nextTurn();
+          e.preventDefault();
+        }
       }
     }
     for (var k in key_map) { this.key_map[k] = d(key_map[k],this); }

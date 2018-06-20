@@ -110,7 +110,6 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       height: this.scale*this.H,
       width: this.scale*this.W,
       parent: document.getElementById("game"),
-      controller: true,
     });
     this.floor_canvas = this.newCanvas({
       height: this.scale*this.H,
