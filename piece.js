@@ -26,13 +26,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       sight: 3, // how far it can see
     });
     this.setSight(this.sight);
-    this.animations = [];
     this.newCanvas({
       width: this.board.scale,
       height: this.board.scale,
       name: 'ui_canvas',
     });
-    this.ds = this.board.scale/10; // scale the image down a little
+    this.ds = this.board.scale/10; // scale the image down a little, "shrink by this much"
+    this.animating = 0;
 
     this.show_health = true;
     this.max_health = this.health;
@@ -40,12 +40,18 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
-    this.sprite = tW.sprites['red'];
     this.restat();
-    this.ui_dirty = this.dirty = true;
+    this.ui_dirty = true;
     this.team_color = ['red','green','blue'][this.team];
     this.team_sprite = tW.sprites.wedge(this.team_color);
+    this.sprites = {
+      damage: tW.sprites.sword,
+      die: tW.sprites.skull,
+      move: this.sprite,
+      bounce: this.sprite,
+    }
   }
+  getSprite(action) { return tW.sprites[this._sprite_map[action]]; }
   getHalo(canvas_set) {
     if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) { return canvas_set.red_halo; }
@@ -60,7 +66,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       moves: [],
       kills: [],
     };
-    this.animations = [];
+    var animation;
     var d,dx,dy;
     if (opts.damage) {
       [dx,dy,d] = opts.damage;
@@ -68,6 +74,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       var damage = square && square.piece && square.piece.takeDamage(d);
       damage.count && result.damages.push(damage);
       damage.kill && result.kills.push(damage);
+      animation = ['bounce',{ dx: dx, dy: dy }];
       opts.done = true;
     }
     if (opts.move) {
@@ -80,54 +87,41 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
         square.item && this.touchItem(square.item);
         this.takeGold(square);
         result.moves.push(opts.move);
+        animation = ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
         [this.x,this.y] = [square.x,square.y];
-        this.newAnimation('move',this.x,this.y,-opts.move[0],-opts.move[1],new Date().valueOf());
         opts.done = true;
         [dx,dy] = opts.move
       }
     }
-
     if (opts.turn) {
       opts.done = true;
       [dx,dy] = opts.turn;
     }
     if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (opts.done) { // anything happened
-      this.dirty = true;
+      animation && this.newAnimation(...animation);
       result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
       return result;
     }
   }
-  newAnimation(type,x,y,dx,dy) {
-    this.animations.push({
-      type:type,
-      x:x,y:y,
-      dx:dx,dy:dy,
-      t0:new Date().valueOf()
-    });
-  }
-  doAnimations(c) {
+  newAnimation(type,opts={}) {
     var self = this;
-    var s = this.board.scale;
-    var now = new Date().valueOf();
-    var dirty = [];
-    uR.forEach(this.animations,function(a,_ai) {
-      var dt = now - a.t0; // progress through current animation
-      var ease = self.getEasing(dt);
-      if (!ease) { dirty.push(_ai); return }
-      var draw_x = s*(a.x+a.dx*ease);
-      var draw_y = s*(a.y+a.dy*ease);
-      var img = self.sprite.get(self);
-      c.ctx.drawImage(
-        img.img,
-        img.x, img.y,
-        img.w, img.h,
-        draw_x+self.ds,draw_y+self.ds,
-        s-2*self.ds,s-2*self.ds,
-      );
+    uR.defaults(opts,{
+      x: this.x, y: this.y, // board coordinates
+      dx: 0, dy: 0, // how much to move animation
+      t0: new Date().valueOf(),
+      ds: this.ds, //shrink factor
     });
-    while (dirty.length) { this.animations.splice(dirty.pop(),1) }
-    return this.animations.length;
+    if (type == "bounce") { opts.easing = (dt) => (dt < 0.5)?dt:1-dt; }
+    var sprite = this.sprites[type];
+    if (sprite) {
+      if (opts.dx || opts.dy) {
+        self.animating++;
+        opts.resolve = function() { self.animating-- };
+      }
+      opts.img = sprite.get(this);
+      this.board.newAnimation(opts);
+    }
   }
   play() {
     var self = this;
@@ -220,8 +214,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (!this.current_square) { return }
     var c = this.board.canvas;
     var s = this.board.scale;
-    this.dirty = this.doAnimations(c);
-    if (this.dirty) { return }
+    if (this.animating) { return }
     var img = this.sprite.get(this);
     var team_img = this.team_sprite.get(this);
     (this.dx || this.dy) && c.ctx.drawImage(
@@ -260,7 +253,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     var result = { count: Math.min(this.health,damage) };
     this.ui_dirty = true;
     this.health -= result.count;
-    if (this.health <= 0) { this.die(); result.kill = true }
+    if (this.health <= 0) {
+      this.newAnimation("die");
+      this.die();
+      result.kill = true;
+    } else if (result.count) { this.newAnimation("damage") }
     return result;
   }
   die() {

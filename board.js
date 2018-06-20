@@ -101,11 +101,13 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.canvas.ctx.drawImage(this.floor_canvas,0,0);
     this.canvas.ctx.translate(-this.offset_x,-this.offset_y);
     uR.forEach(this.pieces,function(p){ p.draw() })
+    this.doAnimations();
     uR.forEach(this.pieces,function(p){ p.drawUI(); })
     this.game.player.drawUI();
     this.canvas.ctx.translate(this.offset_x,this.offset_y);
   }
   createCanvas() {
+    this.animations = [];
     this.canvas = this.newCanvas({
       height: this.scale*this.H,
       width: this.scale*this.W,
@@ -139,6 +141,50 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       this.pieces.push(piece);
       piece.current_square = this.getSquare(piece.x,piece.y);
       if (piece.current_square) { piece.current_square.piece = piece; }
+    }
+  }
+  newAnimation(opts) {
+    opts = uR.defaults(opts,{
+      img: uR.REQUIRED,
+      x: uR.REQUIRED, y: uR.REQUIRED,
+      dx: 0, dy: 0,
+      ds: 0,
+      t0: uR.REQUIRED,
+      easing: (dt) => dt,
+      resolve: ()=>undefined,
+      dtmax: this._ta,
+    })
+    this.animations.push(opts);
+  }
+  doAnimations() {
+    var s = this.scale;
+    var now = new Date().valueOf();
+    var dirty = [];
+    var ctx = this.canvas.ctx;
+    uR.forEach(this.animations,function(a,_ai) {
+      var delta = (now - a.t0)/a.dtmax; // progress through current animation
+      if (delta > 1) { dirty.push(_ai); delta = 1; }
+      var ease = a.easing(delta);
+      var dx = s*(a.x+a.dx*ease);
+      var dy = s*(a.y+a.dy*ease);
+      var dw = s,dh = s;
+      if (a.ds) {
+        dx += a.ds;
+        dy += a.ds;
+        dw = dh = s-2*a.ds;
+      }
+
+      ctx.drawImage(
+        a.img.img,
+        a.img.x, a.img.y,
+        a.img.w, a.img.h,
+        dx,dy,
+        dw,dh,
+      )
+    });
+    while (dirty.length) {
+      var popped = this.animations.splice(dirty.pop(),1)
+      popped[0].resolve();
     }
   }
 }
