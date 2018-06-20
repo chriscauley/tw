@@ -55,6 +55,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     opts.sprite = tW.sprites['blue-flame'];
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0 };
+    this._moves = [];
     this.defaults(opts,{
       game: uR.REQUIRED,
       torch: [
@@ -82,6 +83,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       max: this.max_energy,
       interval: this.energy_interval,
     });
+    this.current_square = this.game.board.getSquare(this.x,this.y);
     new tW.equipment.SprintBoots().equip(this);
   }
   getHealthArray() {

@@ -17,6 +17,7 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
   }
   draw() {
     if (!this.dirty) { return }
+    if (!this.sprite.loaded) { return }
     this.dirty = false;
     this.ctx = this.canvas.getContext('2d');
     this.canvas.clear();

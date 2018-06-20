@@ -21,17 +21,16 @@ tW.Game = class Game extends uR.Object {
     uR.extend(this,this.config.getData());
     this.bindKeys();
     this.board = new tW.Board({ game: this, });
-    this.nextLevel();
-    this.makeTeams();
-    this.makeUnits();
-    this.makeUI();
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
+    this.restart();
+    this.makeUI();
     this.turn = 0;
-    this.piece_count = this.config.get("piece_count");
   }
   nextLevel() {
     this.level_number++;
     this.board.loadLevel(this.level_number);
+    this.makeTeams();
+    this.makeUnits();
   }
   makeUI() {
     uR.newElement(
@@ -43,13 +42,14 @@ tW.Game = class Game extends uR.Object {
   restart() {
     var mask = document.querySelector("[ur-mask]");
     mask && mask.click();
-    this.piece_count = 0;
-    this.ui && this.ui.unmount();
+    this.piece_count = this.config.get("piece_count");
     this.level_number = -1;
     this.nextLevel();
     this.player.reset()
     this.board.draw();
     this.is_gameover = false;
+    document.getElementById("game").focus();
+    this.ui && this.ui.update();
   }
   makeTeams() {
     this.teams = [];
@@ -97,7 +97,7 @@ tW.Game = class Game extends uR.Object {
   }
   makeUnits() {
     var start = this.board.start;
-    this.player = new tW.player.Player({
+    this.player = this.player || new tW.player.Player({
       game: this,
       board: this.board,
       health: 3,

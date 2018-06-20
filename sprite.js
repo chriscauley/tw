@@ -69,7 +69,7 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     this.cdx = this.cdy = 0;
   }
   draw() {
-    if (!this.dirty) { return; }
+    if (!this.dirty || !this.loaded) { return; }
     this.getCenter();
     this.canvas.clear();
     this._draw();
@@ -114,7 +114,6 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     opts.strokeStyle && c.ctx.stroke();
   }
   doRotations() {
-
     var directions = ['up','right','down','left'];
     this.temp_canvas.clear()
     this.temp_canvas.ctx.drawImage(this.canvas,0,0);
@@ -167,6 +166,7 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
       self.temp_canvas.replaceColor("#30346d","transparent");
       self.dataURL = self.temp_canvas.toDataURL();
       self.dirty = true;
+      self.loaded = true;
       self.draw();
     })
   }
@@ -208,6 +208,7 @@ tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
       name: "_wedge_"+opts.color,
     })
     super(opts);
+    this.loaded = true;
   }
   _draw() {
     var colors = ['transparent','transparent',this.color];
@@ -271,6 +272,7 @@ tW.sprites.CircleSprite = class CircleSprite extends tW.sprites.SpriteObject {
     })
     super(opts);
     this.radius = this.scale*this.radius;
+    this.loaded = true;
   }
   _draw() {
     var ctx = this.canvas.ctx;

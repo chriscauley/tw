@@ -87,7 +87,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       floor_dirty = square.dirty || floor_dirty;
       square.draw();
     });
-    if (floor_dirty) {
+    if (floor_dirty ||true) {
       this.floor_canvas.clear();
       this.eachSquare(function(square,x,y) {
         square && this.floor_canvas.ctx.drawImage(square.canvas,s*x-this.offset_x,s*y-this.offset_y);
