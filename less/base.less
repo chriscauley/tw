@@ -7,10 +7,6 @@ img {
     image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
     -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
 }
-#card-box {
-  display: flex;
-  .card { margin: 0 10px; }
-}
 
 #game {
   position: relative;
@@ -36,6 +32,7 @@ img {
 }
 
 tw-scores {
+  bottom: 0;
   display: flex;
   flex-direction: column;
   max-height: 100%;
@@ -82,3 +79,9 @@ tw-scores .energy {
   [data-energy="0.75"] { border-color: blue blue blue @empty; }
 }
 
+tw-scores .help.bot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  table { background: white; }
+}

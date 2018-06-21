@@ -1,9 +1,10 @@
 tW.Board = class Board extends uR.canvas.CanvasObject {
   constructor(opts) {
     super()
+    var _d = opts.game.config.getData();
     this.defaults(opts,{
-      W: 10,
-      H: 10,
+      W: Math.min(10,parseInt(_d.W)+1),
+      H: Math.min(10,parseInt(_d.H)+1),
     });
     this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
     this.W = Math.floor(window.innerWidth/this.scale);
@@ -12,7 +13,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var self = this
     this.pieces = [];
     this.createCanvas();
-    document.getElementById("game",).style.width = (this.W*this.scale)+"px";
+    //document.getElementById("game",).style.width = (this.W*this.scale)+"px";
     this.tick = this.tick.bind(this);
     this.tick();
     this.dirty = true;

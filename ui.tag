@@ -13,6 +13,15 @@
     <h3 if={ combos.length }>Combos</h3>
     <div each={ combo,i in  combos }>{ combo.name }: { combo.value }</div>
   </div>
+  <div class="help bot">
+    <h3>Controls:</h3>
+    <table class={ uR.css.table }>
+      <tr each={ c,i in controls }>
+        <td><b>{ c[0] }</b></td>
+        <td>{ c[1] }</td>
+      </tr>
+    </table>
+  </div>
   <!--
   <div class="logs" ref="logs">
     <div each={ log,i in player.score.log }>
@@ -33,6 +42,11 @@
   <!-- </div> -->
 
   this.on("before-mount",function() {
+    this.controls = [
+      ['space','wait'],
+      ['arrows','move/attack'],
+      ['shift + arrows','dash'],
+    ];
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
@@ -95,3 +109,18 @@
     this.update();
   });
 </tw-sprites>
+
+<tw-menu>
+  <div class={ theme.outer }>
+    <div class={ theme.content }>
+      <h1>timewalker.io</h1>
+      <p>Click here to get started</p>
+    </div>
+  </div>
+
+  <script>
+this.root.classList.add("needs-focus");
+this.opts.theme = uR.css.modal;
+this.opts.ur_modal = true;
+  </script>
+</tw-menu>
