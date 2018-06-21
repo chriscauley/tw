@@ -6,11 +6,14 @@ var sourcemaps = require("gulp-sourcemaps");
 var uglify = require('gulp-uglify');
 var util = require('gulp-util');
 var babel = require('gulp-babel');
+var argv = require('yargs').argv;
+var path = require("path");
+var ncp = require('ncp');
 
 var PROJECT_NAME = "tw";
+var DEST = (argv._[0] == 'deploy')?"/var/timewalker.io/":".dist/";
 
 var JS_FILES = [
-
   "main.js",
   "dungeon/const.js",
   "dungeon/templates.js",
@@ -50,7 +53,7 @@ gulp.task('build-js', function () {
     .pipe(concat(PROJECT_NAME + '-built.js'))
     //.pipe(uglify({mangle: false, compress: false}))
     .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest(".dist/"));
+    .pipe(gulp.dest(DEST));
 });
 
 LESS_FILES = ["less/base.less"];
@@ -59,13 +62,27 @@ gulp.task('build-css', function () {
   return gulp.src(LESS_FILES)
     .pipe(less({}))
     .pipe(concat(PROJECT_NAME+'-built.css'))
-    .pipe(gulp.dest(".dist/"));
+    .pipe(gulp.dest(DEST));
 });
 
-var build_tasks = ['build-js', 'build-css',];
+var STATIC_FILES = [
+  'index.html',
+  'data.json',
+]
+
+gulp.task("cp-static",function() {
+  STATIC_FILES.forEach(function(_dir) {
+    var source = path.join(__dirname,_dir);
+    var dest = path.join(DEST,_dir);
+    ncp(source, dest)
+  });
+})
+
+var build_tasks = ['build-js', 'build-css', 'cp-static'];
 gulp.task('watch', build_tasks, function () {
   gulp.watch(JS_FILES, ['build-js']);
   gulp.watch(["base.less","less/*.less",], ['build-css']);
 });
 
 gulp.task('default', build_tasks);
+gulp.task('deploy', build_tasks);
