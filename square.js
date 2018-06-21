@@ -7,6 +7,7 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
       board: uR.REQUIRED,
     });
     this.sprite = tW.sprites["ground"+((this.x%2-this.y%2)?"1":"2")]
+    this.xy = [this.x,this.y];
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
     this.canvas = this.newCanvas({
@@ -14,6 +15,7 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
       height: this.scale,
     });
     this.dirty = true;
+    this.items = [];
   }
   draw() {
     if (!this.dirty) { return }
@@ -30,7 +32,7 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
       this.scale,this.scale,
     )
     this.drawGold();
-    this.item && this.item.draw(this.canvas);
+    _.each(this.items,i => i.draw());
     this.floor && this.floor.draw(this.canvas);
   }
   isOpen() {
@@ -53,11 +55,12 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     item.x = this.x;
     item.y = this.y
     this.dirty = true;
-    this.item = item;
+    this.items.push(item);
     item.square = this;
   }
-  removeItem() {
-    this.item = undefined;
+  removeItem(item) {
+    var index = this.items.indexOf(item);
+    this.items.splice(index,1);
     this.dirty = true;
   }
   addGold(opts) {
@@ -89,5 +92,9 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     ctx.fillStyle = text.style || "black";
     ctx.textBaseline = text.baseLine ||'middle';
     ctx.fillText(this.gold, s/2,s/2 );
+  }
+  make(state) { // currently only start and exit
+    //if (state == "start") { this.sprite = tW.sprites.ground_stairs_up }
+    if (state == "exit") { this.addItem(new tW.floor.Stairs({square: this})) }
   }
 }
