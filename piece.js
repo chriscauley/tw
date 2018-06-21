@@ -37,6 +37,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.show_health = true;
     this.max_health = this.health;
     this.steps = uR.math.zeros(this.intervals);
+    if (this.i_active == undefined) { this.i_active = this.intervals.length-1; }
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
@@ -51,12 +52,23 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       bounce: this.sprite,
     }
   }
+  levelUp(n=1) {
+    while(n--) {
+      /*if (n%2) {
+        for (var i=0;i<this.intervals.length;i++) {
+          if (!this.intervals[i]) { continue }
+          this.intervals[i] -= 1;
+        }
+      }*/
+      this.health = this.max_health += 1;
+    }
+  }
   getSprite(action) { return tW.sprites[this._sprite_map[action]]; }
   getHalo(canvas_set) {
     if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) { return canvas_set.red_halo; }
   }
-  isActionReady() { return this.steps[0] >= this.intervals[0]; }
+  isActionReady() { return this.steps[this.i_active] >= this.intervals[this.i_active]; }
   isAwake() { return true; }
   applyMove(opts={}) {
     var result = {
@@ -155,8 +167,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.ctx = this.ui_canvas.ctx;
     this.s = this.board.scale/4;
     if (this.show_health && this.current_square) {
-      this.stamp(0,0,this.max_health,'black');
-      this.stamp(0,0,Math.max(this.health,0),'red');
+      this.stamp(0,0,this.health-1,'black'); // change to this.max_health to show empty
+      this.stamp(0,0,Math.max(this.health-1,0),'blue');
     }
     var _i = this.intervals.length;
     var show_intervals = this.board.game && this.board.game.config.get("show_intervals");
@@ -372,12 +384,12 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
 
 tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
-    opts.intervals = [1,0];
+    opts.intervals = [0,1];
     opts.sprite = tW.sprites['skeleton'];
     super(opts);
     this.tasks = [
-      [this.follow],
       [this.findEnemy],
+      [this.follow],
     ]
   }
   isAwake() { return this.following; }
@@ -387,10 +399,10 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.sight = 1;
     opts.sprite = tW.sprites['grave'];
+    opts.intervals = [4];
     super(opts);
     this.pieces = ['ge','be']
     this.dx = this.dy = 0; // has no direction
-    this.intervals = [4];
     this.tasks = [
       [this.spawnPiece]
     ];
@@ -420,8 +432,8 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
       gold: 0,
       gold_per_touch: 0,
     });
+    opts.intervals = [0];
     super(opts)
-    this.intervals = [0];
     this.defaults({
       dx: this.parent_piece.dx,
       dy: this.parent_piece.dy

@@ -34,6 +34,10 @@ tW.team.Team = class Team extends uR.Object {
         board: board,
         team: this.number
       })
+      if (i) {
+        !(i%3) && piece.levelUp();
+        !(i%4) && piece.levelUp();
+      }
       this.pieces.push(piece);
       board.addPieces(piece);
     }
