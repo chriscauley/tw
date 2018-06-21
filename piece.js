@@ -83,11 +83,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
         if (this.current_square) { this.current_square.piece = undefined; }
         this.current_square = square;
         square.piece = this;
+        _.each(square.items,i => i.trigger(this))
         square.floor && square.floor.trigger(this);
-        square.item && this.touchItem(square.item);
         this.takeGold(square);
         result.moves.push(opts.move);
-        animation = ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
+        animation = animation || ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
         [this.x,this.y] = [square.x,square.y];
         opts.done = true;
         [dx,dy] = opts.move

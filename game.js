@@ -46,7 +46,8 @@ tW.Game = class Game extends uR.Object {
     this.piece_count = this.config.get("piece_count");
     this.level_number = -1;
     this.nextLevel();
-    this.player.reset()
+    this.player.reset();
+    this.score = this.player.score = new Score({ game: this, player: this.player });
     this.board.draw();
     this.is_gameover = false;
     document.getElementById("game").focus();
@@ -54,8 +55,9 @@ tW.Game = class Game extends uR.Object {
   }
   makeTeams() {
     this.teams = [];
+    var unit_count = parseInt(this.config.get("base_units")) + this.level_number;
     for (var i=0;i<2;i++) {
-      this.teams.push(new tW.team.Team({game: this}))
+      this.teams.push(new tW.team.Team({game: this, unit_count:unit_count}))
     }
   }
   gameover() {
@@ -106,10 +108,9 @@ tW.Game = class Game extends uR.Object {
       x: start[0],
       y: start[1],
     });
-    this.score = this.player.score = new Score({ game: this, player: this.player });
     this.board.pieces.push(this.player);
-    this.player.x = start[0]+1;
-    this.player.y = start[1];
+    this.player.x = start.x;
+    this.player.y = start.y;
     this.player.resetMiniMap();
     this.player.applyMove();
     for (var team of this.teams) {

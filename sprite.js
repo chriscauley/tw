@@ -238,6 +238,7 @@ uR.ready(function() {
     'beholder',
     'skull',
     'explode',
+    'ground_stairs_up',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',
@@ -252,6 +253,7 @@ uR.ready(function() {
     'sword',
     'skull',
     'explode',
+    'ground_stairs_up',
   ];
   try {
     sprites.map((name,i) => new tW.sprites.DBSprite({

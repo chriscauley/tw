@@ -23,16 +23,18 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     (this.__tick++)%4 && this.draw();
     this.animation_frame = requestAnimationFrame(this.tick);
   }
-  loadLevel(level_number) {
-    //var level = LEVELS[level_number];
-    var level = new tW.level.RectRoom(this.game.config.getData()).level;
-    delete this.squares;
-    delete this.pieces;
+  reset() {
     this.squares = [];
     this.pieces = [];
+    this.start = this.exit = undefined;
+    this.animations = [];
+  }
+  loadLevel(level_number) {
+    //var level = LEVELS[level_number];
+    this.reset();
     var self = this;
-    self.level_number = level_number;
-    var start = [2,2],exit;
+    var level = new tW.level.RectRoom(this.game.config.getData()).level;
+    this.level_number = level_number;
     this.x_max = 0;
     this.y_max = level.length;
     uR.forEach(level,function(row,y) {
@@ -41,13 +43,15 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         self.squares[x] = self.squares[x] || [];
         if (c === " ") { return }
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
-        if (c == 's') { start = [x,y] }
-        if (c == 'x') { exit = [x,y] }
+        if (c == 's') { self.start = square }
+        if (c == 'x') { self.exit = square }
         tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
       });
     });
-    this.start = start;
-    this.exit = exit;
+    this.start = this.start || this.getRandomEmptySquare();
+    this.exit = this.exit || this.getRandomEmptySquare();
+    this.start.make('start');
+    this.exit.make('exit');
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
     this.max_offset_x = Math.max(-0.5,this.x_max+0.5-window.innerWidth/this.scale);
@@ -133,6 +137,10 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     // Return the square at x,y if it exits
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
     return this.squares[x] && this.squares[x][y];
+  }
+  getRandomEmptySquare(i=0) {
+    if (i > 1000) { throw "could not find empty square" }
+    return _.sample(_.sample(this.squares)) || this.getRandomEmptySquare(i++);
   }
   getSquares(list) {
     var self = this;

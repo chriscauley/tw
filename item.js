@@ -1,20 +1,25 @@
 tW.item = {};
 
 tW.item.Item = class Item extends uR.Object {
-  toString() { return '[object Item]' }
-  constructor(opts) {
+  toString() { return `[Item ${this.constructor.name}]` }
+  constructor(opts={}) {
     super(opts);
     this.defaults(opts,{
-      //board: uR.REQUIRED,
-      x: 0,
-      y: 0,
+      square: uR.required,
       tasks: [],
     });
   }
-  stepOn() {
-  }
   pickUp(player) {
-    this.square.removeItem();
+    this.square.removeItem(this);
+  }
+  draw() {
+    var sprite = this.square && this.sprite && this.sprite.get();
+    var s = this.square && this.square.scale;
+    sprite && this.square.canvas.ctx.drawImage(
+      sprite.img,
+      0,0,
+      s,s
+    )
   }
 }
 
@@ -41,7 +46,7 @@ tW.item.Gold = class Gold extends tW.item.Item {
   }
   draw(canvas) {
     var ctx = canvas.ctx;
-    var s = game.board.scale;
+    var s = this.square.board.scale;
     var img = this.sprite.get(0,0);
     var v = this.value*1;
     while(v--) {

@@ -204,7 +204,14 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return out;
   }
   play(opts) {
-    super.play(opts)
+    super.play(opts);
     this.energy.tick();
+    if (this.go_to_next_level) {
+      this.game.nextLevel();
+      this.current_square = this.game.board.start;
+      this.current_square.piece = this;
+      this.animating = 0;
+      this.go_to_next_level = false;
+    }
   }
 }
