@@ -11,7 +11,9 @@ var path = require("path");
 var ncp = require('ncp');
 
 var PROJECT_NAME = "tw";
-var DEST = (argv._[0] == 'deploy')?"/var/timewalker.io/":".dist/";
+var PRODUCTION = argv._[0] == 'deploy'
+var DEST = PRODUCTION?"/var/timewalker.io/":".dist/";
+var FAVICON = `src/img/tw${PRODUCTION?"":"-dev"}.ico`;
 
 var JS_FILES = [
   "main.js",
@@ -76,6 +78,7 @@ gulp.task("cp-static",function() {
     var dest = path.join(DEST,_dir);
     ncp(source, dest)
   });
+  ncp(path.join(__dirname,FAVICON),path.join(DEST,"favicon.ico"));
 })
 
 var build_tasks = ['build-js', 'build-css', 'cp-static'];
