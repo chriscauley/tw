@@ -127,7 +127,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       piece.current_square.piece = undefined;
       piece.current_square = undefined;
     }
-    this.game.onPiecePop();
+    this.game.trigger('death',piece);
   }
   getSquare(x,y) {
     // Return the square at x,y if it exits

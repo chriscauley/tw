@@ -18,6 +18,7 @@ tW.Game = class Game extends uR.Object {
   constructor() {
     super();
     this.config = uR.tw.game_config;
+    riot.observable(this);
     uR.extend(this,this.config.getData());
     this.bindKeys();
     this.board = new tW.Board({ game: this, });
@@ -113,30 +114,7 @@ tW.Game = class Game extends uR.Object {
     this.player.applyMove();
     for (var team of this.teams) {
       this.board.addPieces(team.makeUnits());
-    }
-    this.onPiecePop();
-  }
-  onPiecePop(piece) {
-    if (this.board.pieces.length == 1) { // only the player
-      this.piece_count += 1*this.config.get('piece_increase');
-      var enemy_count = 0;
-      var board = this.board;
-      var choice = uR.random.choice;
-      var iter = 0;
-      while(enemy_count<this.piece_count && iter<100) {
-        var sq = choice(choice(this.board.squares));
-        if (sq && !sq.piece) {
-          board.addPieces(new tW.enemy_map[choice(this.config.get('active_pieces'))]({
-            x: sq.x,
-            y: sq.y,
-            board: board,
-            gold: 0,
-            health: 1,
-          }));
-          enemy_count += 1;
-        }
-        iter ++;
-      }
+      team.unit_count += 1*this.config.get('piece_increase');
     }
   }
 };
