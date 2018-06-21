@@ -101,9 +101,18 @@
 
 <tw-gameover>
   <div class={ theme.outer }>
-    <div class={ theme.content }>
+    <div class={ theme.content } style="text-align: center;max-width: 400px;">
       <h1>Game over!</h1>
       <p>Press any key to restart</p>
+      <p>
+        <a target="_blank" href="https://tinyletter.com/timewalker" class="btn btn-large btn-primary">
+          Click here to sign up for updates.
+        </a>
+      </p>
+      <p>
+        or email me at <a href="mailto:chris@timewalker.io">chris@timewalker.io</a>
+        if you have any comments, questions, or favicon advice.
+      </p>
     </div>
   </div>
   this.on("unmount",function() {
