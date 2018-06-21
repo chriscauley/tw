@@ -83,7 +83,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       max: this.max_energy,
       interval: this.energy_interval,
     });
-    this.current_square = this.game.board.getSquare(this.x,this.y);
+    this.game.board.getSquare(this.x,this.y).addPiece(this);
     new tW.equipment.SprintBoots().equip(this);
   }
   getHealthArray() {
@@ -208,8 +208,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.energy.tick();
     if (this.go_to_next_level) {
       this.game.nextLevel();
-      this.current_square = this.game.board.start;
-      this.current_square.piece = this;
+      this.game.board.getRandomEmptySquare().addPiece(this);
       this.animating = 0;
       this.go_to_next_level = false;
     }

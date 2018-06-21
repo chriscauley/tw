@@ -127,10 +127,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
   }
   remove(piece) {
     this.pieces = this.pieces.filter(function(p) { return p !== piece; });
-    if (piece && piece.current_square) {
-      piece.current_square.piece = undefined;
-      piece.current_square = undefined;
-    }
+    piece && piece.current_square && piece.current_square.removePiece(piece);
     this.game.trigger('death',piece);
   }
   getSquare(x,y) {
@@ -138,9 +135,13 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
     return this.squares[x] && this.squares[x][y];
   }
-  getRandomEmptySquare(i=0) {
-    if (i > 1000) { throw "could not find empty square" }
-    return _.sample(_.sample(this.squares)) || this.getRandomEmptySquare(i++);
+  getRandomEmptySquare() {
+    var i=1000,s;
+    while (i--) {
+      s = _.sample(_.sample(this.squares));
+      if (s.isOpen()) { return s }
+    }
+    throw "could not find empty square";
   }
   getSquares(list) {
     var self = this;
@@ -150,8 +151,8 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     if (!Array.isArray(pieces)) { pieces = [].slice.apply(arguments); }
     for (var piece of pieces) {
       this.pieces.push(piece);
-      piece.current_square = this.getSquare(piece.x,piece.y);
-      if (piece.current_square) { piece.current_square.piece = piece; }
+      var square = this.getSquare(piece.x,piece.y);
+      square && square.addPiece(piece);
     }
   }
   newAnimation(opts) {

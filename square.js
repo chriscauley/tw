@@ -51,6 +51,16 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     this.floor = item;
     this.dirty = true;
   }
+  addPiece(piece) {
+    if ( this.piece && this.piece != piece) { console.error(piece); }
+    this.piece = piece;
+    [piece.x,piece.y] = this.xy;
+    piece.current_square = this;
+  }
+  removePiece(piece) {
+    if (this.piece != piece) { return }
+    this.piece = undefined;
+  }
   addItem(item) {
     item.x = this.x;
     item.y = this.y

@@ -55,7 +55,7 @@ tW.Game = class Game extends uR.Object {
   }
   makeTeams() {
     this.teams = [];
-    var unit_count = parseInt(this.config.get("base_units")) + this.level_number;
+    var unit_count = parseInt(this.config.get("base_units")) + this.level_number*this.config.get("piece_increase");
     for (var i=0;i<2;i++) {
       this.teams.push(new tW.team.Team({game: this, unit_count:unit_count}))
     }
@@ -105,17 +105,14 @@ tW.Game = class Game extends uR.Object {
       board: this.board,
       health: 3,
       team: 1, // #! TODO this is where competative multiplayer happens
-      x: start[0],
-      y: start[1],
+      x: start.x,
+      y: start.y,
     });
     this.board.pieces.push(this.player);
-    this.player.x = start.x;
-    this.player.y = start.y;
     this.player.resetMiniMap();
     this.player.applyMove();
     for (var team of this.teams) {
-      this.board.addPieces(team.makeUnits());
-      team.unit_count += 1*this.config.get('piece_increase');
+      team.makeUnits();
     }
   }
 };

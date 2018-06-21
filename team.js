@@ -27,14 +27,14 @@ tW.team.Team = class Team extends uR.Object {
     }));
     for (var i=0;i<this.unit_count;i++) {
       var s = board.getRandomEmptySquare();
-      this.pieces.push(
-        new tW.enemy_map[_.sample(active_pieces)]({
-          x: s.x,
-          y: s.y,
-          board: board,
-          team: this.number
-        })
-      )
+      var piece = new tW.enemy_map[_.sample(active_pieces)]({
+        x: s.x,
+        y: s.y,
+        board: board,
+        team: this.number
+      })
+      this.pieces.push(piece);
+      board.addPieces(piece);
     }
     return this.pieces;
   }
