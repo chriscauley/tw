@@ -15,6 +15,7 @@ tW.team.Team = class Team extends uR.Object {
   }
   makeUnits() {
     var active_pieces = this.active_pieces || this.game.config.get("active_pieces");
+    if (!active_pieces.length) { active_pieces = ['ge','be'] }
     if (this.number == 1) { return this.pieces } // player only
     // this should probably be it's own class
     var board = this.game.board;

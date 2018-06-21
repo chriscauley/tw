@@ -387,6 +387,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     opts.sight = 1;
     opts.sprite = tW.sprites['grave'];
     super(opts);
+    this.pieces = ['ge','be']
     this.dx = this.dy = 0; // has no direction
     this.intervals = [4];
     this.tasks = [
@@ -396,10 +397,9 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   spawnPiece() {
     var squares = this.getVisibleSquares();
     uR.random.shuffle(squares);
-    var pieces = this.pieces || uR.tw.game_config.get("active_pieces");
     for (var sq of squares) {
       if (!sq.piece) {
-        this.board.addPieces(new tW.enemy_map[uR.random.choice(pieces)]({
+        this.board.addPieces(new tW.enemy_map[uR.random.choice(this.pieces)]({
           x:sq.x,
           y:sq.y,
           board: this.board,
