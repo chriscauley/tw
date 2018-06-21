@@ -372,11 +372,12 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
 
 tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
-    opts.intervals = [1];
+    opts.intervals = [1,0];
     opts.sprite = tW.sprites['skeleton'];
     super(opts);
     this.tasks = [
-      [this.follow,this.findEnemy],
+      [this.follow],
+      [this.findEnemy],
     ]
   }
   isAwake() { return this.following; }
