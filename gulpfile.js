@@ -13,7 +13,7 @@ var ncp = require('ncp');
 var PROJECT_NAME = "tw";
 var PRODUCTION = argv._[0] == 'deploy'
 var DEST = PRODUCTION?"/var/timewalker.io/":".dist/";
-var FAVICON = `src/img/tw${PRODUCTION?"":"-dev"}.ico`;
+var FAVICON = `src/img/tw${PRODUCTION?".png":"-dev.ico"}`;
 
 var JS_FILES = [
   "main.js",
