@@ -51,8 +51,8 @@ tW.utils.Counter = class Counter extends uR.Object {
 tW.player.Player = class Player extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
-    opts.intervals = [0,4];
-    opts.sprite = tW.sprites['blue-flame'];
+    opts.intervals = [0];
+    opts.sprite = tW.sprites['warrior'];
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0 };
     this._moves = [];
@@ -70,6 +70,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       energy_interval: 4,
       gold: 0,
     });
+    this.action_halo = "blue_halo";
     this.move = this.move.bind(this);
     this.is_player = true;
     this.reset();
@@ -171,6 +172,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   drawUI() {
   }
   drawMoves() {
+    if (true) { return }
     var s = this.board.scale;
     if (this.game.turn != this.last_turn_drawn) {
       this._moves = [];

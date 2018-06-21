@@ -179,7 +179,7 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
     var ctx = this.canvas.ctx;
     ctx.drawImage(this.temp_canvas, 0, 0);
     if (this.is_piece) {
-      for (var color of ["red","black"]) {
+      for (var color of ["red","black",'blue']) {
         this.canvas_names.push(color+"_halo");
         var c = this.newCanvas({
           name: color+"_halo",

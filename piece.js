@@ -26,12 +26,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       sight: 3, // how far it can see
     });
     this.setSight(this.sight);
+    this.action_halo = "red_halo";
     this.newCanvas({
       width: this.board.scale,
       height: this.board.scale,
       name: 'ui_canvas',
     });
-    this.ds = this.board.scale/10; // scale the image down a little, "shrink by this much"
+    this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
     this.animating = 0;
 
     this.show_health = true;
@@ -53,6 +54,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     }
   }
   levelUp(n=1) {
+    this.level += n;
+    this.ds = 0;
     while(n--) {
       /*if (n%2) {
         for (var i=0;i<this.intervals.length;i++) {
@@ -66,7 +69,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   getSprite(action) { return tW.sprites[this._sprite_map[action]]; }
   getHalo(canvas_set) {
     if (!this.isAwake()) { return canvas_set.black_halo; }
-    if (this.isActionReady()) { return canvas_set.red_halo; }
+    if (this.isActionReady()) {return canvas_set[this.action_halo]; }
   }
   isActionReady() { return this.steps[this.i_active] >= this.intervals[this.i_active]; }
   isAwake() { return true; }
