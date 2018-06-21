@@ -14,13 +14,24 @@
     <div each={ combo,i in  combos }>{ combo.name }: { combo.value }</div>
   </div>
   <div class="help bot">
-    <h3>Controls:</h3>
-    <table class={ uR.css.table }>
-      <tr each={ c,i in controls }>
-        <td><b>{ c[0] }</b></td>
-        <td>{ c[1] }</td>
-      </tr>
-    </table>
+    <ur-tabs>
+      <ur-tab title="Controls">
+        <table class={ uR.css.table }>
+          <tr each={ c,i in tW._controls }>
+            <td><b>{ c[0] }</b></td>
+            <td>{ c[1] }</td>
+          </tr>
+        </table>
+      </ur-tab>
+      <ur-tab title="Enemies">
+        <table class={ uR.css.table }>
+          <tr each={ c,i in tW._enemies }>
+            <td><b>{ c[0] }</b></td>
+            <td>{ c[1] }</td>
+          </tr>
+        </table>
+      </ur-tab>
+    </ur-tabs>
   </div>
   <!--
   <div class="logs" ref="logs">
@@ -42,10 +53,17 @@
   <!-- </div> -->
 
   this.on("before-mount",function() {
-    this.controls = [
+    tW._controls = [
       ['space','wait'],
       ['arrows','move/attack'],
       ['shift + arrows','dash'],
+    ];
+    tW._enemies = [
+      ['fly','hugs the walls,fast'],
+      ['zombie','walks forward, fast'],
+      ['skeleton', 'follows you'],
+      ['evil eye', 'spits fire balls'],
+      ['beholder','Dashes when it sees you'],
     ];
     this.player = this.opts.player;
     this.opts.game.ui = this;
