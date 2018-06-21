@@ -11,7 +11,7 @@ uR.ready(function() {
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
     { name: "show_intervals", type: "boolean", value: false, required: false},
-    { name: "active_pieces", choices: PIECE_CHOICES, value: ['GE'], type: "checkbox", required: false },
+    { name: "active_pieces", choices: PIECE_CHOICES, value: ['ge','wf','be','w','sp'], type: "checkbox", required: false },
   ]);
 });
 tW.Game = class Game extends uR.Object {
@@ -115,4 +115,15 @@ tW.Game = class Game extends uR.Object {
       team.makeUnits();
     }
   }
-};
+  dumpData() {
+    var out = {};
+    for (var model of [SpriteSheet,Sprite]) {
+      out[model.name] = model.objects.all().map(m => m.toJson());
+    }
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:attachment/text,' + encodeURI("var __DATA="+JSON.stringify(out));
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'data.json';
+    hiddenElement.click();
+  }
+}
