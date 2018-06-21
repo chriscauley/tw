@@ -255,6 +255,10 @@ uR.ready(function() {
     'explode',
     'ground_stairs_up',
   ];
+  if (!Sprite.objects.all().length) {
+    __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())
+    __DATA.Sprite.map(s=>new Sprite(s).save())
+  }
   try {
     sprites.map((name,i) => new tW.sprites.DBSprite({
       name: name,
