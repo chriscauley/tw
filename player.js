@@ -210,8 +210,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.energy.tick();
     if (this.go_to_next_level) {
       this.game.nextLevel();
-      this.game.board.getRandomEmptySquare().addPiece(this);
-      this.animating = 0;
       this.go_to_next_level = false;
     }
   }

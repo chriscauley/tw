@@ -28,7 +28,6 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.squares = [];
     this.pieces = [];
     this.start = this.exit = undefined;
-    this.animations = [];
   }
   loadLevel(level_number) {
     //var level = LEVELS[level_number];
@@ -38,6 +37,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.level_number = level_number;
     this.x_max = 0;
     this.y_max = level.length;
+    var player = this.game.player || {};
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(c,x) {
@@ -46,7 +46,11 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         if (c == 's') { self.start = square }
         if (c == 'x') { self.exit = square }
-        tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
+        if (x == player.x && y == player.y) {
+          square.addPiece(player);
+        } else {
+          tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
+        }
       });
     });
     this.start = this.start || this.getRandomEmptySquare();
