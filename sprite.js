@@ -211,7 +211,7 @@ tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
     this.loaded = true;
   }
   _draw() {
-    var colors = ['transparent','transparent',this.color];
+    var colors = ['transparent','transparent','transparent','rgba(0,0,0,0.5)',this.color];
     this.drawGradient({colors: colors, theta0:-3*Math.PI/4,theta1:-Math.PI/4});
     this.doRotations();
   }
