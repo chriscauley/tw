@@ -6,6 +6,7 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     super(opts);
     this.defaults(opts,{
       tasks: [],
+      sprite: tW.sprites[this.constructor.name.toLowerCase()]
     });
     this.ds = 10; // should be set by square
     this.square && this.square.addItem(this);
@@ -23,11 +24,17 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   }
 }
 
-tW.item.Apple = class Apple extends tW.item.Item {
+tW.item.Consumable = class Consumable extends tW.item.Item {
   constructor(opts={}) {
-    opts.sprite = tW.sprites.apple;
     super(opts);
+    this.slot = "consumable";
   }
+}
+
+tW.item.Apple = class Apple extends tW.item.Consumable {
+}
+
+tW.item.Steak = class Steak extends tW.item.Consumable {
 }
 
 tW.item.Gold = class Gold extends tW.item.Item {

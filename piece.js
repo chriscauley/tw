@@ -298,12 +298,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   }
   canBeAttacked() { return true; }
   bindItem(item) {
-    if (item.slot) {
-      this.equipment[item.slot] && this.dropItem(item.slot);
+    if (item.slot && this.equipment) {
+      this.dropItem(this.equipment[item.slot]);
       this.equipment[item.slot] = item;
     } else {
       this.items.push(item);
     }
+  }
+  dropItem(item) {
+    item && this.current_square.addItem(item);
   }
   restat() {
     var gold_to_next = this.gold_levels[this.level];
