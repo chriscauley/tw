@@ -74,6 +74,10 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     this.canvas.clear();
     this._draw();
     this.dirty = false;
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = `.sprite.sprite-${this.name} { background-image: url("${this.canvas.toDataURL()}") }`
+    document.getElementsByTagName('head')[0].appendChild(style);
   }
   drawGradient(opts={}) {
     opts = uR.defaults(opts,this);

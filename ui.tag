@@ -33,6 +33,9 @@
       </ur-tab>
     </ur-tabs>
   </div>
+  <div class="equipment">
+    <div each={ item,_i in equipment } class="box { item.className }"></div>
+  </div>
   <!--
   <div class="logs" ref="logs">
     <div each={ log,i in player.score.log }>
@@ -68,7 +71,7 @@
     this.player = this.opts.player;
     this.opts.game.ui = this;
     this.game = this.opts.game;
-    this.totals = this.combos = [];
+    this.equipment = this.totals = this.combos = [];
   });
   this.on("mount",function() {
     this.update();
@@ -77,6 +80,7 @@
     this.sword = this.sword || tW.sprites.sword.dataURL;
     this.health = this.player.getHealthArray();
     this.energy = this.player.energy.getArray();
+    this.equipment = this.player.listEquipment();
     var score = this.player.score;
     this.combos = [];
     this.totals = [];

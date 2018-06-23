@@ -92,12 +92,22 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     for (var i=0;i<this.health; i++) { array[i] = 1; }
     return array;
   }
-  equipItem(item) {
+  equipItem(item) { //depracated in favor of additem
     item.player = this;
     this.equipment[item.slot] = item;
   }
   touchItem(item) {
     item.pickUp(this);
+  }
+  listEquipment() {
+    if (this.equipment_cache) { return this.equipment_cache }
+    var list = [];
+    var c = this.equipment.consumable;
+    if (c) {
+      list.push({ className: 'sprite sprite-'+c.sprite.name })
+    }
+    this.equipment_cache = list;
+    return list;
   }
   getMove(e,dx,dy) {
     var out = { turn: [dx,dy] };

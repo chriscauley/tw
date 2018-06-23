@@ -301,6 +301,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (item.slot && this.equipment) {
       this.dropItem(this.equipment[item.slot]);
       this.equipment[item.slot] = item;
+      this.equipment_cache = undefined;
     } else {
       this.items.push(item);
     }
