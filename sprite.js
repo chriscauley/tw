@@ -11,6 +11,23 @@ tW.sprites = tW.sprites || {
     return tW.sprites["_wedge_"+color] || new tW.sprites.WedgeSprite(color);
   },
 };
+
+var createSpriteClass = (function() {
+  var content = "";
+  var createTag = uR.debounce(function () {
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = content;
+    content = "";
+    document.getElementsByTagName('head')[0].appendChild(style);
+  });
+
+  return function(name,dataURL) {
+    content += `.sprite.sprite-${name} { background-image: url("${dataURL}") }\n`
+    createTag();
+  }
+})();
+
 tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
   constructor(opts) {
     super(opts);
@@ -74,10 +91,7 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     this.canvas.clear();
     this._draw();
     this.dirty = false;
-    var style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = `.sprite.sprite-${this.name} { background-image: url("${this.canvas.toDataURL()}") }`
-    document.getElementsByTagName('head')[0].appendChild(style);
+    createSpriteClass(this.name,this.canvas.toDataURL());
   }
   drawGradient(opts={}) {
     opts = uR.defaults(opts,this);
