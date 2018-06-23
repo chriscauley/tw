@@ -9,11 +9,18 @@ var util = require('gulp-util');
 var babel = require('gulp-babel');
 var ncp = require('ncp');
 var path = require("path");
+var rev = require('gulp-rev');
 
 module.exports = function(opts) {
-  var build_tasks = [ 'cp-static'];
+  opts.js = opts.js || {}; // javascript and riot files
+  opts.less = opts.less || {}; // css and less
+  opts.static = opts.static || []; // files to be directly copied over
+  opts.mustache = opts.mustache || []; // mustache templates to be processed
+  var build_tasks = ['cp-static'];
+  var results = []
   for (var key in opts.js) {
     (function(key) {
+      results.push(key + '-built.js');
       build_tasks.push("build-"+key);
       gulp.task('build-'+key, function () {
         if (key == "vendor") { // vendor files are already minified and babel-ifiied
@@ -27,7 +34,7 @@ module.exports = function(opts) {
           .pipe(babel({ presets: ['es2017'] }))
           .pipe(concat(key + '-built.js'))
           .pipe(sourcemaps.write("."))
-          .pipe(gulp.dest(opts.DEST));
+          .pipe(gulp.dest(opts.DEST))
       });
     })(key)
   }
@@ -35,6 +42,7 @@ module.exports = function(opts) {
   for (var key in opts.less) {
     (function(key) {
       build_tasks.push("build-"+key+"-css");
+      results.push(key+'-built.css')
       gulp.task("build-"+key+"-css", function () {
         return gulp.src(opts.less[key])
           .pipe(less({}))
@@ -52,13 +60,38 @@ module.exports = function(opts) {
     opts.static.forEach(function(file_or_directory) {
       var source = path.join(__dirname,file_or_directory);
       var dest = path.join(DEST,file_or_directory);
-      console.log(source, dest);
       ncp(source, dest);
     });
     opts.renames && opts.renames.forEach(function(r) {
       ncp(path.join(__dirname,r[0]),path.join(DEST,r[1]));
     });
+  });
+
+  gulp.task('build-revision', build_tasks.slice(), function() {
+    return gulp.src(results.map(s => path.join(opts.DEST,s)))
+      .pipe(rev())
+      .pipe(gulp.dest(opts.DEST))
+      .pipe(rev.manifest())
+      .pipe(gulp.dest(opts.DEST))
   })
+  build_tasks.push('build-revision');
+
+  if (opts.mustache.length) {
+    var mustache = require("gulp-mustache");
+    var fs = require('fs');
+    gulp.task("build-mustache",build_tasks.slice(),function() {
+      var manifest = JSON.parse(fs.readFileSync(path.join(opts.DEST,"rev-manifest.json")));
+      for (var key in manifest) {
+        manifest[key.replace("-","").replace(".","")] = manifest[key]
+      }
+      return gulp.src(opts.mustache)
+        .pipe(mustache({
+          manifest: manifest
+        }))
+        .pipe(gulp.dest(opts.DEST));
+    });
+    build_tasks.push('build-mustache');
+  }
 
   gulp.task('watch', build_tasks, function () {
     for (var key in opts.js) {

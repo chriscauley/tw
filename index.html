@@ -3,7 +3,7 @@
     <title>Time Walker</title>
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-    <link rel="stylesheet" href="tw-built.css">
+    <link rel="stylesheet" href="{{ manifest.twbuiltcss }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- <link href="//beta.unrest.io/uc/uc-built.css" rel="stylesheet"></link>-->
   </head>
@@ -42,5 +42,5 @@
   -->
   <script>uR.auth.reset = function() { return };</script>
   <script src="data.json"></script>
-  <script src="tw-built.js"></script>
+  <script src="{{ manifest.twbuiltjs }}"></script>
 </html>

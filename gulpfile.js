@@ -39,8 +39,10 @@ var LESS_FILES = {
 }
 
 var STATIC_FILES = [
-  'index.html',
   'data.json',
+];
+var MUSTACHE_FILES = [
+  'index.html',
 ]
 var PRODUCTION = argv._[0] == 'deploy';
 
@@ -53,5 +55,6 @@ ezGulp({
   less: LESS_FILES,
   static: STATIC_FILES,
   renames: RENAMES,
+  mustache: MUSTACHE_FILES,
   DEST: PRODUCTION?"/var/timewalker.io/":".dist/",
 })
