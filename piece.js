@@ -16,6 +16,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       dx: dx,
       dy: dy,
       tasks: [],
+      items: [],
       health: 1,
       damage: 1,
       team: 0,
@@ -95,15 +96,18 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (opts.move) {
       var square = this.look(opts.move);
       if (square && !square.piece) {
-        if (this.current_square) { this.current_square.piece = undefined; }
-        this.current_square = square;
-        square.piece = this;
-        _.each(square.items,i => i.trigger(this))
-        square.floor && square.floor.trigger(this);
+        this.current_square && this.current_square.moveOff(this,opts);
+        animation = animation || ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
+        square.moveOn(this,opts);
+
+        //if (this.current_square) { this.current_square.piece = undefined; }
+        //this.current_square = square;
+        //square.piece = this;
+        //_.each(square.items,i => i.trigger(this))
+        //square.floor && square.floor.trigger(this);
         this.takeGold(square);
         result.moves.push(opts.move);
-        animation = animation || ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
-        [this.x,this.y] = [square.x,square.y];
+        //[this.x,this.y] = [square.x,square.y];
         opts.done = true;
         [dx,dy] = opts.move
       }
@@ -293,8 +297,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     return false;
   }
   canBeAttacked() { return true; }
-  touchItem(item) {
-    item.touch(this);
+  bindItem(item) {
+    if (item.slot) {
+      this.equipment[item.slot] && this.dropItem(item.slot);
+      this.equipment[item.slot] = item;
+    } else {
+      this.items.push(item);
+    }
   }
   restat() {
     var gold_to_next = this.gold_levels[this.level];

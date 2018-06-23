@@ -95,7 +95,7 @@ module.exports = function(opts) {
 
   gulp.task('watch', build_tasks, function () {
     for (var key in opts.js) {
-      gulp.watch(opts.js[key], ['build-'+key]);
+      gulp.watch(opts.js[key], ['build-'+key,'build-revision','build-mustache']);
     }
     for (var key in opts.less) {
       var watch_files = opts.less[key].map((name) => name.match(/.*\//)[0]+"*");

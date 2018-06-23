@@ -114,6 +114,8 @@ tW.Game = class Game extends uR.Object {
     for (var team of this.teams) {
       team.makeUnits();
     }
+    var s = this.board.getRandomEmptySquare();
+    new tW.item.Apple({square: s});
   }
   dumpData() {
     var out = {};

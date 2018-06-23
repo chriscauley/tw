@@ -5,12 +5,28 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   constructor(opts={}) {
     super(opts);
     this.defaults(opts,{
-      square: uR.required,
       tasks: [],
     });
+    this.ds = 10; // should be set by square
+    this.square && this.square.addItem(this);
   }
-  pickUp(player) {
-    this.square.removeItem(this);
+  moveOn(piece,move) {
+    move = super.moveOn(piece,move);
+    this.canBind(piece) && this.bindTo(piece); // need some sort of chaining effect if it changes the move
+  }
+  canBind(piece) {
+    return piece.is_player;
+  }
+  bindTo(piece) {
+    piece.bindItem(this)
+    this.square && this.square.removeItem(this);
+  }
+}
+
+tW.item.Apple = class Apple extends tW.item.Item {
+  constructor(opts={}) {
+    opts.sprite = tW.sprites.apple;
+    super(opts);
   }
 }
 

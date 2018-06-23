@@ -4,9 +4,7 @@ tW.floor.FloorItem = class FloorItem extends tW.square.SquareMixin(uR.Object) {
     super(opts)
     this.defaults(opts,{})
   }
-  trigger(player) {
-
-  }
+  moveOn(piece,move) { }
 }
 
 tW.floor.Stairs = class Stairs extends tW.floor.FloorItem {
@@ -14,19 +12,21 @@ tW.floor.Stairs = class Stairs extends tW.floor.FloorItem {
     super(opts);
     this.open = false;
     this.sprite = tW.sprites.ground_lock;
-    this.square.board.game.on('death',(p) => this.ondeath(p))
+    this._ondeath = (p) => this.ondeath(p);
+    this.square.board.game.on('death',this._ondeath);
   }
   ondeath(piece) {
     if (this.square.board.pieces.length == 1) {
+      this.square.board.game.off('death',this._ondeath);
       this.open = true;
       this.sprite = tW.sprites.ground_stairs;
       this.square.dirty = true;
     }
   }
-  trigger(unit) {
-    super.trigger(unit);
-    if (unit.is_player && this.open) {
-      unit.go_to_next_level = true;
+  moveOn(piece,move) {
+    super.moveOn(piece,move);
+    if (piece.is_player && this.open) {
+      piece.go_to_next_level = true;
     }
   }
 }

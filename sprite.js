@@ -239,6 +239,7 @@ uR.ready(function() {
     'skull',
     'explode',
     'ground_stairs_up',
+    'apple',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',
@@ -254,6 +255,7 @@ uR.ready(function() {
     'skull',
     'explode',
     'ground_stairs_up',
+    'apple',
   ];
   if (!Sprite.objects.all().length) {
     __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())

@@ -6,11 +6,15 @@ tW.square.SquareMixin = (superclass) => class extends superclass {
     super.draw && super.draw();
     if (!this.square) { return }
     var sprite = this.sprite && this.sprite.get();
+    var ds = this.ds || 0;
     sprite && this.square.canvas.ctx.drawImage(
       sprite.img,
-      0,0,
-      this.square.scale,this.square.scale,
+      ds,ds,
+      this.square.scale-2*ds,this.square.scale-2*ds,
     )
+  }
+  moveOn(move) {
+    return move
   }
 }
 
@@ -66,7 +70,15 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     this.floor = item;
     this.dirty = true;
   }
-  addPiece(piece) {
+  moveOn(piece,move) {
+    this.addPiece(piece);
+    _.each(this.items,i=>i.moveOn(piece,move));
+    this.floor && this.floor.moveOn(piece,move);
+  }
+  moveOff(piece) {
+    if (this.piece == piece) { this.piece = undefined }
+  }
+  addPiece(piece) { // depracate in favor of moveOn?
     if ( this.piece && this.piece != piece) { console.error(piece); }
     this.piece = piece;
     [piece.x,piece.y] = this.xy;
