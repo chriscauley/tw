@@ -80,6 +80,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.gold = 0;
     this.resetMiniMap();
     this.equipment = {};
+    this.equipment_cache = undefined;
     this.energy = new tW.utils.Counter({
       max: this.max_energy,
       interval: this.energy_interval,

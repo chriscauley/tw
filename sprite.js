@@ -179,7 +179,7 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
         self.temp_canvas.ctx.scale(1, -1);
       }
       self.raw_image = document.createElement("canvas");
-      self.temp_canvas.ctx.drawImage(this,0,0);
+      self.temp_canvas.ctx.drawImage(this,0,0,self.scale,self.scale);
       self.temp_canvas.ctx.restore();
       self.temp_canvas.replaceColor("#30346d","transparent");
       self.dataURL = self.temp_canvas.toDataURL();
@@ -259,6 +259,7 @@ uR.ready(function() {
     'ground_stairs_up',
     'apple',
     'steak',
+    'chest',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',
@@ -276,8 +277,9 @@ uR.ready(function() {
     'ground_stairs_up',
     'apple',
     'steak',
+    'chest',
   ];
-  if (!Sprite.objects.all().length) {
+  if (Sprite.objects.all().length != sprites.length) {
     __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())
     __DATA.Sprite.map(s=>new Sprite(s).save())
   }
