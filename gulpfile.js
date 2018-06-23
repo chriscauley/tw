@@ -17,12 +17,16 @@ var JS_FILES = {
     "dungeon/generators/dungeon.js",
     "pallet.js",
     "sprite.js",
-    "item.js",
+    "square.js",
+
     "floor.js",
+    "item/base.js",
+    "item/equipment.js",
+
     "moves.js",
     "piece.js",
     "player.js",
-    "square.js",
+
     "board.js",
     "game.js",
     "score.js",
@@ -30,8 +34,6 @@ var JS_FILES = {
     "levels.js",
     "ui.tag",
     "map-sprite.tag",
-
-    "equipment/base.js",
   ]
 }
 var LESS_FILES = {

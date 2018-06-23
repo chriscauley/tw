@@ -1,5 +1,9 @@
 tW.floor = {};
-tW.floor.FloorItem = class FloorItem extends tW.item.Item {
+tW.floor.FloorItem = class FloorItem extends tW.square.SquareMixin(uR.Object) {
+  constructor(opts) {
+    super(opts)
+    this.defaults(opts,{})
+  }
   trigger(player) {
 
   }

@@ -92,6 +92,19 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     for (var i=0;i<this.health; i++) { array[i] = 1; }
     return array;
   }
+  addItem(item) {
+    var slot = item.slot;
+    var old_item = this.equipment[slot];
+    item.bind(player);
+    this.current_square && this.current_square.removeItem(item);
+    this.equipment[slot] = item;
+    if (old_item) {
+      this.dropItem(old_item);
+    }
+  }
+  dropItem(item) {
+    this.current_square.addItem(old_item);
+  }
   equipItem(item) {
     item.player = this;
     this.equipment[item.slot] = item;

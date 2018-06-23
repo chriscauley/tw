@@ -1,6 +1,6 @@
 tW.item = {};
 
-tW.item.Item = class Item extends uR.Object {
+tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   toString() { return `[Item ${this.constructor.name}]` }
   constructor(opts={}) {
     super(opts);
@@ -11,15 +11,6 @@ tW.item.Item = class Item extends uR.Object {
   }
   pickUp(player) {
     this.square.removeItem(this);
-  }
-  draw() {
-    var sprite = this.square && this.sprite && this.sprite.get();
-    var s = this.square && this.square.scale;
-    sprite && this.square.canvas.ctx.drawImage(
-      sprite.img,
-      0,0,
-      s,s
-    )
   }
 }
 

@@ -1,4 +1,19 @@
 tW.square = {};
+
+tW.square.SquareMixin = (superclass) => class extends superclass {
+  // for anything that can sit on a square
+  draw() {
+    super.draw && super.draw();
+    if (!this.square) { return }
+    var sprite = this.sprite && this.sprite.get();
+    sprite && this.square.canvas.ctx.drawImage(
+      sprite.img,
+      0,0,
+      this.square.scale,this.square.scale,
+    )
+  }
+}
+
 tW.square.Square = class Square extends uR.canvas.CanvasObject {
   constructor(opts) {
     super()
