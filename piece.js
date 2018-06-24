@@ -190,16 +190,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       this.stamp(0,0,this.max_health,'black');
       this.stamp(0,0,Math.max(this.health,0),'red');
     }
-    var _i = this.intervals.length;
-    var show_intervals = this.board.game && this.board.game.config.get("show_intervals");
-    while (show_intervals && _i--) {
-      var empty = this.intervals[_i];
-      var y = this.s*(3-_i);
-      if (empty) {
-        this.stamp(0,y,empty,'#008');
-        this.stamp(0,y,Math.min(this.steps[_i],empty),'#88F');
-      } else { this.stamp(0,y,1,'#F00') }
-    }
     this.ui_dirty = false;
   }
   drawSteps(c) {

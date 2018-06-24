@@ -10,7 +10,6 @@ uR.ready(function() {
     { name: "base_units", type: "integer", value: 1 },
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
-    { name: "show_intervals", type: "boolean", value: false, required: false},
     { name: "active_pieces", choices: PIECE_CHOICES, value: ['ge','wf','be','w','sp'], type: "checkbox", required: false },
   ]);
 });
