@@ -51,7 +51,7 @@ tW.utils.Counter = class Counter extends uR.Object {
 tW.player.Player = class Player extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
-    opts.intervals = [0];
+    opts.interval = 0
     opts.sprite = tW.sprites['warrior'];
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0 };
