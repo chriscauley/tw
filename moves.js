@@ -1,6 +1,16 @@
 tW.moves = {};
 
 tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
+  buildHelp() {
+    return {
+      forward: "Move or attack the direction it's facing.",
+      flip: "Turn to the opposite direction.",
+      follow: "If following a unit, move or attack in the direction of the unit.",
+      findEnemy: `Look ${this.sight} squares for an enemy to follow.`,
+      throwFireball: `Creates a fireball in the direction this is facing.`,
+      turnRandomly: "Turn in a random direction.",
+    }
+  }
   flip(move) {
     return { turn: [-this.dx,-this.dy], move: move && [-this.dx,-this.dy] }
   }
@@ -34,24 +44,6 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     var piece = square && square.piece;
     if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
     if (square && !piece) { return { move: [this.dx,this.dy ] } }
-  }
-  doubleForward(dx,dy) {
-    if (dx == undefined || dy == undefined) {
-      dx = this.dx; dy = this.dy;
-    }
-    var s1 = this.look(dx,dy);
-    var s2 = this.look(dx*2,dy*2);
-    if (!s1) { return } //against wall
-    if (s1.piece) {
-      if (s1.piece.team == this.team) { return } // can't attack team mate
-      return { damage: [dx,dy,this.damage+2] }
-    }
-    if (!s2) { return { move: [dx,dy] } } // one away from wall
-    if (s2.piece) {
-      if (s2.piece.team == this.team) { return }
-      return { move: [dx,dy], damage: [dx*2,dy*2,this.damage] }
-    }
-    return { move: [dx*2,dy*2] }
   }
   _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
@@ -169,6 +161,12 @@ tW.mixins.TunnelVision = (superclass) => class extends superclass {
 }
 
 tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(superclass) {
+  buildHelp() {
+    return _.extend(super.buildHelp(),{
+      checkCharge: "Looks for an enemy "+this.tunnel_sight+" squares away or less",
+      doCharge: "Charges in the direction of an enemy spotted by 'checkCharge'",
+    })
+  }
   checkCharge() {
     if (this.charging_deltas) { return }
     var piece,square

@@ -54,8 +54,18 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       bounce: this.sprite,
     }
   }
+  buildHelp() {
+    return super.buildHelp && super.buildHelp() || {};
+  }
   getHelpText() {
-    return this.description && [this.description] || [];
+    var _help = this.buildHelp();
+    var items = this.description && [this.description] || [];
+    for (var task_list of this.tasks) {
+      _.each(task_list,function(task,i) {
+        items.push(`${i}. *${task.name}:* ${_help[task.name] || 'unknown'}`)
+      });
+    }
+    return items;
   }
   levelUp(n=1) {
     this.level += n;

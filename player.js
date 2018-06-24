@@ -111,13 +111,13 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.equipment_cache = list;
     return list;
   }
+  getCtrlItem() {
+    return
+  }
   getMove(e,dx,dy) {
     var out = { turn: [dx,dy] };
-    if (e.ctrlKey && this.intervals[1]) {
-      //out = this.doSpecial();
-      if (this.steps[1] < this.intervals[1]) { console.log("fail"); } // spell wasn't ready
-      else { out = this.doubleForward(dx,dy) || out; }
-      this.steps[1] = -1;
+    if (e.ctrlKey && this.getCtrlItem()) {
+      return this.getCtrlItem().getMove(dx,dy);
     } else if (e.shiftKey && this.equipment.feet) {
       return this.equipment.feet.getMove(dx,dy);
     } else {
