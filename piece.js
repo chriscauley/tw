@@ -25,6 +25,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
       interval: 1, // how often piece moves, zero indexed
       sight: 3, // how far it can see
+      wait_interval: 0, // how long this.wait will block task queue
     });
     this.setSight(this.sight);
     this.action_halo = "red_halo";
@@ -38,6 +39,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
 
     this.show_health = true;
     this.max_health = this.health;
+    this.waited = 0;
     this.step = 0;
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
@@ -154,7 +156,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (this.step >= this.interval) {
       var move = this.getNextMove();
       if (move) {
-        move = this.applyMove(move);
+        this.wait_ready = move.wait_ready;
+        var result = this.applyMove(move);
         this.step = 0;
         return;
       }
@@ -391,14 +394,17 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
 
 tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
-    opts.interval = 1;
+    opts.interval = 0;
     opts.sprite = tW.sprites['skeleton'];
+    opts.wait_interval = 1;
     super(opts);
     this.tasks = [
       this.findEnemy,
+      this.wait,
       this.follow,
     ]
   }
+  isActionReady() { return this.wait_ready }
   isAwake() { return this.following; }
 }
 

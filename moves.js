@@ -28,7 +28,7 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     if (x_open && this.dx && Math.sign(dx) == this.dx) { return this.forward(); }
     if (y_open && this.dy && Math.sign(dy) == this.dy) { return this.forward(); }
 
-    var move = {};
+    var move = undefined;
     if (y_open && Math.abs(dx) < Math.abs(dy)) { // is x distance smaller than y distance? if so persue in y
       if ( !this.dy ) { move = { turn: [0,Math.sign(dy)] } } // currently lookin in x so turn in y
       else if ( Math.sign(dy) != this.dy ) { move = this.flip(); } // facing away from enemy
@@ -36,8 +36,10 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
       if ( !this.dx ) { move = { turn: [Math.sign(dx),0] } }
       else if ( Math.sign(dx) != this.dx ) { move = this.flip(); }
     }
-    move.chain = this.forward;
-    return move;
+    if (move) {
+      move.chain = this.forward;
+      return move;
+    }
   }
   forward() {
     var square = this.look();
@@ -83,7 +85,14 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   _getDistance(piece) {
     return Math.abs(this.x-piece.x) + Math.abs(this.y-piece.y);
   }
-  wait() {}
+  wait() {
+    if (this.wait_ready) { return }
+    if (this.waited < this.wait_interval) {
+      this.waited++;
+      return { done: true }
+    }
+    return { done: true, wait_ready: true }
+  }
   countdown() {
     this.points = this.step%4+1;
   }
