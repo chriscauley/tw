@@ -5,22 +5,45 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   constructor(opts={}) {
     super(opts);
     this.defaults(opts,{
-      tasks: [],
+      min_level: 0,
+      resources: {},
       sprite: tW.sprites[this.constructor.name.toLowerCase()]
     });
     this.ds = 10; // should be set by square
     this.square && this.square.addItem(this);
+    this.piece && this.piece.bindItem(this);
   }
+
+  // picking up
   moveOn(piece,move) {
     move = super.moveOn(piece,move);
     this.canBind(piece) && this.bindTo(piece); // need some sort of chaining effect if it changes the move
   }
   canBind(piece) {
-    return piece.is_player;
+    return piece.is_player && piece.level >= this.min_level;
   }
   bindTo(piece) {
+    // can bind should be called before bindTo, but just in case it was not...
+    if (!this.canBind(piece)) { throw "Cannot bind "+this+" to "+piece; }
+    this.piece = piece;
     piece.bindItem(this)
     this.square && this.square.removeItem(this);
+  }
+
+  // use
+  canUse(move) {
+    var costs = this.getCost();
+    for (var key in costs) {
+      if (!this.piece[key].canAdd(costs[key])) { return false; }
+    }
+    return true;
+  }
+  getCost() {
+    return this.resources
+  }
+  getMove(dx,dy) {
+    // unless a child class adds anything, by default this just drains resources
+    return { resources: this.getCost() }
   }
 }
 

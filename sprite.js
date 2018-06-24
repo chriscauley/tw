@@ -260,6 +260,7 @@ uR.ready(function() {
     'apple',
     'steak',
     'chest',
+    'sprint',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',
@@ -278,6 +279,7 @@ uR.ready(function() {
     'apple',
     'steak',
     'chest',
+    'sprint',
   ];
   if (Sprite.objects.all().length != sprites.length) {
     __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())

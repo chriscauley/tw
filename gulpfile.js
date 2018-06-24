@@ -21,7 +21,7 @@ var JS_FILES = {
 
     "floor.js",
     "item/base.js",
-    "item/equipment.js",
+    "item/feet.js",
 
     "moves.js",
     "piece.js",
