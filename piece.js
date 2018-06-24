@@ -173,9 +173,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.ui_canvas.clear();
     this.ctx = this.ui_canvas.ctx;
     this.s = this.board.scale/4;
-    if (this.show_health && this.current_square) {
-      this.stamp(0,0,this.health-1,'black'); // change to this.max_health to show empty
-      this.stamp(0,0,Math.max(this.health-1,0),'blue');
+    if (this.show_health && this.max_health != 1 && this.current_square) {
+      this.stamp(0,0,this.max_health,'black');
+      this.stamp(0,0,Math.max(this.health,0),'red');
     }
     var _i = this.intervals.length;
     var show_intervals = this.board.game && this.board.game.config.get("show_intervals");

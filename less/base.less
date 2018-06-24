@@ -52,7 +52,7 @@ tw-scores {
 @empty: gray;
 @s: 2rem;
 tw-scores {
-  .health, .energy {
+  .health {
     margin-bottom: @s/2;
     width: 6*@s;
   }
@@ -67,6 +67,10 @@ tw-scores .health {
 }
 
 tw-scores .energy {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  @s:20px;
   i {
     border: @s/2 solid blue;
     border-radius: 100%;

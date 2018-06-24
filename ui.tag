@@ -2,9 +2,6 @@
   <div class="health">
     <i class="fa fa-heart { red:h }" each={ h in health }></i>
   </div>
-  <div class="energy">
-    <i data-energy={ e } each={ e,i in energy }></i>
-  </div>
   <div class="totals">
     <h3 if={ totals.length }>Totals</h3>
     <div each={ total,i in  totals }>{ total.name }: { total.value }</div>
@@ -34,7 +31,11 @@
     </ur-tabs>
   </div>
   <div class="equipment">
-    <div each={ item,_i in equipment } class="box { item.className }"></div>
+    <div each={ item,_i in equipment } class="box { item.className }">
+      <div if={ item.energy } class="energy">
+        <i data-energy={ e } each={ e,i in item.energy }></i>
+      </div>
+    </div>
   </div>
   <!--
   <div class="logs" ref="logs">
@@ -79,8 +80,9 @@
   this.on("update",function() {
     this.sword = this.sword || tW.sprites.sword.dataURL;
     this.health = this.player.getHealthArray();
-    this.energy = this.player.energy.getArray();
     this.equipment = this.player.listEquipment();
+    var energy = this.player.energy.getArray();
+    _.each(this.equipment,function(e) { if(e.slot == "feet") { e.energy = energy } });
     var score = this.player.score;
     this.combos = [];
     this.totals = [];

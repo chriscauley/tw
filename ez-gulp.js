@@ -99,7 +99,7 @@ module.exports = function(opts) {
     }
     for (var key in opts.less) {
       var watch_files = opts.less[key].map((name) => name.match(/.*\//)[0]+"*");
-      gulp.watch(watch_files, ['build-'+key+'-css']);
+      gulp.watch(watch_files, ['build-'+key+'-css','build-revision','build-mustache']);
     }
     gulp.watch(opts.static.map(d => d+"/**"),['cp-static']);
   });

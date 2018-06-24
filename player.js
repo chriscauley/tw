@@ -103,7 +103,10 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     if (this.equipment_cache) { return this.equipment_cache }
     var list = [];
     for (var key of ['feet','consumable']) {
-      this.equipment[key] && list.push({ className: 'sprite sprite-'+this.equipment[key].sprite.name })
+      this.equipment[key] && list.push({
+        className: key+' sprite sprite-'+this.equipment[key].sprite.name,
+        slot: key,
+      })
     }
     this.equipment_cache = list;
     return list;
@@ -216,7 +219,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   }
   play(opts) {
     super.play(opts);
-    this.energy.tick();
+    this.equipment.feet && this.energy.tick();
     if (this.go_to_next_level) {
       this.game.nextLevel();
       this.go_to_next_level = false;
