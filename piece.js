@@ -280,7 +280,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     return result;
   }
   die() {
-    this.item && this.current_square.addItem(this.item);
+    this.items.map(i => this.current_square.addItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.board.remove(this);
     this.is_dead = true;
@@ -506,7 +506,20 @@ tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece
   }
 }
 
+tW.pieces.Chest = class Chest extends tW.pieces.BasePiece {
+  constructor(opts={}) {
+    opts.sprite = tW.sprites.chest;
+    opts.intervals = [];
+    super(opts);
+    this.tasks = [];
+    this.dx = this.dy = 0;
+    this.sprites = {};
+    this.item && new tW.item[this.item]({piece: this})
+  }
+}
+
 tW.enemy_map = {
+  ch: tW.pieces.Chest,
   c: tW.pieces.CountDown,
   b: tW.pieces.Blob,
   be: tW.pieces.Beholder,
