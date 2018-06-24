@@ -21,7 +21,16 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
       move.move = [i*dx,i*dy];
     }
     return move;
-  } 
+  }
+  getHelpText() {
+    var text = [
+      "Hold shift while moving to dash up to "+this.distance+" squares.",
+      "Uses 1 energy (blue dot under item).", // #! hardcoded... gross,
+    ];
+    this.damage && text.push("Will do "+this.damage+" damage if you collide with anyone.")
+    //this.kill_dash && text.push()
+    return text;
+  }
 }
 
 tW.item.Sprint = class Sprint extends tW.feet.BaseFeet {

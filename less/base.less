@@ -1,12 +1,15 @@
 img {
-    image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
-    image-rendering: -moz-crisp-edges;          /* Firefox                        */
-    image-rendering: -o-crisp-edges;            /* Opera                          */
-    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-    image-rendering: pixelated; /* Chrome */
-    image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
-    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+  max-wdth: 100%;
+  image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+  image-rendering: -moz-crisp-edges;          /* Firefox                        */
+  image-rendering: -o-crisp-edges;            /* Opera                          */
+  image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+  image-rendering: pixelated; /* Chrome */
+  image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
 }
+
+p { margin-bottom: 0.8em; }
 
 #game {
   position: relative;
@@ -93,22 +96,28 @@ tw-scores .help.bot {
   table { background: white; }
 }
 
+.itemBox(@size: 60px; @border: 5px) {
+  background: no-repeat center;
+  background-size: 90% auto;
+  border: @border grey solid;
+  border-radius: 20%;
+  box-sizing: border-box;
+  height: @size;
+  margin: @border;
+  width: @size;
+}
+
 .equipment {
   display: flex;
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
-  .box {
-    @size: 60px;
-    @border: 5px;
-    background: no-repeat center;
-    background-size: 90% auto;
-    border: @border grey solid;
-    border-radius: 20%;
-    box-sizing: border-box;
-    height: @size;
-    margin: @border;
-    width: @size;
-  }
+  .box { .itemBox(); }
+}
+
+tw-help .sprite {
+  display: inline-block;
+  vertical-align: middle;
+  .itemBox(2em)
 }
