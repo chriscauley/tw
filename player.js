@@ -86,7 +86,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       interval: this.energy_interval,
     });
     this.game.board.getSquare(this.x,this.y).addPiece(this);
-    new tW.equipment.SprintBoots().equip(this);
   }
   getHealthArray() {
     var array = uR.math.zeros(this.max_health);
@@ -103,9 +102,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   listEquipment() {
     if (this.equipment_cache) { return this.equipment_cache }
     var list = [];
-    var c = this.equipment.consumable;
-    if (c) {
-      list.push({ className: 'sprite sprite-'+c.sprite.name })
+    for (var key of ['feet','consumable']) {
+      this.equipment[key] && list.push({ className: 'sprite sprite-'+this.equipment[key].sprite.name })
     }
     this.equipment_cache = list;
     return list;
