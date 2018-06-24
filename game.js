@@ -65,7 +65,8 @@ tW.Game = class Game extends uR.Object {
     uR.alertElement("tw-gameover",{game: this});
   }
   mousedown(e) {
-    this.board.mousedown(e)
+    // this conditional stops the popup when they click on #game to focus
+    if (e.target.tagName == "CANVAS") { this.board.mousedown(e); }
   }
   keydown(e) {
     if (this.is_gameover) { return this.restart() }

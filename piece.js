@@ -54,6 +54,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       bounce: this.sprite,
     }
   }
+  getHelpText() {
+    return this.description && [this.description] || [];
+  }
   levelUp(n=1) {
     this.level += n;
     this.ds = 0;
@@ -511,6 +514,7 @@ tW.pieces.Chest = class Chest extends tW.pieces.BasePiece {
     opts.sprite = tW.sprites.chest;
     opts.intervals = [];
     super(opts);
+    this.description = "Contains an item. Open it to find out!";
     this.tasks = [];
     this.dx = this.dy = 0;
     this.sprites = {};

@@ -11,24 +11,7 @@
     <div each={ combo,i in  combos }>{ combo.name }: { combo.value }</div>
   </div>
   <div class="help bot">
-    <ur-tabs>
-      <ur-tab title="Controls">
-        <table class={ uR.css.table }>
-          <tr each={ c,i in tW._controls }>
-            <td><b>{ c[0] }</b></td>
-            <td>{ c[1] }</td>
-          </tr>
-        </table>
-      </ur-tab>
-      <ur-tab title="Enemies">
-        <table class={ uR.css.table }>
-          <tr each={ c,i in tW._enemies }>
-            <td><b>{ c[0] }</b></td>
-            <td>{ c[1] }</td>
-          </tr>
-        </table>
-      </ur-tab>
-    </ur-tabs>
+    Need help? Click on a square or item to view info.
   </div>
   <div class="equipment">
     <div each={ item,_i in equipment } class="box { item.className }" onclick={ showHelp }>
@@ -37,24 +20,6 @@
       </div>
     </div>
   </div>
-  <!--
-  <div class="logs" ref="logs">
-    <div each={ log,i in player.score.log }>
-      { log.key }
-      <span if={ log.damage }>
-        <img src={ sword } />
-        { log.damage.name }
-      </span>
-    </div>
-  </div>
-  -->
-  <!-- <div>Gold: { player.gold }</div> -->
-  <!-- <div>Score: { player.score }</div> -->
-  <!-- <\!--<pre class="minimap">{ player.printMiniMap() }</pre>-\-> -->
-  <!-- <div class="combos"> -->
-  <!--   <h4>Combos</h4> -->
-  <!--   <div each={ c in player.combos }>{ c.interval }: { c.streak } (max: { c.max })</div> -->
-  <!-- </div> -->
 
   <script>
 this.on("before-mount",function() {
@@ -98,8 +63,7 @@ this.on("update",function() {
   }
 });
 showHelp(e) {
-console.log(e.item);
-  uR.alertElement("tw-help",{ item: this.player.equipment[e.item.item.slot] });
+  uR.alertElement("tw-help",{ items: [this.player.equipment[e.item.item.slot]] });
 }
   </script>
 </tw-scores>
@@ -107,18 +71,21 @@ console.log(e.item);
 <tw-help>
   <div class={ theme.outer }>
     <div class={ theme.content }>
-      <h2>
-        <i class="sprite sprite-{ item.sprite.name }"></i> { item.constructor.name }
-      </h2>
-      <ul>
-        <li each={ t,_it in item.getHelpText() }>{ t }</li>
-      </ul>
+      <div each={ item,_i in items }>
+        <h2>
+          <i class="sprite sprite-{ item.sprite.name }"></i> { item.constructor.name }
+        </h2>
+        <ul>
+          <li each={ t,_it in item.getHelpText() }>{ t }</li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <script>
 this.on("before-mount",function() {
-  this.item = this.opts.item;
+  this.items = this.opts.items || [];
+  if (opts.piece) { this.items.unshift(opts.piece) }
 })
   </script>
 </tw-help>
