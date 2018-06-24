@@ -87,11 +87,11 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   }
   wait() {
     if (this.wait_ready) { return }
-    if (this.waited < this.wait_interval) {
-      this.waited++;
-      return { done: true }
+    this.waited++;
+    return {
+      done: true,
+      wait_ready: this.wait_interval <= this.waited,
     }
-    return { done: true, wait_ready: true }
   }
   countdown() {
     this.points = this.step%4+1;

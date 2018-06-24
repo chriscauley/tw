@@ -23,7 +23,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       gold_per_touch: 1,
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
-      interval: 1, // how often piece moves, zero indexed
       sight: 3, // how far it can see
       wait_interval: 0, // how long this.wait will block task queue
     });
@@ -40,7 +39,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.show_health = true;
     this.max_health = this.health;
     this.waited = 0;
-    this.step = 0;
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
@@ -72,7 +70,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     this.level += n;
     this.ds = 0;
     while(n--) {
-      // if (n%2 &_& this.interval) { this.interval -= 1;continue }
+      // if (n%2 &_& this.wait_interval) { this.wait_interval -= 1;continue }
       this.health = this.max_health += 1;
     }
   }
@@ -81,7 +79,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
   }
-  isActionReady() { return this.step >= this.interval; }
+  isActionReady() { return this.wait_ready || !this.wait_interval; }
   isAwake() { return true; }
   applyMove(opts={}) {
     var result = {
@@ -153,16 +151,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   }
   play() {
     this.ui_dirty = true;
-    if (this.step >= this.interval) {
-      var move = this.getNextMove();
-      if (move) {
-        this.wait_ready = move.wait_ready;
-        var result = this.applyMove(move);
-        this.step = 0;
-        return;
-      }
+    var move = this.getNextMove();
+    if (move) {
+      if (move.wait_ready) { this.waited = 0; }
+      this.wait_ready = move.wait_ready;
+      var result = this.applyMove(move);
+      return;
     }
-    this.step ++;
   }
   stamp(x0,y0,dx,img) {
     img = tW.sprites.get(img);
@@ -186,9 +181,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       this.stamp(0,0,Math.max(this.health,0),'red');
     }
     this.ui_dirty = false;
-  }
-  drawSteps(c) {
-    c.ctx.drawImage();
   }
   drawGold(c) {
     if (!this.gold) { return } // && !this.game.config.show_gold) { return }
@@ -366,7 +358,6 @@ tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.sprite = tW.sprites['zombie'];
     opts.health = 1;
-    opts.interval = 0;
     super(opts);
     this.tasks = [ this.forward, this.flip ];
   }
@@ -374,7 +365,6 @@ tW.pieces.Walker = class Walker extends tW.pieces.BasePiece {
 
 tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
   constructor(opts={}) {
-    opts.interval = 0;
     opts.sprite = tW.sprites['fly'];
     super(opts);
     this.tasks = [ this.forward,this.turnRandomly ];
@@ -394,7 +384,6 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
 
 tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
   constructor(opts) {
-    opts.interval = 0;
     opts.sprite = tW.sprites['skeleton'];
     opts.wait_interval = 1;
     super(opts);
@@ -412,11 +401,11 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.sight = 1;
     opts.sprite = tW.sprites['grave'];
-    opts.interval = 4;
+    opts.wait_interval = 4;
     super(opts);
     this.pieces = ['ge','be']
     this.dx = this.dy = 0; // has no direction
-    this.tasks = [ this.spawnPiece ];
+    this.tasks = [ this.wait, this.spawnPiece ];
   }
   spawnPiece() {
     var squares = this.getVisibleSquares();
@@ -443,7 +432,6 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
       gold: 0,
       gold_per_touch: 0,
     });
-    opts.interval = 0;
     super(opts)
     this.defaults({
       dx: this.parent_piece.dx,
@@ -473,12 +461,10 @@ tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
 
 tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
   constructor(opts={}) {
-    uR.defaults(opts,{
-      interval: 3,
-    });
+    opts.wait_interval = 3;
     opts.sprite = tW.sprites['spitter'];
     super(opts);
-    this.tasks = [ this.throwFireball ];
+    this.tasks = [ this.wait, this.throwFireball ];
     for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
       if (!this.look(dxdy)) { this.dx = -dxdy[0]; this.dy = -dxdy[1]; }
     }
@@ -490,7 +476,6 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
 tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece) {
   constructor(opts={}) {
     opts.sprite = tW.sprites['beholder'];
-    opts.interval = 0;
     super(opts);
     this.tasks = [ this.checkCharge, this.doCharge ];
     this.dx = this.dy = 0;
@@ -500,7 +485,7 @@ tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece
 tW.pieces.Chest = class Chest extends tW.pieces.BasePiece {
   constructor(opts={}) {
     opts.sprite = tW.sprites.chest;
-    opts.interval = Infinity;
+    opts.wait_interval = Infinity;
     super(opts);
     this.description = "Contains an item. Open it to find out!";
     this.tasks = [];

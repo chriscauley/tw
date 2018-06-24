@@ -27,8 +27,8 @@ tW.team.Team = class Team extends uR.Object {
       team: this.number,
     }));
 
-    // for now give boots away on level 0
-    if (this.game.level_number == 5) {
+    // for now give boots away on level 1
+    if (this.game.level_number == 1) {
       var s = board.getRandomEmptySquare();
       var piece = new tW.pieces.Chest({
         x: s.x,

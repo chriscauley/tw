@@ -148,7 +148,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var i=1000,s;
     while (i--) {
       s = _.sample(_.sample(this.squares));
-      if (s.isOpen()) { return s }
+      if (s && s.isOpen()) { return s }
     }
     throw "could not find empty square";
   }
