@@ -84,9 +84,13 @@ showHelp(e) {
 
   <script>
 this.on("before-mount",function() {
-  this.items = this.opts.items || [];
+  this.items = (this.opts.items || []).slice();
   if (opts.piece) { this.items.unshift(opts.piece) }
 })
+this.on("unmount",function() {
+  var e = document.getElementById("game");
+  e && e.focus();
+});
   </script>
 </tw-help>
 
