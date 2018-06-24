@@ -53,15 +53,6 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
       id: 'tmp'
     });
   }
-  _getY(obj) {
-    var y = 0;
-    var mult = 1;
-    uR.forEach(obj.steps || [],function(s,i) {
-      y += s*mult;
-      mult = obj.intervals[i]+1;
-    });
-    return y;
-  }
   get(obj) {
     this.draw();
     obj = obj || {};
@@ -187,11 +178,6 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
       self.loaded = true;
       self.draw();
     })
-  }
-  _getY(obj) {
-    if (obj.isAwake && !obj.isAwake()) { return 0; }
-    if (obj.steps && obj.steps[0]) { return 1; }
-    return 2;
   }
   _draw() {
     var ctx = this.canvas.ctx;
@@ -355,13 +341,6 @@ tW.sprites.FlameSprite = class FlameSprite extends tW.sprites.GradientSprite {
     this.drawGradient();
     this.drawGradient({cy: this.cy+this.scale, colors: this.attack_colors});
   }
-  _getY(obj) {
-    var _si = obj.steps.length;
-    while (_si--) {
-      if (obj.steps[_si] < obj.intervals[_si]) { return 0; }
-    }
-    return 1;
-  }
 }
 
 tW.sprites.TwoCrystalSprite = class TwoCrystalSprite extends tW.sprites.GradientSprite {
@@ -412,10 +391,6 @@ tW.sprites.PacSprite = class PacSprite extends tW.sprites.GradientSprite {
   constructor(opts) {
     opts.H=3;
     super(opts);
-  }
-  _getY(obj) {
-    if (!obj.following) { return 0; }
-    return obj.steps[0]+1;
   }
   _draw() {
     super._draw();
