@@ -95,28 +95,19 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       opts.damage.deltas = opts.damage.deltas || [[opts.damage.dx,opts.damage.dy]];
       for (var dxdy of opts.damage.deltas) {
         var square = this.look(dxdy);
-        var damage_done = square && square.piece && square.piece.takeDamage(opts.damage.count,this.sprites.damage);
+        var damage_done = square && square.piece && square.piece.takeDamage(opts.damage.count);
+        if (square) {
+          this.newAnimation("damage",{ x: square.x, y: square.y, sprite: this.sprites.damage });
+        }
         if (damage_done) {
           damage_done.count && result.damages.push(damage_done);
           damage_done.kill && result.kills.push(damage_done);
-          animation = animation || ['bounce',{ dx: dxdy[0], dy: dxdy[1] }];
         }
       }
+      animation = animation || ['bounce',{ dx: opts.damage.dx, dy: opts.damage.dy }];
       opts.done = true;
     }
-    if (opts.damages) {
-      var d = opts.damages[1];
-      for (var [dx,dy] of opts.damages[0]) {
-        var square = this.look(dx,dy);
-        var damage = square && square.piece && square.piece.takeDamage(d,this.sprites.damage);
-        if (damage) {
-          damage.count && result.damages.push(damage);
-          damage.kill && result.kills.push(damage);
-        }
-      }
-      animation = ['bounce',{ dx: dx, dy: dy }];
-      opts.done = true;
-    }
+
     if (opts.move) {
       var square = this.look(opts.move);
       if (square && !square.piece) {
@@ -283,7 +274,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       this.newAnimation("die");
       this.die();
       result.kill = true;
-    } else if (result.count) { this.newAnimation("damage",{ sprite: sprite }) }
+    }
     return result;
   }
   die() {

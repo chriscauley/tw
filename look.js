@@ -37,10 +37,13 @@
       tW.look._cone[dxdy][range] = [];
       tW.look._close[dxdy][range] = [];
       for (var j=1-range;j<range;j++) {
-        tW.look._cone[dxdy][range].push([dx+j*dy,dy+j*dx]);
+        tW.look._cone[dxdy][range].push([
+          dx*range+j*dy,
+          dy*range+j*dx
+        ]);
         var i = range-Math.abs(j)-1;
         tW.look._close[dxdy][range].push([
-          dx+i*dx+j*dy+i*dx,
+          dx+i*dx+j*dy,
           dy+i*dy+j*dx
         ])
       }
