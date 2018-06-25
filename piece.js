@@ -270,7 +270,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     return result;
   }
   die() {
-    this.items.map(i => this.current_square.addItem(i));
+    this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.board.remove(this);
     this.is_dead = true;
@@ -299,6 +299,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
   dropItem(item) {
     item && this.current_square.addItem(item);
   }
+  touchedBy(player) { }
   restat() {
     var gold_to_next = this.gold_levels[this.level];
     while (gold_to_next) {
@@ -491,8 +492,9 @@ tW.pieces.Chest = class Chest extends tW.pieces.BasePiece {
     this.tasks = [];
     this.dx = this.dy = 0;
     this.sprites = {};
-    this.item && new tW.item[this.item]({piece: this})
+    this.item && new this.item({piece: this})
   }
+  touchedBy(player) { this.die() }
 }
 
 tW.enemy_map = {

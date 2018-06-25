@@ -39,7 +39,7 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     return true;
   }
   getCost() {
-    return this.resources
+    return this.resources;
   }
   getMove(dx,dy) {
     // unless a child class adds anything, by default this just drains resources

@@ -28,14 +28,14 @@ tW.team.Team = class Team extends uR.Object {
     }));
 
     // for now give boots away on level 1
-    if (this.game.level_number == 1) {
+    if (this.game.level_number == 0) {
       var s = board.getRandomEmptySquare();
       var piece = new tW.pieces.Chest({
         x: s.x,
         y: s.y,
         board: board,
         team: this.number,
-        item: 'Sprint',
+        item: tW.weapon.Knife,
       });
       this.pieces.push(piece);
       board.addPieces(piece);

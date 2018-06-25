@@ -20,8 +20,10 @@ var JS_FILES = {
     "square.js",
 
     "floor.js",
-    "item/base.js",
-    "item/feet.js",
+    "item/index.js",
+    "item/*.js",
+    "item/weapon/index.js",
+    "item/weapon/*.js",
 
     "moves.js",
     "piece.js",

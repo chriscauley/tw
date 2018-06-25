@@ -102,7 +102,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   listEquipment() {
     if (this.equipment_cache) { return this.equipment_cache }
     var list = [];
-    for (var key of ['feet','consumable']) {
+    for (var key of ['weapon','feet','consumable']) {
       this.equipment[key] && list.push({
         className: key+' sprite sprite-'+this.equipment[key].sprite.name,
         slot: key,
@@ -115,20 +115,20 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return
   }
   getMove(e,dx,dy) {
-    var out = { turn: [dx,dy] };
     if (e.ctrlKey && this.getCtrlItem()) {
       return this.getCtrlItem().getMove(dx,dy);
     } else if (e.shiftKey && this.equipment.feet) {
       return this.equipment.feet.getMove(dx,dy);
-    } else {
-      var square = this.look(dx,dy);
-      if (square && square.piece && square.piece.team != this.team) {
-        out.damage = [dx,dy,this.damage];
-        out.damage.piece = square.piece;
-      }
-      if (square && !square.piece) { out.move = [dx,dy] }
     }
-    return out;
+    return this.equipment.weapon && this.equipment.weapon.getMove(dx,dy) || { move: [dx,dy] }
+    // var square = this.look(dx,dy);
+    // var out = { turn: [dx,dy] };
+    // if (square && square.piece && square.piece.team != this.team) {
+    //   out.damage = [dx,dy,this.damage];
+    //   out.damage.piece = square.piece;
+    // }
+    // if (square && !square.piece) { out.move = [dx,dy] }
+    // return out;
   }
   move(e,dx,dy) {
     var out = this.getMove(e,dx,dy);
@@ -147,6 +147,12 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   }
   applyMove(opts) {
     var result = super.applyMove(opts);
+
+    if (!result) { //  currently only used by chest
+      var square = opts && opts.move && this.current_square.look(opts.move);
+      var piece = square && square.piece;
+      piece && piece.touchedBy && piece.touchedBy(this);
+    }
     this.combos && this.combos.map((c) => c.apply(result));
     var self = this;
     var [dx,dy] = [this.dx,this.dy];

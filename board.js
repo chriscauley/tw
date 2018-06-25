@@ -156,6 +156,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var self = this;
     return list.map((xy) => self.getSquare(xy)).filter((s) => s)
   }
+
   addPieces(pieces) {
     if (!Array.isArray(pieces)) { pieces = [].slice.apply(arguments); }
     for (var piece of pieces) {
