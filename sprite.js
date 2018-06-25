@@ -198,8 +198,9 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
         c.getContext("2d").drawImage(this.temp_canvas,0,0);
       }
     }
+    /*
     if (this.is_blade) {
-      var s2 = this.scale*Math.SQRT2;
+      var s2 = this.scale*3;
       var c = this.newCanvas({
         name: 'blade_canvas',
         width: s2,
@@ -207,9 +208,10 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
       })
       c.ctx.translate(s2/2,s2/2);
       c.ctx.rotate(Math.PI/4);
-      c.ctx.drawImage(this.temp_canvas,-s2/2,-s2/2,this.scale,this.scale);
+      c.ctx.drawImage(this.temp_canvas,-s2/2,-s2/2,s2,s2);
       this.doRotations(c);
     }
+    */
     this.rotations && this.doRotations(this.canvas);
   }
 }
