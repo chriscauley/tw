@@ -35,7 +35,7 @@ tW.team.Team = class Team extends uR.Object {
         y: s.y,
         board: board,
         team: this.number,
-        item: tW.weapon.Knife,
+        item: tW.weapon.LongSword,
       });
       this.pieces.push(piece);
       board.addPieces(piece);

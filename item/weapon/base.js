@@ -12,10 +12,13 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     super(opts);
   }
   getMove(dx,dy) {
+    if (!dx && !dy) { return }
     if (!this.piece) { throw "NotImplemented: not sure why a non piece would be calling getMove" }
-    var square = this.piece.current_square.look([dx,dy]);
-    if (square && square.piece && square.piece.team != this.piece.team) {
-      return { damage: [dx,dy,this.damage] }
+    for (var [dx,dy] of tW.look.tunnel[[dx,dy]][this.range]) {
+      var square = this.piece.look(dx,dy);
+      if (square && square.piece && square.piece.team != this.team) {
+        return { damage: [dx,dy,this.damage] }
+      }
     }
   }
 }
@@ -23,5 +26,12 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
 tW.weapon.Knife = class Knife extends tW.weapon.BaseWeapon {
   constructor(opts={}) {
     super(opts);
+  }
+}
+
+tW.weapon.LongSword = class LongSword extends tW.weapon.BaseWeapon {
+  constructor(opts={}) {
+    opts.range = 2;
+    super(opts)
   }
 }

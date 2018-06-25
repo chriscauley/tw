@@ -4,6 +4,8 @@ var ezGulp = require("./ez-gulp");
 var JS_FILES = {
   tw: [
     "main.js",
+    "look.js",
+
     "dungeon/const.js",
     "dungeon/templates.js",
     "dungeon/utils/index.js",
