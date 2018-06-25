@@ -122,10 +122,10 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     c.ctx.fill()
     opts.strokeStyle && c.ctx.stroke();
   }
-  doRotations() {
+  doRotations(source_canvas) {
     var directions = ['up','right','down','left'];
     this.temp_canvas.clear()
-    this.temp_canvas.ctx.drawImage(this.canvas,0,0);
+    this.temp_canvas.ctx.drawImage(source_canvas,0,0);
     var dx = this.scale/2;
     var dy = this.scale/2;
     for (var id=0;id<directions.length;id++) {
@@ -198,7 +198,19 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
         c.getContext("2d").drawImage(this.temp_canvas,0,0);
       }
     }
-    this.rotations && this.doRotations();
+    if (this.is_blade) {
+      var s2 = this.scale*Math.SQRT2;
+      var c = this.newCanvas({
+        name: 'blade_canvas',
+        width: s2,
+        height: s2,
+      })
+      c.ctx.translate(s2/2,s2/2);
+      c.ctx.rotate(Math.PI/4);
+      c.ctx.drawImage(this.temp_canvas,-s2/2,-s2/2,this.scale,this.scale);
+      this.doRotations(c);
+    }
+    this.rotations && this.doRotations(this.canvas);
   }
 }
 
@@ -217,7 +229,7 @@ tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
   _draw() {
     var colors = ['transparent','transparent','transparent','rgba(0,0,0,0.5)',this.color];
     this.drawGradient({colors: colors, theta0:-3*Math.PI/4,theta1:-Math.PI/4});
-    this.doRotations();
+    this.doRotations(this.canvas);
   }
 }
 
@@ -255,23 +267,23 @@ uR.ready(function() {
     // 'ground_cracks3',
     // 'ground_hole',
   ];
-  var not_pieces = [
-    'fireball',
-    'ground1',
-    'ground2',
-    'ground_lock',
-    'ground_stairs',
+  var pieces = [
+    'skeleton',
+    'zombie',
+    'orc',
+    'death',
+    'fly',
+    'warrior',
+    'small_bat',
+    'large_bat',
+    'spitter',
+    'beholder',
+  ];
+  var blades = [
     'sword',
-    'skull',
-    'explode',
-    'ground_stairs_up',
-    'apple',
-    'steak',
-    'chest',
-    'sprint',
-    'longsword',
-    'knife',
-    'spear',
+    //'longsword',
+    //'knife',
+    //'spear',
   ];
   if (Sprite.objects.all().length != sprites.length) {
     __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())
@@ -283,7 +295,8 @@ uR.ready(function() {
       sprite_id: i+1,
       rotations: name == "fireball",
       vflip: name == "fireball",
-      is_piece: not_pieces.indexOf(name) == -1,
+      is_piece: pieces.indexOf(name) != -1,
+      is_blade: blades.indexOf(name) != -1,
     }));
   } catch (e) {
     console.error(e);
@@ -313,7 +326,7 @@ tW.sprites.CircleSprite = class CircleSprite extends tW.sprites.SpriteObject {
   draw() {
     if (!this.dirty) { return }
     super.draw();
-    this.doRotations();
+    this.doRotations(this.canvas);
   }
 }
 
