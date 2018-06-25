@@ -4,6 +4,8 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     uR.defaults(opts,{
       damage: 1,
       range: 1,
+      geometry: 'line',
+      splash: false, // does damage to all squares in tW.look[this.geometry][dxdy][this.range]
       // blood: true, NotImplemented
       // gold: true, NotImplemented
       // glass: true, NotImplemented
@@ -14,16 +16,25 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
   getMove(dx,dy) {
     if (!dx && !dy) { return }
     if (!this.piece) { throw "NotImplemented: not sure why a non piece would be calling getMove" }
-    var deltas = tW.look.tunnel[[dx,dy]][this.range];
-    for (var [dx,dy] of deltas) {
-      var square = this.piece.look(dx,dy);
+    var deltas = tW.look[this.geometry][[dx,dy]][this.range];
+    var result;
+    for (var dxdy2 of deltas) {
+      var square = this.piece.look(dxdy2);
       if (square && square.piece && square.piece.team != this.team) {
-        if (this.pass_through) { // damage everyone in range
-          return { damages: [deltas,this.damage] };
+        result = {
+          dx: dxdy2[0],
+          dy: dxdy2[1],
+          count: this.damage,
         }
-        return { damage: [dx,dy,this.damage] }
+        break;
       }
     }
+    if (result && this.splash) {
+      result.dx = dx;
+      result.dy = dy;
+      result.deltas = deltas;
+    }
+    return result && { damage: result }
   }
 }
 
@@ -36,7 +47,7 @@ tW.weapon.Knife = class Knife extends tW.weapon.BaseWeapon {
 tW.weapon.LongSword = class LongSword extends tW.weapon.BaseWeapon {
   constructor(opts={}) {
     opts.range = 2;
-    opts.pass_through = true;
+    opts.splash = true;
     super(opts)
   }
 }

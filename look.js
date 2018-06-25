@@ -2,15 +2,17 @@
 // values are arrays of dxdy's
 (function() {
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
-  var KEYS = ['cone','close','tunnel'];
+  var KEYS = ['cone','close','line'];
   tW.look = {
-    tunnel: {},
-    _tunnel: {},
+    line: {},
+    _line: {},
     cone: {},
     _cone: {},
     close: {},
     _close: {},
+    point: {},
   };
+  tW.look._point = {};
   tW.look.MAX_RANGE = 8;
   tW.look.RANGES = _.range(1,tW.look.MAX_RANGE+1);
   tW.look.DIRECTIONS = [
@@ -22,14 +24,16 @@
 
   for (var dxdy of tW.look.DIRECTIONS) {
     var [dx,dy] = dxdy;
-    tW.look.tunnel[dxdy] = {};
-    tW.look._tunnel[dxdy] = {};
+    tW.look.point[dxdy] = {};
+    tW.look.line[dxdy] = {};
+    tW.look._line[dxdy] = {};
     tW.look.cone[dxdy] = {};
     tW.look._cone[dxdy] = {};
     tW.look.close[dxdy] = {};
     tW.look._close[dxdy] = {};
     for (var range of tW.look.RANGES) {
-      tW.look._tunnel[dxdy][range] = [_times(dxdy,range)];
+      tW.look.point[dxdy][range] = [dxdy];
+      tW.look._line[dxdy][range] = [_times(dxdy,range)];
       tW.look._cone[dxdy][range] = [];
       tW.look._close[dxdy][range] = [];
       for (var j=1-range;j<range;j++) {

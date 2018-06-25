@@ -44,7 +44,7 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   forward() {
     var square = this.look();
     var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return { damage: [this.dx,this.dy,this.damage] } }
+    if (piece && piece.team != this.team ) { return { damage: {dx:this.dx,dy:this.dy,count:this.damage} } }
     if (square && !piece) { return { move: [this.dx,this.dy ] } }
   }
   _turn(direction) {
@@ -106,7 +106,7 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     if (!square) { console.log("no square"); return } // no square to target
     if (square.piece) {
       if (square.piece.team == this.team) { return } // don't attack friends
-      return { damage: [this.dx,this.dy,this.damage] }
+      return { damage: {dx:this.dx,dy:this.dy,count: this.damage} }
     }
     this.board.addPieces(new tW.pieces.Fireball({
       parent_piece: this,

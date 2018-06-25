@@ -92,12 +92,16 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     var animation;
     var d,dx,dy;
     if (opts.damage) { //#! TODO: deprecate in favor of damages?
-      [dx,dy,d] = opts.damage;
-      var square = this.look(dx,dy);
-      var damage = square && square.piece && square.piece.takeDamage(d,this.sprites.damage);
-      damage.count && result.damages.push(damage);
-      damage.kill && result.kills.push(damage);
-      animation = ['bounce',{ dx: dx, dy: dy }];
+      opts.damage.deltas = opts.damage.deltas || [[opts.damage.dx,opts.damage.dy]];
+      for (var dxdy of opts.damage.deltas) {
+        var square = this.look(dxdy);
+        var damage_done = square && square.piece && square.piece.takeDamage(opts.damage.count,this.sprites.damage);
+        if (damage_done) {
+          damage_done.count && result.damages.push(damage_done);
+          damage_done.kill && result.kills.push(damage_done);
+          animation = animation || ['bounce',{ dx: dxdy[0], dy: dxdy[1] }];
+        }
+      }
       opts.done = true;
     }
     if (opts.damages) {
