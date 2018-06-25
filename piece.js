@@ -91,12 +91,25 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     };
     var animation;
     var d,dx,dy;
-    if (opts.damage) {
+    if (opts.damage) { //#! TODO: deprecate in favor of damages?
       [dx,dy,d] = opts.damage;
       var square = this.look(dx,dy);
       var damage = square && square.piece && square.piece.takeDamage(d,this.sprites.damage);
       damage.count && result.damages.push(damage);
       damage.kill && result.kills.push(damage);
+      animation = ['bounce',{ dx: dx, dy: dy }];
+      opts.done = true;
+    }
+    if (opts.damages) {
+      var d = opts.damages[1];
+      for (var [dx,dy] of opts.damages[0]) {
+        var square = this.look(dx,dy);
+        var damage = square && square.piece && square.piece.takeDamage(d,this.sprites.damage);
+        if (damage) {
+          damage.count && result.damages.push(damage);
+          damage.kill && result.kills.push(damage);
+        }
+      }
       animation = ['bounce',{ dx: dx, dy: dy }];
       opts.done = true;
     }

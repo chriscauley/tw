@@ -1,7 +1,6 @@
 // Look takes the for tW.look.geometry[dxdy][range]
 // values are arrays of dxdy's
 (function() {
-  uR.t()
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
   var KEYS = ['cone','close','tunnel'];
   tW.look = {
@@ -51,5 +50,4 @@
       }
     }
   }
-  uR.t(1)
 })();
