@@ -149,18 +149,28 @@ DG.Piece = class Piece {
     toArray() {
         var output = [];
         for (let y = 0; y < this.size[1]; y ++) {
-            let row ='';
+            let row =[];
             for (let x = 0; x < this.size[0]; x++) {
                 if (this.start_pos && this.start_pos[0] === x && this.start_pos[1] === y) {
-                    row += 's';
+                  row.push('s');
                 } else {
-                    row += this.walls.get([x, y]) ? ' ' : this.id;
+                  row.push(this.walls.get([x, y]) ? ' ':0);
                 }
             }
             output.push(row);
         }
+        for (var child of this.children) {
+            var _s = (child.tag == "initial")?"i":child.id;
+            var [x0,y0] = child.position;
+            // room's (size+position) contains a 1 square buffer on all 4 sides
+            for (var x=1;x<child.size[0]-1;x++) {
+                for (var y=1;y<child.size[1]-1;y++) {
+                    output[y0+y][x0+x] = _s;
+                }
+            }
+        }
         return output;
     }
-    print() { return this.toArray().join("\n") }
+    print(array) { return (array ||this.toArray()).map(a=>a.join("")).join("\n") }
 }
 })();

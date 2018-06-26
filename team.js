@@ -8,7 +8,6 @@ tW.team.Team = class Team extends uR.Object {
     });
     this.number = this.game.teams.length;
 
-    this.start = [(this.number == 1)?2:(uR.tw.game_config.get("W")-2),2];
     this.dx = (this.number == 1)?1:-1;
     this.dy = 0;
     this.pieces = [];
@@ -19,10 +18,9 @@ tW.team.Team = class Team extends uR.Object {
     if (this.number == 1) { return this.pieces } // player only
     // this should probably be it's own class
     var board = this.game.board;
-    var square = board.getSquare(this.start);
     this.pieces = [];
     false && this.pieces.push(new tW.pieces.Grave({
-      square: square,
+      square: board.getRandomEmptySquare(),
       board: board,
       team: this.number,
     }));

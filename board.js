@@ -1,19 +1,14 @@
 tW.Board = class Board extends uR.canvas.CanvasObject {
   constructor(opts) {
-    super()
-    var _d = opts.game.config.getData();
-    this.defaults(opts,{
-      W: Math.min(10,parseInt(_d.W)+1),
-      H: Math.min(10,parseInt(_d.H)+1),
-    });
-    this.scale = Math.floor(Math.min(window.innerWidth/this.W,window.innerHeight/this.H));
+    super(opts)
+    this.defaults(opts)
+    this.scale = Math.floor(Math.min(window.innerWidth/8,window.innerHeight/8));
     this.W = Math.floor(window.innerWidth/this.scale);
     this.H = Math.floor(window.innerHeight/this.scale);
 
     var self = this
     this.pieces = [];
     this.createCanvas();
-    //document.getElementById("game",).style.width = (this.W*this.scale)+"px";
     this.tick = this.tick.bind(this);
     this.tick();
     this.dirty = true;
@@ -30,29 +25,36 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.start = this.exit = undefined;
   }
   loadLevel(level_number) {
-    //var level = LEVELS[level_number];
     this.reset();
     var self = this;
-    var level = tW.level.rect.level;//new tW.level.RectRoom(this.game.config.getData()).level;
+    var template = this.game.config.get("map_template");
     this.level_number = level_number;
+    this._dungeon = new tW.level.Dungeon({
+      style: template,
+      seed: (this.game.config.get("seed") || "RANDOM")+this.level_number,
+    })
+    var level = this._dungeon.level
     this.x_max = 0;
     this.y_max = level.length;
     var player = this.game.player || {};
+    var player_set;
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(c,x) {
         self.squares[x] = self.squares[x] || [];
-        if (c === " ") { return }
+        if (c == undefined || c === " ") { return }
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         if (c == 's') { self.start = square }
         if (c == 'x') { self.exit = square }
         if (x == player.x && y == player.y) {
           square.addPiece(player);
+          player_set = true;
         } else {
           tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
         }
       });
     });
+    if (!player_set) { this.getRandomEmptySquare().addPiece(player); }
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
     this.start.make('start');
@@ -91,8 +93,8 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     if (!player) { return }
     const s = this.scale;
     var ease = this.getEasing(new Date() - player.last_move.t);
-    var ease_x = (player.x - player.last_move.x)*ease;
-    var ease_y = (player.y - player.last_move.y)*ease;
+    var ease_x = (player.x - player.last_move.x)*ease-1;
+    var ease_y = (player.y - player.last_move.y)*ease-1;
     this.offset_x = s*uR.math.between(this.min_offset_x,player.x-this.W/2-0.5-ease_x,this.max_offset_x);
     this.offset_y = s*uR.math.between(this.min_offset_y,player.y-this.H/2-0.5-ease_y,this.max_offset_y);
     var floor_dirty = false;
