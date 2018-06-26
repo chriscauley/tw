@@ -1,16 +1,19 @@
 uR.tw = {game_config: new uR.Config("GAME_CONFIG")};
 uR.ready(function() {
   var PIECE_CHOICES = ['ge','wf','be','w','sp'];
+  var SEED_CHOICES = ['42',['RANDOM','Randomize level']]
   /*for (var key in tW.enemy_map) {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
-  }*/
+    }*/
+  var MAP_CHOICES = [];
+  for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
   uR.tw.game_config.setSchema([
-    { name: "W", value: 5 },
-    { name: "H", value: 5 },
     { name: "base_units", type: "integer", value: 1 },
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
-    { name: "active_pieces", choices: PIECE_CHOICES, value: ['ge','wf','be','w','sp'], type: "checkbox", required: false },
+    { name: "active_pieces", choices: PIECE_CHOICES, value: PIECE_CHOICES, type: "checkbox", required: false },
+    { name: "map_template", choices: MAP_CHOICES.sort(), value: MAP_CHOICES[0], type: 'select' },
+    { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
   ]);
 });
 tW.Game = class Game extends uR.Object {

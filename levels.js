@@ -60,19 +60,12 @@ tW.level.RectRoom = class RectRoom extends tW.level.Level {
 }
 
 tW.level.Dungeon = class Dungeon extends tW.level.Level {
-  constructor(opts) {
-    if (opts.style && DG.TEMPLATES[opts.style]) {
-      uR.defaults(opts,DG.TEMPLATES[opts.style]);
-    }
+  constructor(opts={}) {
+    uR.defaults(opts,DG.TEMPLATES[opts.style] || {});
     super(opts);
 
-    var dungeon = new DG.Dungeon(opts);
-    dungeon.generate();
-    this.level = dungeon.toArray();
+    this._dungeon = new DG.Dungeon(opts);
+    this._dungeon.generate();
+    this.level = this._dungeon.toArray();
   }
 }
-
-uR.extend(tW.level,{
-  //zelda: new tW.level.Dungeon({style:'zelda'}),
-  basic: new tW.level.Dungeon({style:'basic'}),
-})
