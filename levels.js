@@ -74,5 +74,5 @@ tW.level.Dungeon = class Dungeon extends tW.level.Level {
 
 uR.extend(tW.level,{
   //zelda: new tW.level.Dungeon({style:'zelda'}),
-  //basic: new tW.level.Dungeon({style:'basic'}),
+  basic: new tW.level.Dungeon({style:'basic'}),
 })
