@@ -36,7 +36,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var level = this._dungeon.level
     this.x_max = 0;
     this.y_max = level.length;
-    var player = this.game.player || {};
+    var player = this.game.player;
     var player_set;
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
@@ -46,7 +46,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         if (c == 's') { self.start = square }
         if (c == 'x') { self.exit = square }
-        if (x == player.x && y == player.y) {
+        if (player && x == player.x && y == player.y) {
           square.addPiece(player);
           player_set = true;
         } else {
@@ -54,7 +54,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         }
       });
     });
-    if (!player_set) { this.getRandomEmptySquare().addPiece(player); }
+    if (!player_set && player) { this.getRandomEmptySquare().addPiece(player); }
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
     this.start.make('start');
