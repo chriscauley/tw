@@ -264,6 +264,7 @@ uR.ready(function() {
     'longsword',
     'knife',
     'spear',
+    'apocalypse',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',

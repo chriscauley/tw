@@ -2,8 +2,8 @@ tW.feet = {};
 tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
   constructor(opts={}) {
     //opts.kill_dash = true // broken, see #! TODO below 
+    opts.slot = "feet";
     super(opts);
-    this.slot = "feet";
   }
   getMove(dx,dy) {
     // by default boots move this.distance and do this.damage if they are stopped by anyone
@@ -13,7 +13,17 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
       var square = this.piece.look(i*dx,i*dy);
       if (!square) { break }
       if (!square.isOpen()) {
-        if (square.piece && square.piece.team != this.piece.team) { move.damage = [i*dx,i*dy,this.damage]; }
+        if (square.piece && square.piece.team != this.piece.team) {
+          move.damage = {
+            dx: i*dx,
+            dy: i*dy,
+            count: this.damage,
+          }
+          /*if (this.splash) {
+            console.log(this.splash,[dx,dy]+"",this.splash_range||1);
+            move.damage.deltas = tW.look[this.splash][[dx,dy]][this.splash_range || 2]
+          }*/
+        }
         // #! TODO the following doesn't work if the enemy doesn't die
         //if (this.kill_dash) { move.move = [i*dx,i*dy]; }
         break;
@@ -33,11 +43,22 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
   }
 }
 
-tW.item.Sprint = class Sprint extends tW.feet.BaseFeet {
+tW.feet.Sprint = class Sprint extends tW.feet.BaseFeet {
   constructor(opts={}) {
     opts.distance = 2;
     opts.resources = { energy: -1 };
     opts.damage = 1;
+    super(opts);
+  }
+}
+
+tW.feet.ApocalypseBoots = class ApocalypseBoots extends tW.feet.BaseFeet {
+  constructor(opts={}) {
+    opts.distance = 4;
+    opts.resources = {};
+    opts.damage = 1;
+    opts.splash = 'cone';
+    opts.sprite = tW.sprites.apocalypse;
     super(opts);
   }
 }

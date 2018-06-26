@@ -2,7 +2,7 @@
 // values are arrays of dxdy's
 (function() {
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
-  var KEYS = ['cone','close','line'];
+  var KEYS = ['cone','close','line','circle'];
   tW.look = {
     line: {},
     _line: {},
@@ -10,9 +10,11 @@
     _cone: {},
     close: {},
     _close: {},
-    point: {},
+    //point: {},
+    //_point: {},
+    circle: {},
+    _circle: {},
   };
-  tW.look._point = {};
   tW.look.MAX_RANGE = 8;
   tW.look.RANGES = _.range(1,tW.look.MAX_RANGE+1);
   tW.look.DIRECTIONS = [
@@ -24,16 +26,19 @@
 
   for (var dxdy of tW.look.DIRECTIONS) {
     var [dx,dy] = dxdy;
-    tW.look.point[dxdy] = {};
+    //tW.look.point[dxdy] = {};
     tW.look.line[dxdy] = {};
     tW.look._line[dxdy] = {};
     tW.look.cone[dxdy] = {};
     tW.look._cone[dxdy] = {};
     tW.look.close[dxdy] = {};
     tW.look._close[dxdy] = {};
+    tW.look.circle[dxdy] = {};
+    tW.look._circle[dxdy] = {};
     for (var range of tW.look.RANGES) {
-      tW.look.point[dxdy][range] = [dxdy];
+      //tW.look.point[dxdy][range] = [dxdy];
       tW.look._line[dxdy][range] = [_times(dxdy,range)];
+
       tW.look._cone[dxdy][range] = [];
       tW.look._close[dxdy][range] = [];
       for (var j=1-range;j<range;j++) {
@@ -45,7 +50,12 @@
         tW.look._close[dxdy][range].push([
           dx+i*dx+j*dy,
           dy+i*dy+j*dx
-        ])
+        ]);
+      }
+
+      tW.look._circle[dxdy][range] = [];
+      for (var j=0;j<range;j++) {
+        //console.log(range,j);
       }
 
       for (var key of KEYS) {

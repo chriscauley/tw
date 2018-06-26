@@ -80,6 +80,11 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.gold = 0;
     this.resetMiniMap();
     this.equipment = {};
+    var starting_equipment = {}
+    var starting_equipment = [tW.feet.ApocalypseBoots, tW.weapon.Knife]
+    for (var item of starting_equipment) {
+      new item({piece: this});
+    }
     this.equipment_cache = undefined;
     this.energy = new tW.utils.Counter({
       max: this.max_energy,
@@ -91,10 +96,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     var array = uR.math.zeros(this.max_health);
     for (var i=0;i<this.health; i++) { array[i] = 1; }
     return array;
-  }
-  equipItem(item) { //depracated in favor of additem
-    item.player = this;
-    this.equipment[item.slot] = item;
   }
   touchItem(item) {
     item.pickUp(this);

@@ -96,9 +96,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       for (var dxdy of opts.damage.deltas) {
         var square = this.look(dxdy);
         var damage_done = square && square.piece && square.piece.takeDamage(opts.damage.count);
-        if (square) {
-          this.newAnimation("damage",{ x: square.x, y: square.y, sprite: this.sprites.damage });
-        }
+        square && this.newAnimation("damage",{
+          x: square.x,
+          y: square.y,
+          sprite: opts.damage.sprite || this.sprites.damage,
+        });
         if (damage_done) {
           damage_done.count && result.damages.push(damage_done);
           damage_done.kill && result.kills.push(damage_done);
