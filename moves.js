@@ -203,7 +203,13 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
       piece = square && square.piece;
       if (!square || piece) {
         var move = { move: last, turn: [0,0] };
-        if (piece && this.team != piece.team) { move.damage = delta.concat([this.damage]) }
+        if (piece && this.team != piece.team) {
+          move.damage = {
+            count: this.damage,
+            dx: delta[0],
+            dy: delta[1],
+          }
+        }
         return move;
       }
       last = delta;
