@@ -33,7 +33,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     //var level = LEVELS[level_number];
     this.reset();
     var self = this;
-    var level = tW.level.basic.level;//new tW.level.RectRoom(this.game.config.getData()).level;
+    var level = tW.level.rect.level;//new tW.level.RectRoom(this.game.config.getData()).level;
     this.level_number = level_number;
     this.x_max = 0;
     this.y_max = level.length;

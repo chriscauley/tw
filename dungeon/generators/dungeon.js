@@ -1,29 +1,28 @@
 DG.Dungeon = class Dungeon extends DG.Generator {
-
-    constructor(options) {
+    constructor(options={}) {
         options = Object.assign({}, {
             size: [100, 100],
-            rooms: {
-                initial: {
-                    min_size: [3, 3],
-                    max_size: [3, 3],
-                    max_exits: 1
-                },
-                any: {
-                    min_size: [2, 2],
-                    max_size: [5, 5],
-                    max_exits: 4
-                }
-            },
             max_corridor_length: 6,
             min_corridor_length: 2,
+            rooms: {},
             corridor_density: 0.5, //corridors per room
             symmetric_rooms: false, // exits must be in the middle of walls
             interconnects: 1, //extra corridors to connect rooms and make circular paths. not guaranteed
             max_interconnect_length: 10,
             room_count: 10
         }, options);
-
+        options.rooms = {
+            initial: Object.assign({},{
+                min_size: [3, 3],
+                max_size: [3, 3],
+                max_exits: 1
+            },options.rooms.initial),
+            any: Object.assign({},{
+                min_size: [2, 2],
+                max_size: [5, 5],
+                max_exits: 4
+            },options.rooms.any),
+        };
         super(options);
 
         this.room_tags = Object.keys(this.rooms).filter(tag => (tag !== 'any' && tag !== 'initial'));
