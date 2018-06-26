@@ -54,7 +54,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     opts.interval = 0
     opts.sprite = tW.sprites['warrior'];
     super(opts);
-    this.last_move = { dx: 0, dy:0, t:0 };
+    this.last_move = { dx: 0, dy:0, t:0, x: this.x, y: this.y };
     this._moves = [];
     this.defaults(opts,{
       game: uR.REQUIRED,
@@ -133,15 +133,16 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   move(e,dx,dy) {
     var out = this.getMove(e,dx,dy);
     out.key = e.key;
+    var last_move = { x: this.x, y: this.y }
     this.applyMove(out);
     this.ui_dirty = true;
     if (out.move) {
-      this.last_move = {
+      this.last_move = _.extend(last_move,{
         dx: out.move[0],
         dy: out.move[1],
         t: new Date().valueOf(),
         damage: out.damage,
-      }
+      })
     }
     return true;
   }
