@@ -47,6 +47,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         self.rooms[c].push([square.x,square.y])
       });
     });
+    this.game.player && this.getRandomEmptySquare().moveOn(this.game.player);
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
     //this.start.make('start');

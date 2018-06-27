@@ -90,7 +90,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       moves: [],
       kills: [],
     };
-    var animation = (opts.dy || opts.dx) && ['bounce',{ dx: opts.dx, dy: opts.dy }];
+    result.animation = (opts.dy || opts.dx) && ['bounce',{ dx: opts.dx, dy: opts.dy }];
     var d,dx,dy;
     if (opts.damage) {
       for (var square of opts.damage.squares) {
@@ -118,22 +118,27 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       }
       if (square && square.isOpen([dx,dy])) {
         this.current_square && this.current_square.moveOff(this,opts);
-        animation = animation || ['move',{ x: this.x, y: this.y, dx: dx, dy: dy }];
+        result.animation = result.animation || ['move',opts.move_animation || {
+          x: this.x,
+          y: this.y,
+          dx: dx,
+          dy: dy
+        }];
         var move_on_result = square.moveOn(this,opts);
         if (move_on_result) { return this.applyMove(move_on_result) }
         this.takeGold(square); // #! TODO should be in the square.moveOn
         result.moves.push([dx,dy]);
       }
       opts.done = true;
-      animation = animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
+      result.animation = result.animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
     }
-    if (opts.turn) {
+    if (opts.turn || opts.dxdy) {
       opts.done = true;
-      [dx,dy] = opts.turn;
+      [dx,dy] = opts.turn || opts.dxdy;
     }
     if (opts.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (opts.done) { // anything happened
-      animation && this.newAnimation(...animation);
+      result.animation && this.newAnimation(...result.animation);
       result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
       return result;
     }

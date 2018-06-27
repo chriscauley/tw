@@ -139,14 +139,14 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.applyMove(out);
     this.ui_dirty = true;
     if (out.move) {
-      this.last_move = _.extend(last_move,{
+      this.last_move = _.extend(last_move, {
         dx: out.move[0],
         dy: out.move[1],
         t: new Date().valueOf(),
         damage: out.damage,
       })
     }
-    return true;
+    return out;
   }
   applyMove(opts) {
     var result = super.applyMove(opts);
