@@ -41,11 +41,18 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
       return move;
     }
   }
-  forward() {
-    var square = this.look();
+  forward(dxdy) {
+    dxdy = dxdy || [this.dx,this.dy];
+    var square = this.look(dxdy);
     var piece = square && square.piece;
-    if (piece && piece.team != this.team ) { return { damage: {dx:this.dx,dy:this.dy,count:this.damage} } }
-    if (square && !piece) { return { move: [this.dx,this.dy ] } }
+    if (piece && piece.team != this.team ) {
+      return {
+        damage: {squares: [square],count:this.damage},
+        dx: dxdy[0],
+        dy: dxdy[1],
+      }
+    }
+    if (square && !piece) { return { move: dxdy } }
   }
   _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
@@ -106,7 +113,7 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     if (!square) { console.log("no square"); return } // no square to target
     if (square.piece) {
       if (square.piece.team == this.team) { return } // don't attack friends
-      return { damage: {dx:this.dx,dy:this.dy,count: this.damage} }
+      return { damage: {squares: [square], count: this.damage}, dx: this.dx, dy: this.dy }
     }
     this.board.addPieces(new tW.pieces.Fireball({
       parent_piece: this,
@@ -206,9 +213,10 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
         if (piece && this.team != piece.team) {
           move.damage = {
             count: this.damage,
-            dx: delta[0],
-            dy: delta[1],
+            squares: [square]
           }
+          move.dx = delta[0];
+          move.dy = delta[1];
         }
         return move;
       }

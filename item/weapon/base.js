@@ -5,7 +5,7 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
       damage: 1,
       range: 1,
       geometry: 'line',
-      splash: false, // does damage to all squares in tW.look[this.geometry][dxdy][this.range]
+      splash: false, // does damage to all squares in tW.look[this.splash][dxdy][this.range]
       // blood: true, NotImplemented
       // gold: true, NotImplemented
       // glass: true, NotImplemented
@@ -18,23 +18,24 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     if (!this.piece) { throw "NotImplemented: not sure why a non piece would be calling getMove" }
     var deltas = tW.look[this.geometry][[dx,dy]][this.range];
     var result;
-    for (var dxdy2 of deltas) {
-      var square = this.piece.look(dxdy2);
+    var squares = this.piece.current_square.getSquares(deltas);
+    for (var square of squares) {
       if (square && square.piece && square.piece.team != this.team) {
         result = {
-          dx: dxdy2[0],
-          dy: dxdy2[1],
+          squares: [square],
           count: this.damage,
         }
         break;
       }
     }
     if (result && this.splash) {
-      result.dx = dx;
-      result.dy = dy;
-      result.deltas = deltas;
+      result.squares = squares
     }
-    return result && { damage: result }
+    return result && {
+      damage: result,
+      dx: dx,
+      dy: dy,
+    }
   }
 }
 

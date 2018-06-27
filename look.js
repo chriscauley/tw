@@ -4,6 +4,7 @@
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
   var KEYS = ['cone','close','line','circle'];
   tW.look = {
+    directions: [[0,1],[0,-1],[1,0],[-1,0]],
     line: {},
     _line: {},
     cone: {},
