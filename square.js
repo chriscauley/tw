@@ -140,37 +140,4 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
   look(dxdy) { // note: dx,dy should always be one of 1,0,-1
     return this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
   }
-
-  lookTunnel(dxdy,distance=1) { // note: dx,dy should always be one of 1,0,-1
-    var out = [], [dx,dy] = dxdy;
-    for (var i=0;i<distance;i++) { out.push([this.x+i*dx,this.y+i*dy]); }
-    return this.board.getSquares(out);
-  }
-
-  lookCone(dx,dy,distance=1) {
-    var out = [];
-    for (var i=0;i<distance;i++) {
-      for (var j=-i;j<=i;j++) {
-        out.push([
-          this.x + i*dx + j*dy,
-          this.y + i*dy + j*dx
-        ]);
-      }
-    }
-    return this.board.getSquares(out);
-  }
-
-  lookClose(dx,dy,distance=1) {
-    var out = [],jmax;
-    for (var i=0;i<distance;i++) {
-      jmax = distance-i;
-      for (var j=-jmax;j<=jmax;j++) {
-        out.push([
-          this.x + i*dx + j*dy,
-          this.y + i*dy + j*dx
-        ]);
-      }
-    }
-    return this.board.getSquares(out);
-  }
 }
