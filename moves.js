@@ -43,16 +43,17 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   }
   forward(dxdy) {
     dxdy = dxdy || [this.dx,this.dy];
-    var square = this.look(dxdy);
-    var piece = square && square.piece;
-    if (piece && piece.team != this.team ) {
-      return {
-        damage: {squares: [square],count:this.damage},
-        dx: dxdy[0],
-        dy: dxdy[1],
+    var out = {};
+    var squares = this.current_square.getSquares(tW.look.line[dxdy][this.speed]);
+    for (var square of squares) {
+      var piece = square && square.piece;
+      if (piece && piece.team != this.team ) {
+        out.damage = {squares: [square],count:this.damage};
       }
+      if (piece) { break; }
+      out.move = square;
     }
-    if (square && !piece) { return { move: dxdy } }
+    return (out.move || out.damage) && out;
   }
   _turn(direction) {
     // left and right are [dx,dy] to make it go in that direction
@@ -179,50 +180,39 @@ tW.mixins.TunnelVision = (superclass) => class extends superclass {
 tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(superclass) {
   buildHelp() {
     return _.extend(super.buildHelp(),{
-      checkCharge: "Looks for an enemy "+this.tunnel_sight+" squares away or less",
-      doCharge: "Charges in the direction of an enemy spotted by 'checkCharge'",
+      //checkCharge: "Looks for an enemy "+this.tunnel_sight+" squares away or less",
+      //doCharge: "Charges in the direction of an enemy spotted by 'checkCharge'",
     })
   }
-  checkCharge() {
-    if (this.charging_deltas) { return }
-    var piece,square
-    for (let deltas of this.tunnel_directions) {
-      for (let delta of deltas) {
-        square = this.look(delta);
-        piece = square && square.piece;
-         // don't charge if no square or if ally or neutral is blocking
-        if (!square || piece && piece.team == this.team) { break }
-        if (piece) {
-          this.charging_deltas = deltas;
-          return { turn: deltas[0] }
+  charge(func,opts={}) {
+    func = func.bind(this);
+    opts = uR.defaults(opts, {
+      range: this.sight,
+      geometry: "line",
+      pass: s => s && s.piece && s.piece.team != this.team, // pass on enemy target
+      fail: s => !s || s.piece && s.piece.team == this.team, // fail on no square or friendly target
+    })
+    var charged;
+    function out() {
+      if (charged) {
+        var result =  func(charged);
+        charged = false;
+        if (result) { result.turn = [0,0] }
+        return result;
+      }
+      for (let direction of tW.look.directions) {
+        var squares = this.current_square.getSquares(tW.look[opts.geometry][direction][opts.range]);
+        for (let square of squares) {
+          if (opts.pass(square)) {
+            charged = direction;
+            return { turn: direction }
+          }
+          if (opts.fail(square)) { break }
         }
       }
     }
+    out._name = `Charge ${func.name}@${opts.distance}`;
+    return out
   }
   isActionReady() { return !!this.charging_deltas }
-  doCharge() {
-    if (!this.charging_deltas) { return }
-    var charging_deltas = this.charging_deltas;
-    this.charging_deltas = undefined;
-    var last = [0,0], square, piece;
-    for (var delta of charging_deltas) {
-      square = this.look(delta)
-      piece = square && square.piece;
-      if (!square || piece) {
-        var move = { move: last, turn: [0,0] };
-        if (piece && this.team != piece.team) {
-          move.damage = {
-            count: this.damage,
-            squares: [square]
-          }
-          move.dx = delta[0];
-          move.dy = delta[1];
-        }
-        return move;
-      }
-      last = delta;
-    }
-    // all squares are empty, charge to end
-    return { move: last, turn: [0,0] }
-  }
 }

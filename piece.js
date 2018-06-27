@@ -25,6 +25,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
       sight: 3, // how far it can see
       wait_interval: 0, // how long this.wait will block task queue
+      speed: 1, // how many squares it moves on this.forward
     });
     this.setSight(this.sight);
     this.action_halo = "red_halo";
@@ -108,29 +109,22 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     }
 
     if (opts.move) {
-      var square = this.look(opts.move);
+      var square = Array.isArray(opts.move)?this.look(opts.move):opts.move;
       if (square && !square.piece) {
         this.current_square && this.current_square.moveOff(this,opts);
-        animation = animation || ['move',{ x: this.x, y: this.y, dx: opts.move[0], dy: opts.move[1] }];
+        [dx,dy] = [square.x-this.x, square.y-this.y];
+        animation = animation || ['move',{ x: this.x, y: this.y, dx: dx, dy: dy }];
         square.moveOn(this,opts);
-
-        //if (this.current_square) { this.current_square.piece = undefined; }
-        //this.current_square = square;
-        //square.piece = this;
-        //_.each(square.items,i => i.trigger(this))
-        //square.floor && square.floor.trigger(this);
-        this.takeGold(square);
-        result.moves.push(opts.move);
-        //[this.x,this.y] = [square.x,square.y];
+        this.takeGold(square); // #! TODO should be in the square.moveOn
+        result.moves.push([dx,dy]);
         opts.done = true;
-        [dx,dy] = opts.move
       }
     }
     if (opts.turn) {
       opts.done = true;
       [dx,dy] = opts.turn;
     }
-    if (dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
+    if (opts.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
     if (opts.done) { // anything happened
       animation && this.newAnimation(...animation);
       result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
@@ -485,7 +479,8 @@ tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece
   constructor(opts={}) {
     opts.sprite = tW.sprites['beholder'];
     super(opts);
-    this.tasks = [ this.checkCharge, this.doCharge ];
+    this.speed = 3;
+    this.tasks = [ this.charge(this.forward) ];
     this.dx = this.dy = 0;
   }
 }
