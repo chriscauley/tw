@@ -109,16 +109,23 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
     }
 
     if (opts.move) {
-      var square = Array.isArray(opts.move)?this.look(opts.move):opts.move;
-      if (square && !square.piece) {
-        this.current_square && this.current_square.moveOff(this,opts);
+      if (Array.isArray(opts.move)) {
+        var square = this.look(opts.move);
+        [dx,dy] = opts.move;
+      } else {
+        var square = opts.move;
         [dx,dy] = [square.x-this.x, square.y-this.y];
+      }
+      if (square && square.isOpen([dx,dy])) {
+        this.current_square && this.current_square.moveOff(this,opts);
         animation = animation || ['move',{ x: this.x, y: this.y, dx: dx, dy: dy }];
-        square.moveOn(this,opts);
+        var move_on_result = square.moveOn(this,opts);
+        if (move_on_result) { return this.applyMove(move_on_result) }
         this.takeGold(square); // #! TODO should be in the square.moveOn
         result.moves.push([dx,dy]);
-        opts.done = true;
       }
+      opts.done = true;
+      animation = animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
     }
     if (opts.turn) {
       opts.done = true;

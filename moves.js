@@ -50,8 +50,9 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
       if (piece && piece.team != this.team ) {
         out.damage = {squares: [square],count:this.damage};
       }
-      if (piece) { break; }
+      if (!square.isOpen(dxdy)) { break; }
       out.move = square;
+      out.dxdy = dxdy;
     }
     return (out.move || out.damage) && out;
   }
@@ -107,7 +108,6 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
   bounce() {
     var square = this.look();
     if (square && square.piece) { return this.attack(square.piece); }
-    //this.move(0,this.dy);
   }
   throwFireball(dx,dy) {
     var square = this.look();

@@ -133,6 +133,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   }
   move(e,dx,dy) {
     var out = this.getMove(e,dx,dy);
+    out.dxdy = [dx,dy];
     out.key = e.key;
     var last_move = { x: this.x, y: this.y }
     this.applyMove(out);
@@ -199,7 +200,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
         var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
         if (!square) { return }
-        if (square.isOpen()) {
+        if (square.isOpen(dxdy)) {
           this._moves.push(["rgba(0,100,0,0.5)",square.x,square.y]);
         } else if (square.canBeAttacked() && square.piece.team != this.team) {
           this._moves.push(["rgba(100,0,0,0.5)",square.x,square.y]);

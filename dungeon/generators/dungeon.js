@@ -13,12 +13,12 @@ DG.Dungeon = class Dungeon extends DG.Generator {
         }, options);
         options.rooms = {
             initial: Object.assign({},{
-                min_size: [3, 3],
-                max_size: [3, 3],
+                min_size: [4, 4],
+                max_size: [5, 5],
                 max_exits: 1
             },options.rooms.initial),
             any: Object.assign({},{
-                min_size: [2, 2],
+                min_size: [3, 3],
                 max_size: [5, 5],
                 max_exits: 4
             },options.rooms.any),

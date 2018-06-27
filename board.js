@@ -36,29 +36,25 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     var level = this._dungeon.level
     this.x_max = 0;
     this.y_max = level.length;
-    var player = this.game.player;
-    var player_set;
+    this.rooms = {};
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(c,x) {
         self.squares[x] = self.squares[x] || [];
         if (c == undefined || c === " ") { return }
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
-        if (c == 's') { self.start = square }
-        if (c == 'x') { self.exit = square }
-        if (player && x == player.x && y == player.y) {
-          square.addPiece(player);
-          player_set = true;
-        } else {
-          tW.enemy_map[c] && self.pieces.push(new tW.enemy_map[c]({ x: x, y: y, board: self}));
-        }
+        self.rooms[c] = self.rooms[c] || [];
+        self.rooms[c].push([square.x,square.y])
       });
     });
-    if (!player_set && player) { this.getRandomEmptySquare().addPiece(player); }
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
-    this.start.make('start');
-    this.exit.make('exit');
+    //this.start.make('start');
+    this.exit.setFloor(tW.floor.Stairs);
+    var red = this.getRandomEmptySquare();
+    var blue = this.getRandomEmptySquare();
+    red.setFloor(tW.floor.Portal,{color: 'red'});
+    blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
     this.max_offset_x = Math.max(-0.5,this.x_max+0.5-window.innerWidth/this.scale);

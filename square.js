@@ -54,8 +54,8 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     _.each(this.items,i => i.draw());
     this.floor && this.floor.draw(this.canvas);
   }
-  isOpen() {
-    return !this.piece || this.piece.canReplace();
+  isOpen(dxdy) {
+    return (!this.piece || this.piece.canReplace(dxdy)) && (!this.floor || this.floor.canStepOn(dxdy));
   }
   canBeAttacked() {
     return this.piece && this.piece.canBeAttacked();
@@ -66,14 +66,15 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     this.floor = undefined;
     this.dirty = true;
   }
-  setFloor(item) {
-    this.floor = item;
+  setFloor(cls,opts={}) {
+    opts.square = this;
+    this.floor = new cls(opts);
     this.dirty = true;
   }
   moveOn(piece,move) {
     this.addPiece(piece);
     _.each(this.items,i=>i.moveOn(piece,move));
-    this.floor && this.floor.moveOn(piece,move);
+    return this.floor && this.floor.moveOn(piece,move);
   }
   moveOff(piece) {
     if (this.piece == piece) { this.piece = undefined }
@@ -129,10 +130,6 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     ctx.fillStyle = text.style || "black";
     ctx.textBaseline = text.baseLine ||'middle';
     ctx.fillText(this.gold, s/2,s/2 );
-  }
-  make(state) { // currently only start and exit
-    //if (state == "start") { this.sprite = tW.sprites.ground_stairs_up }
-    if (state == "exit") { this.addItem(new tW.floor.Stairs({square: this})) }
   }
 
   getSquares(deltas) {
