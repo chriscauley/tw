@@ -3,7 +3,19 @@
 (function() {
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
   var KEYS = ['cone','close','line','circle'];
+
+  var Look = (superclass) => class extends superclass {
+    lookForward() { return this.look([this.dx,this.dy]) }
+    look(dxdy) {
+      return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
+    }
+    lookMany(deltas) {
+      return deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]]).map(this.look);
+    }
+  }
+
   tW.look = {
+    Look: Look,
     directions: [[0,1],[0,-1],[1,0],[-1,0]],
     line: {},
     _line: {},

@@ -122,7 +122,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       return this.equipment.feet.getMove(dx,dy);
     }
     return this.equipment.weapon && this.equipment.weapon.getMove(dx,dy) || { move: [dx,dy] }
-    // var square = this.look(dx,dy);
+    // var square = this.look(dxdy);
     // var out = { turn: [dx,dy] };
     // if (square && square.piece && square.piece.team != this.team) {
     //   out.damage = [dx,dy,this.damage];

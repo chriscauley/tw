@@ -389,7 +389,7 @@ tW.pieces.WallFlower = class WallFlower extends tW.pieces.BasePiece {
     var square,direction;
     while (directions.length) {
       var d = directions[(uR.random()>0.5)?'pop':'shift']();
-      square = this.look(d);
+      square = this.look(this._turn(d));
       if (square && !square.piece) { break; }
     }
     return this._turn(d);

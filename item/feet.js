@@ -10,7 +10,7 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
     var move = super.getMove(dx,dy);
     if (!this.canUse(dx,dy)) { return move; }
     for (var i=1; i<=this.distance;i++) {
-      var square = this.piece.look(i*dx,i*dy);
+      var square = this.piece.look([i*dx,i*dy]);
       if (!square) { break }
       if (!square.isOpen([dx,dy])) {
         if (square.piece && square.piece.team != this.piece.team) {

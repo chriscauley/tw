@@ -1,6 +1,6 @@
 tW.moves = {};
 
-tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
+tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   buildHelp() {
     return {
       forward: "Move or attack the direction it's facing.",
@@ -18,12 +18,12 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     if (!this.following) { return }
     var dx = this.following.x - this.x; //how far in each direction
     var dy = this.following.y - this.y;
-    var square =this.look();
+    var square =this.lookForward();
     if (this.following.is_dead || Math.abs(dx) + Math.abs(dy) > this.sight*2) { this.following = undefined; return }
 
-    var square_x = this.look(Math.sign(dx),0);
+    var square_x = this.look([Math.sign(dx),0]);
     var x_open = square_x && (!square_x.piece || square_x.piece.team != this.team);
-    var square_y = this.look(0,Math.sign(dy));
+    var square_y = this.look([0,Math.sign(dy)]);
     var y_open = square_y && (!square_y.piece || square_y.piece.team != this.team);
     if (x_open && this.dx && Math.sign(dx) == this.dx) { return this.forward(); }
     if (y_open && this.dy && Math.sign(dy) == this.dy) { return this.forward(); }
@@ -63,19 +63,6 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     }
     return {turn: (direction == "left")?[this.dy,-this.dx]:[-this.dy,this.dx] };
   }
-  look(dx,dy) { //#! TODO: distance
-    if (dx === undefined) { return this.look(this.dx,this.dy); } // no arguments means look forward
-    if (Array.isArray(dx)) { [dx,dy] = dx } // array means it's [dx,dy]
-
-    // if dx is string, look in the direction relative to piece
-    if (dx == "left" || dx == "right") {
-      return this.look(this._turn(dx));
-    }
-    if (dx == "back") { return this.look(-this.dx,-this.dy); }
-
-    // two arguments returns the square
-    return this.board.getSquare(this.x+dx,this.y+dy);
-  }
   findEnemy() {
     if (this.following) {
       // pieces can see twice as far before losing sight, hence the *2
@@ -106,11 +93,11 @@ tW.moves.Moves = class Moves extends uR.canvas.CanvasObject {
     this.points = this.step%4+1;
   }
   bounce() {
-    var square = this.look();
+    var square = this.lookForward();
     if (square && square.piece) { return this.attack(square.piece); }
   }
   throwFireball(dx,dy) {
-    var square = this.look();
+    var square = this.lookForward();
     if (!square) { console.log("no square"); return } // no square to target
     if (square.piece) {
       if (square.piece.team == this.team) { return } // don't attack friends
