@@ -69,14 +69,9 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       if (this._getDistance(this.following) > this.sight*2) { this.following == undefined; } // lost sight
       else { return } // keep following
     }
-    var following_distance = this.sight;
-    uR.forEach(this.board.pieces,function(piece,i) {
-      if (piece.team == this.team) { return }
-      var distance = this._getDistance(piece);
-      if (distance > following_distance) { return } // out of sight or folllowing a closer piece
-      this.following = piece;
-      following_distance = distance;
-    },this)
+    var squares = this.lookMany(tW.look.circle[this.sight])
+        .filter(s=>s && s.piece && s.piece.team != this);
+    this.following = _.sample(squares).piece;
   }
   _getDistance(piece) {
     return Math.abs(this.x-piece.x) + Math.abs(this.y-piece.y);

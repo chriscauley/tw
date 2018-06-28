@@ -82,4 +82,9 @@
       }
     }
   }
+  for (var range of tW.look.RANGES) {
+    // since circle is symetrical it technically just needs a range, not a direction
+    // for now just cloning look right as the direction
+    tW.look._circle[range] = tW.look._circle[[0,1]][range];
+    tW.look.circle[range] = tW.look.circle[[0,1]][range];
 })();
