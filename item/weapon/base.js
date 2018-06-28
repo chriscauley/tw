@@ -18,7 +18,7 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     if (!this.piece) { throw "NotImplemented: not sure why a non piece would be calling getMove" }
     var deltas = tW.look[this.geometry][[dx,dy]][this.range];
     var result;
-    var squares = this.piece.current_square.getSquares(deltas);
+    var squares = this.piece.current_square.lookMany(deltas);
     for (var square of squares) {
       if (square && square.piece && square.piece.team != this.team) {
         result = {

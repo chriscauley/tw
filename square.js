@@ -18,7 +18,7 @@ tW.square.SquareMixin = (superclass) => class extends superclass {
   }
 }
 
-tW.square.Square = class Square extends uR.canvas.CanvasObject {
+tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
   constructor(opts) {
     super()
     this.defaults(opts,{
@@ -130,14 +130,5 @@ tW.square.Square = class Square extends uR.canvas.CanvasObject {
     ctx.fillStyle = text.style || "black";
     ctx.textBaseline = text.baseLine ||'middle';
     ctx.fillText(this.gold, s/2,s/2 );
-  }
-
-  getSquares(deltas) {
-    var xys = deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]])
-    return this.board.getSquares(xys)
-  }
-
-  look(dxdy) { // note: dx,dy should always be one of 1,0,-1
-    return this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
   }
 }

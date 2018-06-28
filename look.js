@@ -10,7 +10,7 @@
       return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
     }
     lookMany(deltas) {
-      return deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]]).map(this.look);
+      return (this.square || this).board.getSquares(deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]]));
     }
   }
 

@@ -44,7 +44,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   forward(dxdy) {
     dxdy = dxdy || [this.dx,this.dy];
     var out = {};
-    var squares = this.current_square.getSquares(tW.look.line[dxdy][this.speed]);
+    var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
     for (var square of squares) {
       var piece = square && square.piece;
       if (piece && piece.team != this.team ) {
@@ -188,7 +188,7 @@ tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(supercla
         return result;
       }
       for (let direction of tW.look.directions) {
-        var squares = this.current_square.getSquares(tW.look[opts.geometry][direction][opts.range]);
+        var squares = this.current_square.lookMany(tW.look[opts.geometry][direction][opts.range]);
         for (let square of squares) {
           if (opts.pass(square)) {
             charged = direction;
