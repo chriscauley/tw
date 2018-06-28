@@ -18,27 +18,16 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     if (!this.following) { return }
     var dx = this.following.x - this.x; //how far in each direction
     var dy = this.following.y - this.y;
-    var square =this.lookForward();
     if (this.following.is_dead || Math.abs(dx) + Math.abs(dy) > this.sight*2) { this.following = undefined; return }
-
-    var square_x = this.look([Math.sign(dx),0]);
-    var x_open = square_x && (!square_x.piece || square_x.piece.team != this.team);
-    var square_y = this.look([0,Math.sign(dy)]);
-    var y_open = square_y && (!square_y.piece || square_y.piece.team != this.team);
-    if (x_open && this.dx && Math.sign(dx) == this.dx) { return this.forward(); }
-    if (y_open && this.dy && Math.sign(dy) == this.dy) { return this.forward(); }
-
-    var move = undefined;
-    if (y_open && Math.abs(dx) < Math.abs(dy)) { // is x distance smaller than y distance? if so persue in y
-      if ( !this.dy ) { move = { turn: [0,Math.sign(dy)] } } // currently lookin in x so turn in y
-      else if ( Math.sign(dy) != this.dy ) { move = this.flip(); } // facing away from enemy
-    } else if (x_open) { //target is closer in y (same as above, but flipped)
-      if ( !this.dx ) { move = { turn: [Math.sign(dx),0] } }
-      else if ( Math.sign(dx) != this.dx ) { move = this.flip(); }
+    var dirs = [[Math.sign(dx),0],[0,Math.sign(dy)]]; // defaults to check x direction first
+    if (dy && this.dy) { // check the y direction first since unit is facing the y direciton
+      dirs.reverse();
     }
-    if (move) {
-      move.chain = this.forward;
-      return move;
+    for (var direction of dirs) {
+      var square = this.look(direction);
+      if (square && square.piece == this.following || square.isOpen()) {
+        return this.forward(direction);
+      }
     }
   }
   forward(dxdy) {
@@ -53,6 +42,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       if (!square.isOpen(dxdy)) { break; }
       out.move = square;
       out.dxdy = dxdy;
+      out.turn = dxdy;
     }
     return (out.move || out.damage) && out;
   }
