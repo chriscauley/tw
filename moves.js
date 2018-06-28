@@ -119,52 +119,8 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   }
 }
 
-tW.mixins = {};
-tW.mixins.Sight = (superclass) => class extends superclass {
-  constructor(opts={}) {
-    super(opts);
-    this.defaults(opts,{sight:1});
-    this.setSight();
-  }
-  setSight(value) {
-    this.sight = value || this.sight; // NB: Can never be 0
-    this.visibility = [];
-    var x,y,dy;
-    for (x=-this.sight; x<=this.sight; x++) {
-      dy = this.sight-Math.abs(x);
-      for (y=-dy; y<=dy; y++) { this.visibility.push([x,y]); }
-    }
-  }
-  getVisibleSquares(visibility) {
-    visibility = visibility || this.visibility;
-    var indexes = [];
-    for (var dxdy of visibility) { indexes.push([dxdy[0]+this.x,dxdy[1]+this.y]); }
-    return this.board.getSquares(indexes);
-  }
-  getRandomSquare() {
-    uR.random.choice(this.getVisibleSquares());
-  }
-}
-
-tW.mixins.TunnelVision = (superclass) => class extends superclass {
-  constructor(opts={}) {
-    super(opts);
-    this.defaults(opts,{tunnel_sight: 3});
-    this.setTunnelSight();
-  }
-  setTunnelSight(value) {
-    this.sight = value || this.sight; // NB: Can never be 0
-    this.tunnel_directions = [[],[],[],[]];
-    for (let dxy=1; dxy<=this.tunnel_sight; dxy++) {
-      this.tunnel_directions[0].push([dxy,0]); // right
-      this.tunnel_directions[1].push([-dxy,0]); // left
-      this.tunnel_directions[2].push([0,dxy]); // down
-      this.tunnel_directions[3].push([0,-dxy]); // up
-    }
-  }
-}
-
-tW.mixins.Charge = (superclass) => class extends tW.mixins.TunnelVision(superclass) {
+tW.mixins = {}
+tW.mixins.Charge = (superclass) => class extends superclass {
   buildHelp() {
     return _.extend(super.buildHelp(),{
       //checkCharge: "Looks for an enemy "+this.tunnel_sight+" squares away or less",

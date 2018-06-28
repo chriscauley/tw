@@ -19,7 +19,7 @@ tW.team.Team = class Team extends uR.Object {
     // this should probably be it's own class
     var board = this.game.board;
     this.pieces = [];
-    false && this.pieces.push(new tW.pieces.Grave({
+    this.pieces.push(new tW.pieces.Grave({
       square: board.getRandomEmptySquare(),
       board: board,
       team: this.number,
@@ -36,7 +36,6 @@ tW.team.Team = class Team extends uR.Object {
         item: tW.weapon.LongSword,
       });
       this.pieces.push(piece);
-      board.addPieces(piece);
     }
 
     for (var i=0;i<this.unit_count;i++) {
@@ -52,8 +51,8 @@ tW.team.Team = class Team extends uR.Object {
         !(i%4) && piece.levelUp();
       }
       this.pieces.push(piece);
-      board.addPieces(piece);
     }
+    board.addPieces(this.pieces);
     return this.pieces;
   }
 }

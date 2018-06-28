@@ -80,7 +80,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     if (this.piece == piece) { this.piece = undefined }
   }
   addPiece(piece) { // depracate in favor of moveOn?
-    if ( this.piece && this.piece != piece) { console.error(piece); }
+    if ( this.piece && this.piece != piece) { console.error('Pauli exclusion',piece); }
     this.piece = piece;
     [piece.x,piece.y] = this.xy;
     piece.current_square = this;

@@ -1,5 +1,5 @@
 tW.pieces = {}
-tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
+tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
@@ -27,7 +27,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.mixins.Sight(tW.moves.Moves) {
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
     });
-    this.setSight(this.sight);
+    if (opts.square) { opts.square.moveOn(this) } // #! TODO: do this instead of opts.x,opts.y
     this.action_halo = "red_halo";
     this.newCanvas({
       width: this.board.scale,
@@ -413,7 +413,7 @@ tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
 
 tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
   constructor(opts) {
-    opts.sight = 1;
+    opts.sight = 2;
     opts.sprite = tW.sprites['grave'];
     opts.wait_interval = 4;
     super(opts);
@@ -422,7 +422,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     this.tasks = [ this.wait, this.spawnPiece ];
   }
   spawnPiece() {
-    var squares = this.getVisibleSquares();
+    var squares = this.lookMany(tW.look.circle[[1,0]][this.sight]);
     uR.random.shuffle(squares);
     for (var sq of squares) {
       if (!sq.piece) {
