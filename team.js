@@ -19,7 +19,7 @@ tW.team.Team = class Team extends uR.Object {
     // this should probably be it's own class
     var board = this.game.board;
     this.pieces = [];
-    this.pieces.push(new tW.pieces.Grave({
+    false && this.pieces.push(new tW.pieces.Grave({
       square: board.getRandomEmptySquare(),
       team: this.number,
     }));

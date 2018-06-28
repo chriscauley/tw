@@ -70,8 +70,8 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       else { return } // keep following
     }
     var squares = this.lookMany(tW.look.circle[this.sight])
-        .filter(s=>s && s.piece && s.piece.team != this);
-    this.following = _.sample(squares).piece;
+        .filter(s => s && s.piece && s.piece.team != this.team);
+    this.following = squares.length && _.sample(squares).piece;
   }
   _getDistance(piece) {
     return Math.abs(this.x-piece.x) + Math.abs(this.y-piece.y);
