@@ -21,17 +21,13 @@ tW.team.Team = class Team extends uR.Object {
     this.pieces = [];
     this.pieces.push(new tW.pieces.Grave({
       square: board.getRandomEmptySquare(),
-      board: board,
       team: this.number,
     }));
 
     // for now give boots away on level 1
     if (this.game.level_number == 0) {
-      var s = board.getRandomEmptySquare();
       var piece = new tW.pieces.Chest({
-        x: s.x,
-        y: s.y,
-        board: board,
+        square: board.getRandomEmptySquare(),
         team: this.number,
         item: tW.weapon.LongSword,
       });
@@ -39,11 +35,8 @@ tW.team.Team = class Team extends uR.Object {
     }
 
     for (var i=0;i<this.unit_count;i++) {
-      var s = board.getRandomEmptySquare();
       var piece = new tW.enemy_map[_.sample(active_pieces)]({
-        x: s.x,
-        y: s.y,
-        board: board,
+        square: board.getRandomEmptySquare(),
         team: this.number
       })
       if (i) {

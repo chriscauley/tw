@@ -7,12 +7,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     var dx = 0, dy = 0;
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
-    super();
+    super(opts);
     this.defaults(opts,{
-      board: uR.REQUIRED,
       sprite: uR.REQUIRED,
-      x:0,
-      y:0,
       dx: dx,
       dy: dy,
       tasks: [],
@@ -27,7 +24,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
     });
-    if (opts.square) { opts.square.moveOn(this) } // #! TODO: do this instead of opts.x,opts.y
+    if (opts.square) {
+      this.board = opts.square.board;
+      opts.square.moveOn(this);
+    }
     this.action_halo = "red_halo";
     this.newCanvas({
       width: this.board.scale,
