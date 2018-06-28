@@ -67,8 +67,10 @@
       }
 
       tW.look._circle[dxdy][range] = [];
-      for (var j=0;j<range;j++) {
-        //console.log(range,j);
+      for (var j=-range;j<range;j++) {
+        var i = range-Math.abs(j);
+        tW.look._circle[dxdy][range].push([j,i]);
+        tW.look._circle[dxdy][range].push([-j,-i]);
       }
 
       for (var key of KEYS) {

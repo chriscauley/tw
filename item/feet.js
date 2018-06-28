@@ -18,11 +18,11 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
             dx: i*dx,
             dy: i*dy,
             count: this.damage,
+            squares: [square],
           }
-          /*if (this.splash) {
-            console.log(this.splash,[dx,dy]+"",this.splash_range||1);
-            move.damage.deltas = tW.look[this.splash][[dx,dy]][this.splash_range || 2]
-          }*/
+          if (this.splash) {
+            move.damage.squares = this.piece.lookMany(tW.look[this.splash][[dx,dy]][this.splash_range || 2])
+          }
         }
         // #! TODO the following doesn't work if the enemy doesn't die
         //if (this.kill_dash) { move.move = [i*dx,i*dy]; }
@@ -54,10 +54,10 @@ tW.feet.Sprint = class Sprint extends tW.feet.BaseFeet {
 
 tW.feet.ApocalypseBoots = class ApocalypseBoots extends tW.feet.BaseFeet {
   constructor(opts={}) {
-    opts.distance = 4;
+    opts.distance = 2;
     opts.resources = {};
     opts.damage = 1;
-    opts.splash = 'cone';
+    opts.splash = 'circle';
     opts.sprite = tW.sprites.apocalypse;
     super(opts);
   }
