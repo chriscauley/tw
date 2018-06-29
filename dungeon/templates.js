@@ -37,3 +37,13 @@ DG.TEMPLATES['rect'] = {
     },
   }
 }
+
+DG.TEMPLATES['tiny_rect'] = {
+  room_count: 1,
+  rooms: {
+    initial: {
+      max_size: [5,5],
+      min_size: [5,5]
+    },
+  }
+}

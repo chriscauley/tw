@@ -103,7 +103,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   listEquipment() {
     if (this.equipment_cache) { return this.equipment_cache }
     var list = [];
-    for (var key of ['weapon','feet','consumable']) {
+    for (var key of ['weapon','feet','consumable','bomb']) {
       this.equipment[key] && list.push({
         className: key+' sprite sprite-'+this.equipment[key].sprite.name,
         slot: key,

@@ -21,11 +21,11 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
   }
   reset() {
     this.squares = [];
-    this.pieces = [];
     this.start = this.exit = undefined;
   }
   loadLevel(level_number) {
     this.reset();
+    this.pieces = [];
     var self = this;
     var template = this.game.config.get("map_template");
     this.level_number = level_number;
@@ -47,7 +47,10 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         self.rooms[c].push([square.x,square.y])
       });
     });
-    this.game.player && this.getRandomEmptySquare().moveOn(this.game.player);
+    if (this.game.player) {
+      this.getRandomEmptySquare().moveOn(this.game.player);
+      this.pieces.push(this.game.player);
+    }
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
     //this.start.make('start');
@@ -157,13 +160,13 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     return list.map((xy) => self.getSquare(xy)).filter((s) => s)
   }
 
-  addPieces(pieces) {
-    if (!Array.isArray(pieces)) { pieces = [].slice.apply(arguments); }
-    for (var piece of pieces) {
-      this.pieces.push(piece);
-      var square = this.getSquare(piece.x,piece.y);
-      square && square.addPiece(piece);
+  addPiece(piece) {
+    if (piece.board) {
+      if (piece.board == this) { return }
+      piece.board.removePiece(piece);
     }
+    piece.board = this;
+    this.pieces.push(piece);
   }
   newAnimation(opts) {
     opts = uR.defaults(opts,{

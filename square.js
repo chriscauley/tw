@@ -76,14 +76,15 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     _.each(this.items,i=>i.moveOn(piece,move));
     return this.floor && this.floor.moveOn(piece,move);
   }
-  moveOff(piece) {
-    if (this.piece == piece) { this.piece = undefined }
-  }
-  addPiece(piece) { // depracate in favor of moveOn?
+  addPiece(piece) {
     if ( this.piece && this.piece != piece) { console.error('Pauli exclusion',piece); }
     this.piece = piece;
+    this.board.addPiece(piece); // returns immediately if it's already on the board
     [piece.x,piece.y] = this.xy;
     piece.current_square = this;
+  }
+  moveOff(piece) {
+    if (this.piece == piece) { this.piece = undefined }
   }
   removePiece(piece) {
     if (this.piece != piece) { return }

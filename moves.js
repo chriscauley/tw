@@ -81,22 +81,24 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     var square = this.lookForward();
     if (square && square.piece) { return this.attack(square.piece); }
   }
-  throwFireball(dx,dy) {
-    var square = this.lookForward();
-    if (!square) { console.log("no square"); return } // no square to target
-    if (square.piece) {
-      if (square.piece.team == this.team) { return } // don't attack friends
-      return { damage: {squares: [square], count: this.damage}, dx: this.dx, dy: this.dy }
+  shoot(clss) {
+    function func(dx,dy) {
+      var square = this.lookForward();
+      if (!square) { console.error("no square"); return } // no square to target
+      if (square.piece) {
+        if (square.piece.team == this.team) { return } // don't attack friends
+        return { damage: {squares: [square], count: this.damage}, dx: this.dx, dy: this.dy }
+      }
+      var projectile = new clss({
+        parent_piece: this,
+        dx: this.dx,
+        dy: this.dy,
+        damage: this.damage,
+        square: square,
+      });
+      return { done: true };
     }
-    this.board.addPieces(new tW.pieces.Fireball({
-      parent_piece: this,
-      dx: this.dx,
-      dy: this.dy,
-      damage: this.damage,
-      x: this.x+this.dx,
-      y: this.y+this.dy,
-    }))
-    return { done: true };
+    return func
   }
   burnout() {
     this.die();

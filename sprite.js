@@ -269,6 +269,7 @@ uR.ready(function() {
     'stairs_down',
     'portal_red',
     'portal_blue',
+    'bomb',
     // 'ground_cracks',
     // 'ground_cracks2',
     // 'ground_cracks3',

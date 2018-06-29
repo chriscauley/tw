@@ -45,7 +45,6 @@ tW.team.Team = class Team extends uR.Object {
       }
       this.pieces.push(piece);
     }
-    board.addPieces(this.pieces);
     return this.pieces;
   }
 }

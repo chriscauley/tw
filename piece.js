@@ -24,10 +24,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
     });
-    if (opts.square) {
-      this.board = opts.square.board;
-      opts.square.moveOn(this);
-    }
+    opts.square && opts.square.addPiece(this);
     this.action_halo = "red_halo";
     this.newCanvas({
       width: this.board.scale,
@@ -426,12 +423,10 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     uR.random.shuffle(squares);
     for (var sq of squares) {
       if (!sq.piece) {
-        this.board.addPieces(new tW.enemy_map[uR.random.choice(this.pieces)]({
-          x:sq.x,
-          y:sq.y,
-          board: this.board,
+        new tW.enemy_map[uR.random.choice(this.pieces)]({
+          square: square,
           team: this.team,
-        }));
+        });
         return { done: true }
       }
     }
@@ -442,7 +437,6 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
   constructor(opts={}) {
     uR.defaults(opts,{
       parent_piece: uR.REQUIRED,
-      board: opts.parent_piece.board,
       gold: 0,
       gold_per_touch: 0,
     });
@@ -478,7 +472,7 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
     opts.wait_interval = 3;
     opts.sprite = tW.sprites['spitter'];
     super(opts);
-    this.tasks = [ this.wait, this.throwFireball ];
+    this.tasks = [ this.wait, this.shoot(tW.pieces.Fireball) ];
     for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
       if (!this.look(dxdy)) { this.dx = -dxdy[0]; this.dy = -dxdy[1]; }
     }

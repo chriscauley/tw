@@ -104,14 +104,11 @@ tW.Game = class Game extends uR.Object {
   makeUnits() {
     var start = this.board.start;
     this.player = this.player || new tW.player.Player({
+      square: start,
       game: this,
-      board: this.board,
       health: 3,
       team: 1, // #! TODO this is where competative multiplayer happens
-      x: start.x,
-      y: start.y,
     });
-    this.board.pieces.push(this.player);
     this.player.resetMiniMap();
     this.player.applyMove();
     for (var team of this.teams) {
