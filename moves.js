@@ -18,7 +18,8 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     if (!this.following) { return }
     var dx = this.following.x - this.x; //how far in each direction
     var dy = this.following.y - this.y;
-    if (this.following.is_dead || Math.abs(dx) + Math.abs(dy) > this.sight*2) { this.following = undefined; return }
+    var distances = Math.abs(dx) + Math.abs(dy);
+    if (this.following.is_dead || distance > this.sight*2) { this.following = undefined; return }
     var dirs = [[Math.sign(dx),0],[0,Math.sign(dy)]]; // defaults to check x direction first
     if (dy && this.dy) { // check the y direction first since unit is facing the y direciton
       dirs.reverse();
@@ -82,17 +83,19 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     if (square && square.piece) { return this.attack(square.piece); }
   }
   shoot(clss) {
-    function func(dx,dy) {
+    function func(dxdy) {
+      dxdy = dxdy || [this.dx,this.dy]
       var square = this.lookForward();
       if (!square) { console.error("no square"); return } // no square to target
+      if (!square.piece && !square.isOpen(dxdy)) { return } // some non-piece obstacle
       if (square.piece) {
         if (square.piece.team == this.team) { return } // don't attack friends
-        return { damage: {squares: [square], count: this.damage}, dx: this.dx, dy: this.dy }
+        return { damage: {squares: [square], count: this.damage}, dx: dxdy[0], dy: dxdy[1] }
       }
       var projectile = new clss({
         parent_piece: this,
-        dx: this.dx,
-        dy: this.dy,
+        dx: dxdy[0],
+        dy: dxdy[1],
         damage: this.damage,
         square: square,
       });
