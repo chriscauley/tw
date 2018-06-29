@@ -441,19 +441,13 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
       gold_per_touch: 0,
     });
     super(opts)
-    this.defaults({
-      dx: this.parent_piece.dx,
-      dy: this.parent_piece.dy
-    });
-    this.defaults({
-      x: this.parent_piece.x + this.dx,
-      y: this.parent_piece.y + this.dy,
-    });
     this.tasks = [this.forward,this.burnout];
+    var move = this.square.moveOn(this,{move: this.square, dxdy: [this.dx,this.dy]});
+    if (move) { this.applyMove(move) }
   }
   applyMove(opts) {
     var move = super.applyMove(opts);
-    move.damages.length && this.die();
+    move.damages && move.damages.length && this.die();
     return move;
   }
 }
