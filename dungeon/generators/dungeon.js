@@ -1,7 +1,7 @@
 DG.Dungeon = class Dungeon extends DG.Generator {
     constructor(options={}) {
         options = Object.assign({}, {
-            size: [100, 100],
+            size: [200, 200],
             max_corridor_length: 6,
             min_corridor_length: 2,
             rooms: {},
@@ -15,7 +15,7 @@ DG.Dungeon = class Dungeon extends DG.Generator {
             initial: Object.assign({},{
                 min_size: [4, 4],
                 max_size: [5, 5],
-                max_exits: 1
+                max_exits: 2
             },options.rooms.initial),
             any: Object.assign({},{
                 min_size: [3, 3],

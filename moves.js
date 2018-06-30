@@ -18,7 +18,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     if (!this.following) { return }
     var dx = this.following.x - this.x; //how far in each direction
     var dy = this.following.y - this.y;
-    var distances = Math.abs(dx) + Math.abs(dy);
+    var distance = Math.abs(dx) + Math.abs(dy);
     if (this.following.is_dead || distance > this.sight*2) { this.following = undefined; return }
     var dirs = [[Math.sign(dx),0],[0,Math.sign(dy)]]; // defaults to check x direction first
     if (dy && this.dy) { // check the y direction first since unit is facing the y direciton

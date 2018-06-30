@@ -20,11 +20,11 @@ DG.TEMPLATES['basic'] = {
     any: {
       min_size: [5,5],
       max_size: [8,8],
-      max_exits: 1,
+      max_exits: 2,
     },
   },
   corridor_density: 0,
-  room_count: 2,
+  room_count: 5,
   max_interconnect_length: 5,
 }
 
@@ -42,8 +42,8 @@ DG.TEMPLATES['tiny_rect'] = {
   room_count: 1,
   rooms: {
     initial: {
-      max_size: [5,5],
-      min_size: [5,5]
+      max_size: [6,6],
+      min_size: [4,4]
     },
   }
 }

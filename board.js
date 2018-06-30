@@ -21,16 +21,16 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
   }
   reset() {
     this.squares = [];
+    this.flat_squares = [];
+    this.pieces = [];
     this.start = this.exit = undefined;
   }
   loadLevel(level_number) {
     this.reset();
-    this.pieces = [];
     var self = this;
-    var template = this.game.config.get("map_template");
     this.level_number = level_number;
     this._dungeon = new tW.level.Dungeon({
-      style: template,
+      style: this.game.config.get("map_template"),
       seed: (this.game.config.get("seed") || "RANDOM")+this.level_number,
     })
     var level = this._dungeon.level;
@@ -43,6 +43,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         self.squares[x] = self.squares[x] || [];
         if (c == undefined || c === " ") { return }
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
+        self.flat_squares.push(square);
         self.rooms[c] = self.rooms[c] || [];
         self.rooms[c].push([square.x,square.y])
         square.room = c;
@@ -144,10 +145,12 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     if (Array.isArray(x)) { y = x[1]; x = x[0]; }
     return this.squares[x] && this.squares[x][y];
   }
-  getRandomEmptySquare() {
+  getRandomEmptySquare(filters={}) {
+    var squares = this.flat_squares;
+    for (var key in filters) { squares = _.filter(squares,s=>s[key] == filters[key]) }
     var i=1000,s;
     while (i--) {
-      s = _.sample(_.sample(this.squares));
+      s = _.sample(squares);
       if (s && s.isOpen()) { return s }
     }
     throw "could not find empty square";
