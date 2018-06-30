@@ -102,17 +102,19 @@ tW.Game = class Game extends uR.Object {
     this.board.pieces.forEach((p) => p.play());
   }
   makeUnits() {
-    var start = this.board.start;
-    this.player = this.player || new tW.player.Player({
-      square: start,
-      game: this,
-      health: 3,
-      team: 1, // #! TODO this is where competative multiplayer happens
-    });
-    this.player.resetMiniMap();
-    this.player.applyMove();
     for (var team of this.teams) {
       team.makeUnits();
+    }
+    if (this.player) {
+      this.player.board = undefined;
+      this.board.getRandomEmptySquare({room:'i'}).addPiece(this.player);
+    } else {
+      this.player = new tW.player.Player({
+        square: this.board.getRandomEmptySquare({room:'i'}),
+        game: this,
+        health: 3,
+        team: 1, // #! TODO this is where competative multiplayer happens
+      });
     }
     //new tW.item.Apple({square: this.board.getRandomEmptySquare() });
     //new tW.item.Steak({square: this.board.getRandomEmptySquare() });

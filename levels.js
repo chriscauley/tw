@@ -59,13 +59,11 @@ tW.level.RectRoom = class RectRoom extends tW.level.Level {
   }
 }
 
-tW.level.Dungeon = class Dungeon extends tW.level.Level {
+tW.level.Dungeon = class Dungeon extends DG.Dungeon {
   constructor(opts={}) {
-    uR.defaults(opts,DG.TEMPLATES[opts.style] || {});
+    opts.style && uR.defaults(opts,DG.TEMPLATES[opts.style] || {});
     super(opts);
-
-    this._dungeon = new DG.Dungeon(opts);
-    this._dungeon.generate();
-    this.level = this._dungeon.toArray();
+    this.generate();
+    this.level = this.toArray();
   }
 }

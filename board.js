@@ -33,7 +33,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       style: template,
       seed: (this.game.config.get("seed") || "RANDOM")+this.level_number,
     })
-    var level = this._dungeon.level
+    var level = this._dungeon.level;
     this.x_max = 0;
     this.y_max = level.length;
     this.rooms = {};
@@ -45,16 +45,13 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         self.rooms[c] = self.rooms[c] || [];
         self.rooms[c].push([square.x,square.y])
+        square.room = c;
       });
     });
-    if (this.game.player) {
-      this.getRandomEmptySquare().moveOn(this.game.player);
-      this.pieces.push(this.game.player);
-    }
     this.start = this.start || this.getRandomEmptySquare();
     this.exit = this.exit || this.getRandomEmptySquare();
     //this.start.make('start');
-    this.exit.setFloor(tW.floor.Stairs);
+    this.exit && this.exit.setFloor(tW.floor.Stairs);
     var red = this.getRandomEmptySquare();
     var blue = this.getRandomEmptySquare();
     red.setFloor(tW.floor.Portal,{color: 'red'});
