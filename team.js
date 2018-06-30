@@ -1,4 +1,12 @@
 tW.team = {};
+
+tW.ROOM_UNITS = [
+  { g: 1 },
+  { ge: 2, wf:5 },
+  { be: 1, ge: 3, wf: 2 },
+  { w: 4, wf: 4 },
+]
+
 tW.team.Team = class Team extends uR.Object {
   constructor(opts={}) {
     super(opts);
@@ -19,10 +27,6 @@ tW.team.Team = class Team extends uR.Object {
     // this should probably be it's own class
     var board = this.game.board;
     this.pieces = [];
-    false && this.pieces.push(new tW.pieces.Grave({
-      square: board.getRandomEmptySquare(),
-      team: this.number,
-    }));
 
     // for now give boots away on level 1
     if (this.game.level_number == 0) {
@@ -34,16 +38,22 @@ tW.team.Team = class Team extends uR.Object {
       this.pieces.push(piece);
     }
 
-    for (var i=0;i<this.unit_count;i++) {
-      var piece = new tW.enemy_map[_.sample(active_pieces)]({
-        square: board.getRandomEmptySquare(),
-        team: this.number
-      })
-      if (i) {
-        !(i%3) && piece.levelUp();
-        !(i%4) && piece.levelUp();
+    for (var room_number in board.rooms) {
+      if (room_number == 0 || room_number == 'i') { continue; } // no enemies in start room or hallways
+      var room_units = _.sample(tW.ROOM_UNITS);
+      for (var enemy_key in room_units) {
+        for (var i=0;i<room_units[enemy_key];i++) {
+          var piece = new tW.enemy_map[enemy_key]({
+            square: board.getRandomEmptySquare({room: room_number}),
+            team: this.number
+          })
+          /*if (i) {
+            !(i%3) && piece.levelUp();
+            !(i%4) && piece.levelUp();
+          }*/
+          this.pieces.push(piece);
+        }
       }
-      this.pieces.push(piece);
     }
     return this.pieces;
   }

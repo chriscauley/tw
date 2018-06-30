@@ -424,7 +424,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     for (var sq of squares) {
       if (!sq.piece) {
         new tW.enemy_map[uR.random.choice(this.pieces)]({
-          square: square,
+          square: sq,
           team: this.team,
         });
         return { done: true }

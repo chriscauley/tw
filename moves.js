@@ -26,9 +26,8 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     }
     for (var direction of dirs) {
       var square = this.look(direction);
-      if (square && square.piece == this.following || square.isOpen()) {
-        return this.forward(direction);
-      }
+      if (!square) { continue }
+      if (square.piece == this.following || square.isOpen()) { return this.forward(direction); }
     }
   }
   forward(dxdy) {

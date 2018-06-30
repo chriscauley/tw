@@ -45,7 +45,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self});
         self.flat_squares.push(square);
         self.rooms[c] = self.rooms[c] || [];
-        self.rooms[c].push([square.x,square.y])
+        self.rooms[c].push(square)
         square.room = c;
       });
     });
@@ -146,7 +146,12 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     return this.squares[x] && this.squares[x][y];
   }
   getRandomEmptySquare(filters={}) {
-    var squares = this.flat_squares;
+    if (filters.room) {
+      var squares = this.rooms[filters.room];
+      delete filters.room;
+    } else {
+      var squares = this.flat_squares;
+    }
     for (var key in filters) { squares = _.filter(squares,s=>s[key] == filters[key]) }
     var i=1000,s;
     while (i--) {
