@@ -150,22 +150,29 @@ DG.Piece = class Piece {
         var output = [];
         for (let y = 0; y < this.size[1]; y ++) {
             let row =[];
-            for (let x = 0; x < this.size[0]; x++) {
-                if (this.start_pos && this.start_pos[0] === x && this.start_pos[1] === y) {
-                  row.push('s');
-                } else {
-                  row.push(this.walls.get([x, y]) ? ' ':0);
-                }
-            }
             output.push(row);
+            for (let x = 0; x < this.size[0]; x++) {
+                var is_wall = this.walls.get([x, y]);
+                row.push({
+                    wall_rooms: [],
+                    room: is_wall?undefined:0,
+                })
+            }
         }
         for (var child of this.children) {
+            var xmax = child.size[0] - 1;
+            var ymax = child.size[1] - 1;
             var _s = (child.tag == "initial")?"i":child.id;
             var [x0,y0] = child.position;
             // room's (size+position) contains a 1 square buffer on all 4 sides
-            for (var x=1;x<child.size[0]-1;x++) {
-                for (var y=1;y<child.size[1]-1;y++) {
-                    output[y0+y][x0+x] = _s;
+            for (var x=0;x<child.size[0];x++) {
+                for (var y=0;y<child.size[1];y++) {
+                    var square = output[y0+y][x0+x];
+                    if (!x || !y || x == xmax || y == ymax) { // square is on perimiter of room (wall)
+                        square.wall_rooms.push(_s);
+                        continue;
+                    }
+                    square.room = _s;
                 }
             }
         }
