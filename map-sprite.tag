@@ -87,7 +87,7 @@ class SpriteMapper extends uR.canvas.PaintObject {
     this.tag = opts.tag;
     this.defaults(opts,{
       bg: uR.required,
-      scale: 16,
+      scale: 32,
       spacer: 8,
       offset: 8,
       parent: uR.REQUIRED,
@@ -144,6 +144,8 @@ class SpriteMapper extends uR.canvas.PaintObject {
       width: this.scale,
       height: this.scale,
       spritesheet: this.spritesheet,
+      sx: this.canvas.imgX,
+      sy: this.canvas.imgY,
     });
     s.save();
     this.sprites.push(s);
