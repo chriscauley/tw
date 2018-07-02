@@ -264,6 +264,8 @@ uR.ready(function() {
     'portal_red',
     'portal_blue',
     'bomb',
+    'brick1',
+    'brick2',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',

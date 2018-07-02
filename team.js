@@ -50,7 +50,7 @@ tW.team.Team = class Team extends uR.Object {
           /*if (i) {
             !(i%3) && piece.levelUp();
             !(i%4) && piece.levelUp();
-          }*/
+            }*/
           this.pieces.push(piece);
         }
       }

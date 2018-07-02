@@ -41,13 +41,20 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(square_options,x) {
         self.squares[x] = self.squares[x] || [];
-        var room_id = square_options.room
-        if (room_id == undefined) { return } // wall or deeper
-        var square = self.squares[x][y] = new tW.square.Square({x:x,y:y,board:self,room:room_id});
+        var room_id = square_options.room;
+        var square = self.squares[x][y] = new tW.square.Square({
+          x:x,
+          y:y,
+          board:self,
+          room:room_id,
+          wall: (room_id==undefined)?1:0,
+        });
         self.flat_squares.push(square);
-        self.rooms[room_id] = self.rooms[room_id] || [];
-        self.rooms[room_id].push(square)
-        square.room = room_id;
+        if (room_id) {
+          self.rooms[room_id] = self.rooms[room_id] || [];
+          self.rooms[room_id].push(square)
+          square.room = room_id;
+        }
       });
     });
     this.start = this.start || this.getRandomEmptySquare();

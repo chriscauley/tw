@@ -25,7 +25,8 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
       gold: 0,
       board: uR.REQUIRED,
     });
-    this.sprite = tW.sprites["ground"+((this.x%2-this.y%2)?"1":"2")]
+    if (this.wall) { this.sprite = tW.sprites["brick"+this.wall] }
+    else { this.sprite = tW.sprites["ground"+((this.x%2-this.y%2)?"1":"2")] }
     this.xy = [this.x,this.y];
     this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
@@ -55,7 +56,9 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.floor && this.floor.draw(this.canvas);
   }
   isOpen(dxdy) {
-    return (!this.piece || this.piece.canReplace(dxdy)) && (!this.floor || this.floor.canStepOn(dxdy));
+    return !this.wall
+      && (!this.piece || this.piece.canReplace(dxdy))
+      && (!this.floor || this.floor.canStepOn(dxdy));
   }
   canBeAttacked() {
     return this.piece && this.piece.canBeAttacked();
