@@ -7,7 +7,7 @@ DG.Dungeon = class Dungeon extends DG.Generator {
             rooms: {},
             corridor_density: 0.5, //corridors per room
             symmetric_rooms: false, // exits must be in the middle of walls
-            interconnects: 1, //extra corridors to connect rooms and make circular paths. not guaranteed
+            interconnects: 0, //extra corridors to connect rooms and make circular paths. not guaranteed
             max_interconnect_length: 10,
             room_count: 10
         }, options);

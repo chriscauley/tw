@@ -49,7 +49,7 @@ tW.floor = (function() {
       if (this.square.board.pieces.length == 1) {
         this.square.board.game.off('death',this._ondeath);
         this.open = true;
-        this.sprite = tW.sprites.stairs_down;
+        this.sprite = tW.sprites.ground_stairs;
         this.square.dirty = true;
       }
     }
