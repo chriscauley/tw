@@ -419,7 +419,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     this.tasks = [ this.wait, this.spawnPiece ];
   }
   spawnPiece() {
-    var squares = this.lookMany(tW.look.circle[[1,0]][this.sight]);
+    var squares = this.lookMany(tW.look.circle[[1,0]][this.sight]).filter(s=>s.isOpen());
     uR.random.shuffle(squares);
     for (var sq of squares) {
       if (!sq.piece) {
