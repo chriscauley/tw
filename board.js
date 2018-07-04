@@ -37,6 +37,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.x_max = 0;
     this.y_max = level.length;
     this.rooms = {};
+    this.room_list = [];
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(square_options,x) {
@@ -51,6 +52,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
         });
         self.flat_squares.push(square);
         if (room_id) {
+          if (self.room_list.indexOf(room_id) == -1) { self.room_list.push(room_id) }
           self.rooms[room_id] = self.rooms[room_id] || [];
           self.rooms[room_id].push(square)
           square.room = room_id;

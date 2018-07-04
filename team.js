@@ -1,6 +1,7 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
+  { ns: 1, wf: 4, ge: 2, },
   { g: 1 },
   { ge: 2, wf:5 },
   { be: 1, ge: 3, wf: 2 },
@@ -39,7 +40,8 @@ tW.team.Team = class Team extends uR.Object {
     }
 
     for (var room_number in board.rooms) {
-      if (room_number == 0 || room_number == 'i') { continue; } // no enemies in start room or hallways
+      // no enemies in start room or hallways
+      if (room_number == 0 || (board.room_list.length != 1 && room_number == 'i')) { continue; }
       var room_units = _.sample(tW.ROOM_UNITS);
       for (var enemy_key in room_units) {
         for (var i=0;i<room_units[enemy_key];i++) {
