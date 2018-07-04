@@ -56,13 +56,9 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
   get(obj) {
     this.draw();
     obj = obj || {};
-    var dx = obj.dx || 0;
-    var dy = obj.dy || 0;
+    var dir_string = [obj.dx || 0,obj.dy || 0].toString();
     var canvas_set = this;
-    if (dy < 0) { canvas_set = canvas_set.up || canvas_set }
-    else if (dx > 0) { canvas_set = canvas_set.right || canvas_set }
-    else if (dy > 0) { canvas_set = canvas_set.down || canvas_set }
-    else if (dx < 0) { canvas_set = canvas_set.left || canvas_set }
+    canvas_set = canvas_set[dir_string] || canvas_set
 
     var canvas;
     if (obj.getHalo) { canvas = obj.getHalo(canvas_set) }
@@ -123,7 +119,12 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     opts.strokeStyle && c.ctx.stroke();
   }
   doRotations(source_canvas) {
-    var directions = ['up','right','down','left'];
+    var directions = [
+      '0,-1','1,-1', // up, up-right
+      '1,0','1,1', // right, down-right
+      '0,1','-1,1', // down, down-left
+      '-1,0','-1,-1', // left, up-left
+    ];
     this.temp_canvas.clear()
     this.temp_canvas.ctx.drawImage(source_canvas,0,0);
     var dx = this.scale/2;
@@ -140,7 +141,7 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
         });
 
         c.ctx.translate(dx,dy);
-        c.ctx.rotate(id*Math.PI/2);
+        c.ctx.rotate(id*Math.PI/4);
         c.ctx.drawImage(this.temp_canvas,-dx,-dy);
       }
     }
@@ -266,6 +267,7 @@ uR.ready(function() {
     'bomb',
     'brick1',
     'brick2',
+    'star',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
