@@ -85,7 +85,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   shoot(clss) {
     function func(dxdy) {
       dxdy = dxdy || [this.dx,this.dy]
-      var square = this.lookForward();
+      var square = this.look(dxdy);
       if (!square) { console.error("no square"); return } // no square to target
       if (!square.piece && !square.isOpen(dxdy)) { return } // some non-piece obstacle
       if (square.piece) {
