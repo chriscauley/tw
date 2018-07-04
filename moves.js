@@ -101,7 +101,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       });
       return { done: true };
     }
-    return func
+    return func.bind(this);
   }
   burnout() {
     this.die();
@@ -127,7 +127,7 @@ tW.mixins.Spin = (superclass) => class Spin extends superclass {
   }
   pulse() {
     this.shoot(this.projectile)([this.dx,this.dy]);
-    this.shoot(this.projectile)([-this.dx,-this.dy]);
+    //this.shoot(this.projectile)([-this.dx,-this.dy]);
   }
   spin() {
     this._direction += this.rotation_direction;

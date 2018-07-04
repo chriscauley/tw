@@ -504,7 +504,7 @@ tW.pieces.NeutronStar = class NeutronStar extends tW.mixins.Spin(tW.pieces.BaseP
     opts.sprite = tW.sprites.star;
     super(opts);
     this.description = "Spinnin star which gives off pulses as it rotates"
-    this.tasks = [this.spin];
+    this.tasks = [this.pulse,this.spin];
   }
 }
 

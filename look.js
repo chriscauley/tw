@@ -82,6 +82,19 @@
       }
     }
   }
+
+  tW.look.DIAGONALS = [
+    [1,1],
+    [-1,1],
+    [1,-1],
+    [-1,-1],
+  ]
+  for (var dxdy of tW.look.DIAGONALS) {
+    tW.look._line[dxdy] = {};
+    tW.look._line[dxdy][1] = [dxdy];
+  }
+  tW.look.line = tW.look._line
+
   for (var range of tW.look.RANGES) {
     // since circle is symetrical it technically just needs a range, not a direction
     // for now just cloning look right as the direction
