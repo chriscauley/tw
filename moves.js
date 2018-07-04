@@ -110,7 +110,33 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
 }
 
 tW.mixins = {}
-tW.mixins.Charge = (superclass) => class extends superclass {
+tW.mixins.Spin = (superclass) => class Spin extends superclass {
+  constructor(opts={}) {
+    super(opts);
+    this.directions = [
+      [-1,0],[-1,1], // left,bot-left
+      [0,1],[1,1], // bot,bot-right
+      [1,0],[1,-1], // right, top-right
+      [0,-1],[-1,-1] // top, top-left
+    ];
+    this.max_direction = this.directions.length-1;
+    this._direction = 4;
+    this.rotation_direction = -1;
+    this.applyMove(this.spin()); // matches initial direction to rotation
+    this.projectile = tW.pieces.Fireball;
+  }
+  pulse() {
+    this.shoot(this.projectile)([this.dx,this.dy]);
+    this.shoot(this.projectile)([-this.dx,-this.dy]);
+  }
+  spin() {
+    this._direction += this.rotation_direction;
+    if (this._direction > this.max_direction) { this._direction = 0 }
+    if (this._direction < 0) { this._direction = this.max_direction }
+    return { turn: this.directions[this._direction] };
+  }
+}
+tW.mixins.Charge = (superclass) => class Charge extends superclass {
   buildHelp() {
     return _.extend(super.buildHelp(),{
       //checkCharge: "Looks for an enemy "+this.tunnel_sight+" squares away or less",

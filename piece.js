@@ -499,6 +499,15 @@ tW.pieces.Chest = class Chest extends tW.pieces.BasePiece {
   touchedBy(player) { this.die() }
 }
 
+tW.pieces.NeutronStar = class NeutronStar extends tW.mixins.Spin(tW.pieces.BasePiece) {
+  constructor(opts={}) {
+    opts.sprite = tW.sprites.star;
+    super(opts);
+    this.description = "Spinnin star which gives off pulses as it rotates"
+    this.tasks = [this.spin];
+  }
+}
+
 tW.enemy_map = {
   ch: tW.pieces.Chest,
   c: tW.pieces.CountDown,
@@ -509,4 +518,5 @@ tW.enemy_map = {
   ge: tW.pieces.GooglyEyes,
   g: tW.pieces.Grave,
   sp: tW.pieces.Spitter,
+  ns: tW.pieces.NeutronStar,
 }

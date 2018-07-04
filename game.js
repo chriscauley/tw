@@ -99,7 +99,8 @@ tW.Game = class Game extends uR.Object {
   nextTurn() {
     this.tnow = new Date().valueOf();
     this.turn++;
-    uR.timeIt(()=> this.board.pieces.forEach((p) => p.play()))();
+    //uR.timeIt(()=> this.board.pieces.forEach((p) => p.play()))();
+    this.board.pieces.forEach((p) => p.play());
   }
   makeUnits() {
     for (var team of this.teams) {
