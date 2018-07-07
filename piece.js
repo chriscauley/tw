@@ -8,6 +8,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
     super(opts);
+    opts.sprite = opts.sprite || tW.sprites[this.constructor.name.toLowerCase()];
     this.defaults(opts,{
       sprite: uR.REQUIRED,
       dx: dx,
@@ -404,7 +405,6 @@ tW.pieces.GooglyEyes = class GooglyEyes extends tW.pieces.BasePiece {
       this.follow,
     ]
   }
-  isActionReady() { return this.wait_ready }
   isAwake() { return this.following; }
 }
 

@@ -68,7 +68,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
     return Math.abs(this.x-piece.x) + Math.abs(this.y-piece.y);
   }
   wait() {
-    if (this.wait_ready) { return }
+    if (!this.wait_interval || this.wait_ready) { return }
     this.waited++;
     return {
       done: true,
