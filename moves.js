@@ -75,6 +75,16 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       wait_ready: this.wait_interval <= this.waited,
     }
   }
+  ifWaited(func) {
+    // Useful for putting actions ahead of wait in queue. See BossBat for example of why this is useful
+    func = func.bind(this);
+    function out() {
+      if (!this.wait_ready && this.wait_interval) { return }
+      return func()
+    }
+    out._name = func.name;
+    return out;
+  }
   countdown() {
     this.points = this.step%4+1;
   }

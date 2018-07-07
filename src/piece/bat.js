@@ -41,7 +41,12 @@
       opts.sight = 8;
       super(opts);
       this.minion_class = tW.pieces.bat.BaseBat;
-      this.tasks = [ this.charge(this.shoot(SpawningProjectile)) ].concat(this.tasks);
+      this.tasks = [
+        this.ifWaited(this.attackNearby),
+        this.charge(this.shoot(SpawningProjectile)),
+        this.wait,
+        this.forwardRandomly,
+      ];
     }
   }
 
