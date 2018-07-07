@@ -29,6 +29,8 @@ var JS_FILES = {
 
     "moves.js",
     "piece.js",
+    "src/piece/index.js",
+    "src/piece/*.js",
     "player.js",
 
     "board.js",
