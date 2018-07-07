@@ -28,11 +28,11 @@ var JS_FILES = {
     "item/weapon/*.js",
 
     "moves.js",
+    "src/move/base.js",
+    "src/move/*.js",
     "piece.js",
     "src/piece/index.js",
     "src/piece/*.js",
-    "src/move/index.js",
-    "src/move/*.js",
     "player.js",
 
     "board.js",

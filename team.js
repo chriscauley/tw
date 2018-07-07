@@ -1,11 +1,12 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  { ns: 1, wf: 4, ge: 2, },
-  { g: 1 },
-  { ge: 2, wf:5 },
-  { be: 1, ge: 3, wf: 2 },
-  { w: 4, wf: 4 },
+  { bat: 1, ge: 1, bbat: 1, },
+  // { ns: 1, wf: 4, ge: 2, },
+  // { g: 1 },
+  // { ge: 2, wf:5 },
+  // { be: 1, ge: 3, wf: 2 },
+  // { w: 4, wf: 4 },
 ]
 
 tW.team.Team = class Team extends uR.Object {

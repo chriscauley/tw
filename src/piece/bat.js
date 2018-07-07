@@ -10,16 +10,15 @@
     forwardRandomly() {
       for (let direction of _.shuffle(tW.look.DIRECTIONS)) {
         let move = this.forward(direction);
-        if (move) { return move; }
+        if (move) { move.turn = [0,0]; return move; }
       }
     }
   }
-  class SpawningProjectile extends tW.pieces.Projectile {
+  class SpawningProjectile extends tW.pieces.Fireball {
     burnout() {
       var move = super.burnout();
       if (!move) { return; }
-      console.log("spawn something",this.parent_piece);
-      if (true) { throw "NotImplemented"; }
+      tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.minion_class]);
       return move;
     }
   }
@@ -37,8 +36,9 @@
     }
   }
 
-  class BossBat extends BaseBat {
+  class BossBat extends tW.move.Charge(BaseBat) {
     constructor(opts={}) {
+      opts.sight = 8;
       super(opts);
       this.minion_class = tW.pieces.bat.BaseBat;
       this.tasks = [ this.charge(this.shoot(SpawningProjectile)) ].concat(this.tasks);

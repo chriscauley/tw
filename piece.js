@@ -78,7 +78,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
   }
-  isActionReady() { return this.wait_ready || !this.wait_interval; }
+  isActionReady() { return this.charged || this.wait_ready || !this.wait_interval; }
   isAwake() { return true; }
   applyMove(opts={}) {
     var result = {
@@ -414,7 +414,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     opts.sprite = tW.sprites['grave'];
     opts.wait_interval = 4;
     super(opts);
-    this.pieces = ['ge','be']
+    this.pieces = [tW.pieces.GoogleyEyes,tW.pieces.Beholder];
     this.dx = this.dy = 0; // has no direction
     this.tasks = [ this.wait, tW.move.spawnPiece ];
   }
@@ -462,7 +462,7 @@ tW.pieces.Spitter = class Spitter extends tW.pieces.BasePiece {
   }
 }
 
-tW.pieces.Beholder = class Beholder extends tW.mixins.Charge(tW.pieces.BasePiece) {
+tW.pieces.Beholder = class Beholder extends tW.move.Charge(tW.pieces.BasePiece) {
   constructor(opts={}) {
     opts.sprite = tW.sprites['beholder'];
     super(opts);
