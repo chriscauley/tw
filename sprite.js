@@ -268,6 +268,9 @@ uR.ready(function() {
     'brick1',
     'brick2',
     'star',
+    'basebat',
+    'bossbat',
+    'vampire',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
@@ -287,9 +290,11 @@ uR.ready(function() {
     'death',
     'fly',
     'warrior',
-    'small_bat',
-    'large_bat',
     'spitter',
+    'star',
+    'basebat',
+    'bossbat',
+    'vampire',
     'beholder',
   ];
   var blades = [
