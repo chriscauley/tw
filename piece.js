@@ -416,20 +416,7 @@ tW.pieces.Grave = class Grave extends tW.pieces.BasePiece {
     super(opts);
     this.pieces = ['ge','be']
     this.dx = this.dy = 0; // has no direction
-    this.tasks = [ this.wait, this.spawnPiece ];
-  }
-  spawnPiece() {
-    var squares = this.lookMany(tW.look.circle[[1,0]][this.sight]).filter(s=>s.isOpen());
-    uR.random.shuffle(squares);
-    for (var sq of squares) {
-      if (!sq.piece) {
-        new tW.enemy_map[uR.random.choice(this.pieces)]({
-          square: sq,
-          team: this.team,
-        });
-        return { done: true }
-      }
-    }
+    this.tasks = [ this.wait, tW.move.spawnPiece ];
   }
 }
 

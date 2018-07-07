@@ -31,6 +31,8 @@ var JS_FILES = {
     "piece.js",
     "src/piece/index.js",
     "src/piece/*.js",
+    "src/move/index.js",
+    "src/move/*.js",
     "player.js",
 
     "board.js",
