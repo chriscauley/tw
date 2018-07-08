@@ -1,12 +1,12 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  { bat: 1, ge: 1, bbat: 1, },
-  // { ns: 1, wf: 4, ge: 2, },
-  // { g: 1 },
-  // { ge: 2, wf:5 },
-  // { be: 1, ge: 3, wf: 2 },
-  // { w: 4, wf: 4 },
+  //{ bbat: 1 },
+  // { ns: 1, fly: 4, sk: 2, },
+  { g: 1 },
+  { sk: 2, fly:5 },
+  // { be: 1, sk: 3, fly: 2 },
+  // { zombie: 4, fly: 4 },
 ]
 
 tW.team.Team = class Team extends uR.Object {
@@ -24,7 +24,7 @@ tW.team.Team = class Team extends uR.Object {
   }
   makeUnits() {
     var active_pieces = this.active_pieces || this.game.config.get("active_pieces");
-    if (!active_pieces.length) { active_pieces = ['ge','be'] }
+    if (!active_pieces.length) { active_pieces = ['sk','be'] }
     if (this.number == 1) { return this.pieces } // player only
     // this should probably be it's own class
     var board = this.game.board;

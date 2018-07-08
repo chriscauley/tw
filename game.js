@@ -1,6 +1,6 @@
 uR.tw = {game_config: new uR.Config("GAME_CONFIG")};
 uR.ready(function() {
-  var PIECE_CHOICES = ['ge','wf','be','w','sp'];
+  var PIECE_CHOICES = ['sk','fly','be','zombie','sp'];
   var SEED_CHOICES = ['42',['RANDOM','Randomize level']]
   /*for (var key in tW.enemy_map) {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);

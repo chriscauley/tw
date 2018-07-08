@@ -39,6 +39,7 @@
   class BossBat extends tW.move.Charge(BaseBat) {
     constructor(opts={}) {
       opts.sight = 8;
+      opts.health = 4;
       super(opts);
       this.minion_class = tW.pieces.bat.BaseBat;
       this.tasks = [

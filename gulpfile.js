@@ -30,8 +30,8 @@ var JS_FILES = {
     "moves.js",
     "src/move/base.js",
     "src/move/*.js",
-    "piece.js",
-    "src/piece/index.js",
+    "src/piece/base.js",
+    "src/piece/projectile.js", // will eventually be its own folder
     "src/piece/*.js",
     "player.js",
 
