@@ -56,7 +56,7 @@ var LESS_FILES = {
 
 var STATIC_FILES = _src([
   'data.json',
-  '_sprites/',
+  'img/',
 ]);
 var MUSTACHE_FILES = _src([
   'index.html',

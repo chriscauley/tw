@@ -18,7 +18,7 @@
       { name: "H", type: "int" },
     ];
     this.mapper = new SpriteMapper({
-      bg: "_sprites/"+this.sheet.path,
+      bg: "img/sprites/"+this.sheet.path,
       spritesheet: this.sheet,
       parent: this.root.querySelector("#sprite-mapper-inner"),
       tag: this,
