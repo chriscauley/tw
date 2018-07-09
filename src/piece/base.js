@@ -59,11 +59,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
   getHelpText() {
     var _help = this.buildHelp();
     var items = this.description && [this.description] || [];
-    for (var task_list of this.tasks) {
-      _.each(task_list,function(task,i) {
-        items.push(`${i}. *${task.name}:* ${_help[task.name] || 'unknown'}`)
-      });
-    }
+    _.each(this.tasks,function(task,i) {
+      let name = task._name || task.name;
+      items.push(`${i}. *${name}:* ${_help[name] || 'unknown'}`)
+    })
     return items;
   }
   levelUp(n=1) {

@@ -6,7 +6,6 @@ tW.move.Charge = (superclass) => class Charge extends superclass {
     })
   }
   charge(func,opts={}) {
-    func = func.bind(this);
     opts = uR.defaults(opts, {
       range: this.sight,
       geometry: "line",
@@ -31,7 +30,8 @@ tW.move.Charge = (superclass) => class Charge extends superclass {
         }
       }
     }
-    out._name = `Charge ${func.name}@${opts.distance}`;
+    out._name = `Charge ${func._name || func.name}`;
+    func = func.bind(this);
     return out
   }
 }

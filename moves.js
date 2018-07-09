@@ -8,7 +8,11 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       follow: "If following a unit, move or attack in the direction of the unit.",
       findEnemy: `Look ${this.sight} squares for an enemy to follow.`,
       throwFireball: `Creates a fireball in the direction this is facing.`,
+      forwardRandomly: "Move in a random direction.",
+      attackNearby: "Attack a nearby enemy.",
       turnRandomly: "Turn in a random direction.",
+      wait: `Wait ${this.wait_interval} moves.`,
+      "Charge SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn`,
     }
   }
   flip(move) {
@@ -78,12 +82,12 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   }
   ifWaited(func) {
     // Useful for putting actions ahead of wait in queue. See BossBat for example of why this is useful
-    func = func.bind(this);
     function out() {
       if (!this.wait_ready && this.wait_interval) { return }
       return func()
     }
     out._name = func.name;
+    func = func.bind(this);
     return out;
   }
   countdown() {
@@ -112,7 +116,9 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       });
       return { done: true };
     }
-    return func.bind(this);
+    func = func.bind(this);
+    func._name = clss.name;
+    return func;
   }
   burnout() {
     this.die();
