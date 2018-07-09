@@ -26,6 +26,11 @@
       }));
       return move;
     }
+    buildHelp() {
+      return _.extend(super.buildHelp(),{
+        'burnout': `If this piece cannot move, it dies and makes spawns a ${this.parent_piece.spawn_class.name}`,
+      })
+    }
   }
 
   class BaseBat extends MoveRandomly(tW.pieces.BasePiece) {

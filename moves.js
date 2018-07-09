@@ -13,6 +13,7 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
       turnRandomly: "Turn in a random direction.",
       wait: `Wait ${this.wait_interval} moves.`,
       "Charge SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn`,
+      burnout: 'If this piece cannot move it dies.',
     }
   }
   flip(move) {
