@@ -1,5 +1,5 @@
 tW.pieces = {}
-tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
+tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right

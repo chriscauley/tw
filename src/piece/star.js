@@ -1,5 +1,5 @@
 (function() {
-  class Star extends tW.mixins.Spin(tW.pieces.BasePiece) {
+  class Star extends tW.move.Spin(tW.pieces.BasePiece) {
     constructor(opts={}) {
       opts.sprite = tW.sprites.star;
       super(opts);
