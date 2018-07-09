@@ -15,16 +15,15 @@
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
-    burnout() {
-      const move = super.burnout();
-      if (!move) { return; }
-      const move2 = tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.spawn_class]);
-      _.extend(move,move2);
+    die() {
+      // should this somehow modify the move that caused the death?
+      // not sure if that would be useful
+      super.die();
+      var move = tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.spawn_class]);
       const buff = this.parent_piece.spawn_buff;
-      buff && move2.spawned && move2.spawned.forEach(spawn => new buff({
+      buff && move && move.spawned && move.spawned.forEach(spawn => new buff({
         target: spawn,
       }));
-      return move;
     }
     buildHelp() {
       return _.extend(super.buildHelp(),{
@@ -36,6 +35,8 @@
   class BaseBat extends MoveRandomly(tW.pieces.BasePiece) {
     constructor(opts={}) {
       opts.wait_interval = 1;
+      opts.dx = 0;
+      opts.dy = 0;
       super(opts);
       this.directions = tW.look.DIRECTIONS.slice();
       this.tasks = [
