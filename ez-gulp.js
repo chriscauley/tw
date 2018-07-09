@@ -10,6 +10,7 @@ var babel = require('gulp-babel');
 var ncp = require('ncp');
 var path = require("path");
 var rev = require('gulp-rev');
+var clean = require('gulp-clean');
 
 module.exports = function(opts) {
   opts.js = opts.js || {}; // javascript and riot files
@@ -52,6 +53,11 @@ module.exports = function(opts) {
     })(key);
   }
 
+  gulp.task('clean',function() {
+    return gulp.src(opts.DEST+"/*",{read: false})
+      .pipe(clean())
+  })
+
   gulp.task("cp-static",function() {
     var DEST = opts.DEST;
     if (!DEST.startsWith("/")) {
@@ -60,7 +66,6 @@ module.exports = function(opts) {
     opts.static.forEach(function(file_or_directory) {
       var source = path.join(__dirname,file_or_directory);
       var dest = path.join(DEST,file_or_directory.replace(/src\//,''));
-      console.log(source,dest);
       ncp(source, dest);
     });
     opts.renames && opts.renames.forEach(function(r) {
