@@ -1,8 +1,10 @@
 var argv = require('yargs').argv;
 var ezGulp = require("./ez-gulp");
 
+const _src = array => array.map(s => "src/"+s);
+
 var JS_FILES = {
-  tw: [
+  tw: _src([
     "main.js",
     "look.js",
 
@@ -27,16 +29,16 @@ var JS_FILES = {
     "item/weapon/base.js",
     "item/weapon/*.js",
 
-    "src/sprite/base.js",
-    "src/sprite/*.js",
-    "src/sprite/*.tag",
+    "sprite/base.js",
+    "sprite/*.js",
+    "sprite/*.tag",
 
-    "src/move/base.js",
-    "src/move/*.js",
-    "src/piece/base.js",
-    "src/piece/projectile.js", // will eventually be its own folder
-    "src/piece/*.js",
-    "src/buff.js",
+    "move/base.js",
+    "move/*.js",
+    "piece/base.js",
+    "piece/projectile.js", // will eventually be its own folder
+    "piece/*.js",
+    "buff.js",
     "player.js",
 
     "board.js",
@@ -46,19 +48,19 @@ var JS_FILES = {
     "levels.js",
     "ui.tag",
     "map-sprite.tag",
-  ]
+  ])
 }
 var LESS_FILES = {
-  tw: ["less/base.less"],
+  tw: _src(["less/base.less"]),
 }
 
-var STATIC_FILES = [
+var STATIC_FILES = _src([
   'data.json',
   '_sprites/',
-];
-var MUSTACHE_FILES = [
+]);
+var MUSTACHE_FILES = _src([
   'index.html',
-]
+]);
 var PRODUCTION = argv._[0] == 'deploy';
 
 var RENAMES = [
@@ -69,7 +71,7 @@ ezGulp({
   js: JS_FILES,
   less: LESS_FILES,
   static: STATIC_FILES,
-  renames: RENAMES,
   mustache: MUSTACHE_FILES,
+  renames: RENAMES,
   DEST: PRODUCTION?"/var/timewalker.io/":".dist/",
 })

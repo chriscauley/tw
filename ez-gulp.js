@@ -59,7 +59,8 @@ module.exports = function(opts) {
     }
     opts.static.forEach(function(file_or_directory) {
       var source = path.join(__dirname,file_or_directory);
-      var dest = path.join(DEST,file_or_directory);
+      var dest = path.join(DEST,file_or_directory.replace(/src\//,''));
+      console.log(source,dest);
       ncp(source, dest);
     });
     opts.renames && opts.renames.forEach(function(r) {
