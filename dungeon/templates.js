@@ -32,7 +32,7 @@ DG.TEMPLATES['rect'] = {
   room_count: 1,
   rooms: {
     initial: {
-      max_size: [10,10],
+      max_size: [6,6],
       min_size: [5,5]
     },
   }

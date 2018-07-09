@@ -10,11 +10,15 @@
     for (var sq of squares) {
       if (!sq.piece) {
         const clss = uR.random.choice(pieces || this.pieces);
-        new clss({
-          square: sq,
-          team: this.team,
-        });
-        return { done: true }
+        return {
+          done: true,
+          spawned: [ // eventually this list will be in a forloop so that spawned can be plural
+            new clss({
+              square: sq,
+              team: this.team,
+            })
+          ]
+        }
       }
     }
   }

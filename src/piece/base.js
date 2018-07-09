@@ -27,6 +27,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     });
     opts.square && opts.square.addPiece(this);
     this.action_halo = "red_halo";
+    this.buffs = [];
     this.newCanvas({
       width: this.board.scale,
       height: this.board.scale,
@@ -164,6 +165,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     this.ui_dirty = true;
     var move = this.getNextMove();
     if (move) {
+      for (let buff of this.buffs) { buff.updateMove(move) }
       if (move.wait_ready) { this.waited = 0; }
       this.wait_ready = move.wait_ready;
       var result = this.applyMove(move);
@@ -190,6 +192,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.moves.Moves {
     if (this.show_health && this.max_health != 1 && this.current_square) {
       this.stamp(0,0,this.max_health,'black');
       this.stamp(0,0,Math.max(this.health,0),'red');
+    }
+    for (let i=0;i<this.buffs.length;i++) {
+      let buff = this.buffs[i];
+      this.stamp(0,this.board.scale-this.s,buff.remaining_turns,buff.sprite);
     }
     this.ui_dirty = false;
   }

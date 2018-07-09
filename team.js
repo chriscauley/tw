@@ -1,10 +1,10 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  //{ bbat: 1 },
+  { bbat: 1 },
   // { ns: 1, fly: 4, sk: 2, },
-  { g: 1 },
-  { sk: 2, fly:5 },
+  //{ g: 1 },
+  //{ sk: 2, fly:5 },
   // { be: 1, sk: 3, fly: 2 },
   // { zombie: 4, fly: 4 },
 ]

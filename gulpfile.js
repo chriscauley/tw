@@ -33,6 +33,7 @@ var JS_FILES = {
     "src/piece/base.js",
     "src/piece/projectile.js", // will eventually be its own folder
     "src/piece/*.js",
+    "src/buff.js",
     "player.js",
 
     "board.js",

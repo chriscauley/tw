@@ -16,9 +16,14 @@
   }
   class SpawningProjectile extends tW.pieces.Fireball {
     burnout() {
-      var move = super.burnout();
+      const move = super.burnout();
       if (!move) { return; }
-      tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.minion_class]);
+      const move2 = tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.spawn_class]);
+      _.extend(move,move2);
+      const buff = this.parent_piece.spawn_buff;
+      buff && move2.spawned && move2.spawned.forEach(spawn => new buff({
+        target: spawn,
+      }));
       return move;
     }
   }
@@ -41,7 +46,8 @@
       opts.sight = 8;
       opts.health = 4;
       super(opts);
-      this.minion_class = tW.pieces.bat.BaseBat;
+      this.spawn_class = tW.pieces.bat.BaseBat;
+      this.spawn_buff = tW.buffs.Rage;
       this.tasks = [
         this.ifWaited(this.attackNearby),
         this.charge(this.shoot(SpawningProjectile)),
