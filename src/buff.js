@@ -13,12 +13,14 @@
     }
     updateMove(move) {
       this.remaining_turns--;
-      (this.remaining_turns < 1) && this.dispell();
+      (this.remaining_turns < 1) && this.dispell(move); //should somehow augment the move to trigger dispell;
       this.target._ui_dirty = true;
     }
-    dispell() {
+    dispell(move) {
       var index = this.target.buffs.indexOf(this);
       (index != -1) && this.target.buffs.splice(index,1);
+      move.waited = 0;
+      move.wait_ready = false;
     }
   }
 
@@ -29,8 +31,9 @@
       this.sprite = 'fireball';
     }
     updateMove(move) {
+      move.wait_ready = true;
+      move.waited = 0;
       super.updateMove(move);
-      move.wait_ready = true;;
     }
   }
 

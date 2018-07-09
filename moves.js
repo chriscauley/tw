@@ -69,10 +69,11 @@ tW.moves.Moves = class Moves extends tW.look.Look(uR.canvas.CanvasObject) {
   }
   wait() {
     if (!this.wait_interval || this.wait_ready) { return }
-    this.waited++;
+    const waited = this.waited+1;
     return {
       done: true,
-      wait_ready: this.wait_interval <= this.waited,
+      wait_ready: this.wait_interval <= waited,
+      waited: waited,
     }
   }
   ifWaited(func) {
