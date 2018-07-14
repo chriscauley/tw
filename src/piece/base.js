@@ -338,43 +338,4 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_dirty = true;
   }
 }
-
-tW.pieces.CountDown = class CountDown extends tW.pieces.BasePiece {
-  constructor(opts) {
-    super(opts);
-    this.fillStyle = '#383';
-    this.strokeStyle = "white";
-    this.tasks = [this.countdown];
-  }
-  getText() { return this.points }
-  movedOnTo() {
-    this.board.game.player.addScore(this.points);
-    this.board.remove(this);
-  }
-  canBeAttacked() { return false; }
-  canReplace() { return true; }
-}
-
-tW.pieces.GreenBlob = class GreenBlob extends tW.pieces.BasePiece {
-  constructor(opts) {
-    super(opts);
-  }
-}
-
-tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
-  constructor(opts) {
-    opts.sprite = tW.sprites['blue-blob'];
-    opts.health = 2;
-    super(opts);
-    this.strokeStyle = "green";
-    this.tasks = [
-      this.flip,
-      this.bounce,
-    ];
-  }
-}
-
-tW.enemy_map = {
-  c: tW.pieces.CountDown,
-  b: tW.pieces.Blob,
-}
+tW.enemy_map = {}
