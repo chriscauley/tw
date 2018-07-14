@@ -271,6 +271,7 @@ uR.ready(function() {
     'basebat',
     'bossbat',
     'vampire',
+    'flyking',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
@@ -296,6 +297,7 @@ uR.ready(function() {
     'bossbat',
     'vampire',
     'beholder',
+    'flyking',
   ];
   var blades = [
     'sword',

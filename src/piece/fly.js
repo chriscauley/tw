@@ -18,5 +18,18 @@
     }
   }
 
+  class FlyKing extends tW.pieces.BasePiece {
+    constructor(opts={}) {
+      super(opts);
+      this.pieces = [Fly];
+      this.tasks = [
+        tW.move.Wait(this,8,{name:'_spawn_wait'}).then(tW.move.spawnPiece),
+        this.findEnemy,
+        //this.stayNearEnemy,
+      ]
+    }
+  }
+
   tW.enemy_map.fly = tW.pieces.Fly = Fly;
-})()
+  tW.enemy_map.flyking = tW.pieces.FlyKing = FlyKing;
+})();
