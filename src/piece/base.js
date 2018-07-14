@@ -25,7 +25,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
     });
-    opts.square && opts.square.addPiece(this);
+    opts.square.addPiece(this); // this sets this.board;
+    this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
     this.newCanvas({
@@ -34,11 +35,12 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       name: 'ui_canvas',
     });
     this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
-    this.animating = 0;
+    this.wait = new tW.move.Wait(this,this.wait_interval);
 
+    this.animating = 0;
     this.show_health = true;
     this.max_health = this.health;
-    this.waited = 0;
+    this.onMove = [];
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
     this.outer_color = 'transparent';
@@ -69,7 +71,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.level += n;
     this.ds = 0;
     while(n--) {
-      // if (n%2 &_& this.wait_interval) { this.wait_interval -= 1;continue }
+      // if (n%2 &_& this.wait.interval) { this.wait.interval -= 1;continue }
       this.health = this.max_health += 1;
     }
   }
@@ -78,7 +80,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
   }
-  isActionReady() { return this.charged || this.wait_ready || !this.wait_interval; }
+  isActionReady() { return this.charged || !this.wait.interval || this.wait.isReady(); }
   isAwake() { return true; }
   applyMove(opts={}) {
     var result = {
@@ -162,14 +164,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   play() {
     this.ui_dirty = true;
+    uR.forEach(this.buffs,buff => buff.beforeMove())
     var move = this.getNextMove();
     if (move) {
       for (let buff of this.buffs) { buff.updateMove(move) }
-      if (move.wait_ready) { this.waited = 0; }
-      this.wait_ready = move.wait_ready;
-      var result = this.applyMove(move);
-      return;
+      const result = this.applyMove(move);
+      this.onMove.map(f=>f());
     }
+    uR.forEach(this.buffs,buff => buff.afterMove())
+    this.afterMove = [];
   }
   stamp(x0,y0,dx,img) {
     img = tW.sprites.get(img);

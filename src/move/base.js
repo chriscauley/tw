@@ -11,7 +11,7 @@
         forwardRandomly: "Move in a random direction.",
         attackNearby: "Attack a nearby enemy.",
         turnRandomly: "Turn in a random direction.",
-        wait: `Wait ${this.wait_interval} moves.`,
+        wait: `Wait ${this.wait.interval} moves.`, // should be something like f.wait.interval
         "Charge SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn`,
         burnout: 'If this piece cannot move it dies.',
       }
@@ -71,25 +71,6 @@
     }
     _getDistance(piece) {
       return Math.abs(this.x-piece.x) + Math.abs(this.y-piece.y);
-    }
-    wait() {
-      if (!this.wait_interval || this.wait_ready) { return }
-      const waited = this.waited+1;
-      return {
-        done: true,
-        wait_ready: this.wait_interval <= waited,
-        waited: waited,
-      }
-    }
-    ifWaited(func) {
-      // Useful for putting actions ahead of wait in queue. See BossBat for example of why this is useful
-      function out() {
-        if (!this.wait_ready && this.wait_interval) { return }
-        return func()
-      }
-      out._name = func.name;
-      func = func.bind(this);
-      return out;
     }
     countdown() {
       this.points = this.step%4+1;

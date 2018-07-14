@@ -22,18 +22,18 @@
       move.waited = 0;
       move.wait_ready = false;
     }
+    beforeMove(result) { }
+    afterMove(result) { }
   }
 
   class Rage extends BaseBuff {
     constructor(opts={}) {
       super(opts);
-      this.target.wait_ready = true;
+      this.target.wait.waited = this.target.wait.interval;
       this.sprite = 'fireball';
     }
-    updateMove(move) {
-      move.wait_ready = true;
-      move.waited = 0;
-      super.updateMove(move);
+    afterMove() {
+      this.target.wait.waited = this.target.wait.interval;
     }
   }
 

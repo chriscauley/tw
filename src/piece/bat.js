@@ -55,9 +55,10 @@
       this.spawn_class = tW.pieces.bat.BaseBat;
       this.spawn_buff = tW.buffs.Rage;
       this.tasks = [
-        this.ifWaited(this.attackNearby),
+        this.wait.ifReady(this.attackNearby),
         this.charge(this.shoot(SpawningProjectile)),
         this.wait,
+        this.attackNearby,
         this.forwardRandomly,
       ];
     }
