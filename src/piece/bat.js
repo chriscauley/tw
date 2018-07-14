@@ -56,7 +56,7 @@
       this.spawn_buff = tW.buffs.Rage;
       this.tasks = [
         this.wait.ifReady(this.attackNearby),
-        this.charge(this.shoot(SpawningProjectile)),
+        this.charge(this.shoot(SpawningProjectile),{wait_triggered: true}),
         this.wait,
         this.attackNearby,
         this.forwardRandomly,

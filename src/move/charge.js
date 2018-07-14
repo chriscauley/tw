@@ -12,7 +12,7 @@ tW.move.Charge = (superclass) => class Charge extends superclass {
       pass: s => s && s.piece && s.piece.team != this.team, // pass on enemy target
       fail: s => !s || s.piece && s.piece.team == this.team, // fail on no square or friendly target
     })
-    function out() {
+    const out = () => {
       if (this.charged) {
         var result =  func(this.charged);
         this.charged = false;
@@ -24,6 +24,9 @@ tW.move.Charge = (superclass) => class Charge extends superclass {
         for (let square of squares) {
           if (opts.pass(square)) {
             this.charged = direction;
+            if (opts.wait_triggered && this.wait.isReady()) {
+              return out();
+            }
             return { turn: direction }
           }
           if (opts.fail(square)) { break }
