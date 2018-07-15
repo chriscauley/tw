@@ -17,6 +17,7 @@
   tW.look = {
     Look: Look,
     directions: [[0,1],[0,-1],[1,0],[-1,0]],
+    getDistance: (p1,p2) => Math.abs(p1.x-p2.x) + Math.abs(p1.y-p2.y),
     line: {},
     _line: {},
     cone: {},
