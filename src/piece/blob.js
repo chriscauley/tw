@@ -4,7 +4,7 @@
       super(opts);
       this.fillStyle = '#383';
       this.strokeStyle = "white";
-      this.tasks = [this.countdown];
+      this.setTasks(this.countdown);
     }
     getText() { return this.points }
     movedOnTo() {
@@ -27,10 +27,12 @@
       opts.health = 2;
       super(opts);
       this.strokeStyle = "green";
-      this.tasks = [
-        this.flip,
-        this.bounce,
-      ];
+      this.setTasks(
+        tW.move.cycle(
+          tW.move.flip,
+          tW.move.bounce,
+        )
+      )
     }
   }
 })();

@@ -4,11 +4,11 @@
       opts.sprite = tW.sprites['skeleton'];
       opts.wait_interval = 1;
       super(opts);
-      this.tasks = [
-        this.findEnemy,
+      this.setTasks(
+        tW.move.findEnemy,
         this.wait,
-        this.follow,
-      ]
+        tW.move.follow,
+      )
     }
     isAwake() { return this.following; }
   }

@@ -3,30 +3,30 @@
     constructor(opts={}) {
       opts.sprite = tW.sprites['fly'];
       super(opts);
-      this.tasks = [ this.forward,this.turnRandomly ];
-    }
-    turnRandomly() {
-      // turns left or right if the square is empty. If no empty square, turn randomly
-      var directions = ['left','right'];
-      var square,direction;
-      while (directions.length) {
-        var d = directions[(uR.random()>0.5)?'pop':'shift']();
-        square = this.look(this._turn(d));
-        if (square && !square.piece) { break; }
-      }
-      return this._turn(d);
+      this.setTasks(
+        tW.move.forward,
+        tW.move.turnRandomly,
+      )
     }
   }
 
   class FlyKing extends tW.pieces.BasePiece {
     constructor(opts={}) {
+      opts.wait_interval = 1
+      opts.health = 4
+      opts.sight = 5
       super(opts);
-      this.pieces = [Fly];
-      this.tasks = [
-        tW.move.Wait(this,8,{name:'_spawn_wait'}).then(tW.move.spawnPiece),
-        this.findEnemy,
+      this.pieces = [Fly]
+      this.setTasks(
+        this.wait.ifReady(tW.move.attackNearby),
+        tW.move.wait(5,{name:'_spawn_wait'}).then(tW.move.spawnPiece),
+        tW.move.findEnemy,
         //this.stayNearEnemy,
-      ]
+        this.wait,
+        tW.move.follow,
+        tW.move.attackNearby,
+        tW.move.forwardRandomly,
+      )
     }
   }
 
