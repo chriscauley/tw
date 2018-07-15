@@ -50,7 +50,7 @@
       //tW.nameFunction(func,action);
       return func;
     }
-    wait.then = function(actions) {
+    wait.then = function(...actions) {
       /*
         Yes incrementing, non-blocking variant of wait()
         useage: this.tasks = [
@@ -63,8 +63,8 @@
       // executes the wait() function and the action in one call
       const ifReady = wait.ifReady(...actions);
       function func() {
-        wait(); // See, it increments!
-        return ifReady(...arguments)
+        wait.call(this); // See, it increments!
+        return ifReady.call(this,...arguments)
       }
       //tW.nameFunction(func,action);
       return func;
