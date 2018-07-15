@@ -7,6 +7,7 @@
       this.setTasks(tW.move.charge(tW.move.forward));
       this.dx = this.dy = 0;
     }
+    isActionReady() { return false; }
   }
   tW.enemy_map.be = tW.pieces.Beholder = Beholder;
 })();

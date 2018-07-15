@@ -25,7 +25,6 @@
     dxdy = dxdy || [this.dx,this.dy];
     var out = {};
     var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
-    (this.constructor.name == "Beholder") && console.log(squares);
     for (var square of squares) {
       var piece = square && square.piece;
       if (piece && piece.team != this.team ) {
