@@ -35,23 +35,6 @@
         if (square.piece == this.following || square.isOpen()) { return this.forward(direction); }
       }
     }
-    forward(dxdy) {
-      dxdy = dxdy || [this.dx,this.dy];
-      var out = {};
-      var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
-      (this.constructor.name == "Beholder") && console.log(squares);
-      for (var square of squares) {
-        var piece = square && square.piece;
-        if (piece && piece.team != this.team ) {
-          out.damage = {squares: [square],count:this.damage};
-        }
-        if (!square.isOpen(dxdy)) { break; }
-        out.move = square;
-        out.dxdy = dxdy;
-        out.turn = dxdy;
-      }
-      return (out.move || out.damage) && out;
-    }
     _turn(direction) {
       // left and right are [dx,dy] to make it go in that direction
       if (this.dx && this.dy) {
@@ -102,12 +85,12 @@
       func._name = clss.name;
       return func;
     }
-    burnout() {
-      this.die();
-      return { done: true };
-    }
   }
 
+  const burnout = function() {
+    this.die();
+    return { done: true };
+  }
   const Spin = (superclass) => class Spin extends superclass {
     constructor(opts={}) {
       super(opts);
@@ -134,8 +117,27 @@
       return { turn: this.directions[this._direction] };
     }
   }
+  const forward = function(dxdy) {
+    dxdy = dxdy || [this.dx,this.dy];
+    var out = {};
+    var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
+    (this.constructor.name == "Beholder") && console.log(squares);
+    for (var square of squares) {
+      var piece = square && square.piece;
+      if (piece && piece.team != this.team ) {
+        out.damage = {squares: [square],count:this.damage};
+      }
+      if (!square.isOpen(dxdy)) { break; }
+      out.move = square;
+      out.dxdy = dxdy;
+      out.turn = dxdy;
+    }
+    return (out.move || out.damage) && out;
+  }
   tW.move = {
     Move: Move,
     Spin: Spin,
+    forward: forward,
+    burnout: burnout,
   };
 })();

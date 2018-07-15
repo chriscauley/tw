@@ -6,7 +6,7 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
       gold_per_touch: 0,
     });
     super(opts)
-    this.tasks = [this.forward,this.burnout];
+    this.tasks = [tW.move.forward,tW.move.burnout];
     var move = this.square.moveOn(this,{move: this.square, dxdy: [this.dx,this.dy]});
     if (move) { this.applyMove(move) }
   }

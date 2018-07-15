@@ -1,17 +1,14 @@
 (function() {
-
-  const MoveRandomly = (superclass) => class MoveRandomly extends superclass {
-    attackNearby() {
-      for (let direction of tW.look.DIRECTIONS) {
-        let square = this.look(direction);
-        if (square && square.piece && square.piece.team != this.team) { return this.forward(direction); }
-      }
+  tW.move.attackNearby = function()  {
+    for (let direction of tW.look.DIRECTIONS) {
+      let square = this.look(direction);
+      if (square && square.piece && square.piece.team != this.team) { return tW.move.forward.call(this,direction); }
     }
-    forwardRandomly() {
-      for (let direction of _.shuffle(tW.look.DIRECTIONS)) {
-        let move = this.forward(direction);
-        if (move) { move.turn = [0,0]; return move; }
-      }
+  }
+  tW.move.forwardRandomly = function() {
+    for (let direction of _.shuffle(tW.look.DIRECTIONS)) {
+      let move = tW.move.forward.call(this,direction);
+      if (move) { move.turn = [0,0]; return move; }
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
@@ -32,35 +29,38 @@
     }
   }
 
-  class BaseBat extends MoveRandomly(tW.pieces.BasePiece) {
+  class BaseBat extends tW.pieces.BasePiece {
     constructor(opts={}) {
       opts.wait_interval = 1;
       opts.dx = 0;
       opts.dy = 0;
       super(opts);
       this.directions = tW.look.DIRECTIONS.slice();
-      this.tasks = [
+      this.setTasks(
         this.wait,
-        this.attackNearby,
-        this.forwardRandomly,
-      ];
+        tW.move.attackNearby,
+        tW.move.forwardRandomly,
+      )
     }
   }
 
-  class BossBat extends tW.move.Charge(BaseBat) {
+  class BossBat extends BaseBat {
     constructor(opts={}) {
       opts.sight = 8;
       opts.health = 4;
       super(opts);
       this.spawn_class = tW.pieces.bat.BaseBat;
       this.spawn_buff = tW.buffs.Rage;
-      this.tasks = [
-        this.wait.ifReady(this.attackNearby),
-        this.charge(this.shoot(SpawningProjectile),{wait_triggered: true}),
+      this.setTasks(
+        this.wait.ifReady(tW.move.attackNearby),
+        tW.move.charge(
+          tW.move.shoot(SpawningProjectile),
+          {wait_triggered: true}
+        ),
         this.wait,
-        this.attackNearby,
-        this.forwardRandomly,
-      ];
+        tW.move.attackNearby,
+        tW.move.forwardRandomly,
+      );
     }
   }
 

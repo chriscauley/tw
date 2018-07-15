@@ -35,7 +35,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       name: 'ui_canvas',
     });
     this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
-    this.wait = new tW.move.Wait(this,this.wait_interval);
+    this.wait = tW.move.wait(this.wait_interval); // every unit has a fundemental wait set by opts.wait_interval
 
     this.animating = 0;
     this.show_health = true;
@@ -54,6 +54,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       move: this.sprite,
       bounce: this.sprite,
     }
+  }
+  setTasks(...tasks) {
+    this.tasks = tasks;//.map(t =>t.bind(this));
   }
   buildHelp() {
     return super.buildHelp && super.buildHelp() || {};
@@ -233,7 +236,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     var tasks = this.tasks || [];
     var _i = 0;
     while(_i<tasks.length) {
-      var output = tasks[_i].bind(this)(); // if any task returns an output, we're doing that
+      var output = tasks[_i].call(this); // if any task returns an output, we're doing that
       if (output) { return output }
       _i++;
     }

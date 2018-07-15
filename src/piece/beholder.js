@@ -1,10 +1,10 @@
 (function() {
-  class Beholder extends tW.move.Charge(tW.pieces.BasePiece) {
+  class Beholder extends tW.pieces.BasePiece {
     constructor(opts={}) {
       opts.sprite = tW.sprites['beholder'];
       super(opts);
       this.speed = 3;
-      this.tasks = [ this.charge(this.forward) ];
+      this.tasks = [ tW.move.charge(this.forward) ];
       this.dx = this.dy = 0;
     }
   }
