@@ -80,8 +80,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   getSprite(action) { return tW.sprites[this._sprite_map[action]]; }
   getHalo(canvas_set) {
-    if (!this.isAwake()) { return canvas_set.black_halo; }
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
+    if (this.following) { return canvas_set.black_halo; }
   }
   isActionReady() { return this.charged || !this.wait.interval || this.wait.isReady(); }
   isAwake() { return true; }

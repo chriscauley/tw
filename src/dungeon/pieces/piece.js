@@ -160,6 +160,7 @@ DG.Piece = class Piece {
             }
         }
         for (var child of this.children) {
+            if (child.constructor.name == "Corridor") { continue }
             var xmax = child.size[0] - 1;
             var ymax = child.size[1] - 1;
             var _s = (child.tag == "initial")?"i":child.id;
@@ -178,6 +179,9 @@ DG.Piece = class Piece {
         }
         return output;
     }
-    print(array) { return (array ||this.toArray()).map(a=>a.join("")).join("\n") }
+    print(array) {
+      array = (array ||this.toArray())
+      return array.map(row=>row.map(room => (room.room===undefined)?" ":room.room).join("")).join("\n")
+    }
 }
 })();
