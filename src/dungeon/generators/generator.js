@@ -1,9 +1,7 @@
-DG.Generator = class Generator extends DG.Piece {
+DG.Generator = class Generator extends uR.RandomMixin(DG.Piece) {
 
     constructor(options) {
         super(options);
-
-        this.random = new DG.Random(this.seed);
 
         this.start_pos = [0, 0];
         this.minx = this.size[0];
@@ -76,7 +74,7 @@ DG.Generator = class Generator extends DG.Piece {
         piece1 should already be placed
         */
         if (!piece1_exit) {
-            piece1_exit = this.random.choose(piece1.get_perimeter_by_facing(DG.FACING_INVERSE[piece2_exit[1]]));
+            piece1_exit = this.random.choice(piece1.get_perimeter_by_facing(DG.FACING_INVERSE[piece2_exit[1]]));
         }
 
         //global piece2 exit pos

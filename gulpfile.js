@@ -12,7 +12,6 @@ var JS_FILES = {
     "dungeon/templates.js",
     "dungeon/utils/index.js",
     "dungeon/utils/array2d.js",
-    "dungeon/utils/random.js",
     "dungeon/utils/rectangle.js",
     "dungeon/pieces/piece.js",
     "dungeon/pieces/room.js",

@@ -47,7 +47,7 @@ DG.Dungeon = class Dungeon extends DG.Generator {
             } else {
                 choices = this.get_open_pieces(this.children);
                 if (choices && choices.length) {
-                    old_room = this.random.choose(choices);
+                    old_room = this.random.choice(choices);
                 } else {
                     console.log('ran out of choices connecting');
                     break;
@@ -64,7 +64,9 @@ DG.Dungeon = class Dungeon extends DG.Generator {
             } else {
                 let perim = room.perimeter.slice();
                 while (perim.length) {
-                    if (this.join(old_room, this.random.choose(perim, true), room)) {
+                    let _choice = this.random.choice(perim);
+                    perim.slice(perim.indexOf(_choice),1);
+                    if (this.join(old_room, _choice, room)) {
                         return true;
                     }
                 }
@@ -80,7 +82,7 @@ DG.Dungeon = class Dungeon extends DG.Generator {
     new_corridor() {
         return new DG.Corridor({
             length: this.random.int(this.min_corridor_length, this.max_corridor_length),
-            facing: this.random.choose(DG.FACING)
+            facing: this.random.choice(DG.FACING)
         });
     }
 
@@ -156,15 +158,20 @@ DG.Dungeon = class Dungeon extends DG.Generator {
         }
     }
 
+    vec(min, max){
+        //min and max are vectors [int, int];
+        //returns [min[0]<=x<=max[0], min[1]<=y<=max[1]]
+        return [this.random.int(min[0], max[0]), this.random.int(min[1], max[1])];
+    }
+
     new_room(key) {
         //spawn next room
-        key = key || this.random.choose(this.room_tags, false);
+        key = key || this.random.choice(this.room_tags);
 
         let opts = this.options.rooms[key];
 
-
         let room = new DG.Room({
-            size: this.random.vec(opts.min_size, opts.max_size),
+            size: this.vec(opts.min_size, opts.max_size),
             max_exits: opts.max_exits,
             symmetric: this.symmetric_rooms,
             tag: key
