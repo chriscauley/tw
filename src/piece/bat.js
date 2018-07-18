@@ -1,12 +1,12 @@
 (function() {
   tW.move.attackNearby = function()  {
-    for (let direction of tW.look.DIRECTIONS) {
+    for (let direction of this.DIRECTIONS) {
       let square = this.look(direction);
       if (square && square.piece && square.piece.team != this.team) { return tW.move.forward.call(this,direction); }
     }
   }
   tW.move.forwardRandomly = function() {
-    for (let direction of _.shuffle(tW.look.DIRECTIONS)) {
+    for (let direction of this.random.shuffle(this.DIRECTIONS)) {
       let move = tW.move.forward.call(this,direction);
       if (move) { move.turn = [0,0]; return move; }
     }
@@ -31,11 +31,10 @@
 
   class BaseBat extends tW.pieces.BasePiece {
     constructor(opts={}) {
-      opts.wait_interval = 1;
+      opts.wait_interval = 0;
       opts.dx = 0;
       opts.dy = 0;
       super(opts);
-      this.directions = tW.look.DIRECTIONS.slice();
       this.setTasks(
         this.wait,
         tW.move.attackNearby,

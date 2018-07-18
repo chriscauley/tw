@@ -5,6 +5,10 @@
   var KEYS = ['cone','close','line','circle'];
 
   var Look = (superclass) => class extends superclass {
+    constructor(opts) {
+      super(opts);
+      this.DIRECTIONS = tW.look.DIRECTIONS.slice(); // okay to be shuffled... see moveRandomly
+    }
     lookForward() { return this.look([this.dx,this.dy]) }
     look(dxdy) {
       return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);

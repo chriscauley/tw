@@ -1,7 +1,7 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  { sp: 9, bbat: 1}
+  { sp: 0, bbat: 1}
   //{ bbat: 1, flyking: 0 },
   // { star: 1, fly: 4, sk: 2, },
   // { g: 1 },
