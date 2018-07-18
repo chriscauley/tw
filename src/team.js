@@ -1,7 +1,7 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  { sp: 1, bbat: 1}
+  { sp: 9, bbat: 1}
   //{ bbat: 1, flyking: 0 },
   // { star: 1, fly: 4, sk: 2, },
   // { g: 1 },
@@ -38,7 +38,7 @@ tW.team.Team = class Team extends uR.RandomObject {
         square: board.getRandomEmptySquare(),
         team: this.number,
         item: tW.weapon.LongSword,
-        _SEED: this.random.raw(),
+        _prng: this,
       });
       this.pieces.push(piece);
     }
@@ -52,7 +52,7 @@ tW.team.Team = class Team extends uR.RandomObject {
           var piece = new tW.enemy_map[enemy_key]({
             square: board.getRandomEmptySquare({room: room_number}),
             team: this.number,
-            _SEED: this.random.raw(),
+            _prng: this,
           })
           /*if (i) {
             !(i%3) && piece.levelUp();

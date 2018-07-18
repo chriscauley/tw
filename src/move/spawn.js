@@ -16,7 +16,7 @@
             new clss({
               square: sq,
               team: this.team,
-              _SEED: this.random.raw(),
+              _prng: this,
             })
           ]
         }

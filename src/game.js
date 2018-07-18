@@ -24,7 +24,7 @@ tW.Game = class Game extends uR.RandomObject {
     riot.observable(this);
     uR.extend(this,this.config.getData());
     this.bindKeys();
-    this.board = new tW.Board({ game: this, _SEED: this.random.raw() });
+    this.board = new tW.Board({ game: this, _prng: this });
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
     this.restart();
     this.makeUI();
@@ -63,7 +63,7 @@ tW.Game = class Game extends uR.RandomObject {
       this.teams.push(new tW.team.Team({
         game: this,
         unit_count:unit_count,
-        _SEED: this.random.raw()
+        _prng: this,
       }))
     }
   }
@@ -116,7 +116,7 @@ tW.Game = class Game extends uR.RandomObject {
       this.board.getRandomEmptySquare({room:'i'}).addPiece(this.player);
     } else {
       this.player = new tW.player.Player({
-        _SEED: this.random.raw(),
+        _prng: this,
         square: this.board.getRandomEmptySquare({room:'i'}),
         game: this,
         health: 3,

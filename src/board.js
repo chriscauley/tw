@@ -31,7 +31,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.level_number = level_number;
     this._dungeon = new tW.level.Dungeon({
       style: this.game.config.get("map_template"),
-      _SEED: this.random.raw(),
+      _prng: this,
     })
     var level = this._dungeon.level;
     this.x_max = 0;
