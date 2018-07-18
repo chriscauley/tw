@@ -4,11 +4,12 @@ tW.ROOM_UNITS = [
   { sp: 0, bbat: 1}
   //{ bbat: 1, flyking: 0 },
   // { star: 1, fly: 4, sk: 2, },
-  // { g: 1 },
-  // { sk: 2, fly:5 },
+  { sk: 1 },
+  //{ sk: 2, fly:5 },
   // { be: 1, sk: 3, fly: 2 },
   // { zombie: 4, fly: 4 },
-  // { zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
+  //{ sp:1, star: 1, zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
+  //{ flyking: 1, sk: 1 },
 ]
 
 tW.team.Team = class Team extends uR.RandomObject {
