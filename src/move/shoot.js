@@ -15,6 +15,7 @@
         dy: dxdy[1],
         damage: this.damage,
         square: square,
+        _SEED: this.random.raw(),
       });
       return { done: true };
     }
