@@ -1,4 +1,4 @@
-tW.Board = class Board extends uR.canvas.CanvasObject {
+tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
   constructor(opts) {
     super(opts)
     this.defaults(opts)
@@ -31,7 +31,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     this.level_number = level_number;
     this._dungeon = new tW.level.Dungeon({
       style: this.game.config.get("map_template"),
-      seed: (this.game.config.get("seed") || "RANDOM")+this.level_number,
+      _SEED: this.random.raw(),
     })
     var level = this._dungeon.level;
     this.x_max = 0;
@@ -165,7 +165,7 @@ tW.Board = class Board extends uR.canvas.CanvasObject {
     for (var key in filters) { squares = _.filter(squares,s=>s[key] == filters[key]) }
     var i=1000,s;
     while (i--) {
-      s = _.sample(squares);
+      s = this.random.choice(squares);
       if (s && s.isOpen()) { return s }
     }
     throw "could not find empty square";

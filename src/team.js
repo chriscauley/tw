@@ -11,7 +11,7 @@ tW.ROOM_UNITS = [
   // { zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
 ]
 
-tW.team.Team = class Team extends uR.Object {
+tW.team.Team = class Team extends uR.RandomObject {
   constructor(opts={}) {
     super(opts);
     this.defaults(opts,{
@@ -38,6 +38,7 @@ tW.team.Team = class Team extends uR.Object {
         square: board.getRandomEmptySquare(),
         team: this.number,
         item: tW.weapon.LongSword,
+        _SEED: this.random.raw(),
       });
       this.pieces.push(piece);
     }
@@ -45,12 +46,13 @@ tW.team.Team = class Team extends uR.Object {
     for (var room_number in board.rooms) {
       // no enemies in start room or hallways
       if (room_number == 0 || (board.room_list.length != 1 && room_number == 'i')) { continue; }
-      var room_units = _.sample(tW.ROOM_UNITS);
+      var room_units = this.random.choice(tW.ROOM_UNITS);
       for (var enemy_key in room_units) {
         for (var i=0;i<room_units[enemy_key];i++) {
           var piece = new tW.enemy_map[enemy_key]({
             square: board.getRandomEmptySquare({room: room_number}),
-            team: this.number
+            team: this.number,
+            _SEED: this.random.raw(),
           })
           /*if (i) {
             !(i%3) && piece.levelUp();

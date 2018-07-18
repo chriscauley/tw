@@ -1,6 +1,6 @@
 tW.square = {};
 
-tW.square.SquareMixin = (superclass) => class extends superclass {
+tW.square.SquareMixin = (superclass) => class SquareMixin extends superclass {
   // for anything that can sit on a square
   draw() {
     super.draw && super.draw();
@@ -106,7 +106,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.dirty = true;
   }
   addGold(opts) {
-    this.gold += Math.round(opts.range*uR.random())+opts.base;
+    this.gold += this.level*opts.range+opts.base;
     this.dirty = true;
   }
   removeGold(amount) {

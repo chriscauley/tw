@@ -15,7 +15,7 @@
     var directions = ['left','right'];
     var square,direction;
     while (directions.length) {
-      var d = directions[(uR.random()>0.5)?'pop':'shift']();
+      var d = directions[(this.random()>0.5)?'pop':'shift']();
       square = this.look(tW.move._turn(this,d));
       if (square && !square.piece) { break; }
     }

@@ -6,10 +6,10 @@
     if (typeof squares == "function") { squares = squares(); }
     if (!Array.isArray(squares)) { squares = [squares]; }
 
-    uR.random.shuffle(squares);
+    this.random.shuffle(squares);
     for (var sq of squares) {
       if (!sq.piece) {
-        const clss = uR.random.choice(pieces || this.pieces);
+        const clss = this.random.choice(pieces || this.pieces);
         return {
           done: true,
           spawned: [ // eventually this list will be in a forloop so that spawned can be plural

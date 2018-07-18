@@ -16,14 +16,15 @@ uR.ready(function() {
     { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
   ]);
 });
-tW.Game = class Game extends uR.Object {
-  constructor() {
-    super();
+tW.Game = class Game extends uR.RandomObject {
+  constructor(opts={}) {
+    opts._SEED = uR.tw.game_config.get('seed');
+    super(opts);
     this.config = uR.tw.game_config;
     riot.observable(this);
     uR.extend(this,this.config.getData());
     this.bindKeys();
-    this.board = new tW.Board({ game: this, });
+    this.board = new tW.Board({ game: this, _SEED: this.random.raw() });
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
     this.restart();
     this.makeUI();
@@ -59,7 +60,11 @@ tW.Game = class Game extends uR.Object {
     this.teams = [];
     var unit_count = parseInt(this.config.get("base_units")) + this.level_number*this.config.get("piece_increase");
     for (var i=0;i<2;i++) {
-      this.teams.push(new tW.team.Team({game: this, unit_count:unit_count}))
+      this.teams.push(new tW.team.Team({
+        game: this,
+        unit_count:unit_count,
+        _SEED: this.random.raw()
+      }))
     }
   }
   gameover() {
@@ -111,6 +116,7 @@ tW.Game = class Game extends uR.Object {
       this.board.getRandomEmptySquare({room:'i'}).addPiece(this.player);
     } else {
       this.player = new tW.player.Player({
+        _SEED: this.random.raw(),
         square: this.board.getRandomEmptySquare({room:'i'}),
         game: this,
         health: 3,

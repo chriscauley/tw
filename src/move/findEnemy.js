@@ -6,5 +6,5 @@ tW.move.findEnemy = function findEnemy() {
   }
   var squares = this.lookMany(tW.look.circle[this.sight])
       .filter(s => s && s.piece && s.piece.team != this.team);
-  this.following = squares.length && _.sample(squares).piece;
+  this.following = squares.length && this.random.choice(squares).piece;
 }

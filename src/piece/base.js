@@ -3,12 +3,12 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
     // randomly point unit up/down/left/right
-    var _d = uR.random();
+    super(opts);
+    opts.sprite = opts.sprite || tW.sprites[this.constructor.name.toLowerCase()];
+    var _d = this.random();
     var dx = 0, dy = 0;
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
-    super(opts);
-    opts.sprite = opts.sprite || tW.sprites[this.constructor.name.toLowerCase()];
     this.defaults(opts,{
       sprite: uR.REQUIRED,
       dx: dx,
