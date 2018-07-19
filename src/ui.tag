@@ -100,14 +100,26 @@ this.on("unmount",function() {
       <h1>Game over!</h1>
       <h3>{ opts.game.turn } turns</h3>
       <p>
-        <button class="btn btn-large btn-primary" onclick={ opts.game.restart }>Restart game</button>
+        <button class="btn btn-large btn-primary" onclick={ opts.game.restart }>
+          Restart game</button>
       </p>
-      <p>
-        <button class="btn btn-large btn-primary" if={ !saved} onclick={ saveReplay }>Save Replay</button>
-        <div class="btn btn-large btn-success" if={ saved }>Replay Saved!</div>
+      <p if={ !saved }>
+        <button class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button>
       </p>
+      <div if={ saved }>
+        <div class="btn btn-large btn-success">Replay Saved!</div>
+        <h3>Replays</h3>
+        <ul>
+          <li each={ replay,_ in replays }>
+            <span>{ replay.toString() }</span>
+            <span onclick={ loadReplay } class="pointer">
+              <i class='fa fa-play'></i></span>
+          </li>
+        </ul>
+      </div>
       <p>
-        <a target="_blank" href="https://tinyletter.com/timewalker" class="btn btn-large btn-primary">
+        <a target="_blank" href="https://tinyletter.com/timewalker"
+           class="btn btn-large btn-primary">
           Click here to sign up for updates.
         </a>
       </p>
@@ -120,7 +132,13 @@ this.on("unmount",function() {
   this.on("unmount",function() {
     this.opts.game.restart();
   });
+  this.on("update",function() {
+    this.replays = uR.db.replay.Replay.objects.all();
+  });
   saveReplay() { opts.game.saveReplay; this.saved=true; }
+  loadReplay(e) {
+    opts.game.loadReplay(e.item.replay);
+  }
 </tw-gameover>
 
 <tw-sprites>

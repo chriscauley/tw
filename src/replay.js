@@ -7,6 +7,9 @@ class Replay extends uR.db.Model {
     ];
     super(opts);
   }
+  __str() {
+    return this.name || (this.hash.slice(0,8)+"...");
+  }
 }
 
 uR.db.register("replay",[Replay])
