@@ -55,7 +55,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     opts.sprite = tW.sprites['warrior'];
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0, x: this.x, y: this.y };
-    this._moves = [];
+    this._moves = []; // used in animations, rename this
+    this.moves = []; // store keypresses to make moves next time
     this.defaults(opts,{
       game: uR.REQUIRED,
       torch: [
@@ -116,6 +117,12 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return
   }
   getMove(e,dx,dy) {
+    this.moves[this.game.turn] = {
+      _key: e._key,
+      dxdy: [dx,dy],
+      shiftKey: e.shiftKey,
+      ctrlKey: e.ctrlKey,
+    }
     if (e.ctrlKey && this.getCtrlItem()) {
       return this.getCtrlItem().getMove(dx,dy);
     } else if (e.shiftKey && this.equipment.feet) {
