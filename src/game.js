@@ -67,8 +67,23 @@ tW.Game = class Game extends uR.RandomObject {
     }
   }
   gameover() {
+    this.saveReplay();
     this.is_gameover = true;
     uR.alertElement("tw-gameover",{game: this});
+  }
+  saveReplay() {
+    const keys = [];
+    for (var key in this.player.moves[0]) { keys.push(key) }
+    const data = {
+      keys: keys,
+      moves: this.player.moves.map( m => keys.map(k => m[k])),
+      opts: this.opts,
+    }
+    const replay = new uR.db.replay.Replay({
+      hash: objectHash(data),
+      data: data,
+    })
+    replay.save();
   }
   mousedown(e) {
     // this conditional stops the popup when they click on #game to focus

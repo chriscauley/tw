@@ -21,6 +21,7 @@ var JS_FILES = {
     "pallet.js",
     "sprite.js",
     "square.js",
+    "replay.js",
 
     "floor.js",
     "item/base.js",

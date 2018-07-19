@@ -120,8 +120,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.moves[this.game.turn] = {
       _key: e._key,
       dxdy: [dx,dy],
-      shiftKey: e.shiftKey,
-      ctrlKey: e.ctrlKey,
+      shiftKey: e.shiftKey*1, // less space if it's a int instead of boolean
+      ctrlKey: e.ctrlKey*1,
     }
     if (e.ctrlKey && this.getCtrlItem()) {
       return this.getCtrlItem().getMove(dx,dy);

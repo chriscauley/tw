@@ -98,7 +98,14 @@ this.on("unmount",function() {
   <div class={ theme.outer }>
     <div class={ theme.content } style="text-align: center;max-width: 400px;">
       <h1>Game over!</h1>
-      <p>Press any key to restart</p>
+      <h3>{ opts.game.turn } turns</h3>
+      <p>
+        <button class="btn btn-large btn-primary" onclick={ opts.game.restart }>Restart game</button>
+      </p>
+      <p>
+        <button class="btn btn-large btn-primary" if={ !saved} onclick={ saveReplay }>Save Replay</button>
+        <div class="btn btn-large btn-success" if={ saved }>Replay Saved!</div>
+      </p>
       <p>
         <a target="_blank" href="https://tinyletter.com/timewalker" class="btn btn-large btn-primary">
           Click here to sign up for updates.
@@ -113,6 +120,7 @@ this.on("unmount",function() {
   this.on("unmount",function() {
     this.opts.game.restart();
   });
+  saveReplay() { opts.game.saveReplay; this.saved=true; }
 </tw-gameover>
 
 <tw-sprites>
