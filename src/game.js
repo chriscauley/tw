@@ -1,4 +1,4 @@
-uR.tw = {game_config: new uR.Config("GAME_CONFIG")};
+tW.game_config =  new uR.Config("GAME_CONFIG");
 uR.ready(function() {
   var PIECE_CHOICES = ['sk','fly','be','zombie','sp'];
   var SEED_CHOICES = ['42',['RANDOM','Randomize level']]
@@ -7,7 +7,7 @@ uR.ready(function() {
     }*/
   var MAP_CHOICES = [];
   for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
-  uR.tw.game_config.setSchema([
+  tW.game_config.setSchema([
     { name: "base_units", type: "integer", value: 1 },
     { name: "piece_count", type: "integer", value: 1 },
     { name: "piece_increase", type: "integer", value: 1 },
@@ -18,14 +18,13 @@ uR.ready(function() {
 });
 tW.Game = class Game extends uR.RandomObject {
   constructor(opts={}) {
-    opts._SEED = uR.tw.game_config.get('seed');
+    uR.defaults(opts,tW.game_config.getData())
     super(opts);
-    this.config = uR.tw.game_config;
+    this.opts = opts;
     riot.observable(this);
-    uR.extend(this,this.config.getData());
     this.bindKeys();
-    this.board = new tW.Board({ game: this, _prng: this });
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
+    this.board = new tW.Board({ game: this, _prng: this });
     this.restart();
     this.makeUI();
     this.turn = 0;
@@ -46,7 +45,7 @@ tW.Game = class Game extends uR.RandomObject {
   restart() {
     var mask = document.querySelector("[ur-mask]");
     mask && mask.click();
-    this.piece_count = this.config.get("piece_count");
+    this.piece_count = this.opts.piece_count;
     this.level_number = -1;
     this.nextLevel();
     this.player.reset();
@@ -58,7 +57,7 @@ tW.Game = class Game extends uR.RandomObject {
   }
   makeTeams() {
     this.teams = [];
-    var unit_count = parseInt(this.config.get("base_units")) + this.level_number*this.config.get("piece_increase");
+    var unit_count = parseInt(this.opts.base_units) + this.level_number*this.opts.piece_increase;
     for (var i=0;i<2;i++) {
       this.teams.push(new tW.team.Team({
         game: this,
@@ -76,7 +75,7 @@ tW.Game = class Game extends uR.RandomObject {
     if (e.target.tagName == "CANVAS") { this.board.mousedown(e); }
   }
   keydown(e) {
-    if (this.is_gameover) { return this.restart() }
+    if (this.is_gameover) { return }
     this.key_map[e._key] && this.key_map[e._key](e);
     this.ui && this.ui.update();
   }

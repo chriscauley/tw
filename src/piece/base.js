@@ -205,7 +205,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_dirty = false;
   }
   drawGold(c) {
-    if (!this.gold) { return } // && !this.game.config.show_gold) { return }
+    if (!this.gold) { return } // && !this.game.opts.show_gold) { return }
     var s = this.board.scale;
     var img = tW.sprites.gold.get(0,0);
     var v = this.gold*1;

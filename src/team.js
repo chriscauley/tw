@@ -1,7 +1,7 @@
 tW.team = {};
 
 tW.ROOM_UNITS = [
-  { sp: 0, bbat: 1}
+  { sp: 0, bbat: 1},
   //{ bbat: 1, flyking: 0 },
   // { star: 1, fly: 4, sk: 2, },
   { sk: 1 },
@@ -17,7 +17,7 @@ tW.team.Team = class Team extends uR.RandomObject {
     super(opts);
     this.defaults(opts,{
       game: uR.REQUIRED,
-      unit_count: opts.game.config.get("base_units"),
+      unit_count: opts.game.opts.base_units,
     });
     this.number = this.game.teams.length;
 
@@ -26,7 +26,7 @@ tW.team.Team = class Team extends uR.RandomObject {
     this.pieces = [];
   }
   makeUnits() {
-    var active_pieces = this.active_pieces || this.game.config.get("active_pieces");
+    var active_pieces = this.active_pieces || this.game.opts.active_pieces;
     if (!active_pieces.length) { active_pieces = ['sk','be'] }
     if (this.number == 1) { return this.pieces } // player only
     // this should probably be it's own class
