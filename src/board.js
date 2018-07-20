@@ -63,10 +63,10 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.exit = this.exit || this.getRandomEmptySquare();
     //this.start.make('start');
     this.exit && this.exit.setFloor(tW.floor.Stairs);
-    var red = this.getRandomEmptySquare();
-    var blue = this.getRandomEmptySquare();
-    red.setFloor(tW.floor.Portal,{color: 'red'});
-    blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
+    // var red = this.getRandomEmptySquare();
+    // var blue = this.getRandomEmptySquare();
+    // red.setFloor(tW.floor.Portal,{color: 'red'});
+    // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
     this.max_offset_x = Math.max(-0.5,this.x_max+0.5-window.innerWidth/this.scale);
