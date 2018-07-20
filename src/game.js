@@ -21,6 +21,9 @@ tW.Game = class Game extends uR.RandomObject {
     uR.defaults(opts,tW.game_config.getData())
     super(opts);
     this.opts = opts;
+    if (this.opts.moves) {
+      this.loadReplay(this.opts);
+    }
     riot.observable(this);
     this.bindKeys();
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
@@ -71,17 +74,23 @@ tW.Game = class Game extends uR.RandomObject {
     this.is_gameover = true;
     uR.alertElement("tw-gameover",{game: this});
   }
-  saveReplay() {
-    const keys = [];
-    for (var key in this.player.moves[0]) { keys.push(key) }
-    const data = {
-      keys: keys,
-      moves: this.player.moves.map( m => keys.map(k => m[k])),
-      opts: this.opts,
+  loadReplay(data) { // maybe should be `Replay().loadGame(opts)`? nb: opts is just this.opts
+    this.moves = [];
+    for (let values of opts.move_values) { // rehydrate
+      let move = {};
+      opts.move_keys.map(k,i => move[k] = values[i])
+      this.moves.append(move);
     }
+  }
+  saveReplay() { // should be `Replay({ game: this })`? classmethod?
+    const keys = []; // this whole packing/unpacking list may be unecessary if we gzip the storage
+    for (var key in this.player.moves[0]) { keys.push(key) }
+    const opts = _.clone(this.opts)
+    opts.move_keys = keys;
+    opts.move_values = this.player.moves.map( m => keys.map(k => m[k])); // dehydrate
     const replay = new uR.db.replay.Replay({
-      hash: objectHash(data),
-      data: data,
+      hash: objectHash(opts),
+      opts,
     })
     replay.save();
   }
