@@ -4,7 +4,7 @@
       opts.sprite = tW.sprites['beholder'];
       super(opts);
       this.speed = 3;
-      this.setTasks(tW.move.charge(tW.move.forward));
+      this.setTasks(tW.move.target(tW.move.forward));
       this.dx = this.dy = 0;
     }
     isActionReady() { return false; }
