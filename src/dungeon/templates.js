@@ -24,7 +24,7 @@ DG.TEMPLATES['basic'] = {
     },
   },
   corridor_density: 0,
-  room_count: 3,
+  room_count: 10,
   max_interconnect_length: 5,
 }
 

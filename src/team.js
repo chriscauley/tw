@@ -1,16 +1,18 @@
 tW.team = {};
 
-tW.ROOM_UNITS = [
-  { sp: 0, bbat: 1},
-  //{ bbat: 1, flyking: 0 },
-  // { star: 1, fly: 4, sk: 2, },
-  { sk: 1 },
-  //{ sk: 2, fly:5 },
-  // { be: 1, sk: 3, fly: 2 },
-  // { zombie: 4, fly: 4 },
-  //{ sp:1, star: 1, zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
-  //{ flyking: 1, sk: 1 },
-]
+tW.ROOM_UNITS = {
+  mix1: [
+    { bbat: 1, bat: 4 },
+    { flyking: 1 },
+    { star: 1, fly: 4, sk: 2, },
+    { sk: 2, fly:5 },
+    { be: 1, sk: 3, fly: 2 },
+    { zombie: 4, fly: 4 },
+    //{ sp:1, star: 1, zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
+    //{ sk: 1 },
+  ]
+}
+for (var e in tW.enemy_map) { tW.ROOM_UNITS[e] = [{ e:1 }] }
 
 tW.team.Team = class Team extends uR.RandomObject {
   constructor(opts={}) {
@@ -47,7 +49,7 @@ tW.team.Team = class Team extends uR.RandomObject {
     for (var room_number in board.rooms) {
       // no enemies in start room or hallways
       if (room_number == 0 || (board.room_list.length != 1 && room_number == 'i')) { continue; }
-      var room_units = this.random.choice(tW.ROOM_UNITS);
+      var room_units = this.random.choice(tW.ROOM_UNITS.mix1);
       for (var enemy_key in room_units) {
         for (var i=0;i<room_units[enemy_key];i++) {
           var piece = new tW.enemy_map[enemy_key]({
