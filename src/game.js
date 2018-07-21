@@ -6,6 +6,7 @@ uR.ready(function() {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
     }*/
   var MAP_CHOICES = [];
+  var MOOK_CHOICES = ['default']
   for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
   tW.game_config.setSchema([
     { name: "base_units", type: "integer", value: 1 },
@@ -14,6 +15,7 @@ uR.ready(function() {
     { name: "active_pieces", choices: PIECE_CHOICES, value: PIECE_CHOICES, type: "checkbox", required: false },
     { name: "map_template", choices: MAP_CHOICES.sort(), value: MAP_CHOICES[0], type: 'select' },
     { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
+    { name: "mook_set", choices: MOOK_CHOICES, type: 'select', value: 'default' },
   ]);
 });
 tW.Game = class Game extends uR.RandomObject {

@@ -24,6 +24,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       sight: 3, // how far it can see
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
+      worth: 1, // used in Team.makeUnits to figure out how many pieces to add
     });
     opts.square.addPiece(this); // this sets this.board;
     this.game = this.board.game;

@@ -1,9 +1,18 @@
 tW.team = {};
 
+tW.MOOK_MAP = {
+  default: [
+    "bat|sk","fly|sk","be|sk|fly","zombie|fly","sp|zombie|sk"
+  ]
+}
+
+tW.BOSS_SETS = {
+  default: "bbat|flyking"
+}
+
 tW.ROOM_UNITS = {
   mix1: [
-    { bbat: 1, bat: 4 },
-    { flyking: 1 },
+    { bat: 4, sk: 1 },
     { star: 1, fly: 4, sk: 2, },
     { sk: 2, fly:5 },
     { be: 1, sk: 3, fly: 2 },
@@ -28,15 +37,21 @@ tW.team.Team = class Team extends uR.RandomObject {
     this.pieces = [];
   }
   makeUnits() {
-    var active_pieces = this.active_pieces || this.game.opts.active_pieces;
-    if (!active_pieces.length) { active_pieces = ['sk','be'] }
     if (this.number == 1) { return this.pieces } // player only
-    // this should probably be it's own class
-    var board = this.game.board;
+
+    // everything below should probably be it's own class, EnemyGenerator or something
+    const game = this.game;
+    const board = game.board;
+    const mook_sets = tW.MOOK_MAP[this.mook_set || game.opts.mook_set];
+    for (let i=0;i<mook_sets.length;i++) {
+      if (typeof mook_sets[i] == "string") {
+        mook_sets[i] = mook_sets[i].split("|").map(s=>tW.enemy_map[s]);
+      }
+    }
     this.pieces = [];
 
     // for now give boots away on level 1
-    if (this.game.level_number == 0) {
+    if (game.level_number == 0) {
       var piece = new tW.pieces.Chest({
         square: board.getRandomEmptySquare(),
         team: this.number,
@@ -48,21 +63,25 @@ tW.team.Team = class Team extends uR.RandomObject {
 
     for (var room_number in board.rooms) {
       // no enemies in start room or hallways
-      if (room_number == 0 || (board.room_list.length != 1 && room_number == 'i')) { continue; }
-      var room_units = this.random.choice(tW.ROOM_UNITS.mix1);
-      for (var enemy_key in room_units) {
-        for (var i=0;i<room_units[enemy_key];i++) {
-          var piece = new tW.enemy_map[enemy_key]({
-            square: board.getRandomEmptySquare({room: room_number}),
-            team: this.number,
-            _prng: this,
-          })
-          /*if (i) {
-            !(i%3) && piece.levelUp();
-            !(i%4) && piece.levelUp();
-            }*/
-          this.pieces.push(piece);
-        }
+      if (room_number == 0 || // no enemies in hallways
+          (room_number == 'i' // or start room
+           && board.room_list.length != 1) // unless start is only room
+         ) { continue; }
+      const mook_set = this.random.choice(mook_sets);
+      var piece_count = game.opts.piece_count + game.opts.piece_increase * game.level_number;
+      while (piece_count > 0) {
+        let mook = this.random.choice(mook_set);
+        let piece = new mook({
+          square: board.getRandomEmptySquare({room: room_number}),
+          team: this.number,
+          _prng: this,
+        });
+        /*if (i) {
+          !(i%3) && piece.levelUp();
+          !(i%4) && piece.levelUp();
+          }*/
+        this.pieces.push(piece);
+        piece_count -= piece.worth;
       }
     }
     return this.pieces;
