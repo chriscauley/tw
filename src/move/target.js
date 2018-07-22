@@ -4,22 +4,23 @@ tW.move.target = function(action,opts={}) {
     pass: function(s) { return s && s.piece && s.piece.team != this.team }, // pass on enemy target
     fail: function(s) { return !(s && s.isOpen()) }, // fail on any blocked square that didn't pass
   })
-  const out = function() {
-    if (this.targeted_piece) {
-      var result =  action.call(this,this.targeted_piece);
-      this.targeted_piece = false;
-      if (result) { result.turn = [0,0] }
-      return result;
+  const out = function(move) {
+    if (this.targeted) { // piece was targeted last turn
+      action.call(this,move,this.targeted);
+      move.afterMove.push(() => this.targeted = false) // targeting only lasts one turn
+      move.turn = [0,0];
+      return;
     }
     for (let direction of tW.look.directions) {
       var squares = this.current_square.lookMany(tW.look[opts.geometry][direction][this.sight || opts.range]);
       for (let square of squares) {
         if (opts.pass.call(this,square)) {
-          this.targeted_piece = direction;
+          this.targeted = direction;
           if (opts.wait_triggered && this.wait.isReady()) {
-            return out.call(this);
+            out.call(this,move); // some targets get applied now if no wait
           }
-          return { turn: direction }
+          move.turn = direction;
+          return
         }
         if (opts.fail.call(this,square)) { break }
       }

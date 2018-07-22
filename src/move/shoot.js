@@ -1,23 +1,26 @@
 (function() {
   tW.move.shoot = (projectile) => {
-    function shoot(dxdy) {
+    function shoot(move,dxdy) {
       dxdy = dxdy || [this.dx,this.dy]
       var square = this.look(dxdy);
       if (!square) { console.error("no square"); return } // no square to target
       if (!square.piece && !square.isOpen(dxdy)) { return } // some non-piece obstacle
       if (square.piece) {
         if (square.piece.team == this.team) { return } // don't attack friends
-        return { damage: {squares: [square], count: this.damage}, dx: dxdy[0], dy: dxdy[1] }
+        move.damage = { squares: [square], count: this.damage};
+        move.turn = dxdy;
+      } else {
+        new projectile({ // #! TODO this should be in afterMove
+          parent_piece: this,
+          dx: dxdy[0],
+          dy: dxdy[1],
+          damage: this.damage,
+          square: square,
+          _prng: this,
+        });
       }
-      new projectile({
-        parent_piece: this,
-        dx: dxdy[0],
-        dy: dxdy[1],
-        damage: this.damage,
-        square: square,
-        _prng: this,
-      });
-      return { done: true };
+      move.done = true;
+      move.force_done = true;
     }
     shoot._name = projectile.name;
     return shoot;
