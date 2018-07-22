@@ -49,7 +49,7 @@
       opts.health = 4;
       super(opts);
       this.spawn_class = tW.pieces.bat.BaseBat;
-      this.spawn_buff = tW.buffs.Rage;
+      this.spawn_buff = tW.buffs.Haste;
       this.setTasks(
         this.wait.ifReady(tW.move.attackNearby),
         tW.move.target(

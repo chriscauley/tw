@@ -28,7 +28,6 @@ tW.team.Team = class Team extends uR.RandomObject {
     super(opts);
     this.defaults(opts,{
       game: uR.REQUIRED,
-      unit_count: opts.game.opts.base_units,
     });
     this.number = this.game.teams.length;
 
@@ -83,6 +82,22 @@ tW.team.Team = class Team extends uR.RandomObject {
         this.pieces.push(piece);
         piece_count -= piece.worth;
       }
+    }
+
+    const boss_room = Math.max(...board.room_list.filter(i => !isNaN(i))); // filter out 'i'
+    var boss_count = game.opts.boss_count;
+    var boss_set = tW.BOSS_SETS[game.opts.boss_set];
+    if (typeof boss_set == "string") {
+      boss_set = boss_set.split("|").map(s=>tW.enemy_map[s]);
+    }
+    while (boss_count > 0) {
+      const boss = this.random.choice(boss_set);
+      this.pieces.push(new boss({
+        square: board.getRandomEmptySquare({room: boss_room ||[i]}),
+        team: this.number,
+        _prng: this,
+      }))
+      boss_count--;
     }
     return this.pieces;
   }

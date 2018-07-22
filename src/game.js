@@ -6,16 +6,17 @@ uR.ready(function() {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
     }*/
   var MAP_CHOICES = [];
-  var MOOK_CHOICES = ['default']
   for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
+  const MOOK_CHOICES = ['default']
+  const BOSS_CHOICES = ['default']
   tW.game_config.setSchema([
-    { name: "base_units", type: "integer", value: 1 },
-    { name: "piece_count", type: "integer", value: 1 },
+    { name: "piece_count", type: "integer", value: 4 },
     { name: "piece_increase", type: "integer", value: 1 },
-    { name: "active_pieces", choices: PIECE_CHOICES, value: PIECE_CHOICES, type: "checkbox", required: false },
+    { name: "boss_count", type: "integer", value: 1 },
     { name: "map_template", choices: MAP_CHOICES.sort(), value: MAP_CHOICES[0], type: 'select' },
     { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
     { name: "mook_set", choices: MOOK_CHOICES, type: 'select', value: 'default' },
+    { name: "boss_set", choices: BOSS_CHOICES, type: 'select', value: 'default'},
   ]);
 });
 tW.Game = class Game extends uR.RandomObject {
@@ -62,11 +63,9 @@ tW.Game = class Game extends uR.RandomObject {
   }
   makeTeams() {
     this.teams = [];
-    var unit_count = parseInt(this.opts.base_units) + this.level_number*this.opts.piece_increase;
     for (var i=0;i<2;i++) {
       this.teams.push(new tW.team.Team({
         game: this,
-        unit_count:unit_count,
         _prng: this,
       }))
     }
