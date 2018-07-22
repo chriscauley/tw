@@ -13,7 +13,7 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
       var square = this.piece.look([i*dx,i*dy]);
       if (!square) { break }
       if (!square.isOpen([dx,dy])) {
-        if (square.piece && square.piece.team != this.piece.team) {
+        if (this.damage && square.piece && square.piece.team != this.piece.team) {
           move.damage = {
             dx: i*dx,
             dy: i*dy,
@@ -47,9 +47,15 @@ tW.feet.Sprint = class Sprint extends tW.feet.BaseFeet {
   constructor(opts={}) {
     opts.distance = 2;
     opts.resources = { energy: -1 };
-    opts.damage = 1;
     super(opts);
   }
+}
+
+tW.feet.Dash = class Dash extends tW.feet.Sprint {
+  constructor(opts={}) {
+    opts.damage = 1;
+    super(opts);
+}
 }
 
 tW.feet.ApocalypseBoots = class ApocalypseBoots extends tW.feet.BaseFeet {
