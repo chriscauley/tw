@@ -10,18 +10,7 @@ tW.BOSS_SETS = {
   default: "bbat|flyking"
 }
 
-tW.ROOM_UNITS = {
-  mix1: [
-    { bat: 4, sk: 1 },
-    { star: 1, fly: 4, sk: 2, },
-    { sk: 2, fly:5 },
-    { be: 1, sk: 3, fly: 2 },
-    { zombie: 4, fly: 4 },
-    //{ sp:1, star: 1, zombie: 1, bbat: 1, sk: 1, be: 1, bat: 1, flyking: 1 }, //rainbow!!!
-    //{ sk: 1 },
-  ]
-}
-for (var e in tW.enemy_map) { tW.ROOM_UNITS[e] = [{ e:1 }] }
+for (var e in tW.enemy_map) { tW.MOOK_MAP[e] = [e] }
 
 tW.team.Team = class Team extends uR.RandomObject {
   constructor(opts={}) {
@@ -90,7 +79,7 @@ tW.team.Team = class Team extends uR.RandomObject {
     if (typeof boss_set == "string") {
       boss_set = boss_set.split("|").map(s=>tW.enemy_map[s]);
     }
-    while (boss_count > 0) {
+    while (boss_count > 0 && boss_room > 0) {
       const boss = this.random.choice(boss_set);
       this.pieces.push(new boss({
         square: board.getRandomEmptySquare({room: boss_room ||[i]}),

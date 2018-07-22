@@ -7,7 +7,8 @@ uR.ready(function() {
     }*/
   var MAP_CHOICES = [];
   for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
-  const MOOK_CHOICES = ['default']
+  var MOOK_CHOICES = [];
+  for (var key in tW.MOOK_MAP) { MOOK_CHOICES.push(key) }
   const BOSS_CHOICES = ['default']
   tW.game_config.setSchema([
     { name: "piece_count", type: "integer", value: 4 },
