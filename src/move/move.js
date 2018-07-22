@@ -35,11 +35,13 @@
       var piece = square && square.piece;
       if (piece && piece.team != this.team ) {
         move.damage = {squares: [square],count:this.damage};
+        move.dxdy = move.turn = dxdy;
+        move.done = true;
+        break
       }
-      else if (!square.isOpen(dxdy)) { break; }
+      if (!square.isOpen(dxdy)) { break; }
       move.move = square;
-      move.dxdy = dxdy;
-      move.turn = dxdy;
+      move.dxdy = move.turn = dxdy;
       move.done = true;
     }
   }
