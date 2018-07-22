@@ -84,7 +84,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
     if (this.following) { return canvas_set.black_halo; }
   }
-  isActionReady() { return this.targeted_piece || !this.wait.interval || this.wait.isReady(); }
+  isActionReady() { return this.targeted || !this.wait.interval || this.wait.isReady(); }
   isAwake() { return true; }
   applyMove(move) {
     var result = {

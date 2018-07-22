@@ -12,19 +12,18 @@
       // #! TODO check buffs to see if similar class is there and increase buff duration, but for now...
       this.target.buffs.push(this);
     }
-    updateMove(move) {
-      this.remaining_turns--;
-      (this.remaining_turns < 1) && this.dispell(move); //should somehow augment the move to trigger dispell;
-      this.target._ui_dirty = true;
+    afterMove(move) {
+      move.afterMove.push(() => {
+        this.remaining_turns--;
+        (this.remaining_turns < 1) && this.dispell(move);
+        this.target._ui_dirty = true;
+      })
     }
     dispell(move) {
       var index = this.target.buffs.indexOf(this);
       (index != -1) && this.target.buffs.splice(index,1);
-      move.waited = 0;
-      move.wait_ready = false;
     }
-    beforeMove(result) { }
-    afterMove(result) { }
+    beforeMove(move) { }
   }
 
   tW.buffs = {
@@ -37,9 +36,16 @@
       this.sprite = 'fireball';
       this.target.wait.waited = this.target.wait.interval;
     }
-    afterMove() {
-      this.target.wait.waited = this.target.wait.interval;
+    afterMove(move) {
+      super.afterMove(move);
+      move.afterMove.push(() => {this.target.wait.waited = this.target.wait.interval })
     }
   }
 
+  tW.buffs.Charge = class Charge extends BaseBuff {
+    constructor(opts={}) {
+      super(opts);
+    }
+    
+  }
 })();

@@ -1,14 +1,16 @@
 (function() {
-  tW.move.attackNearby = function()  {
+  tW.move.attackNearby = function(move)  {
     for (let direction of this.DIRECTIONS) {
       let square = this.look(direction);
-      if (square && square.piece && square.piece.team != this.team) { return tW.move.forward.call(this,direction); }
+      if (square && square.piece && square.piece.team != this.team) {
+        tW.move.forward.call(this,move,direction);
+      }
     }
   }
-  tW.move.forwardRandomly = function() {
+  tW.move.forwardRandomly = function(move) {
     for (let direction of this.random.shuffle(this.DIRECTIONS)) {
-      let move = tW.move.forward.call(this,direction);
-      if (move) { move.turn = [0,0]; return move; }
+      tW.move.forward.call(this,move,direction);
+      if (move.move) { move.turn = [0,0]; return move; }
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
