@@ -86,7 +86,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   isActionReady() { return this.targeted_piece || !this.wait.interval || this.wait.isReady(); }
   isAwake() { return true; }
-  applyMove(opts={}) {
+  applyMove(move) {
     var result = {
       damages: [],
       digs: [],
@@ -94,58 +94,59 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       moves: [],
       kills: [],
     };
-    result.animation = (opts.dy || opts.dx) && ['bounce',{ dx: opts.dx, dy: opts.dy }];
+    result.animation = (move.dy || move.dx) && ['bounce',{ dx: move.dx, dy: move.dy }];
     var d,dx,dy;
-    if (opts.damage) {
-      for (var square of opts.damage.squares) {
-        var damage_done = square && square.piece && square.piece.takeDamage(opts.damage.count);
+    if (move.damage) {
+      for (var square of move.damage.squares) {
+        var damage_done = square && square.piece && square.piece.takeDamage(move.damage.count);
         square && this.newAnimation("damage",{
           x: square.x,
           y: square.y,
-          sprite: opts.damage.sprite || this.sprites.damage,
+          sprite: move.damage.sprite || this.sprites.damage,
         });
         if (damage_done) {
           damage_done.count && result.damages.push(damage_done);
           damage_done.kill && result.kills.push(damage_done);
         }
       }
-      opts.done = true;
+      result.done = true;
     }
 
-    if (opts.move) {
-      if (Array.isArray(opts.move)) {
-        var square = this.look(opts.move);
-        [dx,dy] = opts.move;
+    if (move.move) {
+      if (Array.isArray(move.move)) {
+        var square = this.look(move.move);
+        [dx,dy] = move.move;
       } else {
-        var square = opts.move;
+        var square = move.move;
         [dx,dy] = [square.x-this.x, square.y-this.y];
       }
       if (square && square.isOpen([dx,dy])) {
-        this.current_square && this.current_square.moveOff(this,opts);
-        result.animation = result.animation || ['move',opts.move_animation || {
+        this.current_square && this.current_square.moveOff(this,move);
+        result.animation = result.animation || ['move',move.move_animation || {
           x: this.x,
           y: this.y,
           dx: dx,
           dy: dy
         }];
-        var move_on_result = square.moveOn(this,opts);
+        var move_on_result = square.moveOn(this,move);
         if (move_on_result) { return this.applyMove(move_on_result) }
         this.takeGold(square); // #! TODO should be in the square.moveOn
         result.moves.push([dx,dy]);
       }
-      opts.done = true;
+      result.done = true;
       result.animation = result.animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
     }
-    if (opts.turn || opts.dxdy) {
-      opts.done = true;
-      [dx,dy] = opts.turn || opts.dxdy;
+    if (move.turn || move.dxdy) {
+      result.done = true;
+      [dx,dy] = move.turn || move.dxdy;
     }
-    if (opts.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
-    if (opts.done) { // anything happened
+    if (move.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
+    if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);
-      result.chain = opts.chain && this.applyMove(opts.chain.bind(this)());
-      return result;
+      result.chain = move.chain && this.applyMove(move.chain.bind(this)());
+      result.done = true
     }
+    return result;
   }
   newAnimation(type,opts={}) {
     var self = this;
@@ -169,14 +170,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   play() {
     this.ui_dirty = true;
     uR.forEach(this.buffs,buff => buff.beforeMove())
-    var move = this.getNextMove();
-    if (move) {
-      for (let buff of this.buffs) { buff.updateMove(move) }
-      const result = this.applyMove(move);
-      this.onMove.map(f=>f());
-    }
-    uR.forEach(this.buffs,buff => buff.afterMove())
-    this.afterMove = [];
+    const buff_moves = this.buffs.map(b=>b.beforeMove()).filter(b=>b);
+    const move = this.getNextMove();
+    const result = this.applyMove(move);
+    move.afterMove.map(f=>f(result));
   }
   stamp(x0,y0,dx,img) {
     img = tW.sprites.get(img);
@@ -235,12 +232,19 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   getNextMove() {
     var tasks = this.tasks || [];
-    var _i = 0;
-    while(_i<tasks.length) {
-      var output = tasks[_i].call(this); // if any task returns an output, we're doing that
-      if (output) { return output }
-      _i++;
+    const move = { afterMove: [] };
+    for (let buff of this.buffs) {
+      if (move.done) { break }
+      buff.beforeMove(move);
     }
+    for (let task of this.tasks) {
+      if (move.done) { break }
+      task.call(this,move); // if any task returns an output, we're doing that
+    }
+    for (let buff of this.buffs) {
+      buff.afterMove(move);
+    }
+    return move;
   }
   draw() {
     if (!this.current_square) { return }
