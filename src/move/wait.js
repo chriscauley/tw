@@ -13,16 +13,19 @@
       blocking: true,
       name: "_wait",
     },opts)
-    const wait = function() {
+    const wait = function(move) {
       // usage this.tasks = [no_wait_action,this.wait,post_wait_action]
       if (wait.isReady()) {
-        this.onMove.push(() => wait.waited = 0)
+        move.afterMove.push((result) => { if (result.done) { wait.waited = 0 } })
         return // wait is over, exit silently
-      } else if (this.game.turn != wait.turn) { // only increment wait.waited once a turn
-        this.onMove.push(() => wait.waited++)
-        wait.turn = this.game.turn;
       }
-      if (opts.blocking) { return { done: true } }
+      move.afterMove.push(() => {
+        if (this.game.turn != wait.turn) { // only increment wait.waited once a turn
+          wait.waited++
+          wait.turn = this.game.turn;
+        }
+      })
+      if (opts.blocking) { move.done = true; }
     }
     wait.waited = 0;
     wait.interval = interval;
@@ -37,13 +40,12 @@
            ...post_wait_actions
          ]
       */
-      function func() {
+      function func(move) {
         if (!wait.isReady()) { return } 
         for (let action of actions) {
-          let result = action.call(this,...arguments);
-          if (result) {
+          action.call(this,...arguments);
+          if (move.done) {
             this.onMove.push(() => wait.waited = 0)
-            return result;
           }
         }
       }
@@ -62,8 +64,8 @@
       */
       // executes the wait() function and the action in one call
       const ifReady = wait.ifReady(...actions);
-      function func() {
-        wait.call(this); // See, it increments!
+      function func(move) {
+        wait.call(this,move); // See, it increments!
         return ifReady.call(this,...arguments)
       }
       //tW.nameFunction(func,action);

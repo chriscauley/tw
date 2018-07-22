@@ -25,9 +25,8 @@
     }
   }
 
-  const burnout = function() {
-    this.die();
-    return { done: true };
+  const burnout = function(move) {
+    move.afterMove.push(()=>this.die())
   }
   tW.move = {
     Move: Move,

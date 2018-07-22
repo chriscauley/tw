@@ -1,4 +1,4 @@
-tW.move.follow = function follow() {
+tW.move.follow = function follow(move) {
   if (!this.following) { return }
   const dx = this.following.x - this.x; //how far in each direction
   const dy = this.following.y - this.y;
@@ -11,6 +11,9 @@ tW.move.follow = function follow() {
   for (let direction of dirs) {
     let square = this.look(direction);
     if (!square) { continue }
-    if (square.piece == this.following || square.isOpen()) { return tW.move.forward.call(this,direction); }
+    if (square.piece == this.following || square.isOpen()) {
+      tW.move.forward.call(this,move,direction);
+      break;
+    }
   }
 }
