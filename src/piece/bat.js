@@ -4,6 +4,7 @@
       let square = this.look(direction);
       if (square && square.piece && square.piece.team != this.team) {
         tW.move.forward.call(this,move,direction);
+        console.log('ah',move);
       }
     }
   }
@@ -14,11 +15,11 @@
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
-    die() {
+    die(move) {
       // should this somehow modify the move that caused the death?
       // not sure if that would be useful
-      super.die();
-      var move = tW.move.spawnPiece.bind(this)(this.current_square,[this.parent_piece.spawn_class]);
+      super.die(move);
+      tW.move.spawnPiece.bind(this)(move,this.current_square,[this.parent_piece.spawn_class]);
       const buff = this.parent_piece.spawn_buff;
       buff && move && move.spawned && move.spawned.forEach(spawn => new buff({
         target: spawn,

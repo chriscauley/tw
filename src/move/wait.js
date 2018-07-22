@@ -45,7 +45,7 @@
         for (let action of actions) {
           action.call(this,...arguments);
           if (move.done) {
-            this.onMove.push(() => wait.waited = 0)
+            move.afterMove.push(() => wait.waited = 0)
           }
         }
       }
@@ -66,7 +66,8 @@
       const ifReady = wait.ifReady(...actions);
       function func(move) {
         wait.call(this,move); // See, it increments!
-        return ifReady.call(this,...arguments)
+        ifReady.call(this,...arguments);
+        move.force_done = move.done;
       }
       //tW.nameFunction(func,action);
       return func;

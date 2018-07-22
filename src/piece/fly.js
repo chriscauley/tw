@@ -19,7 +19,7 @@
       this.pieces = [Fly]
       this.setTasks(
         this.wait.ifReady(tW.move.attackNearby),
-        tW.move.wait(5,{name:'_spawn_wait'}).then(tW.move.spawnPiece),
+        tW.move.wait(5,{name:'_spawn_wait',blocking: false}).then(tW.move.spawnPiece),
         tW.move.findEnemy,
         //this.stayNearEnemy,
         this.wait,
