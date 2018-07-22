@@ -75,7 +75,13 @@ uR.router.add({
 });
 
 uR.ready(function() {
-  uR.forEach(['16_colors_14.png','zelda/underworld.png'],function(path) {
+  const pngs = [
+    '16_colors_14.png',
+    'zelda/underworld.png',
+    'DungeonCrawl_ProjectUtumnoTileset.png',
+    'ProjectUtumno_full.png',
+  ];
+  uR.forEach(pngs,function(path) {
     SpriteSheet.objects.getOrCreate({ path: path });
   });
 });
