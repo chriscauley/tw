@@ -305,6 +305,7 @@ uR.ready(function() {
     'vampire',
     'beholder',
     'flyking',
+    'grave',
   ];
   var blades = [
     'sword',

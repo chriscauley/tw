@@ -10,7 +10,7 @@
     for (var sq of squares) {
       if (!sq.piece) {
         const clss = this.random.choice(pieces || this.pieces);
-        move.done = true;
+        move.force_done = move.done = true;
         move.spawned = [ // eventually this list will be in a forloop so that spawned can be plural
           new clss({
             square: sq,
@@ -18,7 +18,6 @@
             _prng: this,
           })
         ]
-        console.log(move);
         return
       }
     }

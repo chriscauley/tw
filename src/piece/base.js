@@ -95,8 +95,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       kills: [],
       done: move.force_done, /* #! TODO used in shoot
       ideally it would be done: move.dome, but that makes moves like tW.move.forward reset the wait
-      even when the piece didn't move forward (skeleton against a wall)
-                             */
+      even when the piece didn't move forward (skeleton against a wall)*/
     };
     result.animation = (move.dy || move.dx) && ['bounce',{ dx: move.dx, dy: move.dy }];
     var d,dx,dy;
