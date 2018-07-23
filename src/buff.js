@@ -25,6 +25,7 @@
       (index != -1) && this.target.buffs.splice(index,1);
     }
     beforeMove(move) { }
+    getHelpText() { throw "NotImplemented"; }
   }
 
   tW.buffs = {
@@ -41,12 +42,18 @@
       super.afterMove(move);
       move.afterMove.push(() => {this.target.wait.waited = this.target.wait.interval })
     }
+    getHelpText() {
+      return `Haste: Skip "wait" for ${this.remaining_turns}`;
+    }
   }
 
   tW.buffs.Stunned = class Stunned extends BaseBuff {
     beforeMove(move) {
       super.beforeMove(move);
       move.done = true;
+    }
+    getHelpText() {
+      return `Stunned: Cannot move for ${this.remaining_turns}.`;
     }
   }
 
@@ -71,6 +78,9 @@
     onBuff(move) {
       // #! TODO: should this be standard? should buff be applied to curren turn?
       move && this.beforeMove(move);
+    }
+    getHelpText() {
+      return `Charge: This piece will run forward until it hits anything. Stunned for 1 turn after.`;
     }
   }
 })();

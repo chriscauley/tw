@@ -75,8 +75,9 @@ showHelp(e) {
         <h2>
           <i class="sprite sprite-{ item.sprite.name }"></i> { item.constructor.name }
         </h2>
-        <ul>
-          <li each={ t,_it in item.getHelpText() }>{ t }</li>
+        <ul each={ section,_is in item.getHelpSections() }>
+          <h4>{ section.title }</h4>
+          <li each={ t,_it in section.lines }>{ t }</li>
         </ul>
       </div>
     </div>

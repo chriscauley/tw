@@ -62,14 +62,19 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   buildHelp() {
     return super.buildHelp && super.buildHelp() || {};
   }
-  getHelpText() {
+  getHelpSections() {
+    const out = [];
+    if (this.buffs.length) {
+      out.push({ title: "Buffs", lines: this.buffs.map(b=>b.getHelpText())})
+    }
     var _help = this.buildHelp();
-    var items = this.description && [this.description] || [];
+    var action_lines = this.description && [this.description] || [];
     _.each(this.tasks,function(task,i) {
       let name = task._name || task.name;
-      items.push(`${i}. *${name}:* ${_help[name] || 'unknown'}`)
+      action_lines.push(`${i}. *${name}:* ${_help[name] || 'unknown'}`)
     })
-    return items;
+    out.push({ title: 'Actions', lines: action_lines });
+    return out;
   }
   levelUp(n=1) {
     this.level += n;

@@ -11,7 +11,7 @@ class PygmyElephant extends tW.pieces.BasePiece {
   }
 }
 
-class WarElephant extends tW.pieces.BasePiece {
+class WarElephant extends PygmyElephant {
   constructor(opts={}) {
     opts.health=4;
     opts.wait_interval = 0;
