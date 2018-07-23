@@ -72,10 +72,13 @@ tw-scores .health {
 }
 
 tw-scores .energy {
-  position: absolute;
-  top: 100%;
-  left: 0;
   @s:20px;
+  left: 50%;
+  margin-left: -3*@s;
+  position: absolute;
+  text-align: center;
+  top: 100%;
+  width: 6*@s;
   i {
     border: @s/2 solid blue;
     border-radius: 100%;
@@ -106,6 +109,7 @@ tw-scores .help.bot {
   box-sizing: border-box;
   height: @size;
   margin: @border;
+  position: relative;
   width: @size;
 }
 

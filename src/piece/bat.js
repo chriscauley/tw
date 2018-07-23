@@ -4,7 +4,6 @@
       let square = this.look(direction);
       if (square && square.piece && square.piece.team != this.team) {
         tW.move.forward.call(this,move,direction);
-        console.log('ah',move);
       }
     }
   }
