@@ -35,12 +35,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       height: this.board.scale,
       name: 'ui_canvas',
     });
-    this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
     this.wait = tW.move.wait(this.wait_interval); // every unit has a fundemental wait set by opts.wait_interval
 
     this.animating = 0;
     this.show_health = true;
     this.max_health = this.health;
+    this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
+    // we want to scale player, but not the bosses
+    // #! TODO super hacky for now
+    if (this.team != 1 && this.max_health>1) { this.ds = 0; }
     this.onMove = [];
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';
@@ -263,13 +266,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     var s = this.board.scale;
     if (this.animating) { return }
     var img = this.sprite.get(this);
-    var team_img = this.team_sprite.get(this);
+    var team_img = this.team_sprite.get(this); // direcitonal wedge
+    var ws = 0;
+    if (!this.ds) { ws = this.board.scale/5 }
     (this.dx || this.dy) && c.ctx.drawImage(
       team_img.img,
       team_img.x, team_img.y,
       team_img.w, team_img.h,
-      this.x*s,this.y*s,
-      s,s,
+      this.x*s-ws,this.y*s-ws,
+      s+2*ws,s+2*ws,
     );
     c.ctx.drawImage(
       img.img,
