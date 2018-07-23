@@ -82,7 +82,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.resetMiniMap();
     this.equipment = {};
     var starting_equipment = {}
-    var starting_equipment = [tW.feet.Dash, tW.weapon.Knife]
+    var starting_equipment = [tW.weapon.Knife]; //,tW.feet.Sprint];
     for (var item of starting_equipment) {
       new item({piece: this});
     }

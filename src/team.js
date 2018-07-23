@@ -38,12 +38,19 @@ tW.team.Team = class Team extends uR.RandomObject {
     }
     this.pieces = [];
 
-    // for now give boots away on level 1
-    if (game.level_number == 0) {
+    if (true) {
+      const prizes = [ // 2x chance of getting weaker items
+        tW.weapon.Spear,
+        tW.feet.Sprint,
+        tW.weapon.Spear,
+        tW.feet.Sprint,
+        tW.weapon.LongSword,
+        tW.feet.Dash
+      ];
       var piece = new tW.pieces.Chest({
         square: board.getRandomEmptySquare(),
         team: this.number,
-        item: tW.weapon.LongSword,
+        item: this.random.choice(prizes),
         _prng: this,
       });
       this.pieces.push(piece);
