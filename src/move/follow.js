@@ -5,9 +5,12 @@ tW.move.follow = function follow(move) {
   const distance = Math.abs(dx) + Math.abs(dy);
   if (this.following.is_dead || distance > this.sight*2) { this.following = undefined; return }
   const dirs = [[Math.sign(dx),0],[0,Math.sign(dy)]]; // defaults to check x direction first
-  if (dy && this.dy) { // check the y direction first since unit is facing the y direciton
-    dirs.reverse();
+  if (this.dy) { // piece is facing in the y-direction
+    if (this.dy == Math.sign(dy)) { dirs.reverse(); } // facing piece, check y-direction first
+  } else { // facing x-direction
+    if (this.dx != Math.sign(dx)) { dirs.reverse(); } // facing away, check y-direction first
   }
+
   for (let direction of dirs) {
     let square = this.look(direction);
     if (!square) { continue }
