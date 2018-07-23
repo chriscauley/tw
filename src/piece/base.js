@@ -192,18 +192,18 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_canvas.clear();
     this.ctx = this.ui_canvas.ctx;
     const size = this.board.scale/4;
-    let edge = this.board.scale-size;
     if (this.show_health && this.max_health != 1 && this.current_square) {
       this.stamp(0,0,this.max_health,'black');
       this.stamp(0,0,Math.max(this.health,0),'red');
     }
-    for (let i=0;i<this.buffs.length;i++) {
+    for (let i=0;i<this.buffs.length;i++) { // #! TODO right now multiple buffs cover each other
       let buff = this.buffs[i];
+      let s = (buff.remaining_turns == 1 || buff.remaining_turns > 4)?size*1.5:size;
+      let edge = this.board.scale-s;
       if (buff.remaining_turns >4) { // just do one big sprite
-        let s = size/2;
-        this.stamp(edge-s,edge-s,1,buff.sprite,size+s);
+        this.stamp(edge,edge,1,buff.sprite,s);
       } else { // one sprite for every turn remaining
-        this.stamp(0,edge,buff.remaining_turns,buff.sprite,size);
+        this.stamp(0,edge,buff.remaining_turns,buff.sprite,s);
       }
     }
     this.ui_dirty = false;
