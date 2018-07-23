@@ -8,7 +8,7 @@ tW.move.target = function(action,opts={}) {
     if (this.targeted) { // piece was targeted last turn
       action.call(this,move,this.targeted);
       move.afterMove.push(() => this.targeted = false) // targeting only lasts one turn
-      //move.turn = [0,0];
+      if (this._no_look) { move.turn = [0,0]; } // beholder only
       return;
     }
     for (let direction of tW.look.directions) {
@@ -16,8 +16,8 @@ tW.move.target = function(action,opts={}) {
       for (let square of squares) {
         if (opts.pass.call(this,square)) {
           this.targeted = direction;
+          move.turn = direction;
           if (opts.instant || opts.wait_triggered && this.wait.isReady()) {
-            move.turn = direction;
             out.call(this,move); // some targets get applied now if no wait
           }
           return
