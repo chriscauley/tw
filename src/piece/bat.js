@@ -27,7 +27,7 @@
     }
     buildHelp() {
       return _.extend(super.buildHelp(),{
-        'burnout': `If this piece cannot move, it dies and makes spawns a ${this.parent_piece.spawn_class.name}`,
+        'burnout': `If this piece cannot move, it dies and spawns a ${this.parent_piece.spawn_class.name}`,
       })
     }
   }

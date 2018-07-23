@@ -100,7 +100,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   }
   getHelpSections() {
     return [{
-      name: "Key Mapping",
+      title: "Key Mapping",
       lines: [
         "Arrows: Move or attack in a direction.",
         "Shift+arrows: Use boots in a direction.",
