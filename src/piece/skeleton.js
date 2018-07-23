@@ -10,7 +10,6 @@
         tW.move.follow,
       )
     }
-    isAwake() { return this.following; }
   }
 
   tW.enemy_map.sk = tW.pieces.Skeleton = Skeleton;

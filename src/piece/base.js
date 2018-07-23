@@ -85,7 +85,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (this.following) { return canvas_set.black_halo; }
   }
   isActionReady() { return this.targeted || !this.wait.interval || this.wait.isReady(); }
-  isAwake() { return true; }
   applyMove(move) {
     var result = {
       damages: [],
@@ -172,36 +171,40 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   play() {
     this.ui_dirty = true;
-    uR.forEach(this.buffs,buff => buff.beforeMove())
-    const buff_moves = this.buffs.map(b=>b.beforeMove()).filter(b=>b);
     const move = this.getNextMove();
     const result = this.applyMove(move);
     move.afterMove.map(f=>f(result));
   }
-  stamp(x0,y0,dx,img) {
+  stamp(x0,y0,dx,img,size) {
     img = tW.sprites.get(img);
     dx++;
-    while(dx--) {
+    while(--dx) {
       this.ctx.drawImage(
         img.img,
         img.x,img.y,
         img.w,img.h,
-        x0+(dx-1)*this.s,y0,
-        this.s,this.s
+        x0+(dx-1)*size,y0,
+        size,size
       )
     }
   }
   _drawUI() {
     this.ui_canvas.clear();
     this.ctx = this.ui_canvas.ctx;
-    this.s = this.board.scale/4;
+    const size = this.board.scale/4;
+    let edge = this.board.scale-size;
     if (this.show_health && this.max_health != 1 && this.current_square) {
       this.stamp(0,0,this.max_health,'black');
       this.stamp(0,0,Math.max(this.health,0),'red');
     }
     for (let i=0;i<this.buffs.length;i++) {
       let buff = this.buffs[i];
-      this.stamp(0,this.board.scale-this.s,buff.remaining_turns,buff.sprite);
+      if (buff.remaining_turns >4) { // just do one big sprite
+        let s = size/2;
+        this.stamp(edge-s,edge-s,1,buff.sprite,size+s);
+      } else { // one sprite for every turn remaining
+        this.stamp(0,edge,buff.remaining_turns,buff.sprite,size);
+      }
     }
     this.ui_dirty = false;
   }

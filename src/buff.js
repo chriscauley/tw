@@ -12,6 +12,7 @@
       // #! TODO check buffs to see if similar class is there and increase buff duration, but for now...
       this.target.buffs.push(this);
     }
+    onBuff(move) {}
     afterMove(move) {
       move.afterMove.push(() => {
         this.remaining_turns--;
@@ -42,10 +43,34 @@
     }
   }
 
+  tW.buffs.Stunned = class Stunned extends BaseBuff {
+    beforeMove(move) {
+      super.beforeMove(move);
+      move.done = true;
+    }
+  }
+
   tW.buffs.Charge = class Charge extends BaseBuff {
     constructor(opts={}) {
+      opts.duration = opts.duration || Infinity; // default behavior is charge until you hit something
       super(opts);
     }
-    
+    beforeMove(move) {
+      tW.move.forward.call(this.target,move);
+      if (!move.done || move.damage) { // crash into wall or player
+        move.done = true;
+        this.remaining_turns = 0;
+        move.afterMove.push(() => {
+          new tW.buffs.Stunned({
+            target: this.target,
+            duration: 1,
+          })
+        })
+      }
+    }
+    onBuff(move) {
+      // #! TODO: should this be standard? should buff be applied to curren turn?
+      move && this.beforeMove(move);
+    }
   }
 })();

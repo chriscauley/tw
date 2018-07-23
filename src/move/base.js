@@ -12,7 +12,8 @@
         attackNearby: "Attack a nearby enemy.",
         turnRandomly: "Turn in a random direction.",
         wait: `Wait ${this.wait.interval} moves.`, // should be something like f.wait.interval
-        "Target SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn`,
+        "Target SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn.`,
+        "Target buffSelf(Charge)": `If an enemy is spotted within ${this.sight} squares, charge in that direction until colliding with anything.`,
         burnout: 'If this piece cannot move it dies.',
       }
     }

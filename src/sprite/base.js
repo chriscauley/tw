@@ -279,6 +279,7 @@ uR.ready(function() {
     'shovel',
     'pickaxe',
     'pygmyelephant',
+    'stunned',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
@@ -306,6 +307,7 @@ uR.ready(function() {
     'beholder',
     'flyking',
     'grave',
+    'pygmyelephant',
   ];
   var blades = [
     'sword',

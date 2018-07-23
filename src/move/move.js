@@ -29,7 +29,7 @@
     move.done = true;
   }
   tW.move.forward = function forward(move,dxdy) {
-    dxdy = dxdy || [this.dx,this.dy];
+    dxdy = dxdy || move.turn || [this.dx,this.dy];
     var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
     for (var square of squares) {
       var piece = square && square.piece;
