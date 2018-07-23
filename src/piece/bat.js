@@ -1,5 +1,5 @@
 (function() {
-  tW.move.attackNearby = function(move)  {
+  tW.move.attackNearby = function attackNearby(move)  {
     for (let direction of this.DIRECTIONS) {
       let square = this.look(direction);
       if (square && square.piece && square.piece.team != this.team) {
@@ -8,7 +8,7 @@
       }
     }
   }
-  tW.move.forwardRandomly = function(move) {
+  tW.move.forwardRandomly = function forwardRandomly(move) {
     for (let direction of this.random.shuffle(this.DIRECTIONS)) {
       tW.move.forward.call(this,move,direction);
       if (move.move) { move.turn = [0,0]; return move; }

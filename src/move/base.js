@@ -15,6 +15,8 @@
         "Target SpawningProjectile": `If an enemy is spotted within ${this.sight} squares, shoot a spawning projectile in that direction next turn.`,
         "Target buffSelf(Charge)": `If an enemy is spotted within ${this.sight} squares, charge in that direction until colliding with anything.`,
         burnout: 'If this piece cannot move it dies.',
+        "wait.ifReady(attackNearby)": "If waited last turn, attack a nearby enemy.",
+        "wait(5).then(spawnPiece)": "Every 5 turns, spawn an enemy.",
       }
     }
     countdown() {

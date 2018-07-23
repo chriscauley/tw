@@ -1,5 +1,5 @@
 (function() {
-  tW.move.spawnPiece = function(move,squares,pieces) {
+  tW.move.spawnPiece = function spawnPiece(move,squares,pieces) {
     // Spawn a specified or random piece on a specified or random nearby square.
     // these three lines should probably be in a function somewhere
     squares = squares || this.lookMany(tW.look.circle[[1,0]][this.sight]).filter(s=>s.isOpen());

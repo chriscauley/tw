@@ -43,7 +43,7 @@
       move.afterMove.push(() => {this.target.wait.waited = this.target.wait.interval })
     }
     getHelpText() {
-      return `Haste: Skip "wait" for ${this.remaining_turns}`;
+      return `Haste: Skip "wait" for ${this.remaining_turns} turns.`;
     }
   }
 

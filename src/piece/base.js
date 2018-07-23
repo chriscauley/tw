@@ -68,9 +68,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       out.push({ title: "Buffs", lines: this.buffs.map(b=>b.getHelpText())})
     }
     var _help = this.buildHelp();
+    console.log(_help);
     var action_lines = this.description && [this.description] || [];
     _.each(this.tasks,function(task,i) {
       let name = task._name || task.name;
+      console.log(name);
       action_lines.push(`${i}. *${name}:* ${_help[name] || 'unknown'}`)
     })
     out.push({ title: 'Actions', lines: action_lines });
@@ -198,8 +200,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ctx = this.ui_canvas.ctx;
     const size = this.board.scale/4;
     if (this.show_health && this.max_health != 1 && this.current_square) {
-      this.stamp(0,0,this.max_health,'black');
-      this.stamp(0,0,Math.max(this.health,0),'red');
+      this.stamp(0,0,this.max_health,'black',size);
+      this.stamp(0,0,Math.max(this.health,0),'red',size);
     }
     for (let i=0;i<this.buffs.length;i++) { // #! TODO right now multiple buffs cover each other
       let buff = this.buffs[i];

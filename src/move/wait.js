@@ -11,7 +11,7 @@
        ]*/
     opts = _.extend({
       blocking: true,
-      name: "_wait",
+      name: "wait",
     },opts)
     const wait = function(move) {
       // usage this.tasks = [no_wait_action,this.wait,post_wait_action]
@@ -45,11 +45,13 @@
         for (let action of actions) {
           action.call(this,...arguments);
           if (move.done) {
-            move.afterMove.push(() => wait.waited = 0)
+            move.afterMove.push(() => wait.waited = 0);
+            return
           }
         }
       }
       //tW.nameFunction(func,action);
+      func._name = `wait.ifReady(${tW.getName(actions[0])})`;
       return func;
     }
     wait.then = function(...actions) {
@@ -70,6 +72,7 @@
         move.force_done = move.done;
       }
       //tW.nameFunction(func,action);
+      func._name = `wait(${wait.interval}).then(${tW.getName(actions[0])})`;
       return func;
     }
     return wait;

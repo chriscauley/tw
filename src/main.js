@@ -5,6 +5,7 @@ window.tW = {
     console.log(f1,f2);
     f1._name = f2.name || f2._name;
   },
+  getName: function(f) { return f._name || f.name },
 };
 
 uR.ready(function() {
