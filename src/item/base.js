@@ -45,6 +45,18 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     // unless a child class adds anything, by default this just drains resources
     return { resources: this.getCost() }
   }
+  getHelpSections() {
+    const texts = {
+      Knife: "Does one damage to any adjacent square.",
+      LongSword: "Does one damage to an enemy one square away and two squares away.",
+      Spear: "Does one damage to an enemy two or one square away.",
+      Sprint: "Shift+arrow: Move up to two squares away.",
+      Dash: "Shift+arrow: Move up to two squares away. If any enemy stops you, do one damage",
+      ApocalypseBoots: "Shift+arrow: damage everyone within 3 squares and move three squares. Unlimited energy.",
+    }
+    const name = this.constructor.name
+    return [{description: name, lines: [texts[name]]}]
+  }
 }
 
 tW.item.Consumable = class Consumable extends tW.item.Item {

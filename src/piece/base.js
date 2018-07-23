@@ -68,11 +68,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       out.push({ title: "Buffs", lines: this.buffs.map(b=>b.getHelpText())})
     }
     var _help = this.buildHelp();
-    console.log(_help);
     var action_lines = this.description && [this.description] || [];
     _.each(this.tasks,function(task,i) {
       let name = task._name || task.name;
-      console.log(name);
       action_lines.push(`${i}. *${name}:* ${_help[name] || 'unknown'}`)
     })
     out.push({ title: 'Actions', lines: action_lines });

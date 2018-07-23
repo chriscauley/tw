@@ -98,6 +98,16 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     for (var i=0;i<this.health; i++) { array[i] = 1; }
     return array;
   }
+  getHelpSections() {
+    return [{
+      name: "Key Mapping",
+      lines: [
+        "Arrows: Move or attack in a direction.",
+        "Shift+arrows: Use boots in a direction.",
+        "Space: Wait (skip turn)"
+      ]
+    }]
+  }
   touchItem(item) {
     item.pickUp(this);
   }
