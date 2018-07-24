@@ -101,7 +101,7 @@ this.on("unmount",function() {
     <div class={ theme.content } style="text-align: center;max-width: 400px;">
       <h1>Game over!</h1>
       <p>
-        <button class="btn btn-large btn-primary" onclick={ opts.game.restart }>
+        <button class="btn btn-large btn-primary" onclick={ unmount }>
           Restart game</button>
       </p>
       <!-- <p if={ !saved }> -->

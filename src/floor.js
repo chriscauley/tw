@@ -49,12 +49,11 @@ tW.floor = (function() {
       return this.open
     }
     ondeath(piece) {
-      if (this.square.board.pieces.length == 1) {
-        this.square.board.game.off('death',this._ondeath);
-        this.open = true;
-        this.sprite = tW.sprites.ground_stairs;
-        this.square.dirty = true;
-      }
+      for (var p of this.pieces) { if (!p.is_dead) { return } }
+      this.square.board.game.off('death',this._ondeath);
+      this.open = true;
+      this.sprite = tW.sprites.ground_stairs;
+      this.square.dirty = true;
     }
     moveOn(piece,move) {
       super.moveOn(piece,move);

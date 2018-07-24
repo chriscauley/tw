@@ -20,11 +20,11 @@ DG.TEMPLATES['basic'] = {
     any: {
       min_size: [5,5],
       max_size: [8,8],
-      max_exits: 2,
+      max_exits: 3,
     },
   },
   corridor_density: 0,
-  room_count: 10,
+  room_count: 8,
   max_interconnect_length: 5,
 }
 

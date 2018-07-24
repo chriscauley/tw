@@ -60,9 +60,6 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       });
     });
     this.start = this.start || this.getRandomEmptySquare();
-    this.exit = this.exit || this.getRandomEmptySquare();
-    //this.start.make('start');
-    this.exit && this.exit.setFloor(tW.floor.Stairs);
     // var red = this.getRandomEmptySquare();
     // var blue = this.getRandomEmptySquare();
     // red.setFloor(tW.floor.Portal,{color: 'red'});

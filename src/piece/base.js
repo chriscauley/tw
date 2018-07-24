@@ -315,8 +315,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   die() {
     this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
-    this.board.remove(this);
     this.is_dead = true;
+    this.board.remove(this);
   }
   attack(target) {
     if (target.team == this.team) {
