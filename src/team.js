@@ -2,12 +2,12 @@ tW.team = {};
 
 tW.MOOK_MAP = {
   default: [
-    "bat|sk","fly|sk","be|sk|fly","zombie|fly","sp|zombie|sk"
+    "bat|sk","fly|sk","be|sk|fly","zombie|fly","sp|zombie|sk","pe"
   ]
 }
 
 tW.BOSS_SETS = {
-  default: "bbat|flyking"
+  default: "bbat|flyking|we"
 }
 
 for (var e in tW.enemy_map) { tW.MOOK_MAP[e] = [e] }
@@ -40,8 +40,6 @@ tW.team.Team = class Team extends uR.RandomObject {
 
     if (true) {
       const prizes = [ // 2x chance of getting weaker items
-        tW.weapon.Spear,
-        tW.feet.Sprint,
         tW.weapon.Spear,
         tW.feet.Sprint,
         tW.weapon.LongSword,
