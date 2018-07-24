@@ -88,10 +88,11 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     const sq = this.getSquare(x,y)
     if (sq) {
       console.log(sq);
-      (sq.piece || sq.items.length) && uR.alertElement("tw-help", {
+      (sq.floor ||sq.piece || sq.items.length) && uR.alertElement("tw-help", {
         square: sq,
         piece: sq.piece,
         items: sq.items,
+        floor: sq.floor,
       })
       sq.piece && sq.piece.following && console.log('following',sq.piece.following);
     }

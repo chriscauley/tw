@@ -87,6 +87,7 @@ showHelp(e) {
 this.on("before-mount",function() {
   this.items = (this.opts.items || []).slice();
   if (opts.piece) { this.items.unshift(opts.piece) }
+  if (opts.floor) { this.items.push(opts.floor) }
 })
 this.on("unmount",function() {
   var e = document.getElementById("game");

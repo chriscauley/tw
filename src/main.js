@@ -1,3 +1,10 @@
+const VERSION = "0.0.1";
+if (localStorage.getItem("VERSION") != VERSION) {
+  localStorage.clear();
+  console.log('reset');
+  localStorage.setItem("VERSION",VERSION);
+}
+
 window.tW = {
   nameFunction: function(f1,f2) {
     // transfer name from f2 to f1 via _name

@@ -42,6 +42,9 @@ tW.floor = (function() {
       this._ondeath = (p) => this.ondeath(p);
       this.square.board.game.on('death',this._ondeath);
     }
+    getHelpSections() {
+      return [{title: "Stairs",lines: ["Kill all enemies to open"]}]
+    }
     canStepOn() {
       return this.open
     }
