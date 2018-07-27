@@ -47,9 +47,11 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   }
   getHelpSections() {
     const texts = {
-      Knife: "Does one damage to any adjacent square.",
+      Knife: "Does one damage to target square.",
       LongSword: "Does one damage to an enemy one square away and two squares away.",
       Spear: "Does one damage to an enemy two or one square away.",
+      Katana: "Damage target square or damage an enemy 2 squares away and dash towards enemy.",
+      Katana: "Damage target square. If target is empty, and the 3 squares beyond have any enemies, damage those three squares and dash forward",
       Sprint: "Shift+arrow: Move up to two squares away.",
       Dash: "Shift+arrow: Move up to two squares away. If any enemy stops you, do one damage",
       ApocalypseBoots: "Shift+arrow: damage everyone within 3 squares and move three squares. Unlimited energy.",

@@ -39,11 +39,13 @@ tW.team.Team = class Team extends uR.RandomObject {
     this.pieces = [];
 
     if (true) {
-      const prizes = [ // 2x chance of getting weaker items
+      const prizes = [
         tW.weapon.Spear,
         tW.feet.Sprint,
         tW.weapon.LongSword,
-        tW.feet.Dash
+        tW.feet.Dash,
+        tW.weapon.Katana,
+        tW.weapon.Scythe,
       ];
       var piece = new tW.pieces.Chest({
         square: board.getRandomEmptySquare(),
@@ -84,7 +86,6 @@ tW.team.Team = class Team extends uR.RandomObject {
     if (board.room_list.length == 1) { // only "i", disco-mode
       boss_room = "i";
       stairs_pieces = this.pieces;
-      console.log(1,stairs_pieces)
       boss_count = 0; // #! TODO: bosses in disco mode?
     } else {
       boss_room = Math.max(...board.room_list.filter(i => !isNaN(i))); // filter out 'i'
