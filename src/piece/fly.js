@@ -16,6 +16,7 @@
       opts.health = 4
       opts.sight = 5
       super(opts);
+      this.is_boss = true;
       this.pieces = [Fly]
       this.setTasks(
         this.wait.ifReady(tW.move.attackNearby),

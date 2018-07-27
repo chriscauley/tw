@@ -51,6 +51,7 @@
       opts.sight = 8;
       opts.health = 4;
       super(opts);
+      this.is_boss = true;
       this.spawn_class = tW.pieces.bat.BaseBat;
       this.spawn_buff = tW.buffs.Haste;
       this.setTasks(

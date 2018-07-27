@@ -43,7 +43,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
     // we want to scale player, but not the bosses
     // #! TODO super hacky for now
-    if (this.team != 1 && this.max_health>1) { this.ds = 0; }
+    if (this.is_boss) { this.ds = 0; }
     this.onMove = [];
     this.radius = this.board.scale*3/8;
     this.fillStyle = 'gradient';

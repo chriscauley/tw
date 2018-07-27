@@ -17,6 +17,7 @@ class WarElephant extends PygmyElephant {
     opts.sight=8;
     opts.wait_interval = 0;
     super(opts);
+    this.is_boss = true;
   }
 }
 
