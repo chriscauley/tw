@@ -98,7 +98,7 @@ tW.weapon.Jambiya = class Jambiya extends tW.weapon.BaseWeapon {
   getMove(dx,dy) {
     if (!dx && !dy) { return }
     var action = super.getMove(dx,dy)
-    if (action) { console.log(action);return action } // damage square in front
+    if (action) { return action } // damage square in front
     const square = this.piece.look([dx,dy])
     if (!square || square.piece) { return }
     var damage_squares

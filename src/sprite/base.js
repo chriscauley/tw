@@ -284,6 +284,7 @@ uR.ready(function() {
     'scythe',
     'jambiya',
     'hammer',
+    'orb',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
