@@ -46,6 +46,7 @@ tW.team.Team = class Team extends uR.RandomObject {
         tW.feet.Dash,
         tW.weapon.Katana,
         tW.weapon.Scythe,
+        tW.weapon.Jambiya,
       ];
       var piece = new tW.pieces.Chest({
         square: board.getRandomEmptySquare(),

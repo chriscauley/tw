@@ -25,11 +25,19 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
       var deltas = tW.look[this.geometry][[dx,dy]][r];
 
       const squares = this.piece.lookMany(deltas);
-      const action = this._getMoveForSquares(squares,r)
-      if (action) { return action }
+      const action = this._getMoveForSquares(squares)
+      if (action) {
+        // katana and scythe will dash one square if they are attacking 2 squares
+        // not sure how this should be handled at longer distances
+        if (this.dash && r>1) {
+          const d = Math.max(r-1,this.dash);
+          action.move = [Math.sign(dx)*d,Math.sign(dy)*d];
+        }
+        return action
+      }
     }
   }
-  _getMoveForSquares(squares,range) {
+  _getMoveForSquares(squares) {
     const square = _.find( //get the first matching square in this geometry
       squares,
       s=> s && s.piece && s.piece.team != this.piece.team
@@ -40,13 +48,6 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
         squares: this.splash?squares:[square],
         count: this.damage,
       }
-    }
-
-    // katana and scythe will dash one square if they are attacking 2 squares
-    // not sure how this should be handled at longer distances
-    if (this.dash && range>1) {
-      const d = Math.max(range-1,this.dash);
-      action.move = [Math.sign(dx)*d,Math.sign(dy)*d];
     }
     return action;
   }
