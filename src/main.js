@@ -1,8 +1,7 @@
-const VERSION = "0.0.1";
-if (localStorage.getItem("VERSION") != VERSION) {
+if (localStorage.getItem("VERSION") != window.VERSION) {
   localStorage.clear();
   console.log('reset');
-  localStorage.setItem("VERSION",VERSION);
+  localStorage.setItem("VERSION",window.VERSION);
 }
 
 window.tW = {

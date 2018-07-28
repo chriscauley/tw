@@ -11,6 +11,7 @@ var ncp = require('ncp');
 var path = require("path");
 var rev = require('gulp-rev');
 var clean = require('gulp-clean');
+var execSync = require('child_process').execSync;
 
 module.exports = function(opts) {
   opts.js = opts.js || {}; // javascript and riot files
@@ -83,16 +84,23 @@ module.exports = function(opts) {
   build_tasks.push('build-revision');
 
   if (opts.mustache.length) {
-    var mustache = require("gulp-mustache");
-    var fs = require('fs');
+    const fs = require("fs");
+    const mustache = require("gulp-mustache");
+
     gulp.task("build-mustache",build_tasks.slice(),function() {
       var manifest = JSON.parse(fs.readFileSync(path.join(opts.DEST,"rev-manifest.json")));
+      const _package = JSON.parse(fs.readFileSync("package.json"));
       for (var key in manifest) {
         manifest[key.replace("-","").replace(".","")] = manifest[key]
       }
       return gulp.src(opts.mustache)
         .pipe(mustache({
-          manifest: manifest
+          manifest: manifest,
+          package: _package,
+          VCS: JSON.stringify({
+            hash: execSync("git rev-parse HEAD").toString().trim(),
+            dirty: !! execSync("git diff"),
+          }),
         }))
         .pipe(gulp.dest(opts.DEST));
     });
