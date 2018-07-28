@@ -49,42 +49,40 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
   }
 }
 
-tW.weapon.Knife = class Knife extends tW.weapon.BaseWeapon {
-  constructor(opts={}) {
-    super(opts);
+function defineWeapon(name,default_opts={}) {
+  const weapon = class extends tW.weapon.BaseWeapon {
+    constructor(opts={}) {
+      uR.defaults(opts,default_opts)
+      super(opts)
+    }
+  }
+  Object.defineProperty(weapon, "name", { value:name })
+  tW.weapon[name] = weapon;
+  return weapon;
+}
+
+const _weapons = {
+  Knife: {},
+
+  Spear: { range: 2, },
+
+  LongSword: {
+    range: 2,
+    splash: true,
+  },
+
+  Katana: {
+    range: 2,
+    geometry: "_line",
+    dash: 1,
+  },
+
+  Scythe: {
+    range: 2,
+    geometry: "_cone",
+    dash: 1,
+    splash: true,
   }
 }
 
-tW.weapon.LongSword = class LongSword extends tW.weapon.BaseWeapon {
-  constructor(opts={}) {
-    opts.range = 2;
-    opts.splash = true;
-    super(opts)
-  }
-}
-
-tW.weapon.Spear = class Spear extends tW.weapon.BaseWeapon {
-  constructor(opts={}) {
-    opts.range = 2;
-    super(opts)
-  }
-}
-
-tW.weapon.Katana = class Katana extends tW.weapon.BaseWeapon {
-  constructor(opts={}) {
-    opts.range = 2;
-    opts.geometry = "_line";
-    opts.dash = 1;
-    super(opts);
-  }
-}
-
-tW.weapon.Scythe = class Scythe extends tW.weapon.BaseWeapon {
-  constructor(opts={}) {
-    opts.range = 2;
-    opts.geometry = "_cone";
-    opts.dash = 1;
-    opts.splash = true;
-    super(opts);
-  }
-}
+for (let key in _weapons) { defineWeapon(key,_weapons[key]) }
