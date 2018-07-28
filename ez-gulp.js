@@ -99,7 +99,7 @@ module.exports = function(opts) {
           package: _package,
           VCS: JSON.stringify({
             hash: execSync("git rev-parse HEAD").toString().trim(),
-            dirty: !! execSync("git diff"),
+            dirty: !! execSync("git diff").toString(),
           }),
         }))
         .pipe(gulp.dest(opts.DEST));
