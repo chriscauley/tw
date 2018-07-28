@@ -1,0 +1,29 @@
+{
+  "name": "timewalker",
+  "version": "0.0.2",
+  "description": "A open source rogue-lite.",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp-rev": "^8.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chriscauley/tw.git"
+  },
+  "keywords": [
+    "rogue-lite",
+    "game",
+    "canvas",
+    "unrest"
+  ],
+  "author": "chriscauley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chriscauley/tw/issues"
+  },
+  "homepage": "https://github.com/chriscauley/tw#readme"
+}
