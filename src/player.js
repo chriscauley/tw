@@ -243,8 +243,8 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     uR.forEach(this.minimap || [],function(row) { out += row.join(" ") + "\n" });
     return out;
   }
-  play(opts) {
-    super.play(opts);
+  play() {
+    this.ui_dirty = true;
     this.equipment.feet && this.energy.tick();
     if (this.go_to_next_level) {
       this.game.nextLevel();
