@@ -98,19 +98,18 @@ this.on("unmount",function() {
 
 <tw-gameover>
   <div class={ theme.outer }>
+    <div class={ theme.header }>
+      <div class="h5 text-center">{ header_text }</div>
+    </div>
     <div class={ theme.content } style="text-align: center;max-width: 400px;">
-      <h1>{ header_text }</h1>
       <p>
         <button class="btn btn-large btn-primary" onclick={ unmount }>
           Restart game</button>
+        <button if={ !saved } class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button>
+        <div if={ saved } class="btn btn-large btn-success">Replay Saved!</div>
       </p>
-      <p if={ !saved }>
-        <button class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button>
-      </p>
-      <h3>{ opts.game.turn } turns</h3>
-      <div if={ saved }>
-        <div class="btn btn-large btn-success">Replay Saved!</div>
-        <h3>Replays</h3>
+      <div if={ replays.length }>
+        <h5>Replays</h5>
         <ul>
           <li each={ replay,_ in replays }>
             <span>{ replay.toString() }</span>
@@ -133,6 +132,10 @@ this.on("unmount",function() {
   </div>
   this.on("before-mount",function() {
     this.header_text = this.opts.game.won?"You win!":"Game Over!";
+    this.replays = [];
+  });
+  this.on("mount", function() {
+    this.update()
   });
   this.on("unmount",function() {
     this.opts.game.restart();
@@ -177,3 +180,14 @@ this.opts.theme = uR.css.modal;
 this.opts.ur_modal = true;
   </script>
 </tw-menu>
+
+<tw-scorecard>
+  <div each={ log,il in score.logs }>
+    <div class="damage">{ log.damages.length</div>
+  </div>
+
+  <script>
+this.on("before-mount",function() {
+  this.score = opts.game.score;
+})
+</tw-scorecard>
