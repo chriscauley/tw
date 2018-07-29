@@ -10,7 +10,6 @@
       this.sprites = {};
       this.item && new this.item({piece: this})
     }
-    touchedBy(player) { this.die() }
   }
   tW.enemy_map.ch = tW.pieces.Chest = Chest;
 })();

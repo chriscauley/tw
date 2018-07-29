@@ -154,6 +154,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
+      result.dxdy = [dx,dy];
       result.done = true
     }
     return result;
@@ -164,7 +165,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       x: this.x, y: this.y, // board coordinates
       dx: 0, dy: 0, // how much to move animation
       t0: new Date().valueOf(),
-      ds: this.ds, //shrink factor
+      ds: this.ds, // shrink factor
     });
     if (type == "bounce") { opts.easing = (dt) => (dt < 0.5)?dt:1-dt; }
     var sprite = opts.sprite || this.sprites[type];

@@ -168,11 +168,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   applyMove(opts) {
     var result = super.applyMove(opts);
 
-    if (!result) { //  currently only used by chest
-      var square = opts && opts.move && this.current_square.look(opts.move);
-      var piece = square && square.piece;
-      piece && piece.touchedBy && piece.touchedBy(this);
-    }
     this.combos && this.combos.map((c) => c.apply(result));
     var self = this;
     var [dx,dy] = [this.dx,this.dy];
