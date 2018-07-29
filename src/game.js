@@ -56,6 +56,10 @@ tW.Game = class Game extends uR.RandomObject {
     );
   }
   restart() {
+    var container = document.getElementById("game");
+    container.classList.remove("gameover");
+    if (this.in_replay) { container.classList.add("in_replay"); }
+    else { container.classList.remove("in_replay"); }
     var mask = document.querySelector("[ur-mask]");
     mask && mask.click();
     this.piece_count = this.opts.piece_count;
@@ -79,10 +83,12 @@ tW.Game = class Game extends uR.RandomObject {
   }
   gameover() {
     this.is_gameover = true;
-    uR.alertElement("tw-gameover",{game: this});
+    document.getElementById("game").classList.add("gameover")
+    uR.mountElement("tw-gameover",{game: this, mount_to: "#score"});
   }
   loadReplay() { // maybe should be `Replay().loadGame(opts)`? nb: opts is just this.opts
     this.moves = [];
+    this.in_replay = true;
     for (let values of this.opts.move_values) { // rehydrate
       let move = {};
       this.opts.move_keys.map((k,i) => move[k] = values[i])

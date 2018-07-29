@@ -1,3 +1,4 @@
+body { background: #ddd; }
 img {
   max-wdth: 100%;
   image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
@@ -14,8 +15,11 @@ p { margin-bottom: 0.8em; }
 
 #game {
   height: 100%;
+  background: white;
+  max-width: 1000px;
+  margin: auto;
   position: relative;
-  &:focus {
+  &:focus, &.in_replay, &.gameover {
     outline: none;
     &:before { content: none; }
   }
@@ -59,7 +63,7 @@ tw-scores {
 tw-scores {
   .health {
     margin-bottom: @s/2;
-    position: fixed;
+    position: absolute;
     right: 0;
     top: 0;
     width: 6*@s;
@@ -136,4 +140,15 @@ tw-help .sprite {
   left: 0;
   position: absolute;
   top: 0;
+}
+
+tw-gameover {
+  display: flex;
+  height: 100%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 300px;
+  max-width: 100%;
+  z-index: 1;
 }
