@@ -96,10 +96,12 @@ module.exports = function(opts) {
       return gulp.src(opts.mustache)
         .pipe(mustache({
           manifest: manifest,
-          package: _package,
-          VCS: JSON.stringify({
-            hash: execSync("git rev-parse HEAD").toString().trim(),
+          DEBUG: opts.environment == "development",
+          package: JSON.stringify({
+            version: _package.version,
+            git_hash: execSync("git rev-parse HEAD").toString().trim(),
             dirty: !! execSync("git diff").toString(),
+            environment: opts.environment,
           }),
         }))
         .pipe(gulp.dest(opts.DEST));

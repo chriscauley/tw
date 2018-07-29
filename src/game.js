@@ -1,7 +1,7 @@
 tW.game_config =  new uR.Config("GAME_CONFIG");
 uR.ready(function() {
   var PIECE_CHOICES = ['sk','fly','be','zombie','sp'];
-  var SEED_CHOICES = ['42',['RANDOM','Randomize level']]
+  var SEED_CHOICES = ['42',['','Randomize level']]
   /*for (var key in tW.enemy_map) {
     PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
     }*/
@@ -11,23 +11,24 @@ uR.ready(function() {
   for (var key in tW.MOOK_MAP) { MOOK_CHOICES.push(key) }
   const BOSS_CHOICES = ['default']
   tW.game_config.setSchema([
+    { name: "level_count", type: "integer", value: 5 },
     { name: "piece_count", type: "integer", value: 4 },
     { name: "piece_increase", type: "integer", value: 1 },
     { name: "boss_count", type: "integer", value: 1 },
     { name: "map_template", choices: MAP_CHOICES.sort(), value: MAP_CHOICES[0], type: 'select' },
     { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
     { name: "mook_set", choices: MOOK_CHOICES, type: 'select', value: 'default' },
-    { name: "boss_set", choices: BOSS_CHOICES, type: 'select', value: 'default'},
+    { name: "boss_set", choices: BOSS_CHOICES, type: 'select', value: 'default' },
   ]);
 });
 tW.Game = class Game extends uR.RandomObject {
   constructor(opts={}) {
     uR.defaults(opts,tW.game_config.getData())
-    if (opts.seed == "RANDOM") { opts.seed = Math.ceil(Math.random()*Math.pow(2,24)); }
+    if (!opts.seed) { opts.seed = Math.ceil(Math.random()*Math.pow(2,24)); }
     super(opts);
     this.opts = opts;
-    if (this.opts.moves) {
-      this.loadReplay(this.opts);
+    if (this.opts.is_replay) {
+      this.loadReplay();
     }
     riot.observable(this);
     this.bindKeys();
@@ -39,6 +40,10 @@ tW.Game = class Game extends uR.RandomObject {
   }
   nextLevel() {
     this.level_number++;
+    if (this.level_number >= this.opts.level_count) {
+      this.won = true;
+      return this.gameover();
+    }
     this.board.loadLevel(this.level_number);
     this.makeTeams();
     this.makeUnits();
@@ -73,27 +78,34 @@ tW.Game = class Game extends uR.RandomObject {
     }
   }
   gameover() {
-    this.saveReplay();
     this.is_gameover = true;
     uR.alertElement("tw-gameover",{game: this});
   }
-  loadReplay(data) { // maybe should be `Replay().loadGame(opts)`? nb: opts is just this.opts
+  loadReplay() { // maybe should be `Replay().loadGame(opts)`? nb: opts is just this.opts
     this.moves = [];
-    for (let values of opts.move_values) { // rehydrate
+    for (let values of this.opts.move_values) { // rehydrate
       let move = {};
-      opts.move_keys.map(k,i => move[k] = values[i])
-      this.moves.append(move);
+      this.opts.move_keys.map((k,i) => move[k] = values[i])
+      this.moves.push(move);
     }
+    setTimeout(this.stepReplay.bind(this),500);
+  }
+  stepReplay() {
+    const move = this.moves[this.turn];
+    this.player.move(move,...move.dxdy)
+    this.nextTurn();
+    if (this.turn != this.moves.length) { setTimeout(this.stepReplay.bind(this),500); }
   }
   saveReplay() { // should be `Replay({ game: this })`? classmethod?
     const keys = []; // this whole packing/unpacking list may be unecessary if we gzip the storage
     for (var key in this.player.moves[0]) { keys.push(key) }
     const opts = _.clone(this.opts)
+    opts.is_replay = true;
     opts.move_keys = keys;
     opts.move_values = this.player.moves.map( m => keys.map(k => m[k])); // dehydrate
     const replay = new uR.db.replay.Replay({
       hash: objectHash(opts),
-      opts,
+      game_opts: opts,
     })
     replay.save();
   }
@@ -102,7 +114,7 @@ tW.Game = class Game extends uR.RandomObject {
     if (e.target.tagName == "CANVAS") { this.board.mousedown(e); }
   }
   keydown(e) {
-    if (this.is_gameover) { return }
+    if (this.is_gameover || this.opts.is_replay) { return }
     this.key_map[e._key] && this.key_map[e._key](e);
     this.ui && this.ui.update();
   }

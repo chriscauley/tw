@@ -99,26 +99,26 @@ this.on("unmount",function() {
 <tw-gameover>
   <div class={ theme.outer }>
     <div class={ theme.content } style="text-align: center;max-width: 400px;">
-      <h1>Game over!</h1>
+      <h1>{ header_text }</h1>
       <p>
         <button class="btn btn-large btn-primary" onclick={ unmount }>
           Restart game</button>
       </p>
-      <!-- <p if={ !saved }> -->
-      <!--   <button class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button> -->
-      <!-- </p> -->
-      <!-- <h3>{ opts.game.turn } turns</h3> -->
-      <!-- <div if={ saved }> -->
-      <!--   <div class="btn btn-large btn-success">Replay Saved!</div> -->
-      <!--   <h3>Replays</h3> -->
-      <!--   <ul> -->
-      <!--     <li each={ replay,_ in replays }> -->
-      <!--       <span>{ replay.toString() }</span> -->
-      <!--       <span onclick={ loadReplay } class="pointer"> -->
-      <!--         <i class='fa fa-play'></i></span> -->
-      <!--     </li> -->
-      <!--   </ul> -->
-      <!-- </div> -->
+      <p if={ !saved }>
+        <button class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button>
+      </p>
+      <h3>{ opts.game.turn } turns</h3>
+      <div if={ saved }>
+        <div class="btn btn-large btn-success">Replay Saved!</div>
+        <h3>Replays</h3>
+        <ul>
+          <li each={ replay,_ in replays }>
+            <span>{ replay.toString() }</span>
+            <span onclick={ loadReplay } class="pointer">
+              <i class='fa fa-play'></i></span>
+          </li>
+        </ul>
+      </div>
       <p>
         <a target="_blank" href="https://tinyletter.com/timewalker"
            class="btn btn-large btn-primary">
@@ -131,13 +131,16 @@ this.on("unmount",function() {
       </p>
     </div>
   </div>
+  this.on("before-mount",function() {
+    this.header_text = this.opts.game.won?"You win!":"Game Over!";
+  });
   this.on("unmount",function() {
     this.opts.game.restart();
   });
   this.on("update",function() {
     this.replays = uR.db.replay.Replay.objects.all();
   });
-  saveReplay() { opts.game.saveReplay; this.saved=true; }
+  saveReplay() { opts.game.saveReplay(); this.saved=true; }
   loadReplay(e) {
     opts.game.loadReplay(e.item.replay);
   }

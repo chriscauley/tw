@@ -55,6 +55,7 @@ var LESS_FILES = {
 }
 
 var STATIC_FILES = _src([
+  'uc-tests.js',
   'data.json',
   'img/',
 ]);
@@ -74,4 +75,5 @@ ezGulp({
   mustache: MUSTACHE_FILES,
   renames: RENAMES,
   DEST: PRODUCTION?"/var/timewalker.io/":".dist/",
+  environment: PRODUCTION?"production":"development",
 })

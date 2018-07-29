@@ -1,7 +1,7 @@
-if (localStorage.getItem("VERSION") != window.VERSION) {
+if (localStorage.getItem("VERSION") != PACKAGE.version) {
   localStorage.clear();
   console.log('reset');
-  localStorage.setItem("VERSION",window.VERSION);
+  localStorage.setItem("VERSION",PACKAGE.version);
 }
 
 window.tW = {
@@ -17,5 +17,17 @@ window.tW = {
 uR.ready(function() {
   window.location.search == "?cheat" && uR.admin.start();
   uR.router.start();
-  uR.router.default_route= function() { tW.game = new tW.Game(); };
+  uR.router.default_route = function(path,data={}) {
+    var game_opts;
+    if (data.matches && data.matches[1]) {
+      try {
+        const replay = Replay.objects.get(data.matches[1]);
+        game_opts = replay.game_opts;
+      } catch (e) {}
+    }
+    tW.game = new tW.Game(game_opts);
+  };
+  uR.router.add({
+    "#Replay=(\\d+)": uR.router.default_route,
+  })
 });

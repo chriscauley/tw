@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <link rel="stylesheet" href="{{ manifest.twbuiltcss }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <!-- <link href="//beta.unrest.io/uc/uc-built.css" rel="stylesheet"></link>-->
   </head>
 
   <div id="main">
@@ -26,21 +25,17 @@
 
     gtag('config', 'UA-30669101-2');
     }
-    window.VERSION = "{{ package.version }}"
-    window.VCS = {{& VCS }};
+    window.PACKAGE = {{& package }}
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
   <script src="//beta.unrest.io/uc/vendor-built.js"></script> <!-- needs objecthash -->
-  <!--
+
+  {{#DEBUG}}
+  <link href="//beta.unrest.io/uc/uc-built.css" rel="stylesheet"></link>
   <script src="//beta.unrest.io/uc/uc-built.js"></script>
-  <script src="{% static "data.js" %}"></script>
-  <script src="{% static "tests.js" %}"></script>
-  <script>
-    var KLOGGER_SELECTOR="#main";
-    var DUMMY_USERS = {{ DUMMY_USERS|safe }};
-  </script>
-  -->
+  <script src="uc-tests.js"></script>
+  {{/DEBUG}}
   <script>uR.auth.reset = function() { return };</script>
   <script src="data.json"></script>
   <script src="{{ manifest.twbuiltjs }}"></script>
