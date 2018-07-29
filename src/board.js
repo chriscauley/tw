@@ -15,6 +15,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.__tick = 0;
   }
   tick() {
+    this._ta = tW.ANIMATION_TIME;
     cancelAnimationFrame(this.animation_frame);
     (this.__tick++)%4 && this.draw();
     this.animation_frame = requestAnimationFrame(this.tick);

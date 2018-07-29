@@ -88,13 +88,15 @@ tW.Game = class Game extends uR.RandomObject {
       this.opts.move_keys.map((k,i) => move[k] = values[i])
       this.moves.push(move);
     }
-    setTimeout(this.stepReplay.bind(this),500);
+    tW.AUTO_REPLAY && setTimeout(this.stepReplay.bind(this),tW.ANIMATION_TIME);
   }
   stepReplay() {
     const move = this.moves[this.turn];
     this.player.move(move,...move.dxdy)
     this.nextTurn();
-    if (this.turn != this.moves.length) { setTimeout(this.stepReplay.bind(this),500); }
+    if (this.AUTO_REPLAY && this.turn != this.moves.length) {
+      setTimeout(this.stepReplay.bind(this),tW.ANIMATION_TIME);
+    }
   }
   saveReplay() { // should be `Replay({ game: this })`? classmethod?
     const keys = []; // this whole packing/unpacking list may be unecessary if we gzip the storage

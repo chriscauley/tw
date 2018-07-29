@@ -5,6 +5,7 @@ if (localStorage.getItem("VERSION") != PACKAGE.version) {
 }
 
 window.tW = {
+  ANIMATION_TIME: 200,
   nameFunction: function(f1,f2) {
     // transfer name from f2 to f1 via _name
     // #! TODO: this should probably be in unrest or part of a function utility library
