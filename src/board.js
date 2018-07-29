@@ -2,9 +2,15 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
   constructor(opts) {
     super(opts)
     this.defaults(opts)
-    this.scale = Math.floor(Math.min(window.innerWidth/8,window.innerHeight/8));
-    this.W = Math.floor(window.innerWidth/this.scale);
-    this.H = Math.floor(window.innerHeight/this.scale);
+    if (!this.game.opts.board) {
+      const scale = Math.floor(Math.min(window.innerWidth/8,window.innerHeight/8))
+      this.game.opts.board = { // this will get saved in replay
+        scale: scale,
+        W: Math.floor(window.innerWidth/scale),
+        H: Math.floor(window.innerHeight/scale),
+      }
+    }
+    _.extend(this,this.game.opts.board)
 
     var self = this
     this.pieces = [];
