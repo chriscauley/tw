@@ -117,7 +117,7 @@ module.exports = function(opts) {
       var watch_files = opts.less[key].map((name) => name.match(/.*\//)[0]+"*");
       gulp.watch(watch_files, ['build-'+key+'-css','build-revision','build-mustache']);
     }
-    gulp.watch(opts.static.map(d => d+"/**"),['cp-static']);
+    gulp.watch(opts.static.map(d => d.replace(/\/$/,"/**")),['cp-static']);
   });
 
   gulp.task('default', build_tasks);
