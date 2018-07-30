@@ -6,6 +6,7 @@ class Replay extends uR.db.Model {
       { name: 'hash' }
     ];
     super(opts);
+    this.exclude = ['game_opts','hash'];
   }
   __str() {
     return this.name || (this.hash.slice(0,8)+"...");

@@ -13,7 +13,7 @@ uR.ready(() => {
       })
       this.done()
     }
-    Object.defineProperty(test,"name",{value: "Test-"+replay.id})
+    Object.defineProperty(test, "name", { value: `Replay Test: ${replay}` })
     tests.push(test)
   }
   konsole.addCommands(...tests);
