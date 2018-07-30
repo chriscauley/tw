@@ -8,7 +8,13 @@ uR.ready(function() {
   var MAP_CHOICES = [];
   for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
   var MOOK_CHOICES = [];
-  for (var key in tW.MOOK_MAP) { MOOK_CHOICES.push(key) }
+  for (var key in tW.MOOK_MAP) {
+    if (tW.enemy_map[key]) {
+      MOOK_CHOICES.push([key,tW.enemy_map[key].name])
+    } else {
+      MOOK_CHOICES.push(key)
+    }
+  }
   const BOSS_CHOICES = ['default']
   tW.game_config.setSchema([
     { name: "level_count", type: "integer", value: 5 },
