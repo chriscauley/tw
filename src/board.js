@@ -4,10 +4,12 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.defaults(opts)
     if (!this.game.opts.board) {
       const scale = Math.floor(Math.min(window.innerWidth/8,window.innerHeight/8))
+      const W = Math.floor(window.innerWidth/scale)
+      const H = Math.floor(window.innerHeight/scale)
       this.game.opts.board = { // this will get saved in replay
         scale: scale,
-        W: Math.floor(window.innerWidth/scale),
-        H: Math.floor(window.innerHeight/scale),
+        W: Math.min(W,H),
+        H: Math.min(W,H)
       }
     }
     _.extend(this,this.game.opts.board)
