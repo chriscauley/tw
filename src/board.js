@@ -13,6 +13,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       }
     }
     _.extend(this,this.game.opts.board)
+    document.getElementById("game").style.width = this.W*this.scale + "px"
 
     var self = this
     this.pieces = [];
@@ -51,13 +52,14 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(square_options,x) {
         self.squares[x] = self.squares[x] || [];
-        var room_id = square_options.room;
+        const room_id = square_options.room_id;
         var square = self.squares[x][y] = new tW.square.Square({
           x:x,
           y:y,
           board:self,
-          room:room_id,
           wall: (room_id==undefined)?1:0,
+          room_id: room_id,
+          edge: square_options.edge
         });
         self.flat_squares.push(square);
         if (room_id) {
@@ -74,10 +76,17 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     // red.setFloor(tW.floor.Portal,{color: 'red'});
     // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
-    this.min_offset_x = -0.5;
-    this.max_offset_x = Math.max(-0.5,this.x_max+0.5-this.W);
-    this.min_offset_y = -0.5;
-    this.max_offset_y = Math.max(-0.5,this.y_max+0.5-this.H);
+    const buffer = 0; // 0.5
+    this.min_offset_x = -buffer;
+    this.max_offset_x = Math.max(-buffer,this.x_max+buffer-this.W);
+    if (!this.min_offset_x && !this.max_offset_x) {
+      this.min_offset_x = this.max_offset_x = -this.W/2+this.x_max/2
+    }
+    this.min_offset_y = -buffer;
+    this.max_offset_y = Math.max(-buffer,this.y_max+buffer-this.H);
+    if (!this.min_offset_y && !this.max_offset_y) {
+      this.min_offset_y = this.max_offset_y = -this.W/2+this.y_max/2
+    }
   }
   eachSquare(func) {
     func = func.bind(this);

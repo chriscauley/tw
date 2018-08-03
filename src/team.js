@@ -106,7 +106,10 @@ tW.team.Team = class Team extends uR.RandomObject {
       this.pieces.push(boss);
       boss_count--;
     }
-    board.getRandomEmptySquare({room: boss_room||"i"}).setFloor(tW.floor.Stairs,{pieces:stairs_pieces});
+    board.getRandomEmptySquare({
+      room: boss_room||"i",
+      edge: false,
+    }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces});
     return this.pieces;
   }
 }

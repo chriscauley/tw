@@ -154,34 +154,37 @@ DG.Piece = class Piece {
             for (let x = 0; x < this.size[0]; x++) {
                 var is_wall = this.walls.get([x, y]);
                 row.push({
-                    wall_rooms: [],
                     room: is_wall?undefined:0,
                 })
             }
         }
         for (var child of this.children) {
-            if (child.constructor.name == "Corridor") { continue }
+            if (child.constructor.name == 'Corridor') { continue }
             var xmax = child.size[0] - 1;
             var ymax = child.size[1] - 1;
-            var _s = (child.tag == "initial")?"i":child.id;
+            var _s = (child.tag == 'initial')?'i':child.id;
             var [x0,y0] = child.position;
             // room's (size+position) contains a 1 square buffer on all 4 sides
             for (var x=0;x<child.size[0];x++) {
                 for (var y=0;y<child.size[1];y++) {
                     var square = output[y0+y][x0+x];
-                    if (!x || !y || x == xmax || y == ymax) { // square is on perimiter of room (wall)
-                        square.wall_rooms.push(_s);
+                    if (!x || !y || x == xmax || y == ymax) { // square is on perimiter of room
                         continue;
                     }
-                    square.room = _s;
+                    square.room_id = _s;
+                    square.edge = x == 1 || y == 1 || x == xmax - 1 || y == ymax - 1
                 }
             }
         }
         return output;
     }
     print(array) {
-      array = (array ||this.toArray())
-      return array.map(row=>row.map(room => (room.room===undefined)?" ":room.room).join("")).join("\n")
+        array = (array ||this.toArray())
+        return array.map(
+          row=>row.map(
+            room => (room.room_id===undefined)?' ':room_id.room
+          ).join('')
+        ).join('\n')
     }
 }
 })();
