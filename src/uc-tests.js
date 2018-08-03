@@ -14,6 +14,7 @@ uR.ready(() => {
       this.done()
     }
     Object.defineProperty(test, "name", { value: `Replay Test: ${replay}` })
+    test.edit = () => replay.edit()
     tests.push(test)
   }
   konsole.addCommands(...tests);

@@ -26,7 +26,13 @@ uR.ready(function() {
         game_opts = replay.game_opts;
       } catch (e) {}
     }
+    const e = document.getElementById("game");
+    while (e.firstChild) {
+      e.removeChild(e.firstChild);
+    }
     tW.game = new tW.Game(game_opts);
+    data.one && data.one.route && data.one.route();
+    data.on && data.on.route && data.on.route();
   };
   uR.router.add({
     "#Replay=(\\d+)": uR.router.default_route,
