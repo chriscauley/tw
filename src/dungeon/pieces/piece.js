@@ -154,7 +154,7 @@ DG.Piece = class Piece {
             for (let x = 0; x < this.size[0]; x++) {
                 var is_wall = this.walls.get([x, y]);
                 row.push({
-                    room: is_wall?undefined:0,
+                    room_id: is_wall?undefined:0,
                 })
             }
         }
