@@ -105,10 +105,12 @@ this.on("unmount",function() {
       <p>
         <button class="btn btn-large btn-primary" onclick={ unmount }>
           Restart game</button>
-        <button if={ !saved } class="btn btn-large btn-primary" onclick={ saveReplay }>Save Replay</button>
-        <div if={ saved } class="btn btn-large btn-success">Replay Saved!</div>
+        <button if={ show_replays && !saved } class="btn btn-large btn-primary"
+                onclick={ saveReplay }>Save Replay</button>
+        <div if={ show_replays &&  saved } class="btn btn-large btn-success">
+          Replay Saved!</div>
       </p>
-      <div if={ replays.length }>
+      <div if={ show_replays && replays.length }>
         <h5>Replays</h5>
         <ul>
           <li each={ replay,_ in replays }>
@@ -132,6 +134,7 @@ this.on("unmount",function() {
   </div>
   this.on("before-mount",function() {
     this.header_text = this.opts.game.won?"You win!":"Game Over!";
+    this.show_replays = window.PACKAGE.environment == "development"
     this.replays = [];
   });
   this.on("mount", function() {
