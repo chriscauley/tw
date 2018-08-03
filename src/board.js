@@ -9,7 +9,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       this.game.opts.board = { // this will get saved in replay
         scale: scale,
         W: Math.min(W,H),
-        H: Math.min(W,H)
+        H: Math.min(W,H),
       }
     }
     _.extend(this,this.game.opts.board)
@@ -75,9 +75,9 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
     this.min_offset_x = -0.5;
-    this.max_offset_x = Math.max(-0.5,this.x_max+0.5-window.innerWidth/this.scale);
+    this.max_offset_x = Math.max(-0.5,this.x_max+0.5-this.W);
     this.min_offset_y = -0.5;
-    this.max_offset_y = Math.max(-0.5,this.y_max+0.5-window.innerHeight/this.scale);
+    this.max_offset_y = Math.max(-0.5,this.y_max+0.5-this.H);
   }
   eachSquare(func) {
     func = func.bind(this);
