@@ -30,7 +30,9 @@ uR.ready(function() {
 tW.Game = class Game extends uR.RandomObject {
   constructor(opts={}) {
     uR.defaults(opts,tW.game_config.getData())
-    if (!opts.seed) { opts.seed = Math.ceil(Math.random()*Math.pow(2,24)); }
+    if (!opts.seed || opts.seed == "RANDOM") {
+      opts.seed = Math.ceil(Math.random()*Math.pow(2,24));
+    }
     super(opts);
     this.opts = opts;
     if (this.opts.is_replay) {
