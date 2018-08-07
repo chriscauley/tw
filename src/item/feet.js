@@ -13,7 +13,7 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
       var square = this.piece.look([i*dx,i*dy]);
       if (!square) { break }
       if (!square.isOpen([dx,dy])) {
-        if (this.damage && square.piece && square.piece.team != this.piece.team) {
+        if (this.damage && square.canBeAttacked(this.piece)) {
           move.damage = {
             dx: i*dx,
             dy: i*dy,

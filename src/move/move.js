@@ -24,7 +24,7 @@
     for (let d of directions) {
       tW.move._turn(this,move,d);
       let square = this.look(move.turn);
-      if (square && (!square.piece || square.piece.team != this.team)) { break; }
+      if (square && (square.canBeAttacked(this) || !square.piece)) { break; }
     }
     move.done = true;
   }
@@ -32,8 +32,7 @@
     dxdy = dxdy || move.turn || [this.dx,this.dy];
     var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
     for (var square of squares) {
-      var piece = square && square.piece;
-      if (piece && piece.team != this.team ) {
+      if (square.canBeAttacked(this)) {
         move.damage = {squares: [square],count:this.damage};
         move.dxdy = move.turn = dxdy;
         move.done = true;

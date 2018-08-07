@@ -130,18 +130,22 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
         var square = move.move;
         [dx,dy] = [square.x-this.x, square.y-this.y];
       }
-      if (square && square.isOpen([dx,dy])) {
-        this.current_square && this.current_square.moveOff(this,move);
-        result.animation = result.animation || ['move',move.move_animation || {
-          x: this.x,
-          y: this.y,
-          dx: dx,
-          dy: dy
-        }];
-        var move_on_result = square.moveOn(this,move);
-        if (move_on_result) { return this.applyMove(move_on_result) }
-        this.takeGold(square); // #! TODO should be in the square.moveOn
-        result.moves.push([dx,dy]);
+      if (square) {
+        if (square.isOpen([dx,dy])) {
+          this.current_square && this.current_square.moveOff(this,move);
+          result.animation = result.animation || ['move',move.move_animation || {
+            x: this.x,
+            y: this.y,
+            dx: dx,
+            dy: dy
+          }];
+          var move_on_result = square.moveOn(this,move);
+          if (move_on_result) { return this.applyMove(move_on_result) }
+          this.takeGold(square); // #! TODO should be in the square.moveOn
+          result.moves.push([dx,dy]);
+        } else {
+          square.touchedBy(this)
+        }
       }
       result.done = true;
       result.animation = result.animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
@@ -330,7 +334,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   canReplace() {
     return false;
   }
-  canBeAttacked() { return true; }
+  canBeAttacked(attacker) { return attacker.team != this.team }
   bindItem(item) {
     if (item.slot && this.equipment) {
       this.dropItem(this.equipment[item.slot]);

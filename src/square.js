@@ -60,8 +60,8 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
       && (!this.piece || this.piece.canReplace(dxdy))
       && (!this.floor || this.floor.canStepOn(dxdy));
   }
-  canBeAttacked() {
-    return this.piece && this.piece.canBeAttacked();
+  canBeAttacked(attacker) {
+    return this.piece && this.piece.canBeAttacked(attacker);
   }
   reset() {
     this.item = undefined;
@@ -73,6 +73,9 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     opts.square = this;
     this.floor = new cls(opts);
     this.dirty = true;
+  }
+  touchedBy(piece) {
+    this.piece && this.piece.touchedBy(piece)
   }
   moveOn(piece,move) {
     this.addPiece(piece);

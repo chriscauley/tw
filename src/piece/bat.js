@@ -2,7 +2,7 @@
   tW.move.attackNearby = function attackNearby(move)  {
     for (let direction of this.DIRECTIONS) {
       let square = this.look(direction);
-      if (square && square.piece && square.piece.team != this.team) {
+      if (square && square.canBeAttacked(this)) {
         tW.move.forward.call(this,move,direction);
       }
     }

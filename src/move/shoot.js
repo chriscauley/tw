@@ -6,7 +6,7 @@
       if (!square) { console.error("no square"); return } // no square to target
       if (!square.piece && !square.isOpen(dxdy)) { return } // some non-piece obstacle
       if (square.piece) {
-        if (square.piece.team == this.team) { return } // don't attack friends
+        if (!square.canBeAttacked(this)) { return } // don't attack friends
         move.damage = { squares: [square], count: this.damage};
         move.turn = dxdy;
       } else {

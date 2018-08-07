@@ -1,7 +1,7 @@
 tW.move.target = function(action,opts={}) {
   opts = uR.defaults(opts, {
     geometry: "line",
-    pass: function(s) { return s && s.piece && s.piece.team != this.team }, // pass on enemy target
+    pass: function(s) { return s && s.canBeAttacked(this) }, // pass on enemy target
     fail: function(s) { return !(s && s.isOpen()) }, // fail on any blocked square that didn't pass
   })
   const out = function(move) {

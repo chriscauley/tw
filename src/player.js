@@ -141,7 +141,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return this.equipment.weapon && this.equipment.weapon.getMove(dx,dy) || { move: [dx,dy] }
     // var square = this.look(dxdy);
     // var out = { turn: [dx,dy] };
-    // if (square && square.piece && square.piece.team != this.team) {
+    // if (square && square.canBeAttacked(this)) {
     //   out.damage = [dx,dy,this.damage];
     //   out.damage.piece = square.piece;
     // }
@@ -214,7 +214,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
         if (!square) { return }
         if (square.isOpen(dxdy)) {
           this._moves.push(["rgba(0,100,0,0.5)",square.x,square.y]);
-        } else if (square.canBeAttacked() && square.piece.team != this.team) {
+        } else if (square.canBeAttacked(this)) {
           this._moves.push(["rgba(100,0,0,0.5)",square.x,square.y]);
         }
       });

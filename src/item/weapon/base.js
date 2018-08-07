@@ -40,7 +40,7 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
   _getMoveForSquares(squares) {
     const square = _.find( //get the first matching square in this geometry
       squares,
-      s=> s && s.piece && s.piece.team != this.piece.team
+      s=> s && s.canBeAttacked(this.piece)
     );
     if (!square) { return }
     const action = {
