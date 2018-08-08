@@ -15,7 +15,6 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     _.extend(this,this.game.opts.board)
     document.getElementById("game").style.width = this.W*this.scale + "px"
 
-    var self = this
     this.pieces = [];
     this.createCanvas();
     this.tick = this.tick.bind(this);
@@ -37,7 +36,15 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
   }
   loadLevel(level_number) {
     this.reset();
-    var self = this;
+
+    // possible "mooks" or enemies that each room could spawn
+    this.mook_sets = tW.MOOK_MAP[this.mook_set || this.game.opts.mook_set];
+    for (let i=0;i<this.mook_sets.length;i++) {
+      if (typeof this.mook_sets[i] == "string") {
+        this.mook_sets[i] = this.mook_sets[i].split("|").map(s=>tW.enemy_map[s]);
+      }
+    }
+
     this.level_number = level_number;
     this._dungeon = new tW.level.Dungeon({
       style: this.game.opts.map_template,
@@ -47,22 +54,27 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.x_max = 0;
     this.y_max = level.length;
     const room_opts = {};
-    uR.forEach(level,function(row,y) {
-      self.x_max = Math.max(self.x_max,row.length);
-      uR.forEach(row,function(square_options,x) {
-        self.squares[x] = self.squares[x] || [];
+    uR.forEach(level,(row,y) => {
+      this.x_max = Math.max(this.x_max,row.length);
+      uR.forEach(row,(square_options,x) => {
+        this.squares[x] = this.squares[x] || [];
         const room_id = square_options.room_id;
-        var square = self.squares[x][y] = new tW.square.Square({
+        var square = this.squares[x][y] = new tW.square.Square({
           x:x,
           y:y,
-          board:self,
+          board:this,
           wall: (room_id==undefined)?1:0,
           room_id: room_id,
           edge: square_options.edge
         });
-        self.flat_squares.push(square);
+        this.flat_squares.push(square);
         if (room_id) {
-          room_opts[room_id] = room_opts[room_id] || { id: room_id, squares: [] };
+          room_opts[room_id] = room_opts[room_id] || {
+            id: room_id,
+            squares: [],
+            _prng: this,
+            board: this,
+          };
           room_opts[room_id].squares.push(square)
         }
       });
@@ -70,9 +82,9 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.rooms = {}
     this.room_list = []
     for (let key in room_opts) {
-      this.rooms[key] = new tW.room.Room(room_opts[key]);
-      this.room_list.push(key)
+      this.room_list.push(this.rooms[key] = new tW.room.Room(room_opts[key]))
     }
+
     this.start = this.start || this.getRandomEmptySquare();
     // var red = this.getRandomEmptySquare();
     // var blue = this.getRandomEmptySquare();
@@ -190,8 +202,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     throw "could not find empty square";
   }
   getSquares(list) {
-    var self = this;
-    return list.map((xy) => self.getSquare(xy)).filter((s) => s)
+    return list.map((xy) => this.getSquare(xy)).filter((s) => s)
   }
 
   addPiece(piece) {

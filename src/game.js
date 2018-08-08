@@ -166,6 +166,9 @@ tW.Game = class Game extends uR.RandomObject {
     for (var team of this.teams) {
       team.makeUnits();
     }
+    for (let room of this.board.room_list) {
+      room.makeUnits();
+    }
     if (this.player) {
       this.player.board = undefined;
       this.board.getRandomEmptySquare({room:'i'}).addPiece(this.player);
