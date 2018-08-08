@@ -46,8 +46,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     var level = this._dungeon.level;
     this.x_max = 0;
     this.y_max = level.length;
-    this.rooms = {};
-    this.room_list = [];
+    const room_opts = {};
     uR.forEach(level,function(row,y) {
       self.x_max = Math.max(self.x_max,row.length);
       uR.forEach(row,function(square_options,x) {
@@ -63,13 +62,17 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
         });
         self.flat_squares.push(square);
         if (room_id) {
-          if (self.room_list.indexOf(room_id) == -1) { self.room_list.push(room_id) }
-          self.rooms[room_id] = self.rooms[room_id] || [];
-          self.rooms[room_id].push(square)
-          square.room = room_id;
+          room_opts[room_id] = room_opts[room_id] || { id: room_id, squares: [] };
+          room_opts[room_id].squares.push(square)
         }
       });
     });
+    this.rooms = {}
+    this.room_list = []
+    for (let key in room_opts) {
+      this.rooms[key] = new tW.room.Room(room_opts[key]);
+      this.room_list.push(key)
+    }
     this.start = this.start || this.getRandomEmptySquare();
     // var red = this.getRandomEmptySquare();
     // var blue = this.getRandomEmptySquare();
@@ -173,7 +176,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
   }
   getRandomEmptySquare(filters={}) {
     if (filters.room) {
-      var squares = this.rooms[filters.room];
+      var squares = this.rooms[filters.room].squares;
       delete filters.room;
     } else {
       var squares = this.flat_squares;
