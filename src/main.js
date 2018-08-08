@@ -20,17 +20,22 @@ uR.ready(function() {
   uR.router.start();
   uR.router.default_route = function(path,data={}) {
     var game_opts;
-    if (data.matches && data.matches[1]) {
+    const replay_id = data.matches && data.matches[1]
+    if (replay_id) {
       try {
-        const replay = Replay.objects.get(data.matches[1]);
+        const replay = Replay.objects.get(replay_id);
         game_opts = replay.game_opts;
+        game_opts.replay_id = replay.id
       } catch (e) {}
     }
-    const e = document.getElementById("game");
-    while (e.firstChild) {
-      e.removeChild(e.firstChild);
+    if (tW.game && tW.game.opts.replay_id == replay_id) { }
+    else {
+      const e = document.getElementById("game");
+      while (e.firstChild) {
+        e.removeChild(e.firstChild);
+      }
+      tW.game = new tW.Game(game_opts);
     }
-    tW.game = new tW.Game(game_opts);
     data.one && data.one.route && data.one.route();
     data.on && data.on.route && data.on.route();
   };
