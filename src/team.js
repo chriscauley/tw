@@ -49,36 +49,6 @@ tW.team.Team = class Team extends uR.RandomObject {
       });
       this.pieces.push(piece);
     }
-
-    var boss_count = game.opts.boss_count;
-    var boss_set = tW.BOSS_SETS[game.opts.boss_set];
-    var boss_room, stairs_pieces;
-    if (board.room_list.length == 1) { // only "i", disco-mode
-      boss_room = "i";
-      stairs_pieces = this.pieces;
-      boss_count = 0; // #! TODO: bosses in disco mode?
-    } else {
-      boss_room = Math.max(...board.room_list.map(r=>r.id).filter(i => !isNaN(i))); // filter out 'i'
-      stairs_pieces = []
-    }
-    if (typeof boss_set == "string") {
-      boss_set = boss_set.split("|").map(s=>tW.enemy_map[s]);
-    }
-    while (boss_count > 0 && boss_room > 0) {
-      let Boss = this.random.choice(boss_set);
-      const boss = new Boss({
-        square: board.getRandomEmptySquare({room: boss_room ||[i]}),
-        team: this.number,
-        _prng: this,
-      });
-      stairs_pieces.push(boss);
-      this.pieces.push(boss);
-      boss_count--;
-    }
-    board.getRandomEmptySquare({
-      room: boss_room||"i",
-      edge: false,
-    }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces});
     return this.pieces;
   }
 }

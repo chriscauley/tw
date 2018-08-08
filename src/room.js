@@ -38,5 +38,26 @@ tW.room = {
         piece_count -= piece.worth;
       }
     }
+    makeStairs() {
+      const board = this.board
+      var boss_count = board.boss_count
+      var stairs_pieces = []
+      while (boss_count > 0) {
+        let Boss = this.random.choice(board.boss_set);
+        const boss = new Boss({
+          square: board.getRandomEmptySquare({room: this.id}),
+          team: this.team,
+          _prng: this,
+        });
+        stairs_pieces.push(boss);
+        this.pieces.push(boss);
+        boss_count--;
+      }
+      if (stairs_pieces.length == 0) { stairs_pieces = this.pieces }
+      board.getRandomEmptySquare({
+        room: this.id,
+        edge: false,
+      }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces});
+    }
   }
 }

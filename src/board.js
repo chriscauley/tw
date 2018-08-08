@@ -34,9 +34,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.pieces = [];
     this.start = this.exit = undefined;
   }
-  loadLevel(level_number) {
-    this.reset();
-
+  loadPieceSets() {
     // possible "mooks" or enemies that each room could spawn
     this.mook_sets = tW.MOOK_MAP[this.mook_set || this.game.opts.mook_set];
     for (let i=0;i<this.mook_sets.length;i++) {
@@ -45,7 +43,17 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       }
     }
 
+    // possible bosses. for now it's just "all bosses"
+    this.boss_set = tW.BOSS_SETS[this.game.opts.boss_set];
+    if (typeof this.boss_set == "string") {
+      this.boss_set = this.boss_set.split("|").map(s=>tW.enemy_map[s]);
+    }
+  }
+  loadLevel(level_number) {
+    this.reset();
     this.level_number = level_number;
+    this.loadPieceSets();
+
     this._dungeon = new tW.level.Dungeon({
       style: this.game.opts.map_template,
       _prng: this,
@@ -85,12 +93,22 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       this.room_list.push(this.rooms[key] = new tW.room.Room(room_opts[key]))
     }
 
+    this.boss_count = this.game.opts.boss_count;
+    if (this.room_list.length == 1) { // only "i", disco-mode
+      this.boss_room = this.room_list[0];
+      this.boss_count = 0; // #! TODO: bosses in disco mode?
+    } else {
+      const room_ids = this.room_list.map(r=>r.id).filter(i => !isNaN(i)); // filter out 'i'
+      this.boss_room = this.rooms[Math.max(...room_ids)]
+    }
     this.start = this.start || this.getRandomEmptySquare();
     // var red = this.getRandomEmptySquare();
     // var blue = this.getRandomEmptySquare();
     // red.setFloor(tW.floor.Portal,{color: 'red'});
     // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
+
+    // these bits should probably be in some kind of resize method
     const buffer = 0; // 0.5
     this.min_offset_x = -buffer;
     this.max_offset_x = Math.max(-buffer,this.x_max+buffer-this.W);
