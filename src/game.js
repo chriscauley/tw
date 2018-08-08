@@ -164,9 +164,6 @@ tW.Game = class Game extends uR.RandomObject {
     this.board.pieces.forEach((p) => p.play());
   }
   makeUnits() {
-    for (var team of this.teams) {
-      team.makeUnits();
-    }
     for (let room of this.board.room_list) {
       room.makeUnits();
     }

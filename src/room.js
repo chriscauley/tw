@@ -15,7 +15,6 @@ tW.room = {
       this.H = this.xmax-this.xmin
       this.W = this.ymax-this.ymin
       this.squares.map(s=>s.room=this)
-      this.team = (this.board.room_list.length == 1 || this.id != "i")?0:1
     }
     makeUnits() {
       if (this.team == 1) { return } // players team gets no pieces for now
@@ -26,7 +25,7 @@ tW.room = {
       while (piece_count > 0) {
         let mook = this.random.choice(this.mook_set);
         let piece = new mook({
-          square: this.board.getRandomEmptySquare({ room: this.id }),
+          square: this.getRandomEmptySquare(),
           team: this.team,
           _prng: this,
         });
@@ -37,6 +36,25 @@ tW.room = {
         this.pieces.push(piece);
         piece_count -= piece.worth;
       }
+
+      if (this.has_chest) {
+        const prizes = [
+          tW.weapon.Spear,
+          tW.feet.Sprint,
+          tW.weapon.LongSword,
+          tW.feet.Dash,
+          tW.weapon.Katana,
+          tW.weapon.Scythe,
+          tW.weapon.Jambiya,
+        ];
+        var piece = new tW.pieces.Chest({
+          square: this.getRandomEmptySquare(),
+          team: this.team,
+          item: this.random.choice(prizes),
+          _prng: this,
+        });
+        this.pieces.push(piece);
+      }
     }
     makeStairs() {
       const board = this.board
@@ -45,7 +63,7 @@ tW.room = {
       while (boss_count > 0) {
         let Boss = this.random.choice(board.boss_set);
         const boss = new Boss({
-          square: board.getRandomEmptySquare({room: this.id}),
+          square: this.getRandomEmptySquare(),
           team: this.team,
           _prng: this,
         });
@@ -54,10 +72,12 @@ tW.room = {
         boss_count--;
       }
       if (stairs_pieces.length == 0) { stairs_pieces = this.pieces }
-      board.getRandomEmptySquare({
-        room: this.id,
-        edge: false,
-      }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces});
+      this.getRandomEmptySquare({ edge: false }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces})
+    }
+    getRandomEmptySquare(filters={}) {
+      // #! TODO: board and room should both inherit this method from something else
+      filters.room = this.id
+      return this.board.getRandomEmptySquare(filters)
     }
   }
 }

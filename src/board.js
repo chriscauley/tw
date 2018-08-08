@@ -89,17 +89,28 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     });
     this.rooms = {}
     this.room_list = []
+
     for (let key in room_opts) {
+      room_opts[key].team = (room_opts[key].id != "i")?0:1
       this.room_list.push(this.rooms[key] = new tW.room.Room(room_opts[key]))
     }
 
     this.boss_count = this.game.opts.boss_count;
     if (this.room_list.length == 1) { // only "i", disco-mode
       this.boss_room = this.room_list[0];
+      this.boss_room.has_chest = true
+      this.boss_room.team = 0
       this.boss_count = 0; // #! TODO: bosses in disco mode?
     } else {
-      const room_ids = this.room_list.map(r=>r.id).filter(i => !isNaN(i)); // filter out 'i'
+      // every room except "i" can have items or bosses
+      const room_ids = this.room_list.map(r=>r.id).filter(i => !isNaN(i))
       this.boss_room = this.rooms[Math.max(...room_ids)]
+      this.random.shuffle(room_ids)
+      (this.rooms[room_ids[0]] || {}).has_chest = true
+      (this.rooms[room_ids[1]] || {}).has_container = true
+      (this.rooms[room_ids[2]] || {}).has_container = true
+      (this.rooms[room_ids[3]] || {}).has_pocketverse = true
+      (this.rooms[room_ids[3]] || {}).has_shrine = true
     }
     this.start = this.start || this.getRandomEmptySquare();
     // var red = this.getRandomEmptySquare();
