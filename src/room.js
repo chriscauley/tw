@@ -1,3 +1,14 @@
+tW.WALL_GENERATORS = [
+  (r) => {}, // null move
+  (r) => {
+    const xys = [];
+    [r.xmin+1,r.xmax-1].map(x => {
+      [r.ymin+1,r.ymax-1].map(y=> xys.push([x,y]))
+    })
+    r.board.getSquares(xys).forEach(s => s.addWall(1))
+  }
+]
+
 tW.room = {
   Room:class Room extends uR.RandomObject {
     constructor(opts={}) {
@@ -15,6 +26,7 @@ tW.room = {
       this.H = this.xmax-this.xmin
       this.W = this.ymax-this.ymin
       this.squares.map(s=>s.room=this)
+      this.random.choice(tW.WALL_GENERATORS)(this)
     }
     makeUnits() {
       this.squares.map(s=>s.team=this.team)
