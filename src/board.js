@@ -105,12 +105,9 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
       // every room except "i" can have items or bosses
       const room_ids = this.room_list.map(r=>r.id).filter(i => !isNaN(i))
       this.boss_room = this.rooms[Math.max(...room_ids)]
-      this.random.shuffle(room_ids)
-      (this.rooms[room_ids[0]] || {}).has_chest = true
-      (this.rooms[room_ids[1]] || {}).has_container = true
-      (this.rooms[room_ids[2]] || {}).has_container = true
-      (this.rooms[room_ids[3]] || {}).has_pocketverse = true
-      (this.rooms[room_ids[3]] || {}).has_shrine = true
+      this.random.shuffle(room_ids);
+      const box_types = ['chest','container','container','pocketverse','shrine']
+      box_types.forEach((bt,i) => (this.rooms[room_ids[i]] || {})['has_'+bt] = true)
     }
     this.start = this.start || this.getRandomEmptySquare();
     // var red = this.getRandomEmptySquare();

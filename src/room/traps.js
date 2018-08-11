@@ -1,0 +1,1 @@
+tW.room.TRAP_GENERATORS = []

@@ -17,7 +17,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       items: [],
       health: 1,
       damage: 1,
-      team: 0,
+      team: -1,
       gold_per_touch: 1,
       level: 0,
       gold_levels: [ 2, 4, 8, 12 ], // gold to get to next level
