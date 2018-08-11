@@ -66,13 +66,27 @@ tW.item.Consumable = class Consumable extends tW.item.Item {
     super(opts);
     this.slot = "consumable";
   }
+  getMove(e) {
+    const move = { done: true, consume: this.slot, sprite: this.sprite }
+    if (this.health) { move.health = this.health }
+    if (this.energy) { move.energy = this.energy }
+    return move
+  }
 }
 
-tW.item.Apple = class Apple extends tW.item.Consumable {
+function defineConsumable(name,health) {
+  tW.item[name] = class extends tW.item.Consumable {
+    constructor(opts={}) {
+      opts.health = health
+      super(opts)
+    }
+  }
+  Object.defineProperty(tW.item[name], 'name', { value: name })
+  return tW.item[name]
 }
 
-tW.item.Steak = class Steak extends tW.item.Consumable {
-}
+defineConsumable("Apple",1)
+defineConsumable("Steak",3)
 
 tW.item.Gold = class Gold extends tW.item.Item {
   constructor(opts) {

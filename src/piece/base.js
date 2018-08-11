@@ -150,6 +150,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.done = true;
       result.animation = result.animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
     }
+    if (move.health) {
+      this.takeDamage(-move.health,move.sprite)
+    }
+    if (move.consume) {
+      delete this.equipment.consumable
+      this.equipment_cache = undefined;
+    }
     if (move.turn || move.dxdy) {
       result.done = true;
       [dx,dy] = move.turn || move.dxdy;
@@ -158,7 +165,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
-      result.dxdy = [dx,dy];
+      if (dx || dy) { result.dxdy = [dx,dy]; }
       result.done = true
     }
     return result;
@@ -308,6 +315,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   }
   takeDamage(damage,sprite) {
     var result = { count: Math.min(this.health,damage) };
+    if (damage < 0) { // healing
+      result = { count: Math.max(this.health-this.max_health,damage) }
+    }
     this.ui_dirty = true;
     this.health -= result.count;
     if (this.health <= 0) {

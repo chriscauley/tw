@@ -129,9 +129,13 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   getMove(e,dx,dy) {
     this.moves[this.game.turn] = {
       _key: e._key,
-      dxdy: [dx,dy],
+      applyItem: e.applyItem,
+      dxdy: [dx || 0, dy || 0], // defaults to [0,0]... maybe should default to undefined?
       shiftKey: e.shiftKey*1, // less space if it's a int instead of boolean
       ctrlKey: e.ctrlKey*1,
+    }
+    if (e.useItem !== undefined) { // should be player only for now
+      return this.equipment.consumable && this.equipment.consumable.getMove(e) || { done: true }
     }
     if (e.ctrlKey && this.getCtrlItem()) {
       return this.getCtrlItem().getMove(dx,dy);

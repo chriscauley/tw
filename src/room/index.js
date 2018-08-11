@@ -48,6 +48,8 @@ tW.room = {
           tW.weapon.Katana,
           tW.weapon.Scythe,
           tW.weapon.Jambiya,
+          tW.item.Apple,
+          tW.item.Steak,
         ];
         var piece = new tW.pieces.Chest({
           square: this.getRandomEmptySquare(),
