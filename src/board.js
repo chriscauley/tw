@@ -91,15 +91,15 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.room_list = []
 
     for (let key in room_opts) {
-      room_opts[key].team = (room_opts[key].id != "i")?0:1
+      room_opts[key].team = (room_opts[key].id != "i")?-1:1
       this.room_list.push(this.rooms[key] = new tW.room.Room(room_opts[key]))
     }
 
     this.boss_count = this.game.opts.boss_count;
     if (this.room_list.length == 1) { // only "i", disco-mode
-      this.boss_room = this.room_list[0];
-      this.boss_room.has_chest = true
-      this.boss_room.team = 0
+      this.boss_room = this.room_list[0]
+      this.boss_room.has_chest = true // #! TODO: make every other level or something
+      this.boss_room.team = -1
       this.boss_count = 0; // #! TODO: bosses in disco mode?
     } else {
       // every room except "i" can have items or bosses

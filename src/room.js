@@ -17,6 +17,7 @@ tW.room = {
       this.squares.map(s=>s.room=this)
     }
     makeUnits() {
+      this.squares.map(s=>s.team=this.team)
       if (this.team == 1) { return } // players team gets no pieces for now
       this.pieces = []
       const game = this.board.game

@@ -78,6 +78,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.piece && this.piece.touchedBy(piece)
   }
   moveOn(piece,move) {
+    this.team = piece.team
     this.addPiece(piece);
     _.each(this.items,i=>i.moveOn(piece,move));
     return this.floor && this.floor.moveOn(piece,move);
