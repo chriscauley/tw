@@ -53,7 +53,7 @@ tW.room = {
         ];
         var piece = new tW.pieces.Chest({
           square: this.getRandomEmptySquare(),
-          team: this.team,
+          team: 0,
           item: this.random.choice(prizes),
           _prng: this,
         });
@@ -82,6 +82,31 @@ tW.room = {
       // #! TODO: board and room should both inherit this method from something else
       filters.room = this.id
       return this.board.getRandomEmptySquare(filters)
+    }
+    getSquares(filters={}) {
+      // #! TODO: board and room should both inherit this method from something else
+      filters.room = this.id
+      return this.board.getSquares(filters)
+    }
+    play() {
+      this.calculateControl()
+    }
+    calculateControl() {
+      const team_counts = {}
+      const teams = []
+      this.getSquares()
+        .filter(s => s.piece && s.piece.team) // empty squares, chests, etc do not affect control
+        .map(s => { // get an accounting of how many pieces of each team
+          const team = s.piece.team
+          if (!team_counts[team]) {
+            team_counts[team] = 0
+            teams.push(team)
+          }
+          team_counts[team] += 1
+        })
+      if (teams.length == 1) {
+        console.log('controlled',teams)
+      }
     }
   },
 }

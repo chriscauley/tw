@@ -165,7 +165,8 @@ tW.Game = class Game extends uR.RandomObject {
     this.tnow = new Date().valueOf();
     this.turn++;
     //uR.timeIt(()=> this.board.pieces.forEach((p) => p.play()))();
-    this.board.pieces.forEach((p) => p.play());
+    this.board.pieces.forEach(p => p.play())
+    this.board.room_list.forEach(r => r.play())
   }
   makeUnits() {
     for (let room of this.board.room_list) {
