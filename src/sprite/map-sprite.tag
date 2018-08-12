@@ -95,7 +95,6 @@ class SpriteMapper extends uR.canvas.PaintObject {
     this.tag = opts.tag;
     this.defaults(opts,{
       bg: uR.required,
-      zoom_spacer: 8,
       offset: 8,
       parent: uR.REQUIRED,
       spritesheet: uR.required,
@@ -103,6 +102,7 @@ class SpriteMapper extends uR.canvas.PaintObject {
 
     this.scale = parseInt(this.spritesheet.scale)
     this.mod = parseInt(this.spritesheet.mod || 2)
+    this.zoom_spacer = this.scale/2
 
     this.loadImage(this.bg,function() {
       self.buildCanvases(this);
@@ -145,6 +145,7 @@ class SpriteMapper extends uR.canvas.PaintObject {
     this.sprites = Sprite.objects.filter({spritesheet:this.spritesheet})
   }
   mousedown(e) {
+    this.cropcanvas.clear()
     this.cropcanvas.ctx.drawImage(
       this.canvas,
       this.boxX,this.boxY,this.scale,this.scale,
