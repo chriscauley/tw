@@ -329,7 +329,7 @@ uR.ready(function() {
     //'spear',
   ];
   if (Sprite.objects.all().length != sprites.length) {
-    __DATA.SpriteSheet.map(ss => console.log(ss) || SpriteSheet.objects.getOrCreate(ss.id,ss))
+    __DATA.SpriteSheet.map(ss => SpriteSheet.objects.getOrCreate(ss.id,ss))
     __DATA.Sprite.map(s=>Sprite.objects.getOrCreate(s.id,s).save())
   }
   try {

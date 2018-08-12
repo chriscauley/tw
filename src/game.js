@@ -172,13 +172,14 @@ tW.Game = class Game extends uR.RandomObject {
     for (let room of this.board.room_list) {
       room.makeUnits();
     }
+    const player_square = this.board.rooms.i.getRandomEmptySquare()
     if (this.player) {
       this.player.board = undefined;
-      this.board.getRandomEmptySquare({room:'i'}).addPiece(this.player);
+      player_square.addPiece(this.player);
     } else {
       this.player = new tW.player.Player({
         _prng: this,
-        square: this.board.getRandomEmptySquare({room:'i'}),
+        square: player_square,
         game: this,
         health: 3,
         team: 1, // #! TODO this is where competative multiplayer happens

@@ -18,10 +18,10 @@ var JS_FILES = {
     "dungeon/pieces/corridor.js",
     "dungeon/generators/generator.js",
     "dungeon/generators/dungeon.js",
+    "square/*.js",
     "room/*.js",
     "pallet.js",
     "sprite.js",
-    "square.js",
     "replay.js",
 
     "floor.js",

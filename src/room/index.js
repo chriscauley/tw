@@ -1,5 +1,5 @@
 tW.room = {
-  Room:class Room extends uR.RandomObject {
+  Room:class Room extends tW.SquareCollectionMixin(uR.Object) {
     constructor(opts={}) {
       super(opts);
       this.defaults(opts,{
@@ -78,16 +78,6 @@ tW.room = {
       if (stairs_pieces.length == 0) { stairs_pieces = this.pieces }
       this.getRandomEmptySquare({ edge: false }).setFloor(tW.floor.Stairs,{pieces:stairs_pieces})
     }
-    getRandomEmptySquare(filters={}) {
-      // #! TODO: board and room should both inherit this method from something else
-      filters.room = this.id
-      return this.board.getRandomEmptySquare(filters)
-    }
-    getSquares(filters={}) {
-      // #! TODO: board and room should both inherit this method from something else
-      filters.room = this.id
-      return this.board.getSquares(filters)
-    }
     play() {
       this.calculateControl()
     }
@@ -105,7 +95,7 @@ tW.room = {
           team_counts[team] += 1
         })
       if (teams.length == 1) {
-        console.log('controlled',teams)
+        //console.log('controlled',teams)
       }
     }
   },

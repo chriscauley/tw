@@ -1,4 +1,4 @@
-tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
+tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) {
   constructor(opts) {
     super(opts)
     this.defaults(opts)
@@ -27,12 +27,6 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     cancelAnimationFrame(this.animation_frame);
     (this.__tick++)%4 && this.draw();
     this.animation_frame = requestAnimationFrame(this.tick);
-  }
-  reset() {
-    this.squares = [];
-    this.flat_squares = [];
-    this.pieces = [];
-    this.start = this.exit = undefined;
   }
   loadPieceSets() {
     // possible "mooks" or enemies that each room could spawn
@@ -65,9 +59,9 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     uR.forEach(level,(row,y) => {
       this.x_max = Math.max(this.x_max,row.length);
       uR.forEach(row,(square_options,x) => {
-        this.squares[x] = this.squares[x] || [];
+        this.rows[x] = this.rows[x] || [];
         const room_id = square_options.room_id;
-        var square = this.squares[x][y] = new tW.square.Square({
+        var square = this.rows[x][y] = new tW.square.Square({
           x:x,
           y:y,
           board:this,
@@ -75,7 +69,7 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
           room_id: room_id,
           edge: square_options.edge
         });
-        this.flat_squares.push(square);
+        this.squares.push(square);
         if (room_id) {
           room_opts[room_id] = room_opts[room_id] || {
             id: room_id,
@@ -131,8 +125,8 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
   }
   eachSquare(func) {
     func = func.bind(this);
-    for (var x=0;x<this.squares.length;x++) {
-      for (var y=0;y<this.squares[x].length;y++) {
+    for (var x=0;x<this.rows.length;x++) {
+      for (var y=0;y<this.rows[x].length;y++) {
         var square = this.getSquare(x,y);
         func(square,x,y)
       }
@@ -206,29 +200,6 @@ tW.Board = class Board extends uR.RandomMixin(uR.canvas.CanvasObject) {
     this.pieces = this.pieces.filter(function(p) { return p !== piece; });
     piece && piece.current_square && piece.current_square.removePiece(piece);
     this.game.trigger('death',piece);
-  }
-  getSquare(x,y) {
-    // Return the square at x,y if it exits
-    if (Array.isArray(x)) { y = x[1]; x = x[0]; }
-    return this.squares[x] && this.squares[x][y];
-  }
-  getRandomEmptySquare(filters={}) {
-    if (filters.room) {
-      var squares = this.rooms[filters.room].squares;
-      delete filters.room;
-    } else {
-      var squares = this.flat_squares;
-    }
-    for (var key in filters) { squares = _.filter(squares,s=>s[key] == filters[key]) }
-    var i=1000,s;
-    while (i--) {
-      s = this.random.choice(squares);
-      if (s && s.isOpen()) { return s }
-    }
-    throw "could not find empty square";
-  }
-  getSquares(list) {
-    return list.map((xy) => this.getSquare(xy)).filter((s) => s)
   }
 
   addPiece(piece) {

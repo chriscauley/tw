@@ -14,7 +14,9 @@
       return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
     }
     lookMany(deltas) {
-      return (this.square || this).board.getSquares(deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]]));
+      return (this.square || this).board.getSquares({
+        xys: deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]])
+      });
     }
   }
 
