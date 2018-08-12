@@ -50,7 +50,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.outer_color = 'transparent';
     this.restat();
     this.ui_dirty = true;
-    this.team_color = { '-1': 'red', 1: 'green', 2: 'blue' }[this.team]
+    this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
     this.team_sprite = tW.sprites.wedge(this.team_color);
     this.sprites = {
       damage: tW.sprites.sword,
