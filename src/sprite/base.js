@@ -286,10 +286,13 @@ uR.ready(function() {
     'hammer',
     'orb',
     'pickaxe',
-    'arrow_up',
-    'arrow_right',
-    'arrow_down',
-    'arrow_left',
+    //'arrow_up',
+    //'arrow_right',
+    //'arrow_down',
+    //'arrow_left',
+    //'box_0',
+    //'box_1',
+    //'chest_1',
     //'ground_stairs_up',
     //'small_bat',
     //'large_bat',
@@ -326,8 +329,8 @@ uR.ready(function() {
     //'spear',
   ];
   if (Sprite.objects.all().length != sprites.length) {
-    __DATA.SpriteSheet.map(ss=>new SpriteSheet(ss).save())
-    __DATA.Sprite.map(s=>new Sprite(s).save())
+    __DATA.SpriteSheet.map(ss => console.log(ss) || SpriteSheet.objects.getOrCreate(ss.id,ss))
+    __DATA.Sprite.map(s=>Sprite.objects.getOrCreate(s.id,s).save())
   }
   try {
     sprites.map((name,i) => new tW.sprites.DBSprite({

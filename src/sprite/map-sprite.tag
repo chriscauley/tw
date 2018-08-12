@@ -41,8 +41,10 @@ class SpriteSheet extends uR.db.Model {
     opts.schema = [
       { name: 'path' },
       { name: "background-color", type: "color" },
+      { name: "scale", type: 'int', initial: 32 },
+      { name: "mod", type: 'int', initial: 32 },
     ]
-    super(opts);
+    super(opts)
   }
   __str() {
     return "SS: "+ this.path
@@ -93,11 +95,14 @@ class SpriteMapper extends uR.canvas.PaintObject {
     this.tag = opts.tag;
     this.defaults(opts,{
       bg: uR.required,
-      scale: 32,
-      spacer: 8,
+      zoom_spacer: 8,
       offset: 8,
       parent: uR.REQUIRED,
+      spritesheet: uR.required,
     });
+
+    this.scale = parseInt(this.spritesheet.scale)
+    this.mod = parseInt(this.spritesheet.mod || 2)
 
     this.loadImage(this.bg,function() {
       self.buildCanvases(this);
@@ -142,7 +147,7 @@ class SpriteMapper extends uR.canvas.PaintObject {
   mousedown(e) {
     this.cropcanvas.ctx.drawImage(
       this.canvas,
-      this.canvas.mouseX,this.canvas.mouseY,this.scale,this.scale,
+      this.boxX,this.boxY,this.scale,this.scale,
       0,0,this.scale,this.scale,
     )
     var s = new Sprite({
@@ -150,8 +155,8 @@ class SpriteMapper extends uR.canvas.PaintObject {
       width: this.scale,
       height: this.scale,
       spritesheet: this.spritesheet,
-      sx: this.canvas.imgX,
-      sy: this.canvas.imgY,
+      sx: this.hoverX,
+      sy: this.hoverY,
     });
     s.save();
     this.sprites.push(s);
@@ -159,6 +164,14 @@ class SpriteMapper extends uR.canvas.PaintObject {
   }
   mousemove(e) {
     super.mousemove(e);
+    //this.boxX = this.canvas.mouseX - this.canvas.imgX%this.scale
+    //this.boxY = this.canvas.mouseY - this.canvas.imgY%this.scale
+    this.boxX = this.canvas.mouseX - this.canvas.imgX%this.mod - this.scale/2
+    this.boxY = this.canvas.mouseY - this.canvas.imgY%this.mod - this.scale/2
+    if (this.spritesheet.id == 1) {
+      //this.boxX += 2
+      this.boxY -=1
+    }
     this.draw();
   }
   draw() {
@@ -168,15 +181,15 @@ class SpriteMapper extends uR.canvas.PaintObject {
     this.canvas.ctx.globalAlpha = 1;
     this.canvas.ctx.translate(-0.5,-0.5);
     this.canvas.ctx.strokeStyle = 'rgba(0,0,0,1)';
-    this.canvas.ctx.strokeRect(this.canvas.mouseX,this.canvas.mouseY,s+1,s+1);
+    this.canvas.ctx.strokeRect(this.boxX,this.boxY,s+1,s+1);
     this.canvas.ctx.translate(0.5,0.5);
 
     this.zoomcanvas.clear()
     
     this.zoomcanvas.ctx.drawImage(
       this.canvas,
-      this.canvas.mouseX-this.spacer, this.canvas.mouseY-this.spacer,// sx,sy
-      this.scale+this.spacer*2, this.scale+this.spacer*2,// sw,sh
+      this.boxX-this.zoom_spacer, this.boxY-this.zoom_spacer,// sx,sy
+      this.scale+this.zoom_spacer*2, this.scale+this.zoom_spacer*2,// sw,sh
       0,0, // dx,dy
       this.zoomcanvas.width,this.zoomcanvas.height// dw,dh
     )

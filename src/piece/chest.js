@@ -1,7 +1,6 @@
 (function() {
   class Chest extends tW.pieces.BasePiece {
     constructor(opts={}) {
-      opts.sprite = tW.sprites.chest;
       opts.wait_interval = Infinity;
       super(opts);
       this.description = "Contains an item. Open it to find out!";
