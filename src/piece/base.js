@@ -144,7 +144,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
           this.takeGold(square); // #! TODO should be in the square.moveOn
           result.moves.push([dx,dy]);
         } else {
-          square.touchedBy(this)
+          square.touchedBy(this,[dx,dy])
         }
       }
       result.done = true;
@@ -157,11 +157,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       delete this.equipment.consumable
       this.equipment_cache = undefined;
     }
+    move.turn = move._turn || move.turn // turn after move is complete
     if (move.turn || move.dxdy) {
       result.done = true;
       [dx,dy] = move.turn || move.dxdy;
     }
     if (move.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
+    if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
