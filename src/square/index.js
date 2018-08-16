@@ -78,8 +78,8 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.floor = new cls(opts);
     this.dirty = true;
   }
-  touchedBy(piece) {
-    this.piece && this.piece.touchedBy(piece)
+  touchedBy(player,dxdy) {
+    this.piece && this.piece.touchedBy(player,dxdy)
   }
   moveOn(piece,move) {
     this.team = piece.team

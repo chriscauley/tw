@@ -44,4 +44,12 @@
       move.done = true;
     }
   }
+  tW.move.useEnergy = function forward(move,dxdy) {
+    if (this._energy >= 1) {
+      move._energy = -1
+      if (this._energy == 1) { move._turn = [0,0] }
+    } else {
+      move.done = true
+    }
+  }
 })();
