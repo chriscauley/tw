@@ -41,9 +41,9 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   getCost() {
     return this.resources;
   }
-  getMove(dx,dy) {
+  getMove(move,dx,dy) {
     // unless a child class adds anything, by default this just drains resources
-    return { resources: this.getCost() }
+    move.resources = this.getCost()
   }
   getHelpSections() {
     const texts = {
@@ -66,8 +66,8 @@ tW.item.Consumable = class Consumable extends tW.item.Item {
     super(opts);
     this.slot = "consumable";
   }
-  getMove(e) {
-    const move = { done: true, consume: this.slot, sprite: this.sprite }
+  getMove(move,dx,dy) {
+    _.extend(move, { done: true, consume: this.slot, sprite: this.sprite })
     if (this.health) { move.health = this.health }
     if (this.energy) { move.energy = this.energy }
     return move

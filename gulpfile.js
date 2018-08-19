@@ -6,7 +6,8 @@ const _src = array => array.map(s => "src/"+s);
 var JS_FILES = {
   tw: _src([
     "main.js",
-    "look.js",
+    "look/*.js",
+    "look/*.tag",
 
     "dungeon/const.js",
     "dungeon/templates.js",

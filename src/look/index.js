@@ -2,7 +2,6 @@
 // values are arrays of dxdy's
 (function() {
   function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
-  var KEYS = ['cone','close','line','circle'];
 
   var Look = (superclass) => class extends superclass {
     constructor(opts) {
@@ -13,9 +12,9 @@
     look(dxdy) {
       return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
     }
-    lookMany(deltas) {
+    lookMany(deltas,dxdy=[0,0]) {
       return (this.square || this).board.getSquares({
-        xys: deltas.map(dxdy=>[this.x+dxdy[0],this.y+dxdy[1]])
+        xys: deltas.map(delta=>[this.x+delta[0]+dxdy[0],this.y+delta[1]+dxdy[1]])
       });
     }
   }
@@ -24,40 +23,56 @@
     Look: Look,
     directions: [[0,1],[0,-1],[1,0],[-1,0]],
     getDistance: (p1,p2) => Math.abs(p1.x-p2.x) + Math.abs(p1.y-p2.y),
-    line: {},
-    _line: {},
-    cone: {},
-    _cone: {},
-    close: {},
-    _close: {},
-    //point: {},
-    //_point: {},
-    circle: {},
-    _circle: {},
-  };
+  }
+
+  tW.look.GEOMETRIES = [
+    'line', // #! TODO? depracate in favor of n
+    'cone',
+    'close',
+    'circle',
+    'f', // forward
+    'r', // right
+    'l', // left
+    'd', // forward-right (dexter)
+    's', // forward-left (sinister)
+    'lr', // left+right
+    'fd', // forward + forward-right
+    'fs', // forward + forward-left
+    'three',
+  ]
+  tW.look._GEOMETRIES = tW.look.GEOMETRIES.map(g => {
+    tW.look[g] = {}
+    tW.look["_"+g] = {}
+    return "_"+g
+  })
+  tW.look.ALL_GEOMETRIES = tW.look.GEOMETRIES.concat(tW.look._GEOMETRIES)
   tW.look.MAX_RANGE = 8;
   tW.look.RANGES = _.range(1,tW.look.MAX_RANGE+1);
   tW.look.DIRECTIONS = [
     [0,-1], // up
     [1,0], // right
-    [-1,0], // down
-    [0,1], //left
+    [0,1], // down
+    [-1,0], //left
   ];
+  tW.look.DIRECTION_NAMES = ['up','right','down','left']
+  tW.look.DIR2NAME = {}
+  tW.look.DIRECTIONS.map( (d,i) => tW.look.DIR2NAME[d] = tW.look.DIRECTION_NAMES[i] )
 
   for (var dxdy of tW.look.DIRECTIONS) {
     var [dx,dy] = dxdy;
-    //tW.look.point[dxdy] = {};
-    tW.look.line[dxdy] = {};
-    tW.look._line[dxdy] = {};
-    tW.look.cone[dxdy] = {};
-    tW.look._cone[dxdy] = {};
-    tW.look.close[dxdy] = {};
-    tW.look._close[dxdy] = {};
-    tW.look.circle[dxdy] = {};
-    tW.look._circle[dxdy] = {};
+    for (var geometry of tW.look.ALL_GEOMETRIES) {
+      tW.look[geometry][dxdy] = {}
+    }
     for (var range of tW.look.RANGES) {
-      //tW.look.point[dxdy][range] = [dxdy];
-      tW.look._line[dxdy][range] = [_times(dxdy,range)];
+      let [f] = tW.look._f[dxdy][range] = tW.look._line[dxdy][range] = [_times(dxdy,range)]
+      let [s] = tW.look._s[dxdy][range] = [[f[0]+Math.sign(f[1]),f[1]-Math.sign(f[0])]]
+      let [d] = tW.look._d[dxdy][range] = [[f[0]-Math.sign(f[1]),f[1]+Math.sign(f[0])]]
+      let [l] = tW.look._l[dxdy][range] = [[f[1],f[0]]]
+      let [r] = tW.look._r[dxdy][range] = [[-f[1],-f[0]]]
+      tW.look._lr[dxdy][range] = [l,r]
+      tW.look._fs[dxdy][range] = [f,s]
+      tW.look._fd[dxdy][range] = [f,d]
+      tW.look._three[dxdy][range] = [f, s, d]
 
       tW.look._cone[dxdy][range] = [];
       tW.look._close[dxdy][range] = [];
@@ -80,7 +95,7 @@
         tW.look._circle[dxdy][range].push([-j,-i]);
       }
 
-      for (var key of KEYS) {
+      for (var key of tW.look.GEOMETRIES) {
         var _key = "_"+key;
         tW.look[key][dxdy][range] = [];
         for (var ri=1;ri<=range;ri++) {

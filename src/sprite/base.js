@@ -339,6 +339,7 @@ uR.ready(function() {
     __DATA.Sprite.map(s=>Sprite.objects.getOrCreate(s.id,s).save())
   }
   try {
+    
     sprites.map((name,i) => new tW.sprites.DBSprite({
       name: name,
       sprite_id: i+1,

@@ -5,28 +5,22 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
     opts.slot = "feet";
     super(opts);
   }
-  getMove(dx,dy) {
+  getMove(move,dx,dy) {
     // by default boots move this.distance and do this.damage if they are stopped by anyone
-    var move = super.getMove(dx,dy);
+    super.getMove(move,dx,dy);
     if (!this.canUse(dx,dy)) { return move; }
     for (var i=1; i<=this.distance;i++) {
       var square = this.piece.look([i*dx,i*dy]);
       if (!square) { break }
       if (!square.isOpen([dx,dy])) {
         if (this.damage && square.canBeAttacked(this.piece)) {
-          move.damage = {
+          move.damage_move = {
             dx: i*dx,
             dy: i*dy,
             count: this.damage,
             squares: [square],
           }
-          if (this.splash) {
-            move.damage.squares = this.piece.lookMany(tW.look[this.splash][[dx,dy]][this.splash_range || 2])
-          }
         }
-        // #! TODO the following doesn't work if the enemy doesn't die
-        //if (this.kill_dash) { move.move = [i*dx,i*dy]; }
-        break;
       }
       move.move = [i*dx,i*dy];
     }

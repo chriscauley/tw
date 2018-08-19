@@ -81,8 +81,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     this.gold = 0;
     this.resetMiniMap();
     this.equipment = {};
-    var starting_equipment = {}
-    var starting_equipment = [tW.weapon.Knife]; //,tW.feet.Sprint];
+    var starting_equipment = [tW.weapon.Knife, tW.feet.Sprint];
     for (var item of starting_equipment) {
       new item({piece: this});
     }
@@ -127,7 +126,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     return
   }
   getMove(e,dx,dy) {
-    this.moves[this.game.turn] = {
+    this.moves[this.game.turn] = { // just enoug info to reproduce move
       _key: e._key,
       applyItem: e.applyItem,
       dxdy: [dx || 0, dy || 0], // defaults to [0,0]... maybe should default to undefined?
@@ -137,20 +136,21 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     if (e.useItem !== undefined) { // should be player only for now
       return this.equipment.consumable && this.equipment.consumable.getMove(e) || { done: true }
     }
-    if (e.ctrlKey && this.getCtrlItem()) {
-      return this.getCtrlItem().getMove(dx,dy);
-    } else if (e.shiftKey && this.equipment.feet) {
-      return this.equipment.feet.getMove(dx,dy);
+    var move = { }
+    /*if (e.ctrlKey && this.getCtrlItem()) {
+      move = this.getCtrlItem().getMove(move,dx,dy);
+    }*/
+    if (!move.done && e.shiftKey && this.equipment.feet) {
+      this.equipment.feet.getMove(move,dx,dy);
     }
-    return this.equipment.weapon && this.equipment.weapon.getMove(dx,dy) || { move: [dx,dy] }
-    // var square = this.look(dxdy);
-    // var out = { turn: [dx,dy] };
-    // if (square && square.canBeAttacked(this)) {
-    //   out.damage = [dx,dy,this.damage];
-    //   out.damage.piece = square.piece;
-    // }
-    // if (square && !square.piece) { out.move = [dx,dy] }
-    // return out;
+    if (!move.done && this.equipment.weapon) {
+      this.equipment.weapon.getMove(move,dx,dy)
+    }
+    if (!move.move && !move.done) {
+      move.move = [dx,dy]
+      move.done = true
+    }
+    return move
   }
   move(e,dx,dy) {
     var out = this.getMove(e,dx,dy);
