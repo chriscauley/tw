@@ -26,18 +26,18 @@ var JS_FILES = {
     "replay.js",
 
     "floor.js",
-    "item/base.js",
+    "item/index.js",
     "item/*.js",
-    "item/weapon/base.js",
+    "item/weapon/index.js",
     "item/weapon/*.js",
 
-    "sprite/base.js",
+    "sprite/index.js",
     "sprite/*.js",
     "sprite/*.tag",
 
-    "move/base.js",
+    "move/index.js",
     "move/*.js",
-    "piece/base.js",
+    "piece/index.js",
     "piece/projectile.js", // will eventually be its own folder
     "piece/*.js",
     "buff.js",
@@ -48,6 +48,7 @@ var JS_FILES = {
     "score.js",
     "team.js",
     "levels.js",
+    "pixi.tag",
     "ui.tag",
     "map-sprite.tag",
   ])

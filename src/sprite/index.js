@@ -10,8 +10,10 @@ tW.sprites = tW.sprites || {
   wedge: function (color) {
     return tW.sprites["_wedge_"+color] || new tW.sprites.WedgeSprite(color);
   },
+  ready: uR.Ready(),
 };
 
+tW.sprites.ready(() => console.log("I'm ready"))
 var createSpriteClass = (function() {
   var content = "";
   var createTag = uR.debounce(function () {
@@ -156,6 +158,7 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
       sprite_id: uR.REQUIRED,
       color: "red",
       scale: 32,
+      ready: function() {},
     });
     super(opts);
     var sprite = Sprite.objects.get(this.sprite_id);
@@ -178,8 +181,10 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
       self.dirty = true;
       self.loaded = true;
       self.draw();
+      self.ready()
     })
   }
+
   _draw() {
     var ctx = this.canvas.ctx;
     ctx.drawImage(this.temp_canvas, 0, 0);
@@ -277,7 +282,7 @@ uR.ready(function() {
     'dash',
     'sprint',
     'shovel',
-    'pickaxe',
+    'old-pickaxe',
     'pygmyelephant',
     'stunned',
     'katana',
@@ -338,19 +343,30 @@ uR.ready(function() {
     __DATA.SpriteSheet.map(ss => SpriteSheet.objects.getOrCreate(ss.id,ss))
     __DATA.Sprite.map(s=>Sprite.objects.getOrCreate(s.id,s).save())
   }
+  const promises = []
+  tW.sprites.list = []
   try {
-    
-    sprites.map((name,i) => new tW.sprites.DBSprite({
-      name: name,
-      sprite_id: i+1,
-      rotations: name == "fireball",
-      vflip: name == "fireball",
-      is_piece: pieces.indexOf(name) != -1,
-      is_blade: blades.indexOf(name) != -1,
-    }));
+    sprites.map((name,i) => {
+      promises.push(
+        new Promise(
+          resolve => tW.sprites.list.push(
+            new tW.sprites.DBSprite({
+              name: name,
+              sprite_id: i+1,
+              rotations: name == "fireball",
+              vflip: name == "fireball",
+              is_piece: pieces.indexOf(name) != -1,
+              is_blade: blades.indexOf(name) != -1,
+              ready: resolve
+            })
+          )
+        )
+      )
+    })
   } catch (e) {
     console.error(e);
   }
+  Promise.all(promises).then(tW.sprites.ready.start)
 });
 
 tW.sprites.CircleSprite = class CircleSprite extends tW.sprites.SpriteObject {
