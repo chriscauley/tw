@@ -11,6 +11,7 @@ uP.buildCompositeSprite = (name,opts) => {
   // "a|b||b|d" => [['a','b'],['c','d']]
   opts.tiles.split("||").map(s => s.split("|")).forEach((row,ir) =>{
     row.forEach((_name,ic) => {
+      if (!_name) { return } // allows for sloppy pipes
       let square = new PIXI.Sprite(opts.resources[_name].texture)
       square.width = square.height = s
       square.x = s*ic
