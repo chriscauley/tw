@@ -8,12 +8,12 @@ tW.sprites = tW.sprites || {
     })).get();
   },
   wedge: function (color) {
-    return tW.sprites["_wedge_"+color] || new tW.sprites.WedgeSprite(color);
+    if (!tW.sprites["_wedge_"+color]) { tW.sprites["_wedge_"+color] = new tW.sprites.WedgeSprite(color) }
+    return tW.sprites["_wedge_"+color]
   },
   ready: uR.Ready(),
 };
 
-tW.sprites.ready(() => console.log("I'm ready"))
 var createSpriteClass = (function() {
   var content = "";
   var createTag = uR.debounce(function () {

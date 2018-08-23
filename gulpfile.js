@@ -48,7 +48,11 @@ var JS_FILES = {
     "score.js",
     "team.js",
     "levels.js",
-    "pixi.tag",
+
+    "pixi/index.js",
+    "pixi/*.js",
+    "pixi/*.tag",
+
     "ui.tag",
     "map-sprite.tag",
   ])
