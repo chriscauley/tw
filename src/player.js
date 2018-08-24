@@ -125,11 +125,11 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   getCtrlItem() {
     return
   }
-  getMove(e,dx,dy) {
+  getMove(e,dxdy=[0,0]) {
     this.moves[this.game.turn] = { // just enoug info to reproduce move
       _key: e._key,
       applyItem: e.applyItem,
-      dxdy: [dx || 0, dy || 0], // defaults to [0,0]... maybe should default to undefined?
+      dxdy: dxdy, // defaults to [0,0]... maybe should default to undefined?
       shiftKey: e.shiftKey*1, // less space if it's a int instead of boolean
       ctrlKey: e.ctrlKey*1,
     }
@@ -138,23 +138,23 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     }
     var move = { }
     /*if (e.ctrlKey && this.getCtrlItem()) {
-      move = this.getCtrlItem().getMove(move,dx,dy);
+      move = this.getCtrlItem().getMove(move,dxdy);
     }*/
     if (!move.done && e.shiftKey && this.equipment.feet) {
-      this.equipment.feet.getMove(move,dx,dy);
+      this.equipment.feet.getMove(move,dxdy);
     }
     if (!move.done && this.equipment.weapon) {
-      this.equipment.weapon.getMove(move,dx,dy)
+      this.equipment.weapon.getMove(move,dxdy)
     }
     if (!move.move && !move.done) {
-      move.move = [dx,dy]
+      move.move = dxdy
       move.done = true
     }
     return move
   }
-  move(e,dx,dy) {
-    var out = this.getMove(e,dx,dy);
-    out.dxdy = [dx,dy];
+  move(e,dxdy) {
+    var out = this.getMove(e,dxdy);
+    out.dxdy = dxdy;
     out.key = e.key;
     var last_move = { x: this.x, y: this.y }
     this.applyMove(out);
@@ -174,7 +174,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
 
     this.combos && this.combos.map((c) => c.apply(result));
     var self = this;
-    var [dx,dy] = [this.dx,this.dy];
+    var [dx,dy] = this.dxdy;
     if (opts && opts.resources) { // maybe put in pieces.js BasePiece instead
       for (var key in opts.resources) {
         this[key].add(opts.resources[key]);

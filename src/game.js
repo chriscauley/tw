@@ -140,11 +140,11 @@ tW.Game = class Game extends uR.RandomObject {
   bindKeys() {
     function useItem(n) { return { done: true, useItem: n } }
     var key_map = {
-      up: (e) => this.player.move(e,0,-1),
-      down: (e) => this.player.move(e,0,1),
-      left: (e) => this.player.move(e,-1,0),
-      right: (e) => this.player.move(e,1,0),
-      space: (e) => this.player.move(e,0,0),
+      up: (e) => this.player.move(e,[0,-1]),
+      down: (e) => this.player.move(e,[0,1]),
+      left: (e) => this.player.move(e,[-1,0]),
+      right: (e) => this.player.move(e,[1,0]),
+      space: (e) => this.player.move(e,[0,0]),
       z: e => this.player.move({ useItem: 0 }),
       x: e => this.player.move({ useItem: 1 }),
       c: e => this.player.move({ useItem: 2 }),

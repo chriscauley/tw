@@ -108,7 +108,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       even when the piece didn't move forward (skeleton against a wall)*/
     };
     result.animation = (move.dy || move.dx) && ['bounce',{ dx: move.dx, dy: move.dy }];
-    var d,dx,dy;
+    var d,dxdy;
     if (move.damage) {
       for (var square of move.damage.squares) {
         var damage_done = square && square.piece && square.piece.takeDamage(move.damage.count);
@@ -128,30 +128,29 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.move) {
       if (Array.isArray(move.move)) {
         var square = this.look(move.move);
-        [dx,dy] = move.move;
+        dxdy = move.move;
       } else {
         var square = move.move;
-        [dx,dy] = [square.x-this.x, square.y-this.y];
+        dxdy = [square.x-this.x, square.y-this.y];
       }
       if (square) {
-        if (square.isOpen([dx,dy])) {
+        if (square.isOpen(dxdy)) {
           this.current_square && this.current_square.moveOff(this,move);
           result.animation = result.animation || ['move',move.move_animation || {
             x: this.x,
             y: this.y,
-            dx: dx,
-            dy: dy
+            dxdy: dxdy,
           }];
           var move_on_result = square.moveOn(this,move);
           if (move_on_result) { return this.applyMove(move_on_result) }
           this.takeGold(square); // #! TODO should be in the square.moveOn
-          result.moves.push([dx,dy]);
+          result.moves.push(dxdy);
         } else {
-          square.touchedBy(this,[dx,dy])
+          square.touchedBy(this,dxdy)
         }
       }
       result.done = true;
-      result.animation = result.animation || ['bounce',{ dx: dx, dy: dy, x: this.x, y: this.y }];
+      result.animation = result.animation || ['bounce',{ dxdy: dxdy, x: this.x, y: this.y }];
     }
     if (move.health) {
       this.takeDamage(-move.health,move.sprite)
@@ -163,14 +162,14 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     move.turn = move._turn || move.turn // turn after move is complete
     if (move.turn || move.dxdy) {
       result.done = true;
-      [dx,dy] = move.turn || move.dxdy;
+      dxdy = move.turn || move.dxdy;
     }
-    if (move.turn || dx || dy) { [this.dx,this.dy] = [Math.sign(dx),Math.sign(dy)] }
+    if (move.turn || dxdy) { this.dxdy = [Math.sign(dxdy[0]),Math.sign(dxdy[1])] }
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
-      if (dx || dy) { result.dxdy = [dx,dy]; }
+      result.dxdy = dxdy
       result.done = true
     }
     return result;
@@ -179,14 +178,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     var self = this;
     uR.defaults(opts,{
       x: this.x, y: this.y, // board coordinates
-      dx: 0, dy: 0, // how much to move animation
+      dxdy: [0,0], // how much to move animation
       t0: new Date().valueOf(),
       ds: this.ds, // shrink factor
     });
+    const [dx,dy] = opts.dxdy
     if (type == "bounce") { opts.easing = (dt) => (dt < 0.5)?dt:1-dt; }
     var sprite = opts.sprite || this.sprites[type];
     if (sprite) {
-      if (opts.dx || opts.dy) {
+      if (dx || dy) {
         self.animating++;
         opts.resolve = function() { self.animating-- };
       }

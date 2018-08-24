@@ -5,24 +5,24 @@ tW.feet.BaseFeet = class BaseFeet extends tW.item.Item {
     opts.slot = "feet";
     super(opts);
   }
-  getMove(move,dx,dy) {
+  getMove(move,dxdy) {
     // by default boots move this.distance and do this.damage if they are stopped by anyone
-    super.getMove(move,dx,dy);
-    if (!this.canUse(dx,dy)) { return move; }
-    for (var i=1; i<=this.distance;i++) {
-      var square = this.piece.look([i*dx,i*dy]);
+    super.getMove(move,dxdy);
+    if (!this.canUse(dxdy)) { return move; }
+    for (var range=1; range<=this.distance;range++) {
+      let rdxdy = dxdy.map(i => i * range)
+      var square = this.piece.look(rdxdy);
       if (!square) { break }
-      if (!square.isOpen([dx,dy])) {
+      if (!square.isOpen(dxdy)) {
         if (this.damage && square.canBeAttacked(this.piece)) {
           move.damage_move = {
-            dx: i*dx,
-            dy: i*dy,
+            dxdy: rdxdy,
             count: this.damage,
             squares: [square],
           }
         }
       }
-      move.move = [i*dx,i*dy];
+      move.move = rdxdy
     }
     return move;
   }

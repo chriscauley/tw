@@ -13,16 +13,16 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     opts.slot = "weapon";
     super(opts);
   }
-  getMove(action,dx,dy) {
+  getMove(action,dxdy) {
     // although not tested for diagonals, it should in theory work
-    if (!dx && !dy) { return }
-    var deltas = tW.look[this.geometry][[dx,dy]][this.range]
+    if (!dxdy) { return }
+    var deltas = tW.look[this.geometry][dxdy][this.range]
     if (action.move) {
-      [dx,dy] = action.move || [dx,dy]
+      dxdy = action.move || dxdy
     }
-    const sx = Math.sign(dx)
-    const sy = Math.sign(dy)
-    const move_range = action.move?Math.abs(dx || dy):0
+    const sx = Math.sign(dxdy[0])
+    const sy = Math.sign(dxdy[1])
+    const move_range = action.move?Math.abs(dxdy[0] || dxdy[1]):0
     for (let d=0;d<=move_range;d++) {
       let new_dxdy = [sx*d,sy*d]
       let squares = this.piece.lookMany(deltas,new_dxdy)

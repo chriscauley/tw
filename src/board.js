@@ -214,7 +214,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     opts = uR.defaults(opts,{
       img: uR.REQUIRED,
       x: uR.REQUIRED, y: uR.REQUIRED,
-      dx: 0, dy: 0,
+      dx: [0,0],
       ds: 0,
       t0: uR.REQUIRED,
       easing: (dt) => dt,
@@ -232,10 +232,10 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
       var delta = (now - a.t0)/a.dtmax; // progress through current animation
       if (delta > 1) { dirty.push(_ai); delta = 1; }
       var ease = a.easing(delta);
-      var dx = s*(a.x+a.dx*ease);
-      var dy = s*(a.y+a.dy*ease);
+      var dx = s*(a.x+a.dxdy[0]*ease);
+      var dy = s*(a.y+a.dxdy[1]*ease);
       var dw = s,dh = s;
-      if (a.ds) {
+      if (a.ds) { // arbitrary scale factor
         dx += a.ds;
         dy += a.ds;
         dw = dh = s-2*a.ds;

@@ -27,8 +27,7 @@ tW.floor = (function() {
       move.move_animation = {
         x: this.exit.square.x,
         y: this.exit.square.y,
-        dx: move.dxdy[0],
-        dy: move.dxdy[1],
+        dxdy: move.dxdy,
       }
       return move
     }
