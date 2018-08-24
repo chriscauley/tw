@@ -1,7 +1,7 @@
 (function() {
   tW.move.shoot = (projectile) => {
     function shoot(move,dxdy) {
-      dxdy = dxdy || [this.dx,this.dy]
+      dxdy = dxdy || this.dxdy
       var square = this.look(dxdy);
       if (!square) { console.error("no square"); return } // no square to target
       if (!square.piece && !square.isOpen(dxdy)) { return } // some non-piece obstacle
@@ -12,8 +12,7 @@
       } else {
         new projectile({ // #! TODO this should be in afterMove
           parent_piece: this,
-          dx: dxdy[0],
-          dy: dxdy[1],
+          dxdy: dxdy,
           damage: this.damage,
           square: square,
           _prng: this,

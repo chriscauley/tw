@@ -1,6 +1,6 @@
 (function() {
   tW.ball = {}
-  tW.enemy_map.ball = tW.ball.Ball = class Ball extends tW.pieces.BasePiece {
+  tW.ball.Ball = class Ball extends tW.pieces.BasePiece {
     constructor(opts={}) {
       uR.defaults(opts, {
         wait_interval: Infinity, // #! TODO: link red halo to dxdy?
@@ -26,8 +26,7 @@
       this.sprite = tW.sprites['blue-orb']
     }
     touchedBy(player,dxdy) {
-      this.dx = dxdy[0]
-      this.dy = dxdy[1]
+      this.dxdy = dxdy
       this._energy = this.max_energy
     }
   }

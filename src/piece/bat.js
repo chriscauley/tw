@@ -35,8 +35,7 @@
   class BaseBat extends tW.pieces.BasePiece {
     constructor(opts={}) {
       opts.wait_interval = 1;
-      opts.dx = 0;
-      opts.dy = 0;
+      opts.dxdy = [0,0];
       super(opts);
       this.setTasks(
         this.wait,

@@ -9,10 +9,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     var dx = 0, dy = 0;
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
+    this.dxdy = opts.dxdy || [dx,dy]
     this.defaults(opts,{
       sprite: uR.REQUIRED,
-      dx: dx,
-      dy: dy,
       tasks: [],
       items: [],
       health: 1,
@@ -65,6 +64,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   buildHelp() {
     return super.buildHelp && super.buildHelp() || {};
   }
+  get dx () { return this.dxdy[0] }
+  set dx (value) { this.dxdy[0] = value }
+  get dy () { return this.dxdy[1] }
+  set dy (value) { this.dxdy[1] = value }
   getHelpSections() {
     const out = [];
     if (this.buffs.length) {
