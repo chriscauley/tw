@@ -1,7 +1,11 @@
 // Look takes the for tW.look.geometry[dxdy][range]
 // values are arrays of dxdy's
 (function() {
-  var Look = (superclass) => class extends superclass {
+  tW.look = {
+    getDistance: (p1,p2) => Math.abs(p1.x-p2.x) + Math.abs(p1.y-p2.y),
+  }
+
+  tW.look.Look = (superclass) => class extends superclass {
     constructor(opts) {
       super(opts);
       this.DIRECTIONS = tW.look.DIRECTIONS.slice(); // okay to be shuffled... see moveRandomly
@@ -15,12 +19,6 @@
         xys: deltas.map(delta=>tV.sum([this.x,this.y],delta,dxdy))
       });
     }
-  }
-
-  tW.look = {
-    Look: Look,
-    directions: [[0,1],[0,-1],[1,0],[-1,0]],
-    getDistance: (p1,p2) => Math.abs(p1.x-p2.x) + Math.abs(p1.y-p2.y),
   }
 
   tW.look.GEOMETRIES = [
@@ -47,14 +45,19 @@
   tW.look.MAX_RANGE = 8;
   tW.look.RANGES = _.range(1,tW.look.MAX_RANGE+1);
   tW.look.DIRECTIONS = [
-    [0,-1], // up
-    [1,0], // right
-    [0,1], // down
-    [-1,0], //left
+    [0,-1], // N == up
+    [1,0], // E == right
+    [0,1], // S == down
+    [-1,0], // W == left
   ];
-  tW.look.DIRECTION_NAMES = ['up','right','down','left']
+  tW.look.DIRECTION_NAMES = ['N','E','S','W']
+  tV.WAIT = [0,0]
   tW.look.DIR2NAME = {}
-  tW.look.DIRECTIONS.map( (d,i) => tW.look.DIR2NAME[d] = tW.look.DIRECTION_NAMES[i] )
+  tW.look.DIRECTIONS.map((d,i) => {
+    const name = tW.look.DIRECTION_NAMES[i]
+    tW.look.DIR2NAME[d] = name
+    tV[name.toUpperCase()] = d
+  })
 
   for (var dxdy of tW.look.DIRECTIONS) {
     var [dx,dy] = dxdy;
@@ -104,18 +107,23 @@
   }
 
   tW.look.DIAGONALS = [
-    [1,1],
-    [-1,1],
-    [1,-1],
-    [-1,-1],
+    [1,-1], // NE
+    [1,1], // SE
+    [-1,1], // SW
+    [-1,-1], // NW
   ]
-  for (var dxdy of tW.look.DIAGONALS) {
+  tW.look.ALL_DIRECTIONS = []
+  for (let i=0;i<4;i++) {
+    tW.look.ALL_DIRECTIONS.push(tW.look.DIRECTIONS[i])
+    tW.look.ALL_DIRECTIONS.push(tW.look.DIAGONALS[i])
+  }
+  for (let dxdy of tW.look.DIAGONALS) {
     tW.look._line[dxdy] = {};
     tW.look._line[dxdy][1] = [dxdy];
     tW.look.line[dxdy] = tW.look._line[dxdy]
   }
 
-  for (var range of tW.look.RANGES) {
+  for (let range of tW.look.RANGES) {
     // since circle is symetrical it technically just needs a range, not a direction
     // for now just cloning look right as the direction
     tW.look._circle[range] = tW.look._circle[[0,1]][range];

@@ -8,9 +8,9 @@
         this.wait,
         tW.move.shoot(tW.pieces.Fireball),
       );
-      for (var dxdy of [[0,1],[0,-1],[1,0],[-1,0]]) {
+      for (var dxdy of tW.look.DIRECTIONS) {
         if (this.look(dxdy).isOpen()) {
-          [this.dx,this.dy] = dxdy;
+          this.dxdy = dxdy;
           break;
         }
       }

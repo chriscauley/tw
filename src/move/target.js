@@ -11,7 +11,7 @@ tW.move.target = function(action,opts={}) {
       if (this._no_look) { move.turn = [0,0]; } // beholder only
       return;
     }
-    for (let direction of tW.look.directions) {
+    for (let direction of tW.look.DIRECTIONS) {
       var squares = this.current_square.lookMany(tW.look[opts.geometry][direction][this.sight || opts.range]);
       for (let square of squares) {
         if (opts.pass.call(this,square)) {

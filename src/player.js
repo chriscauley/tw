@@ -213,7 +213,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     var s = this.board.scale;
     if (this.game.turn != this.last_turn_drawn) {
       this._moves = [];
-      this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
+      this.forEach(tW.look.DIRECTIONS,dxdy => {
         var square = this.board.getSquare(tV.add([this.x,this.y],dxdy));
         if (!square) { return }
         if (square.isOpen(dxdy)) {
@@ -221,7 +221,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
         } else if (square.canBeAttacked(this)) {
           this._moves.push(["rgba(100,0,0,0.5)",square.x,square.y]);
         }
-      });
+      })
       this.last_turn_drawn = this.game.turn;
     }
     for (var move of this._moves) {

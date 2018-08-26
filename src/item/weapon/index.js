@@ -14,7 +14,7 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     super(opts);
   }
   getMove(action,dxdy) {
-    if (!dxdy) { return }
+    if (!dxdy || dxdy == tV.WAIT) { return }
     var deltas = tW.look[this.geometry][dxdy][this.range]
     if (action.move) {
       dxdy = action.move || dxdy

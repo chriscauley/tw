@@ -41,7 +41,7 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
   getCost() {
     return this.resources;
   }
-  getMove(move,dx,dy) {
+  getMove(move,dxdy) {
     // unless a child class adds anything, by default this just drains resources
     move.resources = this.getCost()
   }
@@ -66,7 +66,7 @@ tW.item.Consumable = class Consumable extends tW.item.Item {
     super(opts);
     this.slot = "consumable";
   }
-  getMove(move,dx,dy) {
+  getMove(move,dxdy) {
     _.extend(move, { done: true, consume: this.slot, sprite: this.sprite })
     if (this.health) { move.health = this.health }
     if (this.energy) { move.energy = this.energy }
@@ -110,14 +110,13 @@ tW.item.Gold = class Gold extends tW.item.Item {
     this.square.dirty = true;
   }
   draw(canvas) {
-    var ctx = canvas.ctx;
-    var s = this.square.board.scale;
-    var img = this.sprite.get(0,0);
+    const s = this.square.board.scale;
+    const img = this.sprite.get(0,0);
     var v = this.value*1;
     while(v--) {
       var dx = (0.5-this.random())*s/2;
       var dy = (0.5-this.random())*s/2;
-      ctx.drawImage(
+     canvas.ctx.drawImage(
         img.img,
         img.x, img.y,
         img.w, img.h,
