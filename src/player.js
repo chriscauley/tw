@@ -125,11 +125,11 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   getCtrlItem() {
     return
   }
-  getMove(e,dxdy=[0,0]) {
+  getMove(e,dxdy=tV.ZERO) {
     this.moves[this.game.turn] = { // just enoug info to reproduce move
       _key: e._key,
       applyItem: e.applyItem,
-      dxdy: dxdy, // defaults to [0,0]... maybe should default to undefined?
+      dxdy: dxdy, // defaults to tV.ZERO... maybe should default to undefined?
       shiftKey: e.shiftKey*1, // less space if it's a int instead of boolean
       ctrlKey: e.ctrlKey*1,
     }

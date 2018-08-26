@@ -10,7 +10,7 @@
   tW.move.forwardRandomly = function forwardRandomly(move) {
     for (let direction of this.random.shuffle(this.DIRECTIONS)) {
       tW.move.forward.call(this,move,direction);
-      if (move.move) { move.turn = [0,0]; return move; }
+      if (move.move) { move.turn = tV.ZERO; return move; }
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
@@ -35,7 +35,7 @@
   class BaseBat extends tW.pieces.BasePiece {
     constructor(opts={}) {
       opts.wait_interval = 1;
-      opts.dxdy = [0,0];
+      opts.dxdy = tV.ZERO;
       super(opts);
       this.setTasks(
         this.wait,

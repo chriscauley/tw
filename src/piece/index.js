@@ -178,7 +178,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     var self = this;
     uR.defaults(opts,{
       x: this.x, y: this.y, // board coordinates
-      dxdy: [0,0], // how much to move animation
+      dxdy: tV.ZERO, // how much to move animation
       t0: new Date().valueOf(),
       ds: this.ds, // shrink factor
     });

@@ -214,7 +214,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     opts = uR.defaults(opts,{
       img: uR.REQUIRED,
       x: uR.REQUIRED, y: uR.REQUIRED,
-      dxdy: [0,0],
+      dxdy: tV.ZERO,
       ds: 0,
       t0: uR.REQUIRED,
       easing: (dt) => dt,

@@ -5,6 +5,8 @@
     getDistance: (p1,p2) => Math.abs(p1.x-p2.x) + Math.abs(p1.y-p2.y),
   }
 
+  tV.isZero = dxdy => !dxdy[0] && !dxdy[1]
+  tV.ZERO = [0,0]
   tW.look.Look = (superclass) => class extends superclass {
     constructor(opts) {
       super(opts);
@@ -14,7 +16,7 @@
     look(dxdy) {
       return (this.square || this).board.getSquare(tV.add([this.x,this.y],dxdy))
     }
-    lookMany(deltas,dxdy=[0,0]) {
+    lookMany(deltas,dxdy=tV.ZERO) {
       return (this.square || this).board.getSquares({
         xys: deltas.map(delta=>tV.sum([this.x,this.y],delta,dxdy))
       });
@@ -51,7 +53,6 @@
     [-1,0], // W == left
   ];
   tW.look.DIRECTION_NAMES = ['N','E','S','W']
-  tV.WAIT = [0,0]
   tW.look.DIR2NAME = {}
   tW.look.DIRECTIONS.map((d,i) => {
     const name = tW.look.DIRECTION_NAMES[i]

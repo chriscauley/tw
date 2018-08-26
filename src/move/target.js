@@ -8,7 +8,7 @@ tW.move.target = function(action,opts={}) {
     if (this.targeted) { // piece was targeted last turn
       action.call(this,move,this.targeted);
       move.afterMove.push(() => this.targeted = false) // targeting only lasts one turn
-      if (this._no_look) { move.turn = [0,0]; } // beholder only
+      if (this._no_look) { move.turn = tV.ZERO; } // beholder only
       return;
     }
     for (let direction of tW.look.DIRECTIONS) {
