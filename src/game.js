@@ -107,7 +107,7 @@ tW.Game = class Game extends uR.RandomObject {
   }
   stepReplay() {
     const move = this.moves[this.turn];
-    this.player.move(move,...move.dxdy)
+    this.player.move(move,move.dxdy)
     this.nextTurn();
     this.ui.update(); // #! TODO not sure why this is not being triggered
     if (this.AUTO_REPLAY && this.turn != this.moves.length) {

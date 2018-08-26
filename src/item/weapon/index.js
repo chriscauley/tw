@@ -14,17 +14,15 @@ tW.weapon.BaseWeapon = class BaseWeapon extends tW.item.Item {
     super(opts);
   }
   getMove(action,dxdy) {
-    // although not tested for diagonals, it should in theory work
     if (!dxdy) { return }
     var deltas = tW.look[this.geometry][dxdy][this.range]
     if (action.move) {
       dxdy = action.move || dxdy
     }
-    const sx = Math.sign(dxdy[0])
-    const sy = Math.sign(dxdy[1])
-    const move_range = action.move?Math.abs(dxdy[0] || dxdy[1]):0
+    const sign_dxdy = tV.sign(dxdy)
+    const move_range = action.move?tV.magnitude(dxdy):0 // not tested for diagonals!
     for (let d=0;d<=move_range;d++) {
-      let new_dxdy = [sx*d,sy*d]
+      let new_dxdy = tV.times(sign_dxdy,d)
       let squares = this.piece.lookMany(deltas,new_dxdy)
       this._updateMoveForSquares(action,squares)
       if (action.damage) {

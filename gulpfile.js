@@ -6,6 +6,8 @@ const _src = array => array.map(s => "src/"+s);
 var JS_FILES = {
   tw: _src([
     "main.js",
+    "vector.js",
+    "look/index.js",
     "look/*.js",
     "look/*.tag",
 

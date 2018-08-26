@@ -164,7 +164,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.done = true;
       dxdy = move.turn || move.dxdy;
     }
-    if (move.turn || dxdy) { this.dxdy = [Math.sign(dxdy[0]),Math.sign(dxdy[1])] }
+    if (move.turn || dxdy) { this.dxdy = tV.sign(dxdy) }
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
       result.animation && this.newAnimation(...result.animation);

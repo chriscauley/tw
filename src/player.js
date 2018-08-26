@@ -214,7 +214,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     if (this.game.turn != this.last_turn_drawn) {
       this._moves = [];
       this.forEach([[0,1],[0,-1],[1,0],[-1,0]],function(dxdy) {
-        var square = this.board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
+        var square = this.board.getSquare(tV.add([this.x,this.y],dxdy));
         if (!square) { return }
         if (square.isOpen(dxdy)) {
           this._moves.push(["rgba(0,100,0,0.5)",square.x,square.y]);

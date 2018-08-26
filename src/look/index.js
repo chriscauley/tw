@@ -1,8 +1,6 @@
 // Look takes the for tW.look.geometry[dxdy][range]
 // values are arrays of dxdy's
 (function() {
-  function _times(dxdy,range) { return [dxdy[0]*range,dxdy[1]*range]; }
-
   var Look = (superclass) => class extends superclass {
     constructor(opts) {
       super(opts);
@@ -10,11 +8,11 @@
     }
     lookForward() { return this.look([this.dx,this.dy]) }
     look(dxdy) {
-      return (this.square || this).board.getSquare(this.x+dxdy[0],this.y+dxdy[1]);
+      return (this.square || this).board.getSquare(tV.add([this.x,this.y],dxdy))
     }
     lookMany(deltas,dxdy=[0,0]) {
       return (this.square || this).board.getSquares({
-        xys: deltas.map(delta=>[this.x+delta[0]+dxdy[0],this.y+delta[1]+dxdy[1]])
+        xys: deltas.map(delta=>tV.sum([this.x,this.y],delta,dxdy))
       });
     }
   }
@@ -64,7 +62,7 @@
       tW.look[geometry][dxdy] = {}
     }
     for (var range of tW.look.RANGES) {
-      let [f] = tW.look._f[dxdy][range] = tW.look._line[dxdy][range] = [_times(dxdy,range)]
+      let [f] = tW.look._f[dxdy][range] = tW.look._line[dxdy][range] = [tV.times(dxdy,range)]
       let [s] = tW.look._s[dxdy][range] = [[f[0]+Math.sign(f[1]),f[1]-Math.sign(f[0])]]
       let [d] = tW.look._d[dxdy][range] = [[f[0]-Math.sign(f[1]),f[1]+Math.sign(f[0])]]
       let [l] = tW.look._l[dxdy][range] = [[f[1],f[0]]]
