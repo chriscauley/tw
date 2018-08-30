@@ -16,7 +16,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     document.getElementById("game").style.width = this.W*this.scale + "px"
 
     this.pieces = [];
-    this.createCanvas();
+    //this.createCanvas();
     this.tick = this.tick.bind(this);
     this.tick();
     this.dirty = true;
@@ -24,9 +24,9 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
   }
   tick() {
     this._ta = tW.ANIMATION_TIME;
-    cancelAnimationFrame(this.animation_frame);
-    (this.__tick++)%4 && this.draw();
-    this.animation_frame = requestAnimationFrame(this.tick);
+    //cancelAnimationFrame(this.animation_frame);
+    //(this.__tick++)%4 && this.draw();
+    //this.animation_frame = requestAnimationFrame(this.tick);
   }
   loadPieceSets() {
     // possible "mooks" or enemies that each room could spawn
@@ -44,6 +44,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     }
   }
   loadLevel(level_number) {
+    this.squares.forEach(s => s.removeSprite())
     this.reset();
     this.level_number = level_number;
     this.loadPieceSets();

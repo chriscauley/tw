@@ -52,7 +52,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   constructor(opts) {
     opts.gold_per_touch = Infinity;
     opts.interval = 0
-    opts.sprite = tW.sprites['warrior'];
+    opts._sprite = 'warrior'
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0, x: this.x, y: this.y };
     this._moves = []; // used in animations, rename this

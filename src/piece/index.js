@@ -4,14 +4,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   constructor(opts) {
     // randomly point unit up/down/left/right
     super(opts);
-    opts.sprite = opts.sprite || tW.sprites[this.constructor.name.toLowerCase()];
     var _d = this.random();
     var dx = 0, dy = 0;
     if (_d < 0.5) { dx = (_d<0.25)?1:-1 }
     else { dy = (_d>0.75)?1:-1 }
     this.dxdy = opts.dxdy || [dx,dy]
     this.defaults(opts,{
-      sprite: uR.REQUIRED,
+      _sprite: this.constructor.name.toLowerCase(),
       tasks: [],
       items: [],
       health: 1,
@@ -25,7 +24,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       speed: 1, // how many squares it moves on this.forward
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
     });
-    opts.square.addPiece(this); // this sets this.board;
+    opts.square.addPiece(this); // this sets this.board
+    uP.bindSprite(this,true)
     this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
@@ -333,6 +333,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     return result;
   }
   die() {
+    this.removeSprite()
     this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.is_dead = true;
