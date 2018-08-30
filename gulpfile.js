@@ -67,6 +67,7 @@ var STATIC_FILES = _src([
   'uc-tests.js',
   'data.json',
   'img/',
+  'font-awesome.min.css',
 ]);
 var MUSTACHE_FILES = _src([
   'index.html',
