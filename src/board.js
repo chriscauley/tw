@@ -16,18 +16,8 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     document.getElementById("game").style.width = this.W*this.scale + "px"
 
     this.pieces = [];
-    //this.createCanvas();
-    this.tick = this.tick.bind(this);
-    this.tick();
-    this.dirty = true;
-    this.__tick = 0;
   }
-  tick() {
-    this._ta = tW.ANIMATION_TIME;
-    //cancelAnimationFrame(this.animation_frame);
-    //(this.__tick++)%4 && this.draw();
-    //this.animation_frame = requestAnimationFrame(this.tick);
-  }
+
   loadPieceSets() {
     // possible "mooks" or enemies that each room could spawn
     this.mook_sets = tW.MOOK_MAP[this.mook_set || this.game.opts.mook_set];
@@ -148,55 +138,6 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
       sq.piece && sq.piece.following && console.log('following',sq.piece.following);
     }
   }
-  draw() {
-    var player = this.game.player;
-    if (!player) { return }
-    const s = this.scale;
-    var ease = this.getEasing(new Date() - player.last_move.t);
-    var ease_x = (player.x - player.last_move.x)*ease-1;
-    var ease_y = (player.y - player.last_move.y)*ease-1;
-    this.offset_x = s*uR.math.between(this.min_offset_x,player.x-this.W/2-0.5-ease_x,this.max_offset_x);
-    this.offset_y = s*uR.math.between(this.min_offset_y,player.y-this.H/2-0.5-ease_y,this.max_offset_y);
-    var floor_dirty = false;
-    this.eachSquare(function(square,x,y) {
-      if (!square) { return }
-      floor_dirty = square.dirty || floor_dirty;
-      square.draw();
-    });
-    if (floor_dirty ||true) {
-      this.floor_canvas.clear();
-      this.eachSquare(function(square,x,y) {
-        square && this.floor_canvas.ctx.drawImage(square.canvas,s*x-this.offset_x,s*y-this.offset_y);
-      });
-    }
-    var dirty = floor_dirty || true;
-    for (var piece of this.pieces) {
-      if (dirty) { break }
-      dirty = dirty || piece.dirty;
-    }
-    this.dirty = dirty;
-    if (!this.dirty) { return }
-    this.canvas.clear()
-    this.canvas.ctx.drawImage(this.floor_canvas,0,0);
-    this.canvas.ctx.translate(-this.offset_x,-this.offset_y);
-    uR.forEach(this.pieces,function(p){ p.draw() })
-    this.doAnimations();
-    uR.forEach(this.pieces,function(p){ p.drawUI(); })
-    player.drawUI();
-    this.canvas.ctx.translate(this.offset_x,this.offset_y);
-  }
-  createCanvas() {
-    this.animations = [];
-    this.canvas = this.newCanvas({
-      height: this.scale*this.H,
-      width: this.scale*this.W,
-      parent: document.getElementById("game"),
-    });
-    this.floor_canvas = this.newCanvas({
-      height: this.scale*this.H,
-      width: this.scale*this.W,
-    });
-  }
   remove(piece) {
     this.pieces = this.pieces.filter(function(p) { return p !== piece; });
     piece && piece.current_square && piece.current_square.removePiece(piece);
@@ -210,49 +151,5 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     }
     piece.board = this;
     this.pieces.push(piece);
-  }
-  newAnimation(opts) {
-    opts = uR.defaults(opts,{
-      img: uR.REQUIRED,
-      x: uR.REQUIRED, y: uR.REQUIRED,
-      dxdy: tV.ZERO,
-      ds: 0,
-      t0: uR.REQUIRED,
-      easing: (dt) => dt,
-      resolve: ()=>undefined,
-      dtmax: this._ta,
-    })
-    this.animations.push(opts);
-  }
-  doAnimations() {
-    var s = this.scale;
-    var now = new Date().valueOf();
-    var dirty = [];
-    var ctx = this.canvas.ctx;
-    uR.forEach(this.animations,function(a,_ai) {
-      var delta = (now - a.t0)/a.dtmax; // progress through current animation
-      if (delta > 1) { dirty.push(_ai); delta = 1; }
-      var ease = a.easing(delta);
-      var dx = s*(a.x+a.dxdy[0]*ease);
-      var dy = s*(a.y+a.dxdy[1]*ease);
-      var dw = s,dh = s;
-      if (a.ds) { // arbitrary scale factor
-        dx += a.ds;
-        dy += a.ds;
-        dw = dh = s-2*a.ds;
-      }
-
-      ctx.drawImage(
-        a.img.img,
-        a.img.x, a.img.y,
-        a.img.w, a.img.h,
-        dx,dy,
-        dw,dh,
-      )
-    });
-    while (dirty.length) {
-      var popped = this.animations.splice(dirty.pop(),1)
-      popped[0].resolve();
-    }
   }
 }

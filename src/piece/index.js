@@ -112,7 +112,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.damage) {
       for (var square of move.damage.squares) {
         var damage_done = square && square.piece && square.piece.takeDamage(move.damage.count);
-        square && this.newAnimation("damage",{
+        false && this.newAnimation("damage",{
           x: square.x,
           y: square.y,
           sprite: move.damage.sprite || this.sprites.damage,
@@ -167,32 +167,12 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.turn || dxdy) { this.dxdy = tV.sign(dxdy) }
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
-      result.animation && this.newAnimation(...result.animation);
+      false && result.animation && this.newAnimation(...result.animation);
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
       result.dxdy = dxdy
       result.done = true
     }
     return result;
-  }
-  newAnimation(type,opts={}) {
-    var self = this;
-    uR.defaults(opts,{
-      x: this.x, y: this.y, // board coordinates
-      dxdy: tV.ZERO, // how much to move animation
-      t0: new Date().valueOf(),
-      ds: this.ds, // shrink factor
-    });
-    const [dx,dy] = opts.dxdy
-    if (type == "bounce") { opts.easing = (dt) => (dt < 0.5)?dt:1-dt; }
-    var sprite = opts.sprite || this.sprites[type];
-    if (sprite) {
-      if (dx || dy) {
-        self.animating++;
-        opts.resolve = function() { self.animating-- };
-      }
-      opts.img = sprite.get(this);
-      this.board.newAnimation(opts);
-    }
   }
   play() {
     this.ui_dirty = true;
@@ -326,7 +306,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_dirty = true;
     this.health -= result.count;
     if (this.health <= 0) {
-      this.newAnimation("die");
+      //this.newAnimation("die");
       this.die();
       result.kill = true;
     }
