@@ -109,20 +109,4 @@ tW.item.Gold = class Gold extends tW.item.Item {
     else { this.value -= amount_taken; unit.addGold(this.value); }
     this.square.dirty = true;
   }
-  draw(canvas) {
-    const s = this.square.board.scale;
-    const img = this.sprite.get(0,0);
-    var v = this.value*1;
-    while(v--) {
-      var dx = (0.5-this.random())*s/2;
-      var dy = (0.5-this.random())*s/2;
-     canvas.ctx.drawImage(
-        img.img,
-        img.x, img.y,
-        img.w, img.h,
-        0+dx,0+dy,
-        s,s,
-      );
-    }
-  }
 }

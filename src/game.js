@@ -76,7 +76,6 @@ tW.Game = class Game extends uR.RandomObject {
     this.nextLevel();
     this.player.reset();
     this.score = this.player.score = new Score({ game: this, player: this.player });
-    //this.board.draw();
     this.is_gameover = false;
     document.getElementById("game").focus();
     this.ui && this.ui.update();

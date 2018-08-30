@@ -42,24 +42,6 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.wall = (this.wall || 0) + n
     this._sprite = this.wall?"brick"+this.wall:"";
   }
-  draw() {
-    if (!this.dirty) { return }
-    if (!this.sprite.loaded) { return }
-    this.dirty = false;
-    this.ctx = this.canvas.getContext('2d');
-    this.canvas.clear();
-    var img = this.sprite.get(this);
-    this.ctx.drawImage(
-      img.img,
-      img.x, img.y,
-      img.w, img.h,
-      0,0,
-      this.scale,this.scale,
-    )
-    this.drawGold();
-    _.each(this.items,i => i.draw());
-    this.floor && this.floor.draw(this.canvas);
-  }
   isOpen(dxdy) {
     return !this.wall
       && (!this.piece || this.piece.canReplace(dxdy))
@@ -123,25 +105,5 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     amount = Math.min(this.gold,amount);
     this.gold -= amount;
     return amount;
-  }
-  drawGold(opts) {
-    if (!this.gold) { return }
-    var ctx = this.canvas.ctx;
-    var s = this.board.scale;
-    var img = tW.sprites.gold.get(0,0);
-    var v = this.gold*1;
-    ctx.drawImage(
-      img.img,
-      img.x, img.y,
-      img.w, img.h,
-      0,0,
-      s,s,
-    );
-    var text = {}; // #! TODO: this needs to be dynamic and in options
-    ctx.font = text.font || (s/4)+'px serif';
-    ctx.textAlign = text.align || 'center';
-    ctx.fillStyle = text.style || "black";
-    ctx.textBaseline = text.baseLine ||'middle';
-    ctx.fillText(this.gold, s/2,s/2 );
   }
 }
