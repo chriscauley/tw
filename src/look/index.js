@@ -54,9 +54,11 @@
   ];
   tW.look.DIRECTION_NAMES = ['N','E','S','W']
   tW.look.DIR2NAME = {}
+  tW.look.DIR2RAD = {}
   tW.look.DIRECTIONS.map((d,i) => {
     const name = tW.look.DIRECTION_NAMES[i]
     tW.look.DIR2NAME[d] = name
+    tW.look.DIR2RAD[d] = i/2*Math.PI
     tV[name.toUpperCase()] = d
   })
 
@@ -117,6 +119,7 @@
   for (let i=0;i<4;i++) {
     tW.look.ALL_DIRECTIONS.push(tW.look.DIRECTIONS[i])
     tW.look.ALL_DIRECTIONS.push(tW.look.DIAGONALS[i])
+    tW.look.DIR2RAD[tW.look.DIAGONALS[i]] = Math.PI*(i+0.5)/2
   }
   for (let dxdy of tW.look.DIAGONALS) {
     tW.look._line[dxdy] = {};
