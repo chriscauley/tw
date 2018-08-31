@@ -5,6 +5,7 @@ uP.bindSprite = (target,mobile) => {
       target.sprite.texture = PIXI.TextureCache[target._sprite]
     } else {
       target.sprite = new PIXI.Sprite(PIXI.TextureCache[target._sprite])
+      target.sprite.anchor.x = target.sprite.anchor.y = 0.5
       const app = uP.app// should be a constructor option... target.stage?
       const s = app.scale
       target.sprite.width = target.sprite.height = s

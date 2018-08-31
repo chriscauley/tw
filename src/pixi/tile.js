@@ -21,6 +21,7 @@ uP.buildCompositeSprite = (name,opts) => {
   const _r = opts.app.renderer
   const tex = _r.generateTexture(container)
   const sprite = new opts._class(tex,_r.width,_r.height)
+  sprite.x = sprite.y = -s/2 // necessary because of the anchor shift for all sprites
   uP.sprite_list.push(uP.sprites[name] = sprite)
   opts.app.stage.addChild(sprite)
   return sprite
