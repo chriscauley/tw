@@ -27,9 +27,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     });
     this.addWall()
     this.xy = [this.x,this.y];
-    this.bg = (this.x%2-this.y%2)?"#333":"#666";
     this.scale = this.board.scale;
-    uP.bindSprite(this)
     this.canvas = this.newCanvas({
       width: this.scale,
       height: this.scale,
@@ -37,10 +35,16 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.dirty = true;
     this.items = [];
   }
-  remove() { this.removeSprite() }
+  remove() {
+    this.sprite && this.removeSprite()
+    this.items.forEach(i => i.removeSprite())
+    this.piece && !this.piece.is_player && this.piece.removeSprite()
+    this.floor && this.floor.removeSprite()
+  }
   addWall(n=0) {
     this.wall = (this.wall || 0) + n
-    this._sprite = this.wall?"brick"+this.wall:"";
+    this._sprite = this.wall?"brick"+this.wall:undefined;
+    this._sprite && uP.bindSprite(this)
   }
   isOpen(dxdy) {
     return !this.wall
@@ -95,6 +99,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     var index = this.items.indexOf(item);
     this.items.splice(index,1);
     this.dirty = true;
+    item.y = item.x = undefined
   }
   addGold(opts) {
     this.gold += this.level*opts.range+opts.base;

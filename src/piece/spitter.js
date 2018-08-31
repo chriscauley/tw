@@ -2,7 +2,6 @@
   class Spitter extends tW.pieces.BasePiece {
     constructor(opts={}) {
       opts.wait_interval = 3;
-      opts.sprite = tW.sprites['spitter'];
       super(opts);
       this.setTasks(
         this.wait,

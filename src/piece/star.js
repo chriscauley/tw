@@ -1,7 +1,6 @@
 (function() {
   class Star extends tW.pieces.BasePiece {
     constructor(opts={}) {
-      opts.sprite = tW.sprites.star;
       super(opts);
       this.description = "Spinnin star which gives off pulses as it rotates"
       this.setTasks(

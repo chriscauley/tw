@@ -10,7 +10,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     else { dy = (_d>0.75)?1:-1 }
     this.dxdy = opts.dxdy || [dx,dy]
     this.defaults(opts,{
-      _sprite: this.constructor.name.toLowerCase(),
       tasks: [],
       items: [],
       health: 1,

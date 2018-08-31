@@ -34,7 +34,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) 
     }
   }
   loadLevel(level_number) {
-    this.squares.forEach(s => s.removeSprite())
+    this.squares.forEach(s => s.remove())
     this.reset();
     this.level_number = level_number;
     this.loadPieceSets();

@@ -1,7 +1,6 @@
 (function() {
   class Beholder extends tW.pieces.BasePiece {
     constructor(opts={}) {
-      opts.sprite = tW.sprites['beholder'];
       super(opts);
       this.speed = 3;
       this.setTasks(tW.move.target(tW.move.forward));

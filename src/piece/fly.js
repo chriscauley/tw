@@ -1,7 +1,6 @@
 (function() {
   class Fly extends tW.pieces.BasePiece {
     constructor(opts={}) {
-      opts.sprite = tW.sprites['fly'];
       super(opts);
       this.setTasks(
         tW.move.forward,

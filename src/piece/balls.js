@@ -22,8 +22,8 @@
 
   tW.enemy_map.soccer = tW.ball.Soccer = class Soccer extends tW.ball.Ball {
     constructor(opts={}) {
+      opts.sprite = 'blue-orb'
       super(opts)
-      this.sprite = tW.sprites['blue-orb']
     }
     touchedBy(player,dxdy) {
       this.dxdy = dxdy

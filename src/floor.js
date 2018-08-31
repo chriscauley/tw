@@ -2,7 +2,9 @@ tW.floor = (function() {
   class FloorItem extends tW.square.SquareMixin(uR.Object) {
     constructor(opts) {
       super(opts)
-      this.defaults(opts,{})
+      this.defaults(opts,{});
+      [this.x,this.y] = this.square.xy
+      uP.bindSprite(this)
     }
     moveOn(piece,move) { }
     canStepOn() {
@@ -12,8 +14,8 @@ tW.floor = (function() {
 
   class Portal extends FloorItem {
     constructor(opts={}) {
+      opts._sprite = "portal_"+opts.color;
       super(opts);
-      this.sprite = tW.sprites["portal_"+opts.color];
       this.ds = 20;
       if (this.exit) { this.exit.exit = this; }
     }
@@ -35,9 +37,10 @@ tW.floor = (function() {
 
   class Stairs extends FloorItem {
     constructor(opts) {
+      opts._sprite = 'ground_lock'
       super(opts);
       this.open = false;
-      this.sprite = tW.sprites.ground_lock;
+
       this._ondeath = (p) => this.ondeath(p);
       this.square.board.game.on('death',this._ondeath);
     }
@@ -51,7 +54,7 @@ tW.floor = (function() {
       for (var p of this.pieces) { if (!p.is_dead) { return } }
       this.square.board.game.off('death',this._ondeath);
       this.open = true;
-      this.sprite = tW.sprites.ground_stairs;
+      this.sprite.texture = PIXI.TextureCache.ground_stairs
       this.square.dirty = true;
     }
     moveOn(piece,move) {

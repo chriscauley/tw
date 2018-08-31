@@ -23,7 +23,7 @@
 
   tW.pieces.Blob = class Blob extends tW.pieces.BasePiece {
     constructor(opts) {
-      opts.sprite = tW.sprites['blue-blob'];
+      opts._sprite = 'blue-blob';
       opts.health = 2;
       super(opts);
       this.strokeStyle = "green";

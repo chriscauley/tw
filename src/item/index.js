@@ -7,11 +7,11 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     this.defaults(opts,{
       min_level: 0,
       resources: {},
-      sprite: tW.sprites[this.constructor.name.toLowerCase()]
     });
     this.ds = 10; // should be set by square
     this.square && this.square.addItem(this);
     this.piece && this.piece.bindItem(this);
+    uP.bindSprite(this,true)
   }
 
   // picking up

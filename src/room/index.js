@@ -15,7 +15,8 @@ tW.room = {
       this.H = this.xmax-this.xmin
       this.W = this.ymax-this.ymin
       this.squares.map(s=>s.room=this)
-      this.random.choice(tW.room.WALL_GENERATORS)(this)
+      window.I = (window.I || 0)+1
+      tW.room.WALL_GENERATORS[window.I%2](this)
     }
     makeUnits() {
       this.squares.map(s=>s.team=this.team)
