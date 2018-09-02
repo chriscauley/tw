@@ -25,8 +25,16 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     });
     opts.square.addPiece(this); // this sets this.board
     this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
-    uP.bindSprite(this,{ is_mobile: true, is_rotate: true, slug: '_wedge_' + this.team_color })
-    uP.bindSprite(this,{ is_mobile: true })
+    !opts.rotate && uP.bindSprite(this,{
+      is_mobile: true,
+      is_rotate: true,
+      slug: '_wedge_' + this.team_color,
+    })
+    uP.bindSprite(this,{
+      is_mobile: true,
+      scale: 0.75,
+      is_rotate: opts.rotate,
+    })
     this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
@@ -172,7 +180,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.dxdy = dxdy
       result.done = true
     }
-    this.sprites && this.sprites.trigger("draw")
+    this.sprites && this.sprites.trigger("redraw")
     return result;
   }
   play() {

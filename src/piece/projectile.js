@@ -19,6 +19,7 @@ tW.pieces.Projectile = class Projectile extends tW.pieces.BasePiece {
 
 tW.pieces.Fireball = class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
+    opts.rotate = true
     opts._sprites = {
       bounce: undefined,
       damage: 'explode',

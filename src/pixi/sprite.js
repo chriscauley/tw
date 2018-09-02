@@ -1,6 +1,7 @@
 uP.bindSprite = (target,opts={}) => {
   uR.defaults(opts,{
     slug: target._sprite || target.constructor.name.toLowerCase(),
+    scale: 1,
   })
   uP.ready(() => {
     const app = uP.app// should be a constructor option... target.stage?
@@ -21,13 +22,14 @@ uP.bindSprite = (target,opts={}) => {
       sprite = target.sprites[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
       target.sprites.list.push(sprite)
       sprite.anchor.x = sprite.anchor.y = 0.5
-      sprite.width = sprite.height = s
+      sprite.width = sprite.height = s*opts.scale;
       app.stage.addChild(sprite);
       opts.is_mobile && app.ticker.add(draw)
-      opts.is_rotate && target.sprites.on('draw',() => {
+      opts.is_rotate && target.sprites.on('redraw',() => {
         sprite.rotation = tW.look.DIR2RAD[target.dxdy]
       })
     }
     draw()
+    target.sprites.trigger("redraw")
   })
 }
