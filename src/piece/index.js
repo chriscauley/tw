@@ -24,7 +24,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
     });
     opts.square.addPiece(this); // this sets this.board
-    uP.bindSprite(this,true)
+    uP.bindSprite(this,{is_mobile: true})
     this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
@@ -48,14 +48,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.outer_color = 'transparent';
     this.restat();
     this.ui_dirty = true;
-    this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
+    // #! TODO
+    /*this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
     this.team_sprite = tW.sprites.wedge(this.team_color);
     this.sprites = {
       damage: tW.sprites.sword,
       die: tW.sprites.skull,
       move: this.sprite,
       bounce: this.sprite,
-    }
+    }*/
   }
   setTasks(...tasks) {
     this.tasks = tasks;//.map(t =>t.bind(this));
@@ -67,6 +68,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   set dx (value) { this.dxdy[0] = value }
   get dy () { return this.dxdy[1] }
   set dy (value) { this.dxdy[1] = value }
+  doRotations() {
+    if (this.sprite) {
+      this.sprite.rotation = tW.look.DIR2RAD[this.dxdy]
+    }
+  }
   getHelpSections() {
     const out = [];
     if (this.buffs.length) {
@@ -89,7 +95,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       this.health = this.max_health += 1;
     }
   }
-  getSprite(action) { return tW.sprites[this._sprite_map[action]]; }
   getHalo(canvas_set) {
     if (this.isActionReady()) {return canvas_set[this.action_halo]; }
     if (this.following) { return canvas_set.black_halo; }
@@ -114,7 +119,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
         false && this.newAnimation("damage",{
           x: square.x,
           y: square.y,
-          sprite: move.damage.sprite || this.sprites.damage,
+          sprite: move.damage.sprite || this._sprites.damage, //#! TODO
         });
         if (damage_done) {
           damage_done.count && result.damages.push(damage_done);
@@ -171,6 +176,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.dxdy = dxdy
       result.done = true
     }
+    //this.doRotations()
     return result;
   }
   play() {
@@ -256,47 +262,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     }
     return move;
   }
-  draw() {
-    if (!this.current_square) { return }
-    var c = this.board.canvas;
-    var s = this.board.scale;
-    if (this.animating) { return }
-    var img = this.sprite.get(this);
-    var team_img = this.team_sprite.get(this); // direcitonal wedge
-    var ws = 0;
-    if (!this.ds) { ws = this.board.scale/5 }
-    (this.dx || this.dy) && c.ctx.drawImage(
-      team_img.img,
-      team_img.x, team_img.y,
-      team_img.w, team_img.h,
-      this.x*s-ws,this.y*s-ws,
-      s+2*ws,s+2*ws,
-    );
-    c.ctx.drawImage(
-      img.img,
-      img.x, img.y,
-      img.w, img.h,
-      this.x*s+this.ds,this.y*s+this.ds,
-      s-2*this.ds,s-2*this.ds,
-    );
-  }
-  getText() {
-    this.text = [];
-  }
-  drawText(c) {
-    var text = this.getText();
-    if (!text) { return }
-    if (!Array.isArray(text)) { text = [text] }
-    for (var i=0;i<text.length;i++) {
-      var text = text[i];
-      if (!text.display) { text = { display: text } }
-      c.ctx.font = text.font || '48px serif';
-      c.ctx.textAlign = text.align || 'center';
-      c.ctx.fillStyle = text.style || "white";
-      c.ctx.textBaseline = text.baseLine ||'middle';
-      c.ctx.fillText(text.display || "", this.cx,this.cy );
-    }
-  }
   takeDamage(damage,sprite) {
     var result = { count: Math.min(this.health,damage) };
     if (damage < 0) { // healing
@@ -312,7 +277,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     return result;
   }
   die() {
-    this.removeSprite()
+    this.sprites.removeAll();
     this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.is_dead = true;

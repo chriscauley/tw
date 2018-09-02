@@ -36,10 +36,10 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.items = [];
   }
   remove() {
-    this.sprite && this.removeSprite()
-    this.items.forEach(i => i.removeSprite())
-    this.piece && !this.piece.is_player && this.piece.removeSprite()
-    this.floor && this.floor.removeSprite()
+    _.flatten([this,this.items,this.piece,this.floor]) // items is an array
+       // items can be undefined or not have sprites. Also player keeps sprites (for next level)
+      .filter(i => i && i.sprites && !i.is_player)
+      .map(i=>i.sprites.removeAll())
   }
   addWall(n=0) {
     this.wall = (this.wall || 0) + n

@@ -14,7 +14,7 @@
       ];
       this._energy = 0
       this.dx = this.dy = 0;
-      this.sprites = {};
+      this._sprites = {};// #! TODO
     }
     canBeAttacked() { return false }
     takeDamage() { }

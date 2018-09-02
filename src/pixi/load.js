@@ -24,7 +24,7 @@ tW.sprites.ready(() => {
   })
   const s = uP.app.scale
   PIXI.loader.load((loader, resources) => {
-    uP.buildCompositeSprite("chessboard",{
+    window.TILE = uP.buildCompositeSprite("chessboard",{
       tiles: "ground1|ground2||ground2|ground1",
       _class: PIXI.extras.TilingSprite,
       app: uP.app,

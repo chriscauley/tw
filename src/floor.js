@@ -54,7 +54,8 @@ tW.floor = (function() {
       for (var p of this.pieces) { if (!p.is_dead) { return } }
       this.square.board.game.off('death',this._ondeath);
       this.open = true;
-      this.sprite.texture = PIXI.TextureCache.ground_stairs
+      this._sprite = 'ground_stairs'
+      uP.bindSprite(this)
       this.square.dirty = true;
     }
     moveOn(piece,move) {

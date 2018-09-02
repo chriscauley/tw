@@ -13,8 +13,9 @@
           break;
         }
       }
-      this.sprites.bounce = undefined;
-      this.sprites.damage = tW.sprites['explode'];
+      // #! TODO
+      // this._sprites.bounce = undefined;
+      // this._sprites.damage = 'explode';
     }
   }
   tW.enemy_map.sp = tW.pieces.Spitter = Spitter;
