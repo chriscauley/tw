@@ -24,7 +24,7 @@ uP.bindSprite = (target,opts={}) => {
       sprite.width = sprite.height = s
       app.stage.addChild(sprite);
       opts.is_mobile && app.ticker.add(draw)
-      opts.rerotate && target.sprites.on('draw',() => {
+      opts.is_rotate && target.sprites.on('draw',() => {
         sprite.rotation = tW.look.DIR2RAD[target.dxdy]
       })
     }

@@ -17,7 +17,10 @@ tW.sprites.ready(() => {
   uP.app = new PIXI.Application({ width: window_length, height: window_length })
   uP.resize()
   document.querySelector("#game").appendChild(uP.app.view)
-  tW.sprites.list.forEach( (sprite,i) => {
+  _.flatten([
+    tW.sprites.list,
+    ['red', 'lightgray', 'green', 'blue'].map(c => tW.sprites.wedge(c)),
+  ]).forEach( (sprite,i) => {
     if (!PIXI.TextureCache[sprite.name]) {
       PIXI.loader.add(sprite.name, sprite.canvas.toDataURL())
     }

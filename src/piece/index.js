@@ -24,7 +24,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
     });
     opts.square.addPiece(this); // this sets this.board
-    uP.bindSprite(this,{is_mobile: true})
+    this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
+    uP.bindSprite(this,{ is_mobile: true, is_rotate: true, slug: '_wedge_' + this.team_color })
+    uP.bindSprite(this,{ is_mobile: true })
     this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
@@ -49,8 +51,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.restat();
     this.ui_dirty = true;
     // #! TODO
-    /*this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
-    this.team_sprite = tW.sprites.wedge(this.team_color);
+    /*
     this.sprites = {
       damage: tW.sprites.sword,
       die: tW.sprites.skull,
@@ -68,11 +69,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   set dx (value) { this.dxdy[0] = value }
   get dy () { return this.dxdy[1] }
   set dy (value) { this.dxdy[1] = value }
-  doRotations() {
-    if (this.sprite) {
-      this.sprite.rotation = tW.look.DIR2RAD[this.dxdy]
-    }
-  }
   getHelpSections() {
     const out = [];
     if (this.buffs.length) {
@@ -176,7 +172,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.dxdy = dxdy
       result.done = true
     }
-    //this.doRotations()
+    this.sprites && this.sprites.trigger("draw")
     return result;
   }
   play() {
