@@ -23,6 +23,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       speed: 1, // how many squares it moves on this.forward
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
     });
+    this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
     this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
     !opts.rotate && uP.bindSprite(this,{
@@ -176,6 +177,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
       false && result.animation && this.newAnimation(...result.animation);
+      if (result.animation && result.animation[0] == 'move') {
+        const axy = result.animation[1].dxdy;
+        [this.ax, this.ay] = axy;
+      }
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
       result.dxdy = dxdy
       result.done = true

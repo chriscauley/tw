@@ -32,6 +32,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
       width: this.scale,
       height: this.scale,
     });
+    this.LAYER = 'FLOOR'
     this.dirty = true;
     this.items = [];
   }
