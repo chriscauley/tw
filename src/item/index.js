@@ -11,7 +11,7 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     this.ds = 10; // should be set by square
     this.square && this.square.addItem(this);
     this.piece && this.piece.bindItem(this);
-    uP.bindSprite(this)
+    uP.bindSprite(this,{ scale: 0.75 })
   }
 
   // picking up

@@ -14,7 +14,7 @@ tW.sprites = tW.sprites || {
   ready: uR.Ready(),
 };
 
-var createSpriteClass = (function() {
+var createSpriteCSS = (function() {
   var content = "";
   var createTag = uR.debounce(function () {
     var style = document.createElement('style');
@@ -80,7 +80,7 @@ tW.sprites.SpriteObject = class SpriteObject extends uR.canvas.PaintObject {
     this.canvas.clear();
     this._draw();
     this.dirty = false;
-    createSpriteClass(this.name,this.canvas.toDataURL());
+    createSpriteCSS(this.name,this.canvas.toDataURL());
   }
   drawGradient(opts={}) {
     opts = uR.defaults(opts,this);

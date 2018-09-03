@@ -7,7 +7,7 @@
       this.tasks = [];
       this.dx = this.dy = 0;
       this._sprites = {}; //#! TODO
-      this.item && new this.item({ piece: this, square: this.square })
+      this.item && new this.item({ piece: this })
     }
     canBeAttacked() { return false }
     touchedBy(piece) { this.die() }

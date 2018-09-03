@@ -73,7 +73,7 @@ showHelp(e) {
     <div class={ theme.content }>
       <div each={ item,_i in items }>
         <h2>
-          <i class="sprite sprite-{ item.sprite.name }"></i> { item.constructor.name }
+          <i class="sprite sprite-{ item._sprite }"></i> { item.constructor.name }
         </h2>
         <ul each={ section,_is in item.getHelpSections() }>
           <h4>{ section.title }</h4>

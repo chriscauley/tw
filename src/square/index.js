@@ -94,12 +94,14 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.dirty = true;
     this.items.push(item);
     item.square = this;
+    item.sprites.trigger('redraw');
   }
   removeItem(item) {
     var index = this.items.indexOf(item);
     this.items.splice(index,1);
     this.dirty = true;
-    item.y = item.x = undefined
+    item.y = item.x = undefined;
+    item.sprites && item.sprites.trigger('redraw')
   }
   addGold(opts) {
     this.gold += this.level*opts.range+opts.base;
