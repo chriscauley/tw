@@ -7,6 +7,7 @@ window.uP = {
     'break01','break02','circle02','hit10','hit11','impact01',
     'impact02','shards01','shards02','splash03','splash04',
   ],
+  cut_animations: ['a','b','c','d'],
   app: { view: {} }, // dummy object so resize doesn't have to check if this exists
   resize: () => {
     uP.SIZE = 8
@@ -18,6 +19,7 @@ window.uP = {
   LAYERS: ['BOARD','FLOOR','ITEM','VOID','PIECE','AIR','ANIMATION',undefined],
   LAYER_MAP: {},
   ASPEED: 15, // frames/square (~60fps)
+  _FRAMES: {},
   _ANIMATIONS: {},
   animate: (name,x,y) => {
     const anim = uP._ANIMATIONS[name]
@@ -48,6 +50,13 @@ tW.sprites.ready(() => {
     })
 
   uP.hit_animations.forEach(name=> PIXI.loader.add(name,`img/sprites/hit_animations_3/${name}.png`))
+  uP.cut_animations = []
+  "abcd".split("").map(l => "1234".split("").map(i => uP.cut_animations.push([l,i])))
+  for (let [l,i] of uP.cut_animations) {
+    if (i==1) { uP._FRAMES['cut_'+l] = [] }
+    let name = `cut_${l}_000${i}`
+    PIXI.loader.add(name,`img/sprites/cuts/${name}.png`)
+  }
   PIXI.loader.load(() => {
     for (let name of uP.hit_animations) {
       const texture = PIXI.TextureCache[name]
@@ -60,16 +69,22 @@ tW.sprites.ready(() => {
           frames.push(new PIXI.Texture(texture, new PIXI.Rectangle(x*s, y*s, s, s)))
         }
       }
+      uP._FRAMES[name] = frames;
+    }
+    for (let [l,i] of uP.cut_animations) {
+      let name = `cut_${l}_000${i}`;
+      uP._FRAMES[`cut_${l}`].push(PIXI.TextureCache[name])
+    }
+    for (let [name, frames] of Object.entries(uP._FRAMES)) {
       const anim = uP._ANIMATIONS[name] = new PIXI.extras.AnimatedSprite(frames);
       anim.anchor.set(0.5);
-      anim.width = anim.height = uP.app.scale
-      anim.animationSpeed = 0.5;
+      anim.width = anim.height = uP.app.scale;
+      anim.animationSpeed = 0.25;
       anim.zIndex = uP.LAYER_MAP.ANIMATION;
       anim.onLoop = () => {
         anim.stop()
         anim.parent.removeChild(anim)
       }
-
     }
   })
 
