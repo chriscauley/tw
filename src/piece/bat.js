@@ -17,6 +17,11 @@
     constructor(opts) {
       opts._sprite = 'fireball'
       super(opts)
+      uP.bindSprite(this,{
+        slug: 'basebat',
+        scale: 0.5,
+        is_rotate: true,
+      })
     }
     die(move) {
       // should this somehow modify the move that caused the death?
