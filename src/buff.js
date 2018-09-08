@@ -11,6 +11,10 @@
       this.remaining_turns = this.duration;
       // #! TODO check buffs to see if similar class is there and increase buff duration, but for now...
       this.target.buffs.push(this);
+      this.redraw()
+    }
+    redraw() {
+      uP.setBuff(this.target,this.slug,this.remaining_turns)
     }
     onBuff(move) {}
     afterMove(move) {
@@ -18,11 +22,13 @@
         this.remaining_turns--;
         (this.remaining_turns < 1) && this.dispell(move);
         this.target._ui_dirty = true;
+        this.redraw()
       })
     }
     dispell(move) {
       var index = this.target.buffs.indexOf(this);
       (index != -1) && this.target.buffs.splice(index,1);
+      this.redraw()
     }
     beforeMove(move) { }
     getHelpText() { throw "NotImplemented"; }
@@ -36,7 +42,6 @@
     constructor(opts={}) {
       opts.slug = 'fireball'
       super(opts);
-      this.slug = 'fireball';
       this.target.wait.waited = this.target.wait.interval;
     }
     afterMove(move) {

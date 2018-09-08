@@ -17,7 +17,8 @@ uP.bindSprite = (target,opts={}) => {
         removeAll: () => app.stage.removeChild(target.pixi.container),
         list: [],
         zIndex: uP.LAYER_MAP[target.LAYER],
-        container: new PIXI.Container()
+        container: new PIXI.Container(),
+        app: app,
       })
       let container = target.pixi.container
       container.zIndex = target.pixi.zIndex
@@ -44,25 +45,6 @@ uP.bindSprite = (target,opts={}) => {
     }
     const container = target.pixi.container
     var child = target.pixi[opts.slug]
-    /*target.pixi.on('redraw',() => {
-      if (target.buffs && target.buffs.length) { target.pixi.trigger('rebuff') }
-    })
-    target.pixi.on('rebuff',() => {
-      if (!target.pixi.buffs) {
-        target.pixi.buffs = [0,1,2,3].map(i => {
-          const buff_sprite = new PIXI.Sprite()
-          const w = buff_sprite.width = buff_sprite.height = s/5
-          buff_sprite.y = s - w
-          buff_sprite.x = s - w * i
-          sprite.addChild(buff_sprite)
-          return buff_sprite
-        })
-      }
-      target.pixi.buffs.forEach(b => b.texture = undefined)
-      target.buffs && target.buffs.forEach((buff,i) => {
-        target.pixi.buffs[i].texture = PIXI.TextureCache[buff.slug]
-      })
-    })*/
     if (child) {
       child.texture = PIXI.TextureCache[opts.slug]
     } else {
