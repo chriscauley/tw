@@ -14,6 +14,10 @@
     }
   }
   class SpawningProjectile extends tW.pieces.Fireball {
+    constructor(opts) {
+      opts._sprite = 'fireball'
+      super(opts)
+    }
     die(move) {
       // should this somehow modify the move that caused the death?
       // not sure if that would be useful
