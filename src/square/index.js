@@ -39,8 +39,8 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
   remove() {
     _.flatten([this,this.items,this.piece,this.floor]) // items is an array
        // items can be undefined or not have sprites. Also player keeps sprites (for next level)
-      .filter(i => i && i.sprites && !i.is_player)
-      .map(i=>i.sprites.removeAll())
+      .filter(i => i && i.pixi && !i.is_player)
+      .map(i=>i.pixi.removeAll())
   }
   addWall(n=0) {
     this.wall = (this.wall || 0) + n
@@ -95,14 +95,14 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.dirty = true;
     this.items.push(item);
     item.square = this;
-    item.sprites.trigger('redraw');
+    item.pixi.trigger('redraw');
   }
   removeItem(item) {
     var index = this.items.indexOf(item);
     this.items.splice(index,1);
     this.dirty = true;
     item.y = item.x = undefined;
-    item.sprites && item.sprites.trigger('redraw')
+    item.pixi && item.pixi.trigger('redraw')
   }
   addGold(opts) {
     this.gold += this.level*opts.range+opts.base;

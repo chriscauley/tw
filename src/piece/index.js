@@ -185,7 +185,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.dxdy = dxdy
       result.done = true
     }
-    this.sprites && this.sprites.trigger("redraw")
+    this.pixi && this.pixi.trigger("redraw")
     return result;
   }
   play() {
@@ -286,7 +286,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     return result;
   }
   die() {
-    this.sprites.removeAll();
+    this.pixi.removeAll();
     this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.is_dead = true;

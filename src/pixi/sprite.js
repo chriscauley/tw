@@ -1,3 +1,7 @@
+// #! TODO TOMORROW!!! add a bunch of sprites to target.pixi, but only add one app.ticker function
+// that updates all the children sprites positions and rotations. Ultimately the redraw trigger will do
+// target.pixi.sprites.map(PIXI.ease) calls
+
 uP.bindSprite = (target,opts={}) => {
   target._sprite = target._sprite || target.constructor.name.toLowerCase()
   target.ax = target.ay = 0
@@ -8,12 +12,12 @@ uP.bindSprite = (target,opts={}) => {
   uP.ready(() => {
     const app = uP.app// should be a constructor option... target.stage?
     const s = app.scale;
-    target.sprites = target.sprites || riot.observable({
-      removeAll: () => target.sprites.list.map(s => app.stage.removeChild(s)),
+    target.pixi = target.pixi || riot.observable({
+      removeAll: () => target.pixi.list.map(s => app.stage.removeChild(s)),
       list: [],
       zIndex: uP.LAYER_MAP[target.LAYER],
     })
-    var sprite = target.sprites[opts.slug]
+    var sprite = target.pixi[opts.slug]
     const draw = (delta) => {
       if (delta && target.ax) { //needs to move
         let sign = Math.sign(target.ax) //direction
@@ -28,25 +32,25 @@ uP.bindSprite = (target,opts={}) => {
       sprite.x = (target.x-target.ax)*s;
       sprite.y = (target.y-target.ay)*s;
     }
-    target.sprites.on('redraw',draw)
-    target.sprites.on('hide', () => sprite.visible = false)
-    target.sprites.on('show', () => sprite.visible = true)
+    target.pixi.on('redraw',draw)
+    target.pixi.on('hide', () => sprite.visible = false)
+    target.pixi.on('show', () => sprite.visible = true)
 
     if (sprite) {
       sprite.texture = PIXI.TextureCache[opts.slug]
     } else {
-      sprite = target.sprites[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
-      sprite.zIndex = target.sprites.zIndex
-      target.sprites.list.push(sprite)
+      sprite = target.pixi[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
+      sprite.zIndex = target.pixi.zIndex
+      target.pixi.list.push(sprite)
       sprite.anchor.x = sprite.anchor.y = 0.5
       sprite.width = sprite.height = s*opts.scale;
       app.stage.addChild(sprite);
       opts.is_mobile && app.ticker.add(draw)
-      opts.is_rotate && target.sprites.on('redraw',() => {
+      opts.is_rotate && target.pixi.on('redraw',() => {
         sprite.rotation = tW.look.DIR2RAD[target.dxdy]
       })
     }
     draw()
-    target.sprites.trigger("redraw")
+    target.pixi.trigger("redraw")
   })
 }
