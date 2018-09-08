@@ -6,7 +6,7 @@
         duration: 4,
         max_duration: 8, // see TODO below
         target: uR.REQUIRED,
-        sprite: this.constructor.name.toLowerCase(),
+        slug: this.constructor.name.toLowerCase(),
       })
       this.remaining_turns = this.duration;
       // #! TODO check buffs to see if similar class is there and increase buff duration, but for now...
@@ -34,8 +34,9 @@
 
   tW.buffs.Haste = class Haste extends BaseBuff {
     constructor(opts={}) {
+      opts.slug = 'fireball'
       super(opts);
-      this.sprite = 'fireball';
+      this.slug = 'fireball';
       this.target.wait.waited = this.target.wait.interval;
     }
     afterMove(move) {

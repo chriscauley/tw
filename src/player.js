@@ -53,6 +53,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     opts.gold_per_touch = Infinity;
     opts.interval = 0
     opts._sprite = 'warrior'
+    opts.is_player = true;
     super(opts);
     this.last_move = { dx: 0, dy:0, t:0, x: this.x, y: this.y };
     this._moves = []; // used in animations, rename this
@@ -73,7 +74,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
     });
     this.action_halo = "blue_halo";
     this.move = this.move.bind(this);
-    this.is_player = true;
     this.reset();
   }
   reset() {

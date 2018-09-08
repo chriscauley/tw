@@ -12,45 +12,68 @@ uP.bindSprite = (target,opts={}) => {
   uP.ready(() => {
     const app = uP.app// should be a constructor option... target.stage?
     const s = app.scale;
-    target.pixi = target.pixi || riot.observable({
-      removeAll: () => target.pixi.list.map(s => app.stage.removeChild(s)),
-      list: [],
-      zIndex: uP.LAYER_MAP[target.LAYER],
-    })
-    var sprite = target.pixi[opts.slug]
-    const draw = (delta) => {
-      if (delta && target.ax) { //needs to move
-        let sign = Math.sign(target.ax) //direction
-        target.ax -= sign*delta/uP.ASPEED
-        if (sign != Math.sign(target.ax)) { target.ax = 0 } // overshot target
-      }
-      if (delta && target.ay) {
-        let sign = Math.sign(target.ay)
-        target.ay -= sign*delta/uP.ASPEED
-        if (sign != Math.sign(target.ay)) { target.ay = 0 }
-      }
-      sprite.x = (target.x-target.ax)*s;
-      sprite.y = (target.y-target.ay)*s;
-    }
-    target.pixi.on('redraw',draw)
-    target.pixi.on('hide', () => sprite.visible = false)
-    target.pixi.on('show', () => sprite.visible = true)
-
-    if (sprite) {
-      sprite.texture = PIXI.TextureCache[opts.slug]
-    } else {
-      sprite = target.pixi[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
-      sprite.zIndex = target.pixi.zIndex
-      target.pixi.list.push(sprite)
-      sprite.anchor.x = sprite.anchor.y = 0.5
-      sprite.width = sprite.height = s*opts.scale;
-      app.stage.addChild(sprite);
-      opts.is_mobile && app.ticker.add(draw)
-      opts.is_rotate && target.pixi.on('redraw',() => {
-        sprite.rotation = tW.look.DIR2RAD[target.dxdy]
+    if (!target.pixi) {
+      target.pixi = riot.observable({
+        removeAll: () => app.stage.removeChild(target.pixi.container),
+        list: [],
+        zIndex: uP.LAYER_MAP[target.LAYER],
+        container: new PIXI.Container()
       })
+      let container = target.pixi.container
+      container.zIndex = target.pixi.zIndex
+      container.width = container.height = s*opts.scale;
+      app.stage.addChild(container);
+      const draw = (delta) => {
+        if (delta && target.ax) { //needs to move
+          let sign = Math.sign(target.ax) //direction
+          target.ax -= sign*delta/uP.ASPEED
+          if (sign != Math.sign(target.ax)) { target.ax = 0 } // overshot target
+        }
+        if (delta && target.ay) {
+          let sign = Math.sign(target.ay)
+          target.ay -= sign*delta/uP.ASPEED
+          if (sign != Math.sign(target.ay)) { target.ay = 0 }
+        }
+        container.x = (target.x-target.ax)*s;
+        container.y = (target.y-target.ay)*s;
+      }
+      target.pixi.on('redraw',draw)
+      target.pixi.on('hide', () => container.visible = false)
+      target.pixi.on('show', () => container.visible = true)
+      opts.is_mobile && app.ticker.add(draw)
     }
-    draw()
+    const container = target.pixi.container
+    var child = target.pixi[opts.slug]
+    /*target.pixi.on('redraw',() => {
+      if (target.buffs && target.buffs.length) { target.pixi.trigger('rebuff') }
+    })
+    target.pixi.on('rebuff',() => {
+      if (!target.pixi.buffs) {
+        target.pixi.buffs = [0,1,2,3].map(i => {
+          const buff_sprite = new PIXI.Sprite()
+          const w = buff_sprite.width = buff_sprite.height = s/5
+          buff_sprite.y = s - w
+          buff_sprite.x = s - w * i
+          sprite.addChild(buff_sprite)
+          return buff_sprite
+        })
+      }
+      target.pixi.buffs.forEach(b => b.texture = undefined)
+      target.buffs && target.buffs.forEach((buff,i) => {
+        target.pixi.buffs[i].texture = PIXI.TextureCache[buff.slug]
+      })
+    })*/
+    if (child) {
+      child.texture = PIXI.TextureCache[opts.slug]
+    } else {
+      child = target.pixi[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
+      container.addChild(child)
+      opts.is_rotate && target.pixi.on('redraw',() => {
+        child.rotation = tW.look.DIR2RAD[target.dxdy]
+      })
+      child.anchor.x = child.anchor.y = 0.5
+      child.width = child.height = s*opts.scale;
+    }
     target.pixi.trigger("redraw")
   })
 }
