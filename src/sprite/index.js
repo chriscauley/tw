@@ -8,8 +8,29 @@ tW.sprites = tW.sprites || {
     })).get();
   },
   wedge: function (color) {
-    if (!tW.sprites["_wedge_"+color]) { tW.sprites["_wedge_"+color] = new tW.sprites.WedgeSprite(color) }
-    return tW.sprites["_wedge_"+color]
+    const name = "_wedge_"+color
+    if (!tW.sprites[name]) {
+      tW.sprites[name] = new tW.sprites.RingSprite({
+        colors: [tinycolor(color).setAlpha(0),color],
+        theta0: -3*Math.PI/4,
+        theta1: -Math.PI/4,
+        name: name,
+      })
+    }
+    return tW.sprites[name]
+  },
+  halo: function(color) {
+    const name = "_halo_"+color;
+    if (!tW.sprites[name]) {
+      tW.sprites[name] = new tW.sprites.RingSprite({
+        colors: [
+          tinycolor(color).setAlpha(0.75).toRgbString(),
+          tinycolor(color).setAlpha(0.25).toRgbString(),
+        ],
+        name: name,
+      })
+    }
+    return tW.sprites[name]
   },
   ready: uR.Ready(),
 };
@@ -221,22 +242,22 @@ tW.sprites.DBSprite = class DBSprite extends tW.sprites.SpriteObject {
   }
 }
 
-tW.sprites.WedgeSprite = class WedgeSprite extends tW.sprites.SpriteObject {
+tW.sprites.RingSprite = class RingSprite extends tW.sprites.SpriteObject {
   constructor(opts={}) {
-    if (typeof opts == "string") { opts = { color: opts } }
     uR.defaults(opts,{
-      color: uR.REQUIRED,
+      colors: uR.REQUIRED,
       W: 1,
       H: 1,
-      name: "_wedge_"+opts.color,
+      theta0: 0,
+      theta1: 2*Math.PI,
     })
     super(opts);
     this.loaded = true;
     this.draw()
   }
   _draw() {
-    var colors = ['transparent','transparent','transparent','rgba(0,0,0,0.5)',this.color];
-    this.drawGradient({colors: colors, theta0:-3*Math.PI/4,theta1:-Math.PI/4});
+    var colors = ['transparent','transparent','transparent'].concat(this.colors);
+    this.drawGradient({colors: colors, theta0: this.theta0, theta1: this.theta1});
   }
 }
 

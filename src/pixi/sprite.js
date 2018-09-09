@@ -22,7 +22,7 @@ uP.bindSprite = (target,opts={}) => {
       })
       let container = target.pixi.container
       container.zIndex = target.pixi.zIndex
-      container.width = container.height = s*opts.scale;
+      container.width = container.height = s
       app.stage.addChild(container);
       const draw = (delta) => {
         if (delta && target.ax) { //needs to move

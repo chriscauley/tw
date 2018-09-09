@@ -27,12 +27,15 @@ tW.sprites.ready(() => {
   uP.app.stage.group.enableSort = true
   uP.resize()
   document.querySelector("#game").appendChild(uP.app.view)
-  tW.sprites.list.concat(['red', 'lightgray', 'green', 'blue'].map(c => tW.sprites.wedge(c)))
-    .forEach( (sprite,i) => {
-      if (!PIXI.TextureCache[sprite.name]) {
-        PIXI.loader.add(sprite.name, sprite.canvas.toDataURL())
-      }
-    })
+  _.flatten([
+    tW.sprites.list,
+    ['red', 'lightgray', 'green', 'blue'].map(c => tW.sprites.wedge(c)),
+    ['red','blue', 'black'].map(c => tW.sprites.halo(c)),
+  ]).forEach( (sprite,i) => {
+    if (!PIXI.TextureCache[sprite.name]) {
+      PIXI.loader.add(sprite.name, sprite.canvas.toDataURL())
+    }
+  })
 
   uP.addAnimations()
   const s = uP.app.scale
