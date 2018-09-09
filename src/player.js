@@ -202,33 +202,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
   die() {
     this.game.gameover();
   }
-  draw() {
-    super.draw()
-    this.drawMoves()
-  }
-  drawUI() {
-  }
-  drawMoves() {
-    if (true) { return }
-    var s = this.board.scale;
-    if (this.game.turn != this.last_turn_drawn) {
-      this._moves = [];
-      this.forEach(tW.look.DIRECTIONS,dxdy => {
-        var square = this.board.getSquare(tV.add([this.x,this.y],dxdy));
-        if (!square) { return }
-        if (square.isOpen(dxdy)) {
-          this._moves.push(["rgba(0,100,0,0.5)",square.x,square.y]);
-        } else if (square.canBeAttacked(this)) {
-          this._moves.push(["rgba(100,0,0,0.5)",square.x,square.y]);
-        }
-      })
-      this.last_turn_drawn = this.game.turn;
-    }
-    for (var move of this._moves) {
-      this.board.canvas.ctx.fillStyle = move[0];
-      this.board.canvas.ctx.fillRect(move[1]*s,move[2]*s,s,s);
-    }
-  }
   resetMiniMap() {
     this.minimap = [];
     for (var y=0;y<this.board.y_max;y++) {

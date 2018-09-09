@@ -14,21 +14,19 @@
       this.redraw()
     }
     redraw() {
-      uP.setBuff(this.target,this.slug,this.remaining_turns)
+      uP.setBuff(this.target,this.slug,(this.remaining_turns>4)?1:this.remaining_turns)
     }
     onBuff(move) {}
     afterMove(move) {
       move.afterMove.push(() => {
         this.remaining_turns--;
         (this.remaining_turns < 1) && this.dispell(move);
-        this.target._ui_dirty = true;
         this.redraw()
       })
     }
     dispell(move) {
       var index = this.target.buffs.indexOf(this);
       (index != -1) && this.target.buffs.splice(index,1);
-      this.redraw()
     }
     beforeMove(move) { }
     getHelpText() { throw "NotImplemented"; }
@@ -83,7 +81,7 @@
     }
     onBuff(move) {
       // #! TODO: should this be standard? should buff be applied to curren turn?
-      move && this.beforeMove(move);
+      //move && this.beforeMove(move);
     }
     getHelpText() {
       return `Charge: This piece will run forward until it hits anything. Stunned for 1 turn after.`;
