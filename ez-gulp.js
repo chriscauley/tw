@@ -33,7 +33,10 @@ module.exports = function(opts) {
         return gulp.src(opts.js[key])
           .pipe(sourcemaps.init())
           .pipe(riot())
-          .pipe(babel({ presets: ['es2017'] }))
+          .pipe(babel({
+            presets: [ 'es2017' ],
+            plugins: [ "transform-object-rest-spread" ],
+          }))
           .pipe(concat(key + '-built.js'))
           .pipe(sourcemaps.write("."))
           .pipe(gulp.dest(opts.DEST))
@@ -82,6 +85,7 @@ module.exports = function(opts) {
       .pipe(gulp.dest(opts.DEST))
   })
   build_tasks.push('build-revision');
+  const watch_tasks = ['build-revision']
 
   if (opts.mustache.length) {
     const fs = require("fs");
@@ -107,15 +111,15 @@ module.exports = function(opts) {
         .pipe(gulp.dest(opts.DEST));
     });
     build_tasks.push('build-mustache');
+    watch_tasks.push('build-mustache');
   }
-
   gulp.task('watch', build_tasks, function () {
     for (var key in opts.js) {
-      gulp.watch(opts.js[key], ['build-'+key,'build-revision','build-mustache']);
+      gulp.watch(opts.js[key], ['build-'+key].concat(watch_tasks))
     }
     for (var key in opts.less) {
       var watch_files = opts.less[key].map((name) => name.match(/.*\//)[0]+"*");
-      gulp.watch(watch_files, ['build-'+key+'-css','build-revision','build-mustache']);
+      gulp.watch(watch_files, ['build-'+key+'-css'].concat(watch_tasks))
     }
     gulp.watch(opts.static.map(d => d.replace(/\/$/,"/**")),['cp-static']);
   });
