@@ -9,7 +9,7 @@ window.uP = {
     // rescale everything when window resizes
     const window_length = Math.min(window.innerWidth,window.innerHeight)
     uP.app.scale = Math.pow(2,Math.floor(Math.log2(window_length/uP.SIZE)))
-    uP.app.view.width = uP.app.view.height = uP.app.scale*uP.SIZE
+    uP.app.view.width = uP.app.view.height = 512-128//uP.app.scale*uP.SIZE
   },
   LAYERS: ['BOARD','FLOOR','ITEM','VOID','PIECE','AIR','ANIMATION',undefined],
   LAYER_MAP: {},
@@ -20,7 +20,7 @@ uP.LAYERS.forEach( (l,i) => { uP.LAYER_MAP[i] = l; uP.LAYER_MAP[l] = i })
 uP.resize()
 
 tW.sprites.ready(() => {
-  const window_length = 512 //Math.min(window.innerWidth,window.innerHeight)
+  const window_length = 512-128 //Math.min(window.innerWidth,window.innerHeight)
   uP.app = new PIXI.Application({ width: window_length, height: window_length })
   // #! TODO putting each layer into a separate PIXI.display.Layer might improve performance?
   uP.app.stage = new PIXI.display.Stage()
@@ -37,8 +37,16 @@ tW.sprites.ready(() => {
     }
   })
 
+  const _half = window_length/2;
+  const recenter = () => {
+    const player = tW.game && tW.game.player;
+    if (!player || !player.pixi) { return }
+    const sprite = player.pixi.container;
+    uP.app.stage.x = -sprite.x+_half;
+    uP.app.stage.y = -sprite.y+_half;
+  }
+  uP.app.ticker.add(recenter);
   uP.addAnimations()
-  const s = uP.app.scale
   PIXI.loader.load((loader, resources) => {
     uP.loadAnimations()
     window.TILE = uP.buildCompositeSprite("chessboard",{
