@@ -86,6 +86,6 @@ this.on("update", () => {
   </style>
 </look-preview>
 
-uR.addRoutes({
+uR.router.add({
   "^#!/look-preview/$": uR.router.routeElement("look-preview"),
 })
