@@ -26,12 +26,17 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
     this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
-    !opts.rotate && uP.bindSprite(this,{
+    uP.bindSprite(this, {
+      is_mobile: true,
+      scale: 0.75,
+      slug: '_halo_black',
+    })
+    !opts.rotate && uP.bindSprite(this, {
       is_mobile: true,
       is_rotate: true,
       slug: '_wedge_' + this.team_color,
     })
-    uP.bindSprite(this,{
+    uP.bindSprite(this, {
       is_mobile: true,
       scale: 0.75,
       is_rotate: opts.rotate,
