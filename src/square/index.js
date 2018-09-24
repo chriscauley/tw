@@ -1,24 +1,12 @@
 tW.square = {};
 
 tW.square.SquareMixin = (superclass) => class SquareMixin extends superclass {
-  // for anything that can sit on a square
-  draw() {
-    super.draw && super.draw();
-    if (!this.square) { return }
-    var sprite = this.sprite && this.sprite.get();
-    var ds = this.ds || 0;
-    sprite && this.square.canvas.ctx.drawImage(
-      sprite.img,
-      ds,ds,
-      this.square.scale-2*ds,this.square.scale-2*ds,
-    )
-  }
   moveOn(move) {
     return move
   }
 }
 
-tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
+tW.square.Square = class Square extends tW.look.Look(uR.Object) {
   constructor(opts) {
     super()
     this.defaults(opts,{
@@ -28,10 +16,6 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.addWall()
     this.xy = [this.x,this.y];
     this.scale = this.board.scale;
-    this.canvas = this.newCanvas({
-      width: this.scale,
-      height: this.scale,
-    });
     this.LAYER = 'FLOOR'
     this.dirty = true;
     this.items = [];
@@ -90,6 +74,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.canvas.CanvasObject) {
     this.piece = undefined;
   }
   addItem(item) {
+    console.log('square')
     item.x = this.x;
     item.y = this.y
     this.dirty = true;

@@ -44,11 +44,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.game = this.board.game;
     this.action_halo = "red_halo";
     this.buffs = [];
-    this.newCanvas({
-      width: this.board.scale,
-      height: this.board.scale,
-      name: 'ui_canvas',
-    });
     this.wait = tW.move.wait(this.wait_interval); // every unit has a fundemental wait set by opts.wait_interval
 
     this.animating = 0;
@@ -198,67 +193,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     const move = this.getNextMove();
     const result = this.applyMove(move);
     move.afterMove.map(f=>f(result));
-  }
-  stamp(x0,y0,dx,img,size) {
-    img = tW.sprites.get(img);
-    dx++;
-    while(--dx) {
-      this.ctx.drawImage(
-        img.img,
-        img.x,img.y,
-        img.w,img.h,
-        x0+(dx-1)*size,y0,
-        size,size
-      )
-    }
-  }
-  _drawUI() {
-    this.ui_canvas.clear();
-    this.ctx = this.ui_canvas.ctx;
-    const size = this.board.scale/4;
-    if (this.show_health && this.max_health != 1 && this.current_square) {
-      this.stamp(0,0,this.max_health,'black',size);
-      this.stamp(0,0,Math.max(this.health,0),'red',size);
-    }
-    for (let i=0;i<this.buffs.length;i++) { // #! TODO right now multiple buffs cover each other
-      let buff = this.buffs[i];
-      let s = (buff.remaining_turns == 1 || buff.remaining_turns > 4)?size*1.5:size;
-      let edge = this.board.scale-s;
-      if (buff.remaining_turns >4) { // just do one big sprite
-        this.stamp(edge,edge,1,buff.sprite,s);
-      } else { // one sprite for every turn remaining
-        this.stamp(0,edge,buff.remaining_turns,buff.sprite,s);
-      }
-    }
-    this.ui_dirty = false;
-  }
-  drawGold(c) {
-    if (!this.gold) { return } // && !this.game.opts.show_gold) { return }
-    var s = this.board.scale;
-    var img = tW.sprites.gold.get(0,0);
-    var v = this.gold*1;
-    var gx = s/2, gy = s/2;
-    c.ctx.drawImage(
-      img.img,
-      img.x, img.y,
-      img.w, img.h,
-      gx,gy,
-      s/2,s/2
-    );
-    var text = {}; // #! TODO: this needs to be dynamic and in options
-    c.ctx.font = text.font || (s/4)+'px serif';
-    c.ctx.textAlign = text.align || 'center';
-    c.ctx.fillStyle = text.style || "black";
-    c.ctx.textBaseline = text.baseLine ||'middle';
-    c.ctx.fontWeight = 'bold';
-    c.ctx.fillText(this.gold, gx+s/4, gy+s/4);
-  }
-  drawUI() {
-    if (this.ui_dirty) { this._drawUI() }
-    this.board.canvas.ctx.drawImage(
-      this.ui_canvas,
-      this.x*this.board.scale,this.y*this.board.scale
-    )
   }
   getNextMove() {
     var tasks = this.tasks || [];

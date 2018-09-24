@@ -1,4 +1,4 @@
-tW.Board = class Board extends tW.SquareCollectionMixin(uR.canvas.CanvasObject) {
+tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
   constructor(opts) {
     super(opts)
     this.defaults(opts)

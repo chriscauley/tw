@@ -1,5 +1,5 @@
 (function() {
-  class Move extends uR.RandomMixin(tW.look.Look(uR.canvas.CanvasObject)) {
+  class Move extends uR.RandomMixin(tW.look.Look(uR.Object)) {
     // Mixin for anything that needs to move
     buildHelp() {
       return {
