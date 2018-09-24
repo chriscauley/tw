@@ -74,7 +74,6 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
     this.piece = undefined;
   }
   addItem(item) {
-    console.log('square')
     item.x = this.x;
     item.y = this.y
     this.dirty = true;

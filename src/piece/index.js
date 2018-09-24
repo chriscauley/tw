@@ -46,7 +46,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.buffs = [];
     this.wait = tW.move.wait(this.wait_interval); // every unit has a fundemental wait set by opts.wait_interval
 
-    this.animating = 0;
     this.show_health = true;
     this.max_health = this.health;
     this.ds = this.board.scale/5; // scale the image down a little, "shrink by this much"
@@ -121,11 +120,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.damage) {
       for (var square of move.damage.squares) {
         var damage_done = square && square.piece && square.piece.takeDamage(move.damage.count);
-        false && this.newAnimation("damage",{
-          x: square.x,
-          y: square.y,
-          sprite: move.damage.sprite || this._sprites.damage, //#! TODO
-        });
         if (damage_done) {
           damage_done.count && result.damages.push(damage_done);
           damage_done.kill && result.kills.push(damage_done);
@@ -176,7 +170,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.turn || dxdy) { this.dxdy = tV.sign(dxdy) }
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
-      false && result.animation && this.newAnimation(...result.animation);
       if (result.animation && result.animation[0] == 'move') {
         const axy = result.animation[1].dxdy;
         [this.ax, this.ay] = axy;
@@ -218,7 +211,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_dirty = true;
     this.health -= result.count;
     if (this.health <= 0) {
-      //this.newAnimation("die");
       this.die();
       result.kill = true;
     }
