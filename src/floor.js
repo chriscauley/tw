@@ -4,6 +4,7 @@ tW.floor = (function() {
       super(opts)
       this.defaults(opts,{});
       [this.x,this.y] = this.square.xy
+      this.board = this.square.board;
       uP.bindSprite(this)
     }
     moveOn(piece,move) { }

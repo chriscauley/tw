@@ -8,7 +8,7 @@
   Object.assign(uP,{
     _FRAMES: {},
     _ANIMATIONS: {},
-    animate: (name,x,y) => {
+    animate: (name,x,y) => { //#! TODO This should be on the uP.Pixi model
       const anim = uP._ANIMATIONS[name]
       anim.x = x*uP.app.scale;
       anim.y = y*uP.app.scale;
@@ -47,7 +47,7 @@
     for (let [name, frames] of Object.entries(uP._FRAMES)) {
       const anim = uP._ANIMATIONS[name] = new PIXI.extras.AnimatedSprite(frames);
       anim.anchor.set(0.5);
-      anim.width = anim.height = uP.app.scale;
+      anim.width = anim.height = 64; // #! TODO this most likely needs to scale with the board
       anim.animationSpeed = 0.25;
       anim.zIndex = uP.LAYER_MAP.ANIMATION;
       anim.onLoop = () => {

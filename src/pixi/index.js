@@ -3,44 +3,58 @@ window.uP = {
   sprite_list: [],
   scale: 32,
   ready: new uR.Ready(),
-  app: { view: {} }, // dummy object so resize doesn't have to check if this exists
-  resize: () => {
-    uP.SIZE = 8
-    // rescale everything when window resizes
-    const window_length = Math.min(window.innerWidth,window.innerHeight)
-    uP.app.scale = Math.pow(2,Math.floor(Math.log2(window_length/uP.SIZE)))
-    uP.app.view.width = uP.app.view.height = 512//uP.app.scale*uP.SIZE
-  },
   LAYERS: ['BOARD', 'FLOOR', 'ITEM', 'VOID', 'PIECE', 'AIR', 'ANIMATION', undefined],
   LAYER_MAP: {},
   ASPEED: 15, // frames/square (~60fps)
 }
 
 uP.LAYERS.forEach( (l,i) => { uP.LAYER_MAP[i] = l; uP.LAYER_MAP[l] = i })
-uP.resize()
 
-tW.sprites.ready(() => {
-  const window_length = 512 //Math.min(window.innerWidth,window.innerHeight)
-  uP.app = new PIXI.Application({ width: window_length, height: window_length })
-  // #! TODO putting each layer into a separate PIXI.display.Layer might improve performance?
-  const stage = uP.app.stage = new PIXI.display.Stage()
-  uP.app.stage.group.enableSort = true
-  uP.resize()
-  uP.app.config = new uR.Config("pixi-form",{
-    scale: 1,
-    x: 0,
-    y: 0,
-  })
-  uP.app.openEditor = () => {
-    uP.app.config.openEditor({
+uP.Pixi = class Pixi {
+  constructor(opts) {
+    uR.defaults(this,opts);
+    this.window_length = 512; // #! TODO pull from container
+    this.app = new PIXI.Application({ width: this.window_length, height: this.window_length });
+    this.stage = this.app.stage = new PIXI.display.Stage();
+    this.stage.group.enableSort = true;
+    this.container && document.querySelector(this.container).appendChild(this.app.view)
+    uP.ready(() => this.setFloor())
+  }
+  setFloor() {
+    this.floor = uP.buildCompositeSprite("chessboard",{
+      tiles: "ground1|ground2||ground2|ground1",
+      _class: PIXI.extras.TilingSprite,
+      app: this.app,
+      scale: 64,
+    })
+  }
+  openEditor() {
+    this.config = this.config || new uR.Config("pixi-form",{
+      scale: 1,
+      x: 0,
+      y: 0,
+    })
+    this.config.openEditor({
       mount_to: "#scores-form",
       submit: (form) => {
         const data = form.getData()
-        stage.scale.x = stage.scale.y = data.scale;
+        this.app.stage.scale.x = this.app.stage.scale.y = data.scale;
       },
     })
   }
-  document.querySelector("#game").appendChild(uP.app.view)
+  follow(player) {
+    // follow one player
+    this._follower && this.app.ticker.remove(this._follower)
+    const _half = this.window_length/2;
+    const sprite = player.pixi.container;
+    this.app.ticker.add(this._follower = () => {
+      this.app.stage.x = -sprite.x+_half;
+      this.app.stage.y = -sprite.y+_half;
+    })
+  }
+}
+
+tW.sprites.ready(() => {
   _.flatten([
     tW.sprites.list,
     ['red', 'lightgray', 'green', 'blue'].map(c => tW.sprites.wedge(c)),
@@ -51,24 +65,9 @@ tW.sprites.ready(() => {
     }
   })
 
-  const _half = window_length/2;
-  const recenter = () => {
-    const player = tW.game && tW.game.player;
-    if (!player || !player.pixi) { return }
-    const sprite = player.pixi.container;
-    uP.app.stage.x = -sprite.x+_half;
-    uP.app.stage.y = -sprite.y+_half;
-  }
-  uP.app.ticker.add(recenter);
   uP.addAnimations()
   PIXI.loader.load((loader, resources) => {
     uP.loadAnimations()
-    window.TILE = uP.buildCompositeSprite("chessboard",{
-      tiles: "ground1|ground2||ground2|ground1",
-      _class: PIXI.extras.TilingSprite,
-      app: uP.app,
-    })
     uP.ready.start()
   })
 })
-

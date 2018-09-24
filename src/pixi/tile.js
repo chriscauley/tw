@@ -1,10 +1,11 @@
 uP.buildCompositeSprite = (name,opts) => {
   uR.defaults(opts,{
     tiles: name,
-    //_class: PIXI.Sprite,
+    _class: PIXI.Sprite,
     app: uR.REQUIRED,
+    scale: uR.REQUIRED,
   })
-  const s = uP.app.scale
+  const s = opts.scale;
   const container = new PIXI.Container()
 
   // "a|b||b|d" => [['a','b'],['c','d']]

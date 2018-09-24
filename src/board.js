@@ -13,8 +13,10 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
       }
     }
     _.extend(this,this.game.opts.board)
-    document.getElementById("game").style.width = this.W*this.scale + "px"
-
+    this.pixi = new uP.Pixi({
+      parent: this,
+      container: "#game",
+    })
     this.pieces = [];
   }
 

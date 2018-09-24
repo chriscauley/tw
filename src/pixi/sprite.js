@@ -10,8 +10,8 @@ uP.bindSprite = (target,opts={}) => {
     scale: 1,
   })
   uP.ready(() => {
-    const app = uP.app// should be a constructor option... target.stage?
-    const s = app.scale;
+    const app = target.board.pixi.app;
+    const s = app.scale || 64;
     if (!target.pixi) {
       target.pixi = riot.observable({
         removeAll: () => app.stage.removeChild(target.pixi.container),

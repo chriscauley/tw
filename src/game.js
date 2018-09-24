@@ -183,6 +183,7 @@ tW.Game = class Game extends uR.RandomObject {
         health: 3,
         team: 1, // #! TODO this is where competative multiplayer happens
       });
+      uP.ready(() => this.board.pixi.follow(this.player))
     }
     //new tW.item.Apple({square: this.board.getRandomEmptySquare() });
     //new tW.item.Steak({square: this.board.getRandomEmptySquare() });
