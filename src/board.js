@@ -2,22 +2,17 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
   constructor(opts) {
     super(opts)
     this.defaults(opts)
-    if (!this.game.opts.board) {
-      const scale = Math.floor(Math.min(window.innerWidth/8,window.innerHeight/8))
-      const W = Math.floor(window.innerWidth/scale)
-      const H = Math.floor(window.innerHeight/scale)
-      this.game.opts.board = { // this will get saved in replay
-        scale: scale,
-        W: Math.min(W,H),
-        H: Math.min(W,H),
-      }
-    }
+
     _.extend(this,this.game.opts.board)
+    this.pieces = [];
+    this.scale = 64;
+    this.loadLevel(0);
     this.pixi = new uP.Pixi({
       parent: this,
       container: "#game",
+      width: this.x_max*this.scale,
+      height: this.y_max*this.scale,
     })
-    this.pieces = [];
   }
 
   loadPieceSets() {
@@ -102,19 +97,6 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
     // red.setFloor(tW.floor.Portal,{color: 'red'});
     // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
-
-    // these bits should probably be in some kind of resize method
-    const buffer = 0; // 0.5
-    this.min_offset_x = -buffer;
-    this.max_offset_x = Math.max(-buffer,this.x_max+buffer-this.W);
-    if (!this.min_offset_x && !this.max_offset_x) {
-      this.min_offset_x = this.max_offset_x = -this.W/2+this.x_max/2
-    }
-    this.min_offset_y = -buffer;
-    this.max_offset_y = Math.max(-buffer,this.y_max+buffer-this.H);
-    if (!this.min_offset_y && !this.max_offset_y) {
-      this.min_offset_y = this.max_offset_y = -this.W/2+this.y_max/2
-    }
   }
   eachSquare(func) {
     func = func.bind(this);

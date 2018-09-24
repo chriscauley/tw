@@ -28,6 +28,20 @@ DG.TEMPLATES['basic'] = {
   max_interconnect_length: 5,
 }
 
+DG.TEMPLATES['huge'] = {
+  seed: "huge",
+  rooms: {
+    any: {
+      min_size: [5,5],
+      max_size: [8,8],
+      max_exits: 3,
+    },
+  },
+  corridor_density: 0,
+  room_count: 10,
+  max_interconnect_length: 5,
+}
+
 DG.TEMPLATES['rect'] = {
   room_count: 1,
   rooms: {

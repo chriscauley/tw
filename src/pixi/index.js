@@ -13,8 +13,7 @@ uP.LAYERS.forEach( (l,i) => { uP.LAYER_MAP[i] = l; uP.LAYER_MAP[l] = i })
 uP.Pixi = class Pixi {
   constructor(opts) {
     uR.defaults(this,opts);
-    this.window_length = 512; // #! TODO pull from container
-    this.app = new PIXI.Application({ width: this.window_length, height: this.window_length });
+    this.app = new PIXI.Application({ width: opts.width, height: opts.height });
     this.stage = this.app.stage = new PIXI.display.Stage();
     this.stage.group.enableSort = true;
     this.container && document.querySelector(this.container).appendChild(this.app.view)
@@ -45,11 +44,12 @@ uP.Pixi = class Pixi {
   follow(player) {
     // follow one player
     this._follower && this.app.ticker.remove(this._follower)
-    const _half = this.window_length/2;
+    const half_x = this.width/2;
+    const half_y = this.height/2;
     const sprite = player.pixi.container;
     this.app.ticker.add(this._follower = () => {
-      this.app.stage.x = -sprite.x+_half;
-      this.app.stage.y = -sprite.y+_half;
+      this.app.stage.x = -sprite.x+half_x;
+      this.app.stage.y = -sprite.y+half_y;
     })
   }
 }

@@ -52,7 +52,6 @@ tW.Game = class Game extends uR.RandomObject {
       this.won = true;
       return this.gameover();
     }
-    this.board.loadLevel(this.level_number);
     this.makeTeams();
     this.makeUnits();
     this.board.boss_room.makeStairs()
