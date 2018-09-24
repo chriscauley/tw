@@ -20,6 +20,7 @@
       </div>
     </div>
   </div>
+  <div id="scores-form"></div>
 
   <script>
 this.on("before-mount",function() {

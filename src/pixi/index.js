@@ -9,9 +9,9 @@ window.uP = {
     // rescale everything when window resizes
     const window_length = Math.min(window.innerWidth,window.innerHeight)
     uP.app.scale = Math.pow(2,Math.floor(Math.log2(window_length/uP.SIZE)))
-    uP.app.view.width = uP.app.view.height = 512-128//uP.app.scale*uP.SIZE
+    uP.app.view.width = uP.app.view.height = 512//uP.app.scale*uP.SIZE
   },
-  LAYERS: ['BOARD','FLOOR','ITEM','VOID','PIECE','AIR','ANIMATION',undefined],
+  LAYERS: ['BOARD', 'FLOOR', 'ITEM', 'VOID', 'PIECE', 'AIR', 'ANIMATION', undefined],
   LAYER_MAP: {},
   ASPEED: 15, // frames/square (~60fps)
 }
@@ -20,12 +20,26 @@ uP.LAYERS.forEach( (l,i) => { uP.LAYER_MAP[i] = l; uP.LAYER_MAP[l] = i })
 uP.resize()
 
 tW.sprites.ready(() => {
-  const window_length = 512-128 //Math.min(window.innerWidth,window.innerHeight)
+  const window_length = 512 //Math.min(window.innerWidth,window.innerHeight)
   uP.app = new PIXI.Application({ width: window_length, height: window_length })
   // #! TODO putting each layer into a separate PIXI.display.Layer might improve performance?
-  uP.app.stage = new PIXI.display.Stage()
+  const stage = uP.app.stage = new PIXI.display.Stage()
   uP.app.stage.group.enableSort = true
   uP.resize()
+  uP.app.config = new uR.Config("pixi-form",{
+    scale: 1,
+    x: 0,
+    y: 0,
+  })
+  uP.app.openEditor = () => {
+    uP.app.config.openEditor({
+      mount_to: "#scores-form",
+      submit: (form) => {
+        const data = form.getData()
+        stage.scale.x = stage.scale.y = data.scale;
+      },
+    })
+  }
   document.querySelector("#game").appendChild(uP.app.view)
   _.flatten([
     tW.sprites.list,
@@ -57,3 +71,4 @@ tW.sprites.ready(() => {
     uP.ready.start()
   })
 })
+

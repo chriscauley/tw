@@ -25,7 +25,6 @@ this.on("mount",function() {
     PIXI.loader.load((loader, resources) => {
       uP.resources = resources
       var tiles = ""
-      const random = new uR.Random()
       const numbers = [0,1,5,6,7,4,2,3]
       const N = numbers.length
       for (var i=0;i<N*N;i++) {

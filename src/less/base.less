@@ -34,6 +34,7 @@ p { margin-bottom: 0.8em; }
     font-size: 1.5rem;
     justify-content: center;
     text-shadow: 1px 1px 3px white;
+    z-index: 3;
   }
   &:after,
   &:before {
@@ -47,6 +48,7 @@ p { margin-bottom: 0.8em; }
   &:after {
     content: "";
     /*box-shadow: 0 0 45px red inset;*/
+    z-index: 1;
   }
 }
 
@@ -62,6 +64,7 @@ tw-scores {
 @empty: gray;
 @s: 2rem;
 tw-scores {
+  z-index: 2;
   .totals,.combos { display: none; }
   .health {
     margin-bottom: @s/2;
@@ -154,4 +157,11 @@ tw-gameover {
   width: 300px;
   max-width: 100%;
   z-index: 1;
+}
+
+#scores-form {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  width: 200px;
 }
