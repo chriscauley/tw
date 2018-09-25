@@ -29,26 +29,18 @@ p { margin-bottom: 0.8em; }
   &:before {
     align-items: center;
     background: rgba(255,255,255,0.6);
+    bottom: 0;
     color: black;
     content: "Game paused. Click here to resume.";
-    font-size: 1.5rem;
-    justify-content: center;
-    text-shadow: 1px 1px 3px white;
-    z-index: 3;
-  }
-  &:after,
-  &:before {
-    bottom: 0;
     display: flex;
+    font-size: 1.5rem;
     left: 0;
+    justify-content: center;
     position: absolute;
     right: 0;
+    text-shadow: 1px 1px 3px white;
     top: 0;
-  }
-  &:after {
-    content: "";
-    /*box-shadow: 0 0 45px red inset;*/
-    z-index: 1;
+    z-index: 3;
   }
 }
 

@@ -124,8 +124,10 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
   }
 
   mousedown(e) {
-    const x = Math.floor((event.offsetX + this.offset_x)/this.scale);
-    const y = Math.floor((event.offsetY + this.offset_y)/this.scale);
+    const stage = this.pixi.app.stage;
+    const canvas = this.pixi.app.view;
+    const x = Math.floor((event.offsetX-stage.x)/this.scale+0.5)
+    const y = Math.floor((event.offsetY-stage.y)/this.scale+0.5)
     const sq = this.getSquare(x,y)
     if (sq) {
       console.log(sq);
