@@ -10,7 +10,7 @@ tW.BOSS_SETS = {
   default: "bbat|flyking|we"
 }
 
-for (var e in tW.enemy_map) { tW.MOOK_MAP[e] = [e] }
+for (let e in tW.enemy_map) { tW.MOOK_MAP[e] = [e] }
 
 tW.team.Team = class Team extends uR.RandomObject {
   constructor(opts={}) {

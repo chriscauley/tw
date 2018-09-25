@@ -1,8 +1,7 @@
 tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
   constructor(opts) {
     super(opts)
-    this.defaults(opts)
-
+    this.game = opts.game;
     _.extend(this,this.game.opts.board)
     this.pieces = [];
     this.scale = 64;
@@ -145,6 +144,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
     // delete the current board. Currently mostly consists of removing canvas
     const view = this.pixi.app.view;
     view.parentNode.removeChild(view)
+    for (let attr in this) { delete this.attr; }
   }
 
   removePiece(piece) {
