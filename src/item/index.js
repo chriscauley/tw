@@ -29,6 +29,7 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     if (!this.canBind(piece)) { throw "Cannot bind "+this+" to "+piece; }
     this.piece = piece;
     piece.bindItem(this)
+    this.board = undefined;
     this.square && this.square.removeItem(this);
   }
 

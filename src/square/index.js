@@ -21,10 +21,13 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
     this.items = [];
   }
   remove() {
-    _.flatten([this,this.items,this.piece,this.floor]) // items is an array
+    _.flatten([this,this.items,this.piece,this.floor]) // items is an array, hence flatten
        // items can be undefined or not have sprites. Also player keeps sprites (for next level)
-      .filter(i => i && i.pixi && !i.is_player)
-      .map(i=>i.pixi.removeAll())
+      .filter(i => i && i.pixi)
+      .map(i=>{
+        i.pixi.remove();
+        i.board = undefined;
+      })
   }
   addWall(n=0) {
     this.wall = (this.wall || 0) + n
@@ -79,6 +82,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
     this.dirty = true;
     this.items.push(item);
     item.square = this;
+    this.board.pixi.app.stage.addChild(item.pixi.container);
     item.pixi.trigger('redraw');
   }
   removeItem(item) {

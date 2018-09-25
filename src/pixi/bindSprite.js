@@ -14,7 +14,7 @@ uP.bindSprite = (target,opts={}) => {
     const s = app.scale || 64;
     if (!target.pixi) {
       target.pixi = riot.observable({
-        removeAll: () => app.stage.removeChild(target.pixi.container),
+        remove: () => app.stage.removeChild(target.pixi.container),
         list: [],
         zIndex: uP.LAYER_MAP[target.LAYER],
         container: new PIXI.Container(),

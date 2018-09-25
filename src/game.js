@@ -41,7 +41,6 @@ tW.Game = class Game extends uR.RandomObject {
     riot.observable(this);
     this.bindKeys();
     this.controller = new uR.controller.Controller({ parent: this, target: document.getElementById("game") });
-    this.board = new tW.Board({ game: this, _prng: this });
     this.restart();
     this.makeUI();
     this.turn = 0;
@@ -52,8 +51,11 @@ tW.Game = class Game extends uR.RandomObject {
       this.won = true;
       return this.gameover();
     }
+    if (this.board) { this.board.trash() }
+    this.board = new tW.Board({ game: this, _prng: this });
     this.makeTeams();
     this.makeUnits();
+    uP.ready(() => this.board.pixi.follow(this.player));
     this.board.boss_room.makeStairs()
   }
   makeUI() {
@@ -73,7 +75,6 @@ tW.Game = class Game extends uR.RandomObject {
     this.piece_count = this.opts.piece_count;
     this.level_number = -1;
     this.nextLevel();
-    this.player.reset();
     this.score = this.player.score = new Score({ game: this, player: this.player });
     this.is_gameover = false;
     document.getElementById("game").focus();
@@ -182,10 +183,8 @@ tW.Game = class Game extends uR.RandomObject {
         health: 3,
         team: 1, // #! TODO this is where competative multiplayer happens
       });
-      uP.ready(() => this.board.pixi.follow(this.player))
     }
-    //new tW.item.Apple({square: this.board.getRandomEmptySquare() });
-    //new tW.item.Steak({square: this.board.getRandomEmptySquare() });
+    this.player.square = undefined
   }
   dumpData() {
     var out = {};

@@ -1,5 +1,5 @@
-*~
-*.pyc
+
+__pycached__/
 node_modules
 node_modules/*
 .dist/*

@@ -6,13 +6,14 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
     _.extend(this,this.game.opts.board)
     this.pieces = [];
     this.scale = 64;
-    this.loadLevel(0);
+    this.generateLevel();
     this.pixi = new uP.Pixi({
       parent: this,
       container: "#game",
       width: this.x_max*this.scale,
       height: this.y_max*this.scale,
     })
+    this.build();
   }
 
   loadPieceSets() {
@@ -30,22 +31,35 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
       this.boss_set = this.boss_set.split("|").map(s=>tW.enemy_map[s]);
     }
   }
-  loadLevel(level_number) {
-    this.squares.forEach(s => s.remove())
-    this.reset();
-    this.level_number = level_number;
-    this.loadPieceSets();
+  toJson() {
+    const layers = {}
+    const LAYERS = ['floor', 'item', 'ether', 'piece', 'air']
+    LAYERS.map(name => { // make empty layers
+      layers[name] = this._dungeon.level.map((row,y) => new Array(row.length));
+    })
+    this.squares.map( sq => {
+      const result = _pick(sq, ['room_id','wall'])
+      for (let key of ['floor','ether','piece','air']) {
+        if (sq[key]) { result[key] = sq[key].toMiniJson() }
+      }
+      if (sq.items.length) { result.items = sq.items.map(i => i.toMiniJson()) }
+    })
+  }
 
+  generateLevel() {
     this._dungeon = new tW.level.Dungeon({
       style: this.game.opts.map_template,
       _prng: this,
     })
-    var level = this._dungeon.level;
-    this.x_max = 0;
-    this.y_max = level.length;
+    this.level = this._dungeon.level;
+    this.x_max = this.level[0].length;
+    this.y_max = this.level.length;
+  }
+
+  build() {
+    this.loadPieceSets();
     const room_opts = {};
-    uR.forEach(level,(row,y) => {
-      this.x_max = Math.max(this.x_max,row.length);
+    uR.forEach(this.level,(row,y) => {
       uR.forEach(row,(square_options,x) => {
         this.rows[x] = this.rows[x] || [];
         const room_id = square_options.room_id;
@@ -98,6 +112,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
     // blue.setFloor(tW.floor.Portal,{color: 'blue',exit: red.floor});
     // determine whether or not board scrolls with movement
   }
+
   eachSquare(func) {
     func = func.bind(this);
     for (var x=0;x<this.rows.length;x++) {
@@ -107,6 +122,7 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
       }
     }
   }
+
   mousedown(e) {
     const x = Math.floor((event.offsetX + this.offset_x)/this.scale);
     const y = Math.floor((event.offsetY + this.offset_y)/this.scale);
@@ -122,17 +138,23 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
       sq.piece && sq.piece.following && console.log('following',sq.piece.following);
     }
   }
-  remove(piece) {
+
+  trash() {
+    // delete the current board. Currently mostly consists of removing canvas
+    const view = this.pixi.app.view;
+    view.parentNode.removeChild(view)
+  }
+
+  removePiece(piece) {
     this.pieces = this.pieces.filter(function(p) { return p !== piece; });
     piece && piece.current_square && piece.current_square.removePiece(piece);
+    piece.board = undefined;
     this.game.trigger('death',piece);
   }
 
   addPiece(piece) {
-    if (piece.board) {
-      if (piece.board == this) { return }
-      piece.board.removePiece(piece);
-    }
+    if (piece.board) { return }
+    piece.pixi && this.pixi.app.stage.addChild(piece.pixi.container);
     piece.board = this;
     this.pieces.push(piece);
   }

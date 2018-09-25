@@ -22,9 +22,11 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       wait_interval: 0, // how long this.wait will block task queue
       speed: 1, // how many squares it moves on this.forward
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
+      square: uR.REQUIRED,
     });
     this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
+    this.square = undefined;
     this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
     uP.bindSprite(this, {
       is_mobile: true,
@@ -217,11 +219,12 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     return result;
   }
   die() {
-    this.pixi.removeAll();
+    this.pixi.remove();
     this.items.map(i=>this.dropItem(i));
     this.gold && this.current_square.addGold({ range: this.level+2, base: 2 * this.gold })
     this.is_dead = true;
-    this.board.remove(this);
+    this.board.game.trigger('death',this);
+    this.board.removePiece(this);
   }
   attack(target) {
     if (target.team == this.team) {

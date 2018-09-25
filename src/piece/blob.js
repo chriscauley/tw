@@ -9,7 +9,7 @@
     getText() { return this.points }
     movedOnTo() {
       this.board.game.player.addScore(this.points);
-      this.board.remove(this);
+      this.board.removePiece(this);
     }
     canBeAttacked() { return false; }
     canReplace() { return true; }

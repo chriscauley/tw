@@ -1,10 +1,6 @@
 tW.SquareCollectionMixin = superclass => class SCM extends uR.RandomMixin(superclass) {
   constructor(opts={}) {
     super(opts)
-    this.reset()
-  }
-
-  reset() {
     this.rows = []; // not used in Rooms
     this.squares = [];
     this.pieces = [];
