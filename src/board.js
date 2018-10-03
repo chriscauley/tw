@@ -20,14 +20,14 @@ tW.Board = class Board extends tW.SquareCollectionMixin(uR.Object) {
     this.mook_sets = tW.MOOK_MAP[this.mook_set || this.game.opts.mook_set];
     for (let i=0;i<this.mook_sets.length;i++) {
       if (typeof this.mook_sets[i] == "string") {
-        this.mook_sets[i] = this.mook_sets[i].split("|").map(s=>tW.enemy_map[s]);
+        this.mook_sets[i] = this.mook_sets[i].split("|").map(s=>tW.pieces.map[s]);
       }
     }
 
     // possible bosses. for now it's just "all bosses"
     this.boss_set = tW.BOSS_SETS[this.game.opts.boss_set];
     if (typeof this.boss_set == "string") {
-      this.boss_set = this.boss_set.split("|").map(s=>tW.enemy_map[s]);
+      this.boss_set = this.boss_set.split("|").map(s=>tW.pieces.map[s]);
     }
   }
   toJson() {

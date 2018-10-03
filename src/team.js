@@ -2,15 +2,20 @@ tW.team = {};
 
 tW.MOOK_MAP = {
   default: [
-    "bat|sk","fly|sk","be|sk|fly","zombie|fly","sp|zombie|sk","pe"
+    "BaseBat|Skeleton",
+    "Fly|Skeleton",
+    "Beholder|Skeleton|Fly",
+    "Zombie|Fly",
+    "Spitter|Zombie|Skeleton",
+    "PigmyElephant"
   ]
 }
 
 tW.BOSS_SETS = {
-  default: "bbat|flyking|we"
+  default: "BossBat|FlyKing|WarElephant"
 }
 
-for (let e in tW.enemy_map) { tW.MOOK_MAP[e] = [e] }
+for (let e in tW.pieces.map) { tW.MOOK_MAP[e] = [e] }
 
 tW.team.Team = class Team extends uR.RandomObject {
   constructor(opts={}) {

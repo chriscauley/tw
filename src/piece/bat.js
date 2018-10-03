@@ -75,10 +75,6 @@
     }
   }
 
-  tW.pieces.bat = {
-    BaseBat: BaseBat,
-    BossBat: BossBat,
-  }
-  tW.enemy_map.bat = BaseBat;
-  tW.enemy_map.bbat = BossBat;
+  tW.pieces.register(BaseBat)
+  tW.pieces.register(BossBat)
 })()

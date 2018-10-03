@@ -30,6 +30,6 @@
     }
   }
 
-  tW.enemy_map.fly = tW.pieces.Fly = Fly;
-  tW.enemy_map.flyking = tW.pieces.FlyKing = FlyKing;
+  tW.pieces.register(Fly);
+  tW.pieces.register(FlyKing);
 })();

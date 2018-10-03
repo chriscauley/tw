@@ -9,5 +9,5 @@
     }
     isActionReady() { return false; }
   }
-  tW.enemy_map.be = tW.pieces.Beholder = Beholder;
+  tW.pieces.register(Beholder);
 })();

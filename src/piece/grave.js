@@ -10,5 +10,5 @@
     }
   }
 
-tW.enemy_map.g = tW.pieces.Grave = Grave;
+  tW.pieces.register(Grave);
 })()

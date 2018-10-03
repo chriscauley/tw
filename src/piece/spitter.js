@@ -18,5 +18,5 @@
       // this._sprites.damage = 'explode';
     }
   }
-  tW.enemy_map.sp = tW.pieces.Spitter = Spitter;
+  tW.pieces.register(Spitter);
 })();

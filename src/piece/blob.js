@@ -1,4 +1,6 @@
 (function() {
+  // these are older pieces that may not be used... haven't decided. They currently aren't registered
+  if (true) { return }
   tW.pieces.CountDown = class CountDown extends tW.pieces.BasePiece {
     constructor(opts) {
       super(opts);

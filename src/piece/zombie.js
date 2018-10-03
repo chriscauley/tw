@@ -8,5 +8,5 @@
       );
     }
   }
-  tW.enemy_map.zombie = tW.pieces.Zombie = Zombie;
+  tW.pieces.register(Zombie);
 })()

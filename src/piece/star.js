@@ -12,5 +12,5 @@
     }
   }
 
-  tW.pieces.Star = tW.enemy_map.star = Star;
+  tW.pieces.register(Star)
 })()

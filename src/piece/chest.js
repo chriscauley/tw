@@ -13,5 +13,5 @@
     touchedBy(piece) { this.die() }
     takeDamage() { }
   }
-  tW.enemy_map.ch = tW.pieces.Chest = Chest;
+  tW.pieces.register(Chest);
 })();

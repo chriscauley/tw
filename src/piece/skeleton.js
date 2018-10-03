@@ -11,5 +11,5 @@
     }
   }
 
-  tW.enemy_map.sk = tW.pieces.Skeleton = Skeleton;
+  tW.pieces.register(Skeleton);
 })();

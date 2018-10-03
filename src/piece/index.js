@@ -1,4 +1,11 @@
-tW.pieces = {}
+tW.pieces = {
+  register: clss => {
+    tW.pieces.map[clss.name] = clss;
+    tW.pieces[clss.name] = clss;
+  },
+  map: {}
+}
+
 tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   toString() { return '[object BasePiece]' }
   constructor(opts) {
@@ -270,4 +277,3 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.ui_dirty = true;
   }
 }
-tW.enemy_map = {}

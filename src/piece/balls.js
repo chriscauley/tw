@@ -1,6 +1,5 @@
 (function() {
-  tW.ball = {}
-  tW.ball.Ball = class Ball extends tW.pieces.BasePiece {
+  class Ball extends tW.pieces.BasePiece {
     constructor(opts={}) {
       uR.defaults(opts, {
         wait_interval: Infinity, // #! TODO: link red halo to dxdy?
@@ -19,8 +18,9 @@
     canBeAttacked() { return false }
     takeDamage() { }
   }
+  tW.pieces.register(Ball)
 
-  tW.enemy_map.soccer = tW.ball.Soccer = class Soccer extends tW.ball.Ball {
+  class Soccer extends Ball {
     constructor(opts={}) {
       opts.sprite = 'blue-orb'
       super(opts)
@@ -30,4 +30,5 @@
       this._energy = this.max_energy
     }
   }
+  tW.pieces.register(Soccer)
 })();

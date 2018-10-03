@@ -1,19 +1,19 @@
 tW.game_config =  new uR.Config("GAME_CONFIG");
 uR.ready(function() {
-  var PIECE_CHOICES = ['sk','fly','be','zombie','sp'];
   var SEED_CHOICES = ['42',['','Randomize level']]
-  /*for (var key in tW.enemy_map) {
-    PIECE_CHOICES.push([key,tW.enemy_map[key].name]);
-    }*/
-  var MAP_CHOICES = [];
-  for (var key in DG.TEMPLATES) { MAP_CHOICES.push(key) }
-  var MOOK_CHOICES = [];
-  for (var key in tW.MOOK_MAP) {
-    if (tW.enemy_map[key]) {
-      MOOK_CHOICES.push([key,tW.enemy_map[key].name])
-    } else {
-      MOOK_CHOICES.push(key)
-    }
+  tW.MAP_CHOICES = [];
+  for (var key in DG.TEMPLATES) { tW.MAP_CHOICES.push(key) }
+  tW.MOOK_CHOICES = []
+  /*default: [
+    "BaseBat|Skeleton",
+    "Fly|Skeleton",
+    "Beholder|Skeleton|Fly",
+    "Zombie|Fly",
+    "Spitter|Zombie|Skeleton",
+    "PigmyElephant"
+    ]*/
+  for (var key in tW.pieces.map) {
+    tW.MOOK_CHOICES.push([key,key]); // needs to be a tuple to preserve capitalization
   }
   const BOSS_CHOICES = ['default']
   tW.game_config.setSchema([
@@ -21,9 +21,9 @@ uR.ready(function() {
     { name: "piece_count", type: "integer", value: 4 },
     { name: "piece_increase", type: "integer", value: 1 },
     { name: "boss_count", type: "integer", value: 1 },
-    { name: "map_template", choices: MAP_CHOICES.sort(), value: MAP_CHOICES[0], type: 'select' },
+    { name: "map_template", choices: tW.MAP_CHOICES.sort(), value: tW.MAP_CHOICES[0], type: 'select' },
     { name: "seed", choices: SEED_CHOICES, required: false, type: 'select', value: "RANDOM" },
-    { name: "mook_set", choices: MOOK_CHOICES, type: 'select', value: 'default' },
+    { name: "mook_set", choices: tW.MOOK_CHOICES, type: 'select', value: 'default' },
     { name: "boss_set", choices: BOSS_CHOICES, type: 'select', value: 'default' },
   ]);
 });
