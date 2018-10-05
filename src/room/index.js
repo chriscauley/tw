@@ -1,4 +1,5 @@
 tW.room = {
+  I: 0,
   Room:class Room extends tW.SquareCollectionMixin(uR.Object) {
     constructor(opts={}) {
       super(opts);
@@ -15,8 +16,8 @@ tW.room = {
       this.H = this.xmax-this.xmin
       this.W = this.ymax-this.ymin
       this.squares.map(s=>s.room=this)
-      window.I = (window.I || 0)+1
-      tW.room.WALL_GENERATORS[window.I%2](this)
+      tW.room.WALL_GENERATORS[tW.room.I%2](this)
+      tW.room.I++
     }
     makeUnits() {
       this.squares.map(s=>s.team=this.team)
