@@ -20,7 +20,7 @@ tW.pieces.register(Projectile);
 
 class Fireball extends tW.pieces.Projectile {
   constructor(opts={}) {
-    opts.rotate = true
+    opts.rotate_sprite = true
     opts._sprites = {
       bounce: undefined,
       damage: 'explode',

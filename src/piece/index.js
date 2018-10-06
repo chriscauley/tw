@@ -48,7 +48,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       texture: '_halo_black',
       redraw: () => this.pixi.halo.texture = PIXI.TextureCache[this.getHalo()],
     })
-    !opts.rotate && uP.bindSprite(this, {
+    !opts.rotate_sprite && uP.bindSprite(this, {
       is_mobile: true,
       is_rotate: true,
       slug: '_wedge_' + this.team_color,
@@ -56,7 +56,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     uP.bindSprite(this, {
       is_mobile: true,
       scale: 0.75,
-      is_rotate: opts.rotate,
+      is_rotate: opts.rotate_sprite,
     })
     this.game = this.board.game;
     this.buffs = [];
