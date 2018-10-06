@@ -34,9 +34,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
     this.square = undefined;
+
     this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'blue', 2: 'green' }[this.team]
+    this.action_halo = `_halo_${this.team_color}`;
+
     // every unit has a fundemental wait set by opts.wait_interval
     this.wait = tW.move.wait(this.wait_interval);
+
     uP.bindSprite(this, {
       is_mobile: true,
       scale: 0.75,
@@ -55,7 +59,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       is_rotate: opts.rotate,
     })
     this.game = this.board.game;
-    this.action_halo = `_halo_${this.team_color}`;
     this.buffs = [];
 
     this.show_health = true;

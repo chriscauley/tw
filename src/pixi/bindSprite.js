@@ -60,6 +60,7 @@ uP.bindSprite = (target,opts={}) => {
       })
       child.anchor.x = child.anchor.y = 0.5
       child.width = child.height = s*opts.scale;
+      target.pixi.list.push(child);
     }
     target.pixi.trigger("redraw")
   })
