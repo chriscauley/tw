@@ -325,6 +325,8 @@ uR.ready(function() {
     'r5',
     'r6',
     'r7',
+    'moon',
+    'planet',
     //'arrow_up',
     //'arrow_right',
     //'arrow_down',
