@@ -57,8 +57,8 @@ uP.Pixi = class Pixi {
 tW.sprites.ready(() => {
   _.flatten([
     tW.sprites.list,
-    ['red', 'lightgray', 'green', 'blue'].map(c => tW.sprites.wedge(c)),
-    ['red','blue', 'black'].map(c => tW.sprites.halo(c)),
+    ['red','lightgray','green','blue'].map(c => tW.sprites.wedge(c)),
+    ['red','blue','black'].map(c => tW.sprites.halo(c)),
   ]).forEach( (sprite,i) => {
     if (!PIXI.TextureCache[sprite.name]) {
       PIXI.loader.add(sprite.name, sprite.canvas.toDataURL())

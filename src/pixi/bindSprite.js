@@ -9,6 +9,7 @@ uP.bindSprite = (target,opts={}) => {
     slug: target._sprite,
     scale: 1,
   })
+  opts.texture = opts.texture || opts.slug;
   uP.ready(() => {
     const app = target.board.pixi.app;
     const s = app.scale || 64;
@@ -43,12 +44,16 @@ uP.bindSprite = (target,opts={}) => {
       target.pixi.on('show', () => container.visible = true)
       opts.is_mobile && app.ticker.add(draw)
     }
+    if (opts.redraw) {
+      // #! TODO rotate would be better in here
+      target.pixi.on('redraw',opts.redraw);
+    }
     const container = target.pixi.container
     var child = target.pixi[opts.slug]
     if (child) {
-      child.texture = PIXI.TextureCache[opts.slug]
+      child.texture = PIXI.TextureCache[opts.texture]
     } else {
-      child = target.pixi[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.slug])
+      child = target.pixi[opts.slug] = new PIXI.Sprite(PIXI.TextureCache[opts.texture])
       container.addChild(child)
       opts.is_rotate && target.pixi.on('redraw',() => {
         child.rotation = tW.look.DIR2RAD[target.dxdy]

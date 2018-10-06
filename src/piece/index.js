@@ -34,11 +34,15 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
     this.square = undefined;
-    this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'green', 2: 'blue' }[this.team]
+    this.team_color = { '-1': 'red', 0: 'lightgray', 1: 'blue', 2: 'green' }[this.team]
+    // every unit has a fundemental wait set by opts.wait_interval
+    this.wait = tW.move.wait(this.wait_interval);
     uP.bindSprite(this, {
       is_mobile: true,
       scale: 0.75,
-      slug: '_halo_black',
+      slug: 'halo',
+      texture: '_halo_black',
+      redraw: () => this.pixi.halo.texture = PIXI.TextureCache[this.getHalo()],
     })
     !opts.rotate && uP.bindSprite(this, {
       is_mobile: true,
@@ -51,9 +55,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       is_rotate: opts.rotate,
     })
     this.game = this.board.game;
-    this.action_halo = "red_halo";
+    this.action_halo = `_halo_${this.team_color}`;
     this.buffs = [];
-    this.wait = tW.move.wait(this.wait_interval); // every unit has a fundemental wait set by opts.wait_interval
 
     this.show_health = true;
     this.max_health = this.health;
@@ -86,6 +89,9 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
   set dx (value) { this.dxdy[0] = value }
   get dy () { return this.dxdy[1] }
   set dy (value) { this.dxdy[1] = value }
+  getHalo() {
+    return this.isActionReady()?this.action_halo:"_halo_black";
+  }
   getHelpSections() {
     const out = [];
     if (this.buffs.length) {
@@ -104,15 +110,13 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     this.level += n;
     this.ds = 0;
     while(n--) {
-      // if (n%2 &_& this.wait.interval) { this.wait.interval -= 1;continue }
+      // if (n%2 && this.wait.interval) { this.wait.interval -= 1;continue }
       this.health = this.max_health += 1;
     }
   }
-  getHalo(canvas_set) {
-    if (this.isActionReady()) {return canvas_set[this.action_halo]; }
-    if (this.following) { return canvas_set.black_halo; }
+  isActionReady() {
+    return this.targeted || !this.wait.interval || this.wait.isReady();
   }
-  isActionReady() { return this.targeted || !this.wait.interval || this.wait.isReady(); }
   applyMove(move) {
     var result = {
       damages: [],
@@ -187,7 +191,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       result.dxdy = dxdy
       result.done = true
     }
-    this.pixi && this.pixi.trigger("redraw")
     return result;
   }
   play() {
@@ -195,6 +198,8 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     const move = this.getNextMove();
     const result = this.applyMove(move);
     move.afterMove.map(f=>f(result));
+    this.pixi && this.pixi.trigger("redraw")
+    !this.is_player && console.log(this.isActionReady());
   }
   getNextMove() {
     var tasks = this.tasks || [];

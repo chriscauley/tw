@@ -72,7 +72,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       energy_interval: 4,
       gold: 0,
     });
-    this.action_halo = "blue_halo";
     this.move = this.move.bind(this);
     this.reset();
   }
@@ -222,5 +221,6 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       this.game.nextLevel();
       this.go_to_next_level = false;
     }
+    this.pixi.trigger("redraw")
   }
 }
