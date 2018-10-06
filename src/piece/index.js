@@ -199,7 +199,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     const result = this.applyMove(move);
     move.afterMove.map(f=>f(result));
     this.pixi && this.pixi.trigger("redraw")
-    !this.is_player && console.log(this.isActionReady());
   }
   getNextMove() {
     var tasks = this.tasks || [];
