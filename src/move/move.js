@@ -23,22 +23,6 @@
     }
     move.done = true;
   }
-  tW.move.forward = function forward(move,dxdy) {
-    dxdy = dxdy || move.turn || this.dxdy;
-    var squares = this.current_square.lookMany(tW.look.line[dxdy][this.speed]);
-    for (var square of squares) {
-      if (square.canBeAttacked(this)) {
-        move.damage = {squares: [square],count:this.damage};
-        move.dxdy = move.turn = dxdy;
-        move.done = true;
-        break
-      }
-      if (!square.isOpen(dxdy)) { break; }
-      move.move = square;
-      move.dxdy = move.turn = dxdy;
-      move.done = true;
-    }
-  }
   tW.move.useEnergy = function forward(move,dxdy) {
     if (this._energy >= 1) {
       move._energy = -1

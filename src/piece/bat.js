@@ -1,18 +1,4 @@
 (function() {
-  tW.move.attackNearby = function attackNearby(move)  {
-    for (let direction of this.DIRECTIONS) {
-      let square = this.look(direction);
-      if (square && square.canBeAttacked(this)) {
-        tW.move.forward.call(this,move,direction);
-      }
-    }
-  }
-  tW.move.forwardRandomly = function forwardRandomly(move) {
-    for (let direction of this.random.shuffle(this.DIRECTIONS)) {
-      tW.move.forward.call(this,move,direction);
-      if (move.move) { move.turn = tV.ZERO; return move; }
-    }
-  }
   class SpawningProjectile extends tW.pieces.Fireball {
     constructor(opts) {
       opts._sprite = 'fireball';
