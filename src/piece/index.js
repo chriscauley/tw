@@ -193,10 +193,6 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     if (move.turn || dxdy) { this.dxdy = tV.sign(dxdy) }
     if (move._energy) { this._energy += move._energy }
     if (result.done) { // anything happened
-      if (result.animation && result.animation[0] == 'move') {
-        const axy = result.animation[1].dxdy;
-        [this.ax, this.ay] = axy;
-      }
       result.chain = move.chain && this.applyMove(move.chain.bind(this)());
       result.dxdy = dxdy
       result.done = true
@@ -208,7 +204,10 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     const move = this.getNextMove();
     const result = this.applyMove(move);
     move.afterMove.map(f=>f(result));
-    this.pixi && this.pixi.trigger("redraw")
+    if (this.pixi) {
+      this.pixi.trigger("redraw");
+      result.moves.length && this.pixi.easeTo()
+    }
   }
   getNextMove() {
     var tasks = this.tasks || [];

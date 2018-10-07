@@ -88,6 +88,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
     item.square = this;
     this.board.pixi.app.stage.addChild(item.pixi.container);
     item.pixi.trigger('redraw');
+    item.pixi.moveTo();
   }
   removeItem(item) {
     var index = this.items.indexOf(item);
@@ -95,6 +96,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
     this.dirty = true;
     item.y = item.x = undefined;
     item.pixi && item.pixi.trigger('redraw')
+    item.pixi.moveTo();
   }
   addGold(opts) {
     this.gold += this.level*opts.range+opts.base;

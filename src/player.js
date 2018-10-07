@@ -221,6 +221,7 @@ tW.player.Player = class Player extends tW.pieces.BasePiece {
       this.game.nextLevel();
       this.go_to_next_level = false;
     }
-    this.pixi.trigger("redraw")
+    this.pixi.trigger("redraw");
+    this.pixi.easeTo();
   }
 }
