@@ -15,13 +15,13 @@
   }
   class SpawningProjectile extends tW.pieces.Fireball {
     constructor(opts) {
-      opts._sprite = 'fireball'
-      super(opts)
-      uP.bindSprite(this,{
-        slug: 'basebat',
+      opts._sprite = 'fireball';
+      super(opts);
+      this.pixi.setLayer({
         scale: 0.5,
         is_rotate: true,
-      })
+        texture: 'basebat',
+      });
     }
     die(move) {
       // should this somehow modify the move that caused the death?

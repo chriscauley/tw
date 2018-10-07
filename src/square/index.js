@@ -13,6 +13,7 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
       gold: 0,
       board: uR.REQUIRED,
     });
+    uP.bindPixi(this);
     this.addWall()
     this.xy = [this.x,this.y];
     this.scale = this.board.scale;
@@ -32,7 +33,10 @@ tW.square.Square = class Square extends tW.look.Look(uR.Object) {
   addWall(n=0) {
     this.wall = (this.wall || 0) + n
     this._sprite = this.wall?"brick"+this.wall:undefined;
-    this._sprite && uP.bindSprite(this)
+    this._sprite && this.pixi.setLayer({
+      texture: this._sprite,
+      name: 'wall',
+    })
   }
   isOpen(dxdy) {
     return !this.wall

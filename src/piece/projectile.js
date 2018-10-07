@@ -7,7 +7,7 @@ class Projectile extends tW.pieces.BasePiece {
     });
     super(opts)
     this.tasks = [tW.move.forward,tW.move.burnout];
-    var move = this.square.moveOn(this,{move: this.square, dxdy: [this.dx,this.dy]});
+    var move = this.current_square.moveOn(this,{move: this.square, dxdy: [this.dx,this.dy]});
     if (move) { this.applyMove(move) }
   }
   applyMove(opts) {

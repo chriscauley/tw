@@ -13,7 +13,8 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     this.piece && this.piece.bindItem(this);
     this.board = (this.piece || this.square).board;
     this.LAYER = 'ITEM';
-    uP.bindSprite(this,{ scale: 0.75 })
+    uP.bindPixi(this,{ scale: 0.75 });
+    this.pixi.setLayer(this._sprite);
   }
 
   // picking up

@@ -41,21 +41,28 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
     // every unit has a fundemental wait set by opts.wait_interval
     this.wait = tW.move.wait(this.wait_interval);
 
-    uP.bindSprite(this, {
+    // halo goes on the bottom
+    uP.bindPixi(this, {
       is_mobile: true,
-      scale: 0.75,
-      slug: 'halo',
+    })
+
+    this.pixi.setLayer({
+      name: 'halo',
       texture: '_halo_black',
+      scale: 0.75,
       redraw: () => this.pixi.halo.texture = PIXI.TextureCache[this.getHalo()],
     })
-    !opts.rotate_sprite && uP.bindSprite(this, {
-      is_mobile: true,
+
+    // If the sprite can't rotate, we need a way to point where the sprite is pointing
+    !opts.rotate_sprite && this.pixi.setLayer({
+      texture: '_wedge_' + this.team_color,
       is_rotate: true,
-      slug: '_wedge_' + this.team_color,
     })
-    uP.bindSprite(this, {
-      is_mobile: true,
+
+    // now add the actual sprite
+    this.pixi.setLayer({
       scale: 0.75,
+      texture: this._sprite || this.constructor.name.toLowerCase(),
       is_rotate: opts.rotate_sprite,
     })
     this.game = this.board.game;

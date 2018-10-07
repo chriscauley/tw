@@ -5,7 +5,8 @@ tW.floor = (function() {
       this.defaults(opts,{});
       [this.x,this.y] = this.square.xy
       this.board = this.square.board;
-      uP.bindSprite(this)
+      uP.bindPixi(this)
+      this.pixi.setLayer(this._sprite);
     }
     moveOn(piece,move) { }
     canStepOn() {
@@ -56,7 +57,7 @@ tW.floor = (function() {
       this.square.board.game.off('death',this._ondeath);
       this.open = true;
       this._sprite = 'ground_stairs'
-      uP.bindSprite(this)
+      this.pixi.setLayer("ground_stairs")
       this.square.dirty = true;
     }
     moveOn(piece,move) {
