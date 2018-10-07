@@ -22,7 +22,7 @@
 
   class Soccer extends Ball {
     constructor(opts={}) {
-      opts.sprite = 'blue-orb'
+      opts._sprite = 'blue-orb'
       super(opts)
     }
     touchedBy(player,dxdy) {
