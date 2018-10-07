@@ -30,6 +30,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       speed: 1, // how many squares it moves on this.forward
       worth: 1, // used in Team.makeUnits to figure out how many pieces to add
       square: uR.REQUIRED,
+      has_halo: true, // whether or not to show the halo behind the piece
     });
     this.LAYER = "PIECE"
     opts.square.addPiece(this); // this sets this.board
@@ -46,7 +47,7 @@ tW.pieces.BasePiece = class BasePiece extends tW.move.Move {
       is_mobile: true,
     })
 
-    this.pixi.setLayer({
+    this.has_halo && this.pixi.setLayer({
       name: 'halo',
       texture: '_halo_black',
       scale: 0.75,
