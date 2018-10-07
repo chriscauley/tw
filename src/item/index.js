@@ -13,14 +13,18 @@ tW.item.Item = class Item extends tW.square.SquareMixin(uR.Object) {
     this.piece && this.piece.bindItem(this);
     this.board = (this.piece || this.square).board;
     this.LAYER = 'ITEM';
-    uP.bindPixi(this,{ scale: 0.75 });
-    this.pixi.setLayer(this._sprite);
+    uP.bindPixi(this);
+    this.pixi.setLayer({
+      scale: 0.75,
+      texture: this._sprite,
+    });
   }
 
   // picking up
   moveOn(piece,move) {
     move = super.moveOn(piece,move);
-    this.canBind(piece) && this.bindTo(piece); // need some sort of chaining effect if it changes the move
+    // need some sort of chaining effect if it changes the move
+    this.canBind(piece) && this.bindTo(piece);
   }
   canBind(piece) {
     return piece.is_player && piece.level >= this.min_level;
