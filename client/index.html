@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Time Walker</title>
+    <link rel="shortcut icon" href="./img/tw.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./less/base.less">
+  </head>
+
+  <div id="main">
+    <div id="game"></div>
+    <div id="score"></div>
+  </div>
+  <link href="../node_modules/unrest.io/less/base.less" rel="stylesheet"></link>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-30669101-2"></script>
+  <script>
+    if (window.location.hostname == "timewalker.io") {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-30669101-2');
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
+  <script src="./data.json"></script>
+</html>
