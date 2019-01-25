@@ -1,0 +1,21 @@
+
+const MAP = new Map([
+  ['up', [0,-1]],
+  ['down', [1,0]],
+  ['left', [0,1]],
+  ['right', [-1,0]],
+])
+
+const NAMES = MAP.keys()
+const VECTORS = MAP.values()
+   
+const RADIANS = NAMES.map((_,i) => i/2*Math.PI)
+const direction = {
+  MAP,
+  NAMES,
+  VECTORS,
+  RADIANS,
+  map: {},
+  getName: vector => direction.vector2name[vector],
+}
+  

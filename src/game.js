@@ -139,15 +139,17 @@ tW.Game = class Game extends uR.RandomObject {
   bindKeys() {
     function useItem(n) { return { done: true, useItem: n } }
     var key_map = {
-      up: (e) => this.player.move(e,tV.N),
-      right: (e) => this.player.move(e,tV.E),
-      down: (e) => this.player.move(e,tV.S),
-      left: (e) => this.player.move(e,tV.W),
       space: (e) => this.player.move(e,tV.ZERO),
       z: e => this.player.move({ useItem: 0 }),
       x: e => this.player.move({ useItem: 1 }),
       c: e => this.player.move({ useItem: 2 }),
     }
+
+    directions.MAP.entries().forEach(
+      ([name,vector]) =>
+        key_map[name] = _event => this.player.move(vector)
+    )
+
     this.key_map = {};
     function d(f,self) {
       f = f.bind(self);

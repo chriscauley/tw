@@ -1,3 +1,5 @@
+import uR from './unrest.io'
+
 if (localStorage.getItem("VERSION") != PACKAGE.version) {
   localStorage.clear();
   console.log('reset');
