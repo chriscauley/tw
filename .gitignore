@@ -1,6 +1,5 @@
 
 __pycached__/
 node_modules
-node_modules/*
-.dist/*
-.dev
+dist/
+.cache/
