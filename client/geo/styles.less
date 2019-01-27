@@ -1,0 +1,27 @@
+look-preview {
+  .grids {
+    width: 600px;
+  }
+  .board, .row, .grids {
+    display: flex;
+  }
+  .row {
+    flex-direction: column;
+  }
+  .box {
+    border: 1px solid black;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    width: 25px;
+  }
+  .board {
+    border: 4px double #888;
+  }
+  ur-form form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  ur-form form > * { flex-basis: unset !important; }
+}
