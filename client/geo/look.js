@@ -51,12 +51,6 @@ look._GEOMETRIES = look.GEOMETRIES.map(g => {
 look.ALL_GEOMETRIES = look.GEOMETRIES.concat(look._GEOMETRIES)
 look.MAX_RANGE = 8;
 look.RANGES = _.range(1,look.MAX_RANGE+1);
-look.DIRECTIONS = [
-  [0,-1], // N == up
-  [1,0], // E == right
-  [0,1], // S == down
-  [-1,0], // W == left
-];
 
 for (let dxy of geo_dxy.list) {
   let [dx,dy] = dxy;

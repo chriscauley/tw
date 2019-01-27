@@ -1,27 +1,31 @@
 look-preview {
-  .grids {
-    width: 600px;
-  }
-  .board, .row, .grids {
+  .flex, .boards, .row {
     display: flex;
   }
   .row {
     flex-direction: column;
   }
-  .box {
+  .cell {
     border: 1px solid black;
     height: 25px;
     line-height: 25px;
     text-align: center;
     width: 25px;
   }
-  .board {
+  .boards {
+    flex-wrap: wrap;
     border: 4px double #888;
-  }
-  ur-form form {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
+    width: 500px;
+    .board {
+      margin-bottom: 1rem;
+      .red {
+        background: red;
+      }
+      .grey {
+        background: grey;
+      }
+    }
   }
   ur-form form > * { flex-basis: unset !important; }
 }

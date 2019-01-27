@@ -1,34 +1,26 @@
 import _ from 'lodash'
 import uR from 'unrest.io'
+import BaseBoard from '../Board/Base'
 
 import geo from './index'
 
-/*  this.grids = []
-  for (let dxdy of tW.look.DIRECTIONS) {
-    let rows = []
-    for (let ir=0;ir<2*range+1;ir++) {
-      rows.push(one_row.slice())
-    }
-    for (let delta of tW.look[this.data.geometry][dxdy][range]) {
-      rows[delta[0]+range][delta[1]+range] = { color: 'red' }
-    }
-    rows[range][range] = { color: "gray", className: `fa fa-arrow-${tW.look.DIR2NAME[dxdy]}` }
-    this.grids.push({
-      dxdy: dxdy,
-      rows: rows,
-    })*/
-
 const LookPreview = {
   init: function() {
-    this.data = { geometry: 'line' }
-    this.grids = [{
-      dxy: 'derp',
-      rows: [
-        [1,1,1,1,1],
-        [1,1,1,1,1],
-      ],
-    }]
-    console.log(this.grids)
+    this.initial = this.data = { geometry: 'line', range: 2 }
+    this.submit = form => {
+      this.data = form.getData()
+      this.update()
+    }
+
+    this.boards = geo.dxy.list.map(dxy=>{
+      const board = new BaseBoard({
+        W: 9,
+        H: 9,
+      })
+      board.dxy = dxy
+      board.center = [4,4]
+      return board
+    })
     this.schema = {
       range: { choices: _.range(1,5) },
       geometry: {
@@ -37,11 +29,18 @@ const LookPreview = {
     }
     this.on("mount", () => this.update())
     this.on("update",() => {
-      /*const range = parseInt(this.data.range)
-      const one_row = _.range(8).map( z => ({ color: "" }) )
-      this.grids = geo.look.DIRECTIONS.map( () => {
-        const rows = one_row.map
-      })*/
+      const { geometry, range } = this.data
+      this.boards.forEach(board => {
+        board.squares.forEach(s => s.color = undefined)
+        const xys = geo.look[geometry][board.dxy][range].map(
+          dxy => geo.vector.add(board.center,dxy)
+        )
+        xys.forEach(xy => {
+          const square = board.getSquare(xy)
+          square.color = "red"
+        })
+        board.getSquare(board.center).color = "grey"
+      })
     })
   }
 }
@@ -50,36 +49,22 @@ const LookPreview = {
   <div class={ theme.outer }>
     <div class={ theme.content }>
       <h3>{ data.geometry }</h3>
-      <div class="grids">
-        <div class="grid" each={ grid in grids }>
-          <h4>
-            { grid.dxy }
-          </h4>
-          <ur-table rows={grid.rows}>
+      <div class="flex">
+        <div class="boards">
+          <div class="board" each={ board in boards }>
+            <h4>
+              { board.dxy }
+            </h4>
+            <ur-table rows={board.serializeRows()}>
+          </div>
         </div>
+        <ur-form initial={ initial } autosubmit={true} schema={schema}
+                 submit={submit} theme="none"></ur-form>
       </div>
-      <ur-form initial={ initial } autosubmit=true schema={schema}></ur-form>
     </div>
   </div>
   <script>
 this.mixin(uR.css.ThemeMixin)
 this.mixin(LookPreview)
-
-/*submit(form_tag) {
-  this.data = form_tag.getData()
-  this.update()
-}
-this.initial = this.data = {
-  range: 1,
-  geometry: 'line',
-}
-this.schema = [
-]
-this.on("mount",() => {
-  this.update()
-})
-this.on("update", () => {
-  }
-})*/
   </script>
 </look-preview>
