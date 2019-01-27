@@ -1,4 +1,6 @@
-import __DATA from './data'
+import uR from 'unrest.io'
 
-window.__DATA = __DATA
-console.log(__DATA)
+import './routes'
+import './geo'
+
+uR.auth.enabled = false
