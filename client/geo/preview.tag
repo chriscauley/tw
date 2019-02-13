@@ -30,7 +30,7 @@ const LookPreview = {
     })
 
     this.boards.forEach(board => {
-      new render.Board({
+      new render.RenderBoard({
         board,
         parent: "#html-renderer",
       })

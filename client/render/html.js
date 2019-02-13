@@ -2,7 +2,7 @@ import uR from 'unrest.io'
 
 const ready = new uR.Ready()
 
-class Board extends uR.db.Model {
+class RenderBoard extends uR.db.Model {
   static slug = "render_html.Board"
   static opts = {
     board: uR.REQURIED,
@@ -19,7 +19,7 @@ class Board extends uR.db.Model {
       parent: this.parent,
     })
     this.squares = this.board.squares.map(
-      square => new Square({
+      square => new RenderSquare({
         square,
         parent: this.container,
       })
@@ -35,7 +35,7 @@ class Board extends uR.db.Model {
   }
 }
 
-class Square extends uR.db.Model {
+class RenderSquare extends uR.db.Model {
   static slug = "render_html.Square"
   static opts = {
     parent: uR.REQUIRED,
@@ -62,5 +62,6 @@ class Square extends uR.db.Model {
 
 export default {
   ready,
-  Board,
+  RenderBoard,
+  RenderSquare,
 }
