@@ -24,21 +24,10 @@ export default class extends Model {
   reset() {
     this.rows = _.range(this.H).map(y=> (
       _.range(this.W).map(x => (
-        new Square({ x, y, board: this})
+        new Square({ xy: [ x, y ], board: this})
       ))
     ))
     this.squares = _.concat(...this.rows)
     this.pieces = []
-  }
-  serializeRows() {
-    return this.rows.map(row => (
-      row.map( square => {
-        const { x, y, color } = square
-        return {
-          text: `${x},${y}`,
-          className: `cell ${color}`
-        }
-      })
-    ))
   }
 }

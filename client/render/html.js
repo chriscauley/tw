@@ -46,8 +46,8 @@ class RenderSquare extends uR.db.Model {
     this.draw()
   }
   getClass() {
-    const { x, y, color } = this.square
-    return `square x${x} y${y} w1 h1 color-${color}`
+    const { xy, color } = this.square
+    return `square x${xy[0]} y${xy[1]} w1 h1 color-${color}`
   }
   draw = () => {
     this.sprite = uR.element.create("div",{
