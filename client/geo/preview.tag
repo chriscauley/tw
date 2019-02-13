@@ -1,10 +1,17 @@
 import _ from 'lodash'
-import uR from 'unrest.io'
 import BaseBoard from '../Board/Base'
 
+import uR from 'unrest.io'
+import render from '../render/html'
 import geo from './index'
 
 const LookPreview = {
+  schema: {
+    range: { choices: _.range(1,5) },
+    geometry: {
+      choices: geo.look.ALL_GEOMETRIES,
+    },
+  },
   init: function() {
     this.initial = this.data = { geometry: 'line', range: 2 }
     this.submit = form => {
@@ -12,7 +19,7 @@ const LookPreview = {
       this.update()
     }
 
-    this.boards = geo.dxy.list.map(dxy=>{
+    this.boards = geo.dxy.list.map(dxy => {
       const board = new BaseBoard({
         W: 9,
         H: 9,
@@ -21,13 +28,18 @@ const LookPreview = {
       board.center = [4,4]
       return board
     })
-    this.schema = {
-      range: { choices: _.range(1,5) },
-      geometry: {
-        choices: geo.look.ALL_GEOMETRIES,
-      },
-    }
-    this.on("mount", () => this.update())
+
+    this.boards.forEach(board => {
+      new render.Board({
+        board,
+        parent: "#html-renderer",
+      })
+    })
+
+    this.on("mount", () => {
+      this.update()
+      render.ready.start()
+    })
     this.on("update",() => {
       const { geometry, range } = this.data
       this.boards.forEach(board => {
@@ -40,6 +52,7 @@ const LookPreview = {
           square.color = "red"
         })
         board.getSquare(board.center).color = "grey"
+        board.renderer.update()
       })
     })
   }
@@ -50,14 +63,6 @@ const LookPreview = {
     <div class={ theme.content }>
       <h3>{ data.geometry }</h3>
       <div class="flex">
-        <div class="boards">
-          <div class="board" each={ board in boards }>
-            <h4>
-              { board.dxy }
-            </h4>
-            <ur-table rows={board.serializeRows()}>
-          </div>
-        </div>
         <ur-form initial={ initial } autosubmit={true} schema={schema}
                  submit={submit} theme="none"></ur-form>
       </div>

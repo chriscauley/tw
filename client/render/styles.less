@@ -1,0 +1,45 @@
+@scale: 1rem;
+
+.loop(@counter) when (@counter > 0) {
+  .loop((@counter - 1));
+  @w: ~"w@{counter}";
+  .@{w} {
+    width: (@scale * @counter);
+  }
+  @h: ~"h@{counter}";
+  .@{h} {
+    height: (@scale * @counter);
+  }
+  @x: ~"x@{counter}";
+  .@{x} {
+    left: (@scale * @counter);
+  }
+  @y: ~"y@{counter}";
+  .@{y} {
+    top: (@scale * @counter);
+  }
+}
+
+#html-renderer {
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-left: 100px;
+  height: 100%;
+  width: 100%;
+  .loop(9);
+}
+
+#html-renderer {
+  .board {
+    background: white;
+    position: relative;
+  }
+  .square {
+    outline: 1px black solid;
+    position: absolute;
+    &.color-red { background: red; }
+    &.color-grey { background: grey; }
+  }
+}
