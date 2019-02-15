@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import BaseBoard from '../Board/Base'
-import BasePiece from '../Piece/BasePiece'
+import BaseBoard from '../board/Base'
+import BasePiece from '../piece/BasePiece'
 
 import uR from 'unrest.io'
 import render from '../render/html'
