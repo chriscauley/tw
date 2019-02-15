@@ -7,7 +7,7 @@ import Square from './Square'
 const { Int, Model, List } = uR.db
 
 export default class extends Model {
-  static slug = 'board.BaseBoard'
+  static slug = 'board.Board'
   static fields = {
     W: Int(10),
     H: Int(10),
