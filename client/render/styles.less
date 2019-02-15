@@ -1,4 +1,4 @@
-@scale: 1rem;
+@scale: 1.5rem;
 
 .loop(@counter) when (@counter > 0) {
   .loop((@counter - 1));
@@ -37,9 +37,32 @@
     position: relative;
   }
   .square {
-    outline: 1px black solid;
+    height: @scale;
+    border: 1px black solid;
+    width: @scale;
+  }
+  .piece,.square {
     position: absolute;
     &.color-red { background: red; }
     &.color-grey { background: grey; }
+  }
+  .piece {
+    border: 0.4 * @scale solid grey;
+    border-radius: 100%;
+    margin: 0.1 * @scale;
+    height: 0.8 * @scale;
+    width: 0.8 * @scale;
+  }
+  .dxy-10 {
+    border-right: 0.4 * @scale solid red;
+  }
+  .dxy--10 {
+    border-left: 0.4 * @scale solid red;
+  }
+  .dxy-01 {
+    border-bottom: 0.4 * @scale solid red;
+  }
+  .dxy-0-1 {
+    border-top: 0.4 * @scale solid red;
   }
 }

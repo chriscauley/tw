@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import BaseBoard from '../Board/Base'
+import BasePiece from '../Piece/BasePiece'
 
 import uR from 'unrest.io'
 import render from '../render/html'
@@ -19,41 +20,39 @@ const LookPreview = {
       this.update()
     }
 
-    this.boards = geo.dxy.list.map(dxy => {
-      const board = new BaseBoard({
-        W: 9,
-        H: 9,
-      })
-      board.dxy = dxy
-      board.center = [4,4]
-      return board
+    this.board = new BaseBoard({
+      W: 9,
+      H: 9,
     })
 
-    this.boards.forEach(board => {
-      new render.RenderBoard({
-        board,
-        parent: "#html-renderer",
-      })
+    this.piece = new BasePiece({
+      board: this.board,
+      xy: [4,4],
+    })
+    this.piece.color = "grey"
+    window.P  = this.piece
+
+    this.renderer = new render.RenderBoard({
+      board: this.board,
+      parent: "#html-renderer",
     })
 
     this.on("mount", () => {
-      this.update()
       render.ready.start()
+      this.update()
     })
     this.on("update",() => {
+      const { board } = this
       const { geometry, range } = this.data
-      this.boards.forEach(board => {
-        board.squares.forEach(s => s.color = undefined)
-        const xys = geo.look[geometry][board.dxy][range].map(
-          dxy => geo.vector.add(board.center,dxy)
-        )
-        xys.forEach(xy => {
-          const square = board.getSquare(xy)
-          square.color = "red"
-        })
-        board.getSquare(board.center).color = "grey"
-        board.renderer.update()
+      board.squares.forEach(s => s.color = undefined)
+      const xys = geo.look[geometry][this.piece.dxy][range].map(
+        dxy => geo.vector.add(this.piece.xy,dxy)
+      )
+      xys.forEach(xy => {
+        const square = board.getSquare(xy)
+        square.color = "red"
       })
+      this.renderer.update()
     })
   }
 }

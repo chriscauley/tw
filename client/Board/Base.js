@@ -30,4 +30,18 @@ export default class extends Model {
     this.squares = _.concat(...this.rows)
     this.pieces = []
   }
+
+  addPiece(piece) {
+    if (piece.board !== this) {
+      if (piece.board) {
+        piece.board.removePiece(piece)
+      }
+      piece.board = this
+      this.pieces.push(piece)
+    }
+  }
+
+  removePiece(piece) {
+    _.remove(this.pieces,piece)
+  }
 }
