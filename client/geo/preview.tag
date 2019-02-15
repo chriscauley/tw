@@ -1,10 +1,11 @@
 import _ from 'lodash'
 import BaseBoard from '../board/Base'
-import BasePiece from '../piece/BasePiece'
+import Player from '../piece/Player'
 
 import uR from 'unrest.io'
 import render from '../render/html'
 import geo from './index'
+
 
 const LookPreview = {
   schema: {
@@ -25,20 +26,41 @@ const LookPreview = {
       H: 9,
     })
 
-    this.piece = new BasePiece({
+    this.piece = new Player({
       board: this.board,
       xy: [4,4],
     })
     this.piece.color = "grey"
-    window.P  = this.piece
+    const container = document.querySelector("#html-renderer")
 
     this.renderer = new render.RenderBoard({
       board: this.board,
-      parent: "#html-renderer",
+      parent: container,
     })
+
+    this.key_map = {
+      ArrowUp: [0,-1],
+      ArrowDown: [0,1],
+      ArrowRight: [1,0],
+      ArrowLeft: [-1,0],
+    }
+
+    this.keydown = e => {
+      const dxy = this.key_map[e.key]
+      if (dxy) {
+        const move = this.piece.getMove({dxy})
+        move && this.piece.applyMove(move)
+        this.update()
+      }
+    }
 
     this.on("mount", () => {
       render.ready.start()
+      window.LP = this
+      this.controller = new uR.Controller({
+        container,
+        parent: this,
+      })
       this.update()
     })
     this.on("update",() => {
@@ -48,10 +70,7 @@ const LookPreview = {
       const xys = geo.look[geometry][this.piece.dxy][range].map(
         dxy => geo.vector.add(this.piece.xy,dxy)
       )
-      xys.forEach(xy => {
-        const square = board.getSquare(xy)
-        square.color = "red"
-      })
+      board.getSquares(xys).forEach(square => square.color = "red")
       this.renderer.update()
     })
   }

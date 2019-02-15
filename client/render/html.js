@@ -11,6 +11,7 @@ class RenderBoard extends uR.db.Model {
   constructor(opts) {
     super(opts)
     this.board.renderer = this
+    this.pieces = []
     ready(this.draw)
   }
   draw = () => {
@@ -35,10 +36,11 @@ class RenderBoard extends uR.db.Model {
     this.squares.forEach(square => square.update())
     this.board.pieces
       .filter(p => !p.renderer)
-      .forEach(p => new RenderPiece({
+      .forEach(p => this.pieces.push(new RenderPiece({
         obj: p,
         parent: this.container
-      }))
+      })))
+    this.pieces.forEach(p => p.update())
   }
 }
 

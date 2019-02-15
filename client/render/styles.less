@@ -25,10 +25,25 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding-left: 100px;
   height: 100%;
   width: 100%;
   .loop(9);
+  position: relative;
+  &:not(:focus):before {
+    background: rgba(255,255,255,0.75);
+    content: "click me!";
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: @scale * 9;
+    height: @scale * 9;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -9/2 * @scale;
+    z-index: 1;
+  }
 }
 
 #html-renderer {
@@ -52,6 +67,7 @@
     margin: 0.1 * @scale;
     height: 0.8 * @scale;
     width: 0.8 * @scale;
+    transition: left top 0.25s;
   }
   .dxy-10 {
     border-right: 0.4 * @scale solid red;

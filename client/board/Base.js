@@ -21,6 +21,9 @@ export default class extends Model {
     if (x < 0 || x >= this.W) { return undefined }
     return this.squares[x + y*this.W]
   }
+  getSquares(xys) {
+    return xys.map(xy => this.getSquare(xy)).filter(s => s)
+  }
   reset() {
     this.rows = _.range(this.H).map(y=> (
       _.range(this.W).map(x => (
