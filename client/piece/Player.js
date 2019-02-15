@@ -7,7 +7,7 @@ const addMoves = (...moves) => {
   const dxys = moves.map(move => move.dxy).filter(dxy => dxy)
   return {
     dxy: vector.sum(dxys),
-    move_to: _.reverse(moves).find(m => m.move_to)
+    move_to: _.reverse(moves).find(m => m.move_to),
   }
 }
 
@@ -15,7 +15,7 @@ export default class Player extends BasePiece {
   getMove(dxy) {
     return {
       dxy,
-      move_to: this.board.getSquare(vector.add(this.xy,dxy))
+      move_to: this.board.getSquare(vector.add(this.xy, dxy)),
     }
   }
 
@@ -33,7 +33,7 @@ export default class Player extends BasePiece {
     if (shiftKey) {
       const move2 = this.getMove(dxy)
       this.applyMove(move2)
-      move = addMoves(move,move2)
+      move = addMoves(move, move2)
     }
     return move
   }

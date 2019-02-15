@@ -3,7 +3,7 @@ import uR from 'unrest.io'
 const ready = new uR.Ready()
 
 class RenderBoard extends uR.db.Model {
-  static slug = "render_html.Board"
+  static slug = 'render_html.Board'
   static opts = {
     board: uR.REQURIED,
     parent: uR.REQUIRED,
@@ -15,15 +15,16 @@ class RenderBoard extends uR.db.Model {
     ready(this.draw)
   }
   draw = () => {
-    this.container = uR.element.create("div",{
+    this.container = uR.element.create('div', {
       className: this.getClass(),
       parent: this.parent,
     })
     this.squares = this.board.squares.map(
-      square => new RenderSquare({
-        obj: square,
-        parent: this.container,
-      })
+      square =>
+        new RenderSquare({
+          obj: square,
+          parent: this.container,
+        }),
     )
   }
   getClass() {
@@ -31,15 +32,21 @@ class RenderBoard extends uR.db.Model {
     return `board w${W} h${H}`
   }
   update() {
-    if (!this.container) { return }
+    if (!this.container) {
+      return
+    }
     this.board.className = this.getClass()
     this.squares.forEach(square => square.update())
     this.board.pieces
       .filter(p => !p.renderer)
-      .forEach(p => this.pieces.push(new RenderPiece({
-        obj: p,
-        parent: this.container
-      })))
+      .forEach(p =>
+        this.pieces.push(
+          new RenderPiece({
+            obj: p,
+            parent: this.container,
+          }),
+        ),
+      )
     this.pieces.forEach(p => p.update())
   }
 }
@@ -51,7 +58,7 @@ class RenderOne extends uR.db.Model {
   }
   constructor(opts) {
     super(opts)
-    this.type = this.constructor.slug.split(".")[1].toLowerCase()
+    this.type = this.constructor.slug.split('.')[1].toLowerCase()
     this.obj.renderer = this
     this.draw()
   }
@@ -60,7 +67,7 @@ class RenderOne extends uR.db.Model {
     return `${this.type} x${xy[0]} y${xy[1]} w1 h1 color-${color}`
   }
   draw = () => {
-    this.sprite = uR.element.create("div",{
+    this.sprite = uR.element.create('div', {
       className: this.getClass(),
       parent: this.parent,
     })
@@ -71,13 +78,13 @@ class RenderOne extends uR.db.Model {
 }
 
 class RenderSquare extends RenderOne {
-  static slug = "render_html.Square"
+  static slug = 'render_html.Square'
 }
 
 class RenderPiece extends RenderOne {
-  static slug = "render_html.Piece"
+  static slug = 'render_html.Piece'
   getClass() {
-    return super.getClass() + ` dxy-${this.obj.dxy.join("")}`
+    return super.getClass() + ` dxy-${this.obj.dxy.join('')}`
   }
 }
 

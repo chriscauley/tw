@@ -1,9 +1,9 @@
 import uR from 'unrest.io'
 
-const { Model, List, Int, REQUIRED } = uR.db
+const { Model, List, REQUIRED } = uR.db
 
 export default class Square extends Model {
-  static slug = "board.Square"
+  static slug = 'board.Square'
   static fields = {
     xy: List(), // #! TODO probably an opt, not a field?
   }
@@ -15,7 +15,7 @@ export default class Square extends Model {
 
   addPiece(piece) {
     if (this.piece && this.piece !== piece) {
-      throw "PauliException: Two pieces cannot occupy the same square"
+      throw 'PauliException: Two pieces cannot occupy the same square'
     }
     this.piece = piece
     this.board.addPiece(piece) // idempotent

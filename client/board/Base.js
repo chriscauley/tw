@@ -7,7 +7,7 @@ import Square from './Square'
 const { Int, Model, List } = uR.db
 
 export default class extends Model {
-  static slug = "board.BaseBoard"
+  static slug = 'board.BaseBoard'
   static fields = {
     W: Int(10),
     H: Int(10),
@@ -17,19 +17,19 @@ export default class extends Model {
     super(opts)
     this.reset()
   }
-  getSquare([x,y]) {
-    if (x < 0 || x >= this.W) { return undefined }
-    return this.squares[x + y*this.W]
+  getSquare([x, y]) {
+    if (x < 0 || x >= this.W) {
+      return undefined
+    }
+    return this.squares[x + y * this.W]
   }
   getSquares(xys) {
     return xys.map(xy => this.getSquare(xy)).filter(s => s)
   }
   reset() {
-    this.rows = _.range(this.H).map(y=> (
-      _.range(this.W).map(x => (
-        new Square({ xy: [ x, y ], board: this})
-      ))
-    ))
+    this.rows = _.range(this.H).map(y =>
+      _.range(this.W).map(x => new Square({ xy: [x, y], board: this })),
+    )
     this.squares = _.concat(...this.rows)
     this.pieces = []
   }
@@ -45,6 +45,6 @@ export default class extends Model {
   }
 
   removePiece(piece) {
-    _.remove(this.pieces,piece)
+    _.remove(this.pieces, piece)
   }
 }

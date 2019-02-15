@@ -10,22 +10,25 @@ const look = {}
 window.LOOK = look
 export default look
 
-look.Mixin = superclass => class extends superclass {
-  // A mixin to give any object the ability to look at other squares on the board
-  constructor(opts) {
-    super(opts);
-    this.DIRECTIONS = look.DIRECTIONS.slice(); // okay to be shuffled... see moveRandomly
+look.Mixin = superclass =>
+  class extends superclass {
+    // A mixin to give any object the ability to look at other squares on the board
+    constructor(opts) {
+      super(opts)
+      this.DIRECTIONS = look.DIRECTIONS.slice() // okay to be shuffled... see moveRandomly
+    }
+    lookForward() {
+      return this.look([this.dx, this.dy])
+    }
+    look(dxy) {
+      return this.board.getSquare(vector.add([this.x, this.y], dxy))
+    }
+    lookMany(deltas, dxy = dxy.ZERO) {
+      return this.board.getSquares({
+        xys: deltas.map(delta => vector.sum([this.x, this.y], delta, dxy)),
+      })
+    }
   }
-  lookForward() { return this.look([this.dx,this.dy]) }
-  look(dxy) {
-    return this.board.getSquare(vector.add([this.x,this.y],dxy))
-  }
-  lookMany(deltas,dxy=dxy.ZERO) {
-    return this.board.getSquares({
-      xys: deltas.map(delta=>vector.sum([this.x,this.y],delta,dxy))
-    })
-  }
-}
 
 look.GEOMETRIES = [
   'line', // #! TODO? depracate in favor of f?
@@ -45,56 +48,56 @@ look.GEOMETRIES = [
 
 look._GEOMETRIES = look.GEOMETRIES.map(g => {
   look[g] = {}
-  look["_"+g] = {}
-  return "_"+g
+  look['_' + g] = {}
+  return '_' + g
 })
 look.ALL_GEOMETRIES = look.GEOMETRIES.concat(look._GEOMETRIES)
-look.MAX_RANGE = 8;
-look.RANGES = _.range(1,look.MAX_RANGE+1);
+look.MAX_RANGE = 8
+look.RANGES = _.range(1, look.MAX_RANGE + 1)
 
-for (let dxy of geo_dxy.list) {
-  let [dx,dy] = dxy;
-  for (let geometry of look.ALL_GEOMETRIES) {
+for (const dxy of geo_dxy.list) {
+  const [dx, dy] = dxy
+  for (const geometry of look.ALL_GEOMETRIES) {
     look[geometry][dxy] = {}
   }
-  for (let range of look.RANGES) {
-    let [f] = look._f[dxy][range] = look._line[dxy][range] = [vector.times(dxy,range)]
-    let [s] = look._s[dxy][range] = [[f[0]+Math.sign(f[1]),f[1]-Math.sign(f[0])]]
-    let [d] = look._d[dxy][range] = [[f[0]-Math.sign(f[1]),f[1]+Math.sign(f[0])]]
-    let [l] = look._l[dxy][range] = [[f[1],f[0]]]
-    let [r] = look._r[dxy][range] = [[-f[1],-f[0]]]
-    look._lr[dxy][range] = [l,r]
-    look._fs[dxy][range] = [f,s]
-    look._fd[dxy][range] = [f,d]
+  for (const range of look.RANGES) {
+    const [f] = (look._f[dxy][range] = look._line[dxy][range] = [
+      vector.times(dxy, range),
+    ])
+    const [s] = (look._s[dxy][range] = [
+      [f[0] + Math.sign(f[1]), f[1] - Math.sign(f[0])],
+    ])
+    const [d] = (look._d[dxy][range] = [
+      [f[0] - Math.sign(f[1]), f[1] + Math.sign(f[0])],
+    ])
+    const [l] = (look._l[dxy][range] = [[f[1], f[0]]])
+    const [r] = (look._r[dxy][range] = [[-f[1], -f[0]]])
+    look._lr[dxy][range] = [l, r]
+    look._fs[dxy][range] = [f, s]
+    look._fd[dxy][range] = [f, d]
     look._three[dxy][range] = [f, s, d]
 
-    look._cone[dxy][range] = [];
-    look._close[dxy][range] = [];
-    for (var j=1-range;j<range;j++) {
-      look._cone[dxy][range].push([
-        dx*range+j*dy,
-        dy*range+j*dx
-      ]);
-      var i = range-Math.abs(j)-1;
-      look._close[dxy][range].push([
-        dx+i*dx+j*dy,
-        dy+i*dy+j*dx
-      ]);
+    look._cone[dxy][range] = []
+    look._close[dxy][range] = []
+    for (let j = 1 - range; j < range; j++) {
+      look._cone[dxy][range].push([dx * range + j * dy, dy * range + j * dx])
+      const i = range - Math.abs(j) - 1
+      look._close[dxy][range].push([dx + i * dx + j * dy, dy + i * dy + j * dx])
     }
 
-    look._circle[dxy][range] = [];
-    for (let j=-range;j<range;j++) {
-      let i = range-Math.abs(j);
-      look._circle[dxy][range].push([j,i]);
-      look._circle[dxy][range].push([-j,-i]);
+    look._circle[dxy][range] = []
+    for (let j = -range; j < range; j++) {
+      const i = range - Math.abs(j)
+      look._circle[dxy][range].push([j, i])
+      look._circle[dxy][range].push([-j, -i])
     }
 
     // this is the bit that folds _geometries back into geometries via concatination
-    for (let key of look.GEOMETRIES) {
-      const _key = "_"+key;
-      look[key][dxy][range] = _.concat(..._.range(1,range+1).map(
-        ri => look[_key][dxy][ri]
-      ))
+    for (const key of look.GEOMETRIES) {
+      const _key = '_' + key
+      look[key][dxy][range] = _.concat(
+        ..._.range(1, range + 1).map(ri => look[_key][dxy][ri]),
+      )
     }
   }
 }
