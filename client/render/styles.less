@@ -1,6 +1,6 @@
 @scale: 1.5rem;
 
-.loop(@counter) when (@counter > 0) {
+.loop(@counter) when (@counter > -1) {
   .loop((@counter - 1));
   @w: ~"w@{counter}";
   .@{w} {
@@ -55,6 +55,8 @@
     height: @scale;
     border: 1px black solid;
     width: @scale;
+    transition: 2s linear;
+    &.color-red { transition: 0s; }
   }
   .piece,.square {
     position: absolute;
@@ -67,7 +69,7 @@
     margin: 0.1 * @scale;
     height: 0.8 * @scale;
     width: 0.8 * @scale;
-    transition: left top 0.25s;
+    transition: 0.25s;
   }
   .dxy-10 {
     border-right: 0.4 * @scale solid red;

@@ -46,10 +46,13 @@ const LookPreview = {
     }
 
     this.keydown = e => {
-      const dxy = this.key_map[e.key]
-      if (dxy) {
-        const move = this.piece.getMove({dxy})
-        move && this.piece.applyMove(move)
+      const input = {
+        dxy: this.key_map[e.key],
+        shiftKey: e.shiftKey,
+        ctrlKey: e.ctrlKey
+      }
+      if (input.dxy) {
+        this.piece.move(input)
         this.update()
       }
     }
