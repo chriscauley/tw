@@ -63,24 +63,32 @@
     &.color-red { background: red; }
     &.color-grey { background: grey; }
   }
-  .piece {
-    border: 0.4 * @scale solid grey;
+  .player {
     border-radius: 100%;
     margin: 0.1 * @scale;
     height: 0.8 * @scale;
     width: 0.8 * @scale;
+    &:before { content: "u"; }
+  }
+  .piece {
+    font-size: 1.5em;
+    line-height: 1;
+    text-align: center;
     transition: 0.25s;
   }
   .dxy-10 {
-    border-right: 0.4 * @scale solid red;
+    border-right: 0.2 * @scale solid red;
   }
   .dxy--10 {
-    border-left: 0.4 * @scale solid red;
+    border-left: 0.2 * @scale solid red;
   }
   .dxy-01 {
-    border-bottom: 0.4 * @scale solid red;
+    border-bottom: 0.2 * @scale solid red;
   }
   .dxy-0-1 {
-    border-top: 0.4 * @scale solid red;
+    border-top: 0.2 * @scale solid red;
+  }
+  .walker:before {
+    content: "W";
   }
 }
