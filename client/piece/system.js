@@ -52,10 +52,15 @@ const canMoveOn = (piece, square, _dxy) => {
   return !(!square || square.piece || square.wall)
 }
 
+const randomChoice = (piece, choices) => {
+  return choices[Math.floor(Math.random() * choices.length)]
+}
+
 export default {
   getMove,
   applyMove,
   canAttackSquare,
   canAttackPiece,
   canMoveOn,
+  randomChoice,
 }

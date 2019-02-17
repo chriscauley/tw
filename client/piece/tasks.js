@@ -1,7 +1,7 @@
-import wait from '../move/wait'
-import flip from '../move/flip'
-import forward from '../move/forward'
+import move from '../move'
 
 export default {
-  walker: [wait(1), forward, flip],
+  walker: [move.wait(1), move.forward, move.flip],
+  seeker: [move.findEnemy, move.wait(1), move.follow],
+  drifter: [],
 }

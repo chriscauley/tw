@@ -10,12 +10,14 @@ const look = {}
 window.LOOK = look
 export default look
 
-look.lookMany = (square, deltas, dxy = [0, 0]) => {
+look.lookMany = (square, deltas, dxy = [0, 0]) =>
   // #! TODO why was the third argument, dxy, here?
-  return square.board.getSquares(
+  square.board.getSquares(
     deltas.map(delta => vector.sum([square.xy, delta, dxy])),
   )
-}
+
+look.lookOne = (square, dxy) =>
+  square.board.getSquare(vector.add(square.xy, dxy))
 
 look.Mixin = superclass =>
   class extends superclass {
@@ -26,9 +28,6 @@ look.Mixin = superclass =>
     }
     lookForward() {
       return this.look([this.dx, this.dy])
-    }
-    look(dxy) {
-      return this.board.getSquare(vector.add([this.x, this.y], dxy))
     }
   }
 
