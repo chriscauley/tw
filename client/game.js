@@ -8,6 +8,7 @@ import piece_controller from './piece/system'
 import * as player_controller from './piece/Player'
 import Board from './board/Board'
 import render_html from './render/html'
+import { killAllEnemies } from './board/goal'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
@@ -15,6 +16,7 @@ export default class Game extends uR.db.Model {
     RenderBoard: render_html.RenderBoard,
     parent: '#html-renderer',
     piece_generator: () => {},
+    victory_condition: killAllEnemies,
   }
   constructor(opts) {
     super(opts)
@@ -27,14 +29,27 @@ export default class Game extends uR.db.Model {
 
     this.ready(() => {
       this.makeBoard()
+      this.makeVictoryContition()
       this.makePlayer()
       this.bindKeys()
-      this.piece_generator(this)
+      this.makePieceGenerator()
+      this.spawnPieces()
       this.makeRenderer()
     })
   }
 
+  makeVictoryContition() {
+    this.checkVictory = this.victory_condition(this)
+  }
+
+  makePieceGenerator() {
+    this.spawnPieces = this.piece_generator(this)
+  }
+
   nextTurn() {
+    if (this.checkVictory()) {
+      this.spawnPieces()
+    }
     this.board.pieces.forEach(piece => {
       if (piece.type === 'player') {
         return
@@ -49,8 +64,7 @@ export default class Game extends uR.db.Model {
 
   makeBoard() {
     this.board = new Board({
-      W: 9,
-      H: 9,
+      _SEED: 11111111,
     })
   }
 

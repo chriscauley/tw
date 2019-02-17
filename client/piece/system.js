@@ -21,7 +21,7 @@ const applyMove = (piece, { xy, dxy = piece.dxy, damage, afterMove }) => {
   }
   piece.dxy = dxy
   if (afterMove) {
-    afterMove()
+    afterMove(piece)
   }
 }
 

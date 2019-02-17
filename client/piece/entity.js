@@ -17,10 +17,11 @@ const PIECE_DEFAULTS = {
   sight: 3,
 }
 
-const newPiece = ({ type, xy, dxy, team }) =>
+const newPiece = ({ type, xy, dxy, team = 0, health }) =>
   newEntity({
     ...PIECE_DEFAULTS,
     name: 'piece',
+    health,
     team,
     type,
     xy,
