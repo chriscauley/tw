@@ -1,5 +1,5 @@
 import geo from '../geo'
-import piece_controller from '../piece/system'
+import control from '../piece/system'
 
 const forward = (piece, move, dxy = piece.dxy) => {
   // move forward up to piece.speed squraes
@@ -9,16 +9,16 @@ const forward = (piece, move, dxy = piece.dxy) => {
 
   squares.find(square => {
     // update move until a square is blocked
-    if (piece_controller.canAttackSquare(piece, square)) {
+    if (control.canAttackSquare(piece, square)) {
       move = {
         ...move,
-        damage: { squares: [square], count: piece.damage },
+        damage: { xy: square.xy, count: piece.damage },
         dxy: dxy,
         done: true,
       }
     }
 
-    if (!piece_controller.canMoveOn(piece, square, dxy)) {
+    if (!control.canMoveOn(piece, square, dxy)) {
       // can't move onto square, continue
       return move
     }
@@ -43,7 +43,7 @@ const dxy_list = [...geo.dxy.list]
 export const forwardRandomly = (piece, move = {}) => {
   // #! TODO piece currently doesn't have random
   // randomness will probably be handled by composition, not inheritance
-  for (const dxy of piece.random.shuffle(dxy_list)) {
+  for (const dxy of control.randomShuffle(piece, dxy_list)) {
     move = forward(piece, move, dxy)
     if (move.done) {
       move.turn = geo.dxy.ZERO
