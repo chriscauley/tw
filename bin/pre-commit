@@ -1,0 +1,52 @@
+#!/bin/bash
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+PY_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".py$" | grep -v /migrations/)
+
+if [ "$FORCE_COMMIT" ]; then
+    echo "Skipping all linting phases due to FORCE_COMMIT env variable."
+    exit 0
+fi
+
+if [[ ! -z "$PY_FILES" ]]; then
+    PASS=true
+    . .venv/bin/activate
+    for FILE in $PY_FILES
+    do
+        black -q "$FILE" --check
+        flake8 "$FILE"
+        if [[ "$?" -ne "0" ]]; then
+            PASS=false
+        fi
+    done
+    if ! $PASS; then
+        printf "\\033[41mCOMMIT FAILED:\\033[0m Your commit contains files that did not pass black and flake8. PLease fix the errors and try again.\\n"
+        exit 1
+    else
+        a=("$PY_FILES")
+        printf "%s python file(s) linted successfully via black and flake8.\\n" "${#a[@]}"
+        deactivate
+    fi
+fi
+
+if [[ ! -d $PROJECT_ROOT/client ]]; then
+    echo "Skipping js lint because client does not exist."
+    exit 0
+fi
+
+cd "$PROJECT_ROOT"
+JS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".js$")
+
+if [[ ! -z "$JS_FILES" ]]; then
+    yarn eslint $JS_FILES
+    if [[ "$?" -ne "0" ]]; then
+        printf "\\033[41mCOMMIT FAILED:\\033[0m Your commit contains files that should pass ESLint but do not. Please fix the ESLint errors and try again.\\n"
+        exit 1
+    else
+        a=("$JS_FILES")
+        printf "%s javascript file(s) linted successfully via eslint.\\n" "${#a[@]}"
+    fi
+fi
+
+
+exit $?
