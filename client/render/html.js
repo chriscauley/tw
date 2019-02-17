@@ -49,6 +49,9 @@ class RenderBoard extends uR.db.Model {
     }
     this.cache[piece.id].className = getClassName(piece)
   }
+  removePiece = piece => {
+    this.cache[piece.id].remove()
+  }
 }
 
 const getClassName = entity => {

@@ -13,6 +13,7 @@ const newEntity = (opts = {}) => {
 const PIECE_DEFAULTS = {
   speed: 1,
   damage: 1,
+  health: 1,
 }
 
 const newPiece = ({ type, xy, dxy, team }) =>

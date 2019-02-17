@@ -53,5 +53,6 @@ export default class extends Model {
 
   removePiece(piece) {
     _.remove(this.pieces, piece)
+    this.renderer.removePiece(piece)
   }
 }

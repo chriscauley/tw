@@ -11,13 +11,29 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, { xy, dxy = piece.dxy, _damage, afterMove }) => {
+const applyMove = (piece, { xy, dxy = piece.dxy, damage, afterMove }) => {
+  if (damage) {
+    const target_square = piece.board.getSquare(damage.xy)
+    applyDamage(target_square, damage.count)
+  }
   if (xy) {
     piece.board.getSquare(xy).addPiece(piece)
   }
   piece.dxy = dxy
   if (afterMove) {
     afterMove()
+  }
+}
+
+const applyDamage = (square, count) => {
+  const piece = square.piece
+  if (!piece) {
+    return
+  }
+  piece.health -= count
+  if (square.piece.health <= 0) {
+    square.removePiece(piece)
+    square.board.removePiece(piece)
   }
 }
 
