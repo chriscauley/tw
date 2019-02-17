@@ -11,9 +11,9 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, { move_to, dxy = piece.dxy, _damage, afterMove }) => {
-  if (move_to) {
-    move_to.addPiece(piece)
+const applyMove = (piece, { xy, dxy = piece.dxy, _damage, afterMove }) => {
+  if (xy) {
+    piece.board.getSquare(xy).addPiece(piece)
   }
   piece.dxy = dxy
   if (afterMove) {
@@ -33,7 +33,7 @@ const canAttackPiece = (piece, target) => {
 }
 
 const canMoveOn = (piece, square, _dxy) => {
-  return !(square.piece || square.wall)
+  return !(!square || square.piece || square.wall)
 }
 
 export default {

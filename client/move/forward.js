@@ -27,7 +27,7 @@ const forward = (piece, move, dxy = piece.dxy) => {
     // return nothing to check next square
     move = {
       ...move,
-      move_to: square,
+      xy: square.xy,
       dxy: dxy,
       done: true,
     }
