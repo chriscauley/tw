@@ -52,33 +52,10 @@ const canMoveOn = (piece, square, _dxy) => {
   return !(!square || square.piece || square.wall)
 }
 
-const randomChoice = (piece, choices) => {
-  return choices[Math.floor(Math.random() * choices.length)]
-}
-
-const randomShuffle = (piece, array) => {
-  let i = array.length,
-    temp,
-    i_rand
-  // While there remain elements to shuffle...
-  while (0 !== i) {
-    // Pick a remaining element...
-    i_rand = Math.floor(Math.random() * i)
-    i -= 1
-    // And swap it with the current element.
-    temp = array[i]
-    array[i] = array[i_rand]
-    array[i_rand] = temp
-  }
-  return array
-}
-
 export default {
   getMove,
   applyMove,
   canAttackSquare,
   canAttackPiece,
   canMoveOn,
-  randomChoice,
-  randomShuffle,
 }

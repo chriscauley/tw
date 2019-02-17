@@ -1,5 +1,6 @@
 import geo from '../geo'
 import control from '../piece/system'
+import Random from 'ur-random'
 
 export default (piece, move) => {
   const target = piece.following
@@ -27,8 +28,7 @@ export default (piece, move) => {
       const squares = geo.look
         .lookMany(piece.square, dxys)
         .filter(square => control.canAttackSquare(piece, square))
-      piece.following =
-        squares.length && control.randomChoice(piece, squares).piece
+      piece.following = squares.length && Random.fp.choice(piece, squares).piece
     },
   }
 }

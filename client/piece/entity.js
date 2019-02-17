@@ -17,7 +17,7 @@ const PIECE_DEFAULTS = {
   sight: 3,
 }
 
-const newPiece = ({ type, xy, dxy, team = 0, health }) =>
+const newPiece = ({ type, xy, dxy, team = 0, health, _PRNG }) =>
   newEntity({
     ...PIECE_DEFAULTS,
     name: 'piece',
@@ -26,6 +26,7 @@ const newPiece = ({ type, xy, dxy, team = 0, health }) =>
     type,
     xy,
     dxy,
+    _PRNG,
   })
 
 const newPlayer = opts =>

@@ -8,6 +8,7 @@ export const randomPiece = game => {
     enemies.split('').forEach(short => {
       let xy
       while (!xy) {
+        //#! TODO this should it's own randomness
         const x = board.random.int(board.W)
         const y = board.random.int(board.H)
         const square = board.getSquare([x, y])
@@ -20,6 +21,7 @@ export const randomPiece = game => {
         type: tasks.short2type[short],
         dxy: [0, -1],
         health: 2,
+        _PRNG: board.random.int(), //# !TODO ibid
       })
     })
   }

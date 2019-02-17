@@ -55,7 +55,6 @@
     height: @scale;
     border: 1px black solid;
     width: @scale;
-    transition: 2s linear;
     &.color-red { transition: 0s; }
   }
   .piece,.square {
@@ -65,16 +64,15 @@
   }
   .player {
     border-radius: 100%;
-    margin: 0.1 * @scale;
-    height: 0.8 * @scale;
-    width: 0.8 * @scale;
     &:before { content: "u"; }
   }
   .piece {
-    font-size: 1.5em;
     line-height: 1;
     text-align: center;
+    margin: 0.1 * @scale;
     transition: 0.25s;
+    height: 0.8 * @scale;
+    width: 0.8 * @scale;
   }
   .dxy-10 {
     border-right: 0.2 * @scale solid red;

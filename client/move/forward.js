@@ -1,5 +1,6 @@
 import geo from '../geo'
 import control from '../piece/system'
+import Random from 'ur-random'
 
 const forward = (piece, move, dxy = piece.dxy) => {
   // move forward up to piece.speed squraes
@@ -41,9 +42,7 @@ export default forward
 const dxy_list = [...geo.dxy.list]
 
 export const forwardRandomly = (piece, move = {}) => {
-  // #! TODO piece currently doesn't have random
-  // randomness will probably be handled by composition, not inheritance
-  for (const dxy of control.randomShuffle(piece, dxy_list)) {
+  for (const dxy of Random.fp.shuffle(piece, dxy_list)) {
     move = forward(piece, move, dxy)
     if (move.done) {
       move.turn = geo.dxy.ZERO
