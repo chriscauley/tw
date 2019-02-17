@@ -3,6 +3,7 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 
 import Square from './Square'
+import { newPiece } from '../piece/entity'
 
 const { Int, Model, List } = uR.db
 
@@ -35,13 +36,19 @@ export default class extends Model {
   }
 
   addPiece(piece) {
-    if (piece.board !== this) {
-      if (piece.board) {
-        piece.board.removePiece(piece)
-      }
-      piece.board = this
-      this.pieces.push(piece)
+    if (piece.board === this) {
+      return // idempotent
     }
+    if (piece.board) {
+      piece.board.removePiece(piece)
+    }
+    piece.board = this
+    this.pieces.push(piece)
+  }
+
+  newPiece(opts) {
+    const piece = newPiece(opts)
+    this.getSquare(piece.xy).addPiece(piece)
   }
 
   removePiece(piece) {

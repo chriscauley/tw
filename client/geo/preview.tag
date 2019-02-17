@@ -1,9 +1,7 @@
 import _ from 'lodash'
-import BaseBoard from '../board/Base'
-import Player from '../piece/Player'
-
 import uR from 'unrest.io'
-import render from '../render/html'
+
+import Game from '../game'
 import geo from './index'
 
 
@@ -21,60 +19,25 @@ const LookPreview = {
       this.update()
     }
 
-    this.board = new BaseBoard({
-      W: 9,
-      H: 9,
+    this.game = new Game({})
+
+    this.game.on("nextturn", () => {
+      const { board, player } = this.game
+      const { geometry, range } = this.data
+      board.squares.forEach(s => s.color = undefined)
+      const xys = geo.look[geometry][player.dxy][range].map(
+        dxy => geo.vector.add(player.xy,dxy)
+      )
+      board.getSquares(xys).forEach(square => square.color = "red")
+      this.game.renderer.update()
     })
-
-    this.piece = new Player({
-      board: this.board,
-      xy: [4,4],
-    })
-    this.piece.color = "grey"
-    const container = document.querySelector("#html-renderer")
-
-    this.renderer = new render.RenderBoard({
-      board: this.board,
-      parent: container,
-    })
-
-    this.key_map = {
-      ArrowUp: [0,-1],
-      ArrowDown: [0,1],
-      ArrowRight: [1,0],
-      ArrowLeft: [-1,0],
-    }
-
-    this.keydown = e => {
-      const input = {
-        dxy: this.key_map[e.key],
-        shiftKey: e.shiftKey,
-        ctrlKey: e.ctrlKey
-      }
-      if (input.dxy) {
-        this.piece.move(input)
-        this.update()
-      }
-    }
 
     this.on("mount", () => {
-      render.ready.start()
-      window.LP = this
-      this.controller = new uR.Controller({
-        container,
-        parent: this,
-      })
+      this.game.ready.start()
       this.update()
     })
     this.on("update",() => {
-      const { board } = this
-      const { geometry, range } = this.data
-      board.squares.forEach(s => s.color = undefined)
-      const xys = geo.look[geometry][this.piece.dxy][range].map(
-        dxy => geo.vector.add(this.piece.xy,dxy)
-      )
-      board.getSquares(xys).forEach(square => square.color = "red")
-      this.renderer.update()
+      this.game.trigger("nextturn")
     })
   }
 }

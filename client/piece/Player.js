@@ -1,4 +1,3 @@
-import BasePiece from './BasePiece'
 import vector from '../geo/vector'
 import _ from 'lodash'
 
@@ -11,30 +10,30 @@ const addMoves = (...moves) => {
   }
 }
 
-export default class Player extends BasePiece {
-  getMove(dxy) {
-    return {
-      dxy,
-      move_to: this.board.getSquare(vector.add(this.xy, dxy)),
-    }
-  }
-
-  applyMove({ dxy = this.dxy, move_to }) {
-    if (move_to) {
-      move_to.addPiece(this)
-    }
-    this.dxy = dxy
-  }
-
-  move({ dxy, shiftKey, _ctrlKey }) {
-    let move = this.getMove(dxy)
-
-    this.applyMove(move)
-    if (shiftKey) {
-      const move2 = this.getMove(dxy)
-      this.applyMove(move2)
-      move = addMoves(move, move2)
-    }
-    return move
+const getMove = (player, dxy) => {
+  return {
+    dxy,
+    move_to: player.board.getSquare(vector.add(player.xy, dxy)),
   }
 }
+
+const applyMove = (player, { dxy, move_to }) => {
+  if (move_to) {
+    move_to.addPiece(player)
+  }
+  player.dxy = dxy || player.dxy
+}
+
+const move = (player, { dxy, shiftKey, _ctrlKey }) => {
+  let move = getMove(player, dxy)
+
+  applyMove(player, move)
+  if (shiftKey) {
+    const move2 = getMove(player, dxy)
+    applyMove(player, move2)
+    move = addMoves(move, move2)
+  }
+  return move
+}
+
+export { move }

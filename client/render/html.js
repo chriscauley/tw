@@ -12,7 +12,8 @@ class RenderBoard extends uR.db.Model {
     super(opts)
     this.board.renderer = this
     this.pieces = []
-    ready(this.draw)
+    this.cache = {}
+    this.draw()
   }
   draw = () => {
     this.container = uR.element.create('div', {
@@ -26,6 +27,7 @@ class RenderBoard extends uR.db.Model {
           parent: this.container,
         }),
     )
+    this.update()
   }
   getClass() {
     const { W, H } = this.board
@@ -37,18 +39,28 @@ class RenderBoard extends uR.db.Model {
     }
     this.board.className = this.getClass()
     this.squares.forEach(square => square.update())
-    this.board.pieces
-      .filter(p => !p.renderer)
-      .forEach(p =>
-        this.pieces.push(
-          new RenderPiece({
-            obj: p,
-            parent: this.container,
-          }),
-        ),
-      )
-    this.pieces.forEach(p => p.update())
+    this.board.pieces.forEach(this.renderPiece)
   }
+  renderPiece = piece => {
+    if (!this.cache[piece.id]) {
+      this.cache[piece.id] = uR.element.create('div', {
+        parent: this.container,
+      })
+    }
+    this.cache[piece.id].className = getClassName(piece)
+  }
+}
+
+const getClassName = entity => {
+  const { xy, color, name, type, dxy } = entity
+  let className = `${name} ${type} x${xy[0]} y${xy[1]} w1 h1`
+  if (color) {
+    className += ` color-${color}`
+  }
+  if (dxy) {
+    className += ` dxy-${dxy.join('')}`
+  }
+  return className
 }
 
 class RenderOne extends uR.db.Model {
@@ -79,13 +91,6 @@ class RenderOne extends uR.db.Model {
 
 class RenderSquare extends RenderOne {
   static slug = 'render_html.Square'
-}
-
-class RenderPiece extends RenderOne {
-  static slug = 'render_html.Piece'
-  getClass() {
-    return super.getClass() + ` dxy-${this.obj.dxy.join('')}`
-  }
 }
 
 export default {

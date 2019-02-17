@@ -10,6 +10,13 @@ const look = {}
 window.LOOK = look
 export default look
 
+look.lookMany = (square, deltas, dxy = [0, 0]) => {
+  // #! TODO why was the third argument, dxy, here?
+  return square.board.getSquares(
+    deltas.map(delta => vector.sum([square.xy, delta, dxy])),
+  )
+}
+
 look.Mixin = superclass =>
   class extends superclass {
     // A mixin to give any object the ability to look at other squares on the board
@@ -22,11 +29,6 @@ look.Mixin = superclass =>
     }
     look(dxy) {
       return this.board.getSquare(vector.add([this.x, this.y], dxy))
-    }
-    lookMany(deltas, dxy = dxy.ZERO) {
-      return this.board.getSquares({
-        xys: deltas.map(delta => vector.sum([this.x, this.y], delta, dxy)),
-      })
     }
   }
 
