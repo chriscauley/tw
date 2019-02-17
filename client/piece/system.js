@@ -11,11 +11,14 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, { move_to, dxy, _damage }) => {
+const applyMove = (piece, { move_to, dxy = piece.dxy, _damage, afterMove }) => {
   if (move_to) {
     move_to.addPiece(piece)
   }
   piece.dxy = dxy
+  if (afterMove) {
+    afterMove()
+  }
 }
 
 const canAttackSquare = (piece, square) => {
