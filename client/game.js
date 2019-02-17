@@ -76,6 +76,7 @@ export default class Game extends uR.db.Model {
       ArrowDown: [0, 1],
       ArrowRight: [1, 0],
       ArrowLeft: [-1, 0],
+      ' ': [0, 0],
     }
 
     this.keydown = e => {
