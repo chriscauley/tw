@@ -22,6 +22,11 @@ const all_zombies = game => {
     type: 'drifter',
     dxy: [0, 0],
   })
+  game.board.newPiece({
+    xy: [2, 5],
+    type: 'bouncer',
+    dxy: [0, 1],
+  })
 }
 
 uR.router.default_route = _path => {
