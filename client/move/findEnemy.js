@@ -1,6 +1,7 @@
+import Random from 'ur-random'
+
 import geo from '../geo'
 import control from '../piece/system'
-import Random from 'ur-random'
 
 export default (piece, move) => {
   const target = piece.following

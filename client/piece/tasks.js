@@ -5,6 +5,7 @@ const task_map = {
   seeker: [move.findEnemy, move.wait(1), move.follow],
   drifter: [move.wait(1), move.attackNearby, move.forwardRandomly],
   bouncer: [move.cycle(move.flip, move.forward)],
+  charger: [move.target(move.forward, { reset_look: true })],
 }
 
 task_map.names = Object.keys(task_map)

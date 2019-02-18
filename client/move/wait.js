@@ -1,10 +1,9 @@
-const tick = piece => piece.waited++
-const reset = piece => (piece.waited = 0)
-
 export default turns => {
+  const tick = piece => piece.waiting--
+  const reset = piece => (piece.waiting = turns)
+
   return (piece, move) => {
-    piece.waited = piece.waited || 0
-    if (piece.waited >= turns) {
+    if (!piece.waiting) {
       return {
         ...move,
         afterMove: reset,
