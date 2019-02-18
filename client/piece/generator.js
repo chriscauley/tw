@@ -1,4 +1,4 @@
-import tasks from '../piece/tasks'
+import types from '../piece/types'
 
 export const randomPiece = game => {
   const enemies = 'wdsc'
@@ -18,8 +18,7 @@ export const randomPiece = game => {
       }
       board.newPiece({
         xy: xy,
-        type: tasks.short2type[short],
-        dxy: [0, -1],
+        type: types.short2type[short],
         health: 1,
         _PRNG: board.random.int(), //# !TODO ibid
       })

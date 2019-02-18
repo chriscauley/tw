@@ -1,8 +1,8 @@
-import tasks from './tasks'
+import types from './types'
 
 const getMove = piece => {
   let move = {}
-  tasks[piece.type].find(task => {
+  types[piece.type].tasks.find(task => {
     move = task(piece, move)
     if (move.done) {
       return move
