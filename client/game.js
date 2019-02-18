@@ -49,16 +49,17 @@ export default class Game extends uR.db.Model {
   nextTurn() {
     if (this.checkVictory()) {
       this.spawnPieces()
+    } else {
+      this.board.pieces.forEach(piece => {
+        if (piece.type === 'player') {
+          return
+        }
+        const move = piece_controller.getMove(piece)
+        if (move) {
+          piece_controller.applyMove(piece, move)
+        }
+      })
     }
-    this.board.pieces.forEach(piece => {
-      if (piece.type === 'player') {
-        return
-      }
-      const move = piece_controller.getMove(piece)
-      if (move) {
-        piece_controller.applyMove(piece, move)
-      }
-    })
     this.trigger('nextturn')
   }
 
