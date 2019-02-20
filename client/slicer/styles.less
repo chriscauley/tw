@@ -1,21 +1,70 @@
 ur-slicer {
   display: block;
   overflow: auto;
-  .bg {
-    background-repeat: no-repeat;
-    background-size: contain;
-    image-rendering: pixelated;
+}
+ur-slicer [ref=bg] {
+  background-repeat: no-repeat;
+  background-size: contain;
+  image-rendering: pixelated;
+  position: relative;
+  [ref=box] {
+    border: black solid;
+    box-sizing: content-box;
+    height: 1em;
+    position: absolute;
+    width: 1em;
+  }
+  [ref=hover] {
+    cursor: pointer;
+    height: 100%;
     position: relative;
-    .box {
-      width: 1em;
-      height: 1em;
-      background: rgba(0,0,0,0.5);
-      position: absolute;
-    }
-    .hover {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+    width: 100%;
+  }
+}
+
+ur-slicer {
+  .inputs, .outputs {
+    background: white;
+    border: 3px black double;
+    bottom: 0;
+    padding: 0.5rem;
+    position: fixed;
+  }
+}
+
+ur-slicer .inputs {
+  left: 0;
+  label {
+    display: flex;
+    justify-content: space-around;
+  }
+  input { width: 50px; }
+}
+
+ur-slicer .outputs {
+  background: #eee;
+  right: 0;
+  .close, .save {
+    cursor: pointer;
+  }
+  .bgout {
+    background-size: contain;
+    cursor: crosshair;
+    height: 2em;
+    image-rendering: pixelated;
+    width: 2em;
+  }
+}
+ur-slicer .checkered {
+  background: white;
+  &:hover {
+    background-image:
+    linear-gradient(45deg, #aaa 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #aaa 75%),
+    linear-gradient(45deg, transparent 75%, #aaa 75%),
+    linear-gradient(45deg, #aaa 25%, #fff 25%);
+
+    background-size:20px 20px;
+    background-position:0 0, 0 0, -10px -10px, 10px 10px;
   }
 }
