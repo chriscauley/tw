@@ -1,5 +1,6 @@
 import uR from 'unrest.io'
+import './slicer.tag'
 
 uR.router.add({
-  '#/slicer/': uR.router.routeElement('ur-slicer'),
+  '#/slicer/(\\d+)/$': uR.router.routeElement('ur-slicer'),
 })
