@@ -1,5 +1,5 @@
-
-__pycached__/
+.venv/
+__pycache__/
 node_modules
 dist/
 .cache/

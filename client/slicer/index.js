@@ -1,7 +1,7 @@
 import uR from 'unrest.io'
 import './routes'
 
-const { Model, String, APIManager } = uR.db
+const { Model, Int, String, APIManager } = uR.db
 
 const FILENAME_CHOICES = [
   '16_colors_14.png',
@@ -11,12 +11,16 @@ const FILENAME_CHOICES = [
 ]
 
 class Sheet extends Model {
-  static slug = 'slicer.Sheet'
+  static slug = 'server.Sheet'
   static manager = APIManager
   static editable_fieldnames = ['name', 'filename']
   static fields = {
+    id: Int(),
     name: String(),
     filename: String('', { choices: FILENAME_CHOICES }),
+  }
+  __str__() {
+    return this.name
   }
 }
 

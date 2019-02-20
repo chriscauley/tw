@@ -1,0 +1,4 @@
+django==2.1.4
+psycopg2-binary==2.7.6.1
+django-unrest==0.0.1b
+whitenoise==4.1.2
