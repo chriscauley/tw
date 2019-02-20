@@ -1,0 +1,18 @@
+[tool.black]
+max-line-length = 88
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.static
+  | _build
+  | build
+  | dist
+  | node_modules
+  | migrations
+
+  # black temporary files
+  | blib2to3
+  | tests/data
+)/
+'''

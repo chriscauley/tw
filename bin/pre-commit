@@ -13,7 +13,8 @@ if [[ ! -z "$PY_FILES" ]]; then
     . .venv/bin/activate
     for FILE in $PY_FILES
     do
-        black -q "$FILE" --check
+        #! TODO renable this when in @ python3.6
+        # black -q "$FILE" --check
         flake8 "$FILE"
         if [[ "$?" -ne "0" ]]; then
             PASS=false
