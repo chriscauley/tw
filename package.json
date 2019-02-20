@@ -6,8 +6,9 @@
   "source": true,
   "scripts": {
     "lint": "eslint client/",
-    "serve": "parcel client/index.html -p 6473 --public-url /static/",
-    "test": "parcel client/tests/index.html -p 2324"
+    "serve": "yarn img && yarn parcel client/index.html -p 6473 --public-url /static/",
+    "test": "parcel client/tests/index.html -p 2324",
+    "img": "cp client/img/sprites/*.png dist"
   },
   "repository": {
     "type": "git",
