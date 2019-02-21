@@ -8,4 +8,7 @@ uR.ready(() => {
   uR.admin.start()
   slicer.Sheet.__makeMeta()
   slicer.Sprite.__makeMeta()
+  uR.db.ready(() => {
+    slicer.css.createAllSpriteCSS()
+  })
 })

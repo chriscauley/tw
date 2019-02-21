@@ -6,7 +6,7 @@
   "source": true,
   "scripts": {
     "lint": "eslint client/",
-    "serve": "yarn img && yarn parcel client/index.html -p 6473 --public-url /static/",
+    "serve": "yarn img && yarn parcel client/index.html -p 6473 --public-url /static/ --no-hmr",
     "test": "parcel client/tests/index.html -p 2324",
     "img": "cp client/img/sprites/*.png dist"
   },

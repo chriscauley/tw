@@ -2,9 +2,7 @@ import uR from 'unrest.io'
 import { Sheet, Sprite } from '../models'
 
 <ur-sprite-preview>
-  <div>
-    <img src={sprite.dataURL} width={sprite.scale*3}/>
-  </div>
+  <div class="sprite sprite-{sprite.name}"></div>
   <b>{sprite.name}</b>
 </ur-sprite-preview>
 
