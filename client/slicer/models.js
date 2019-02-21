@@ -1,6 +1,6 @@
 import uR from 'unrest.io'
 
-const { Model, Int, String, APIManager } = uR.db
+const { Model, Int, String, APIManager, ForeignKey } = uR.db
 
 const FILENAME_CHOICES = [
   '16_colors_14.png',
@@ -9,7 +9,7 @@ const FILENAME_CHOICES = [
   'ProjectUtumno_full.png',
 ]
 
-export default class Sheet extends Model {
+export class Sheet extends Model {
   static slug = 'server.Sheet'
   static manager = APIManager
   static editable_fieldnames = ['name', 'filename']
@@ -20,5 +20,19 @@ export default class Sheet extends Model {
   }
   __str__() {
     return this.name
+  }
+}
+
+export class Sprite extends Model {
+  static slug = 'server.Sprite'
+  static manager = APIManager
+  static editable_fieldnames = ['name']
+  static fields = {
+    id: Int(),
+    name: String(),
+    sheet: ForeignKey(Sheet),
+    scale: Int(),
+    x: Int(),
+    y: Int(),
   }
 }
