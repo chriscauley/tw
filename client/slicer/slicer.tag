@@ -11,6 +11,7 @@ const loadImage = src => new Promise(resolve => {
   img.src = src
 })
 
+
 <ur-slicer>
   <div ref="bg" onmousemove={onMouseMove} onmousedown={onMouseDown}>
     <div ref="box"></div>
@@ -22,6 +23,7 @@ const loadImage = src => new Promise(resolve => {
       <select ref="scale" onchange={update}>
         <option>16</option>
         <option selected="selected">32</option>
+        <option>34</option>
       </select>
     </label>
     <label>
@@ -34,9 +36,11 @@ const loadImage = src => new Promise(resolve => {
     </label>
   </div>
   <div class="outputs" hide={!show_output}>
-    <div class="close" onclick={hideOutput}>close</div>
     <div class="checkered">
       <div class="bgout" ref="bgout" onclick={removeColor}></div>
+    </div>
+    <div if={show_output}>
+      <ur-form model={uR.db.server.Sprite} initial={sprite_data} submit={saveSprite}></ur-form>
     </div>
   </div>
 
@@ -64,7 +68,10 @@ this.on("update", () => {
   if (!this.img) { return }
   const { src, width, height } = this.img
   const { box, bg, bgout } = this.refs
-  bg.style.fontSize = bgout.style.fontSize= zoom * scale + "px"
+  bg.style.fontSize = zoom * scale + "px"
+  if (bgout) {
+    bgout.style.fontSize = zoom * scale + "px"
+  }
   box.style.borderWidth = zoom + "px"
   box.style.margin = -zoom+"px"
   bg.style.backgroundImage = `url(${src})`
@@ -95,6 +102,12 @@ this.onMouseDown = e => {
   const [X,Y] = getXY(e)
   const x = X * scale
   const y = Y * scale
+  this.sprite_data = {
+    sheet: this.sheet,
+    x,
+    y,
+    scale,
+  }
   this.canvas = document.createElement("canvas")
   const w = this.canvas.width = scale
   const h = this.canvas.height = scale
@@ -118,5 +131,20 @@ removeColor(e) {
 hideOutput() {
   this.show_output = false
 }
+
+saveSprite(form) {
+  const img_data = {
+    sheet: this.sheet,
+    dataURL: this.canvas.toDataURL()
+  }
+  const data = _.merge(form.getData(),this.sprite_data,img_data)
+  const obj = Sprite.objects.all().find(s => s.name === data.name)
+  if (obj) { data.id = obj }
+  Sprite.objects.create(data).then(() => {
+    this.hideOutput()
+    this.update()
+  })
+}
+
 </script>
 </ur-slicer>

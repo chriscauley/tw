@@ -34,5 +34,6 @@ export class Sprite extends Model {
     scale: Int(),
     x: Int(),
     y: Int(),
+    dataURL: String(),
   }
 }
