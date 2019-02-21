@@ -3,9 +3,9 @@ ur-slicer {
   overflow: auto;
 }
 ur-slicer [ref=bg] {
+  .pixelated;
   background-repeat: no-repeat;
   background-size: contain;
-  image-rendering: pixelated;
   position: relative;
   [ref=box] {
     border: black solid;
@@ -48,10 +48,10 @@ ur-slicer .outputs {
     cursor: pointer;
   }
   .bgout {
+    .pixelated;
     background-size: contain;
     cursor: crosshair;
     height: 2em;
-    image-rendering: pixelated;
     width: 2em;
   }
 }
@@ -67,4 +67,12 @@ ur-slicer .checkered {
     background-size:20px 20px;
     background-position:0 0, 0 0, -10px -10px, 10px 10px;
   }
+}
+
+ur-sprite-preview {
+  .pixelated;
+  margin-bottom: 1rem;
+  outline: 1px black solid;
+  text-align: center;
+  width: 175px;
 }
