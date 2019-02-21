@@ -1,7 +1,7 @@
 import uR from 'unrest.io'
-import { Sheet, Sprite } from './models'
+import { Sheet, Sprite } from '../models'
 import _ from "lodash"
-import { fillBucket } from '../canvas'
+import { fillBucket } from '../../canvas'
 
 const loadImage = src => new Promise(resolve => {
   const img = new Image();

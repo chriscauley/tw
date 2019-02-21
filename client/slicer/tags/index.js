@@ -1,1 +1,2 @@
 import './sheet'
+import './slicer'
