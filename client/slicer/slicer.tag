@@ -1,5 +1,5 @@
 import uR from 'unrest.io'
-import Sheet from './Sheet'
+import { Sheet, Sprite } from './models'
 import _ from "lodash"
 import { fillBucket } from '../canvas'
 

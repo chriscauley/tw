@@ -1,6 +1,7 @@
 import './routes'
-import Sheet from './Sheet'
+import { Sheet, Sprite } from './models'
 
 export default {
   Sheet,
+  Sprite,
 }

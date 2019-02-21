@@ -7,4 +7,5 @@ import slicer from './slicer'
 uR.ready(() => {
   uR.admin.start()
   slicer.Sheet.__makeMeta()
+  slicer.Sprite.__makeMeta()
 })
