@@ -1,26 +1,31 @@
-@scale: 100/10vh;
+@scale: 1em;
+@red: #a00;
 
 .loop(@counter) when (@counter > -1) {
   .loop((@counter - 1));
-  @w: ~"w@{counter}";
+  @w: ~"w-@{counter}";
   .@{w} {
     width: (@scale * @counter);
   }
-  @h: ~"h@{counter}";
+  @h: ~"h-@{counter}";
   .@{h} {
     height: (@scale * @counter);
+    &.board {
+      font-size: 100vh / @counter;
+    }
   }
-  @x: ~"x@{counter}";
+  @x: ~"x-@{counter}";
   .@{x} {
     left: (@scale * @counter);
   }
-  @y: ~"y@{counter}";
+  @y: ~"y-@{counter}";
   .@{y} {
     top: (@scale * @counter);
   }
 }
 
 #html-renderer {
+  .pixelated;
   &:empty { display: none; }
   background: #333;
   display: flex;
@@ -28,7 +33,7 @@
   justify-content: space-around;
   height: 100%;
   width: 100%;
-  .loop(9);
+  .loop(20);
   position: relative;
   &:not(:focus):before {
     background: rgba(255,255,255,0.75);
@@ -60,12 +65,11 @@
   }
   .piece,.square {
     position: absolute;
-    &.color-red { background: red; }
+    &.color-red { background: @red; }
     &.color-grey { background: grey; }
   }
   .player {
-    border-radius: 100%;
-    &:before { content: "u"; }
+    border-radius: 25%;
   }
   .piece {
     line-height: 1;
@@ -75,31 +79,59 @@
     height: 0.8 * @scale;
     width: 0.8 * @scale;
   }
+  .piece {
+    border: 0.1 * @scale solid transparent;
+  }
   .dxy-10 {
-    border-right: 0.2 * @scale solid red;
+    border-right-color: @red;
   }
   .dxy--10 {
-    border-left: 0.2 * @scale solid red;
+    border-left-color: @red;
   }
   .dxy-01 {
-    border-bottom: 0.2 * @scale solid red;
+    border-bottom-color: @red;
   }
   .dxy-0-1 {
-    border-top: 0.2 * @scale solid red;
+    border-top-color: @red;
   }
-  .walker:before {
-    content: "W";
+  .player {
+    &.dxy-10 {
+      border-right-color: blue;
+    }
+    &.dxy--10 {
+      border-left-color: blue;
+    }
+    &.dxy-01 {
+      border-bottom-color: blue;
+    }
+    &.dxy-0-1 {
+      border-top-color: blue;
+    }
   }
-  .seeker:before {
-    content: "S";
+
+
+  .waiting-0, .waiting-1, .waiting-2, .waiting-3 {
+    &:after {
+      background-color: grey;
+      bottom: 0;
+      content: "";
+      display: block;
+      height: 0.2 * @scale;
+      position: absolute;
+      right: 0;
+      width: 0.2 * @scale;
+    }
   }
-  .drifter:before {
-    content: "D";
+  .waiting-0 {
+    &:after {
+      background-color: red;
+    }
   }
-  .bouncer:before {
-    content: "B";
-  }
-  .charger:before {
-    content: "C";
-  }
+  @import "./_damage.less";
 }
+
+.sprite {
+  background: center no-repeat;
+  background-size: .8 * @scale;
+}
+

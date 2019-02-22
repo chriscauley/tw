@@ -3,24 +3,29 @@ import move from '../move'
 const type_map = {
   walker: {
     short: 'w',
+    sprite: 'zombie',
     tasks: [move.wait(1), move.forward, move.flip],
   },
   seeker: {
     short: 's',
+    sprite: 'skeleton',
     tasks: [move.findEnemy, move.wait(1), move.follow],
   },
   drifter: {
     tasks: [move.wait(1), move.attackNearby, move.forwardRandomly],
     short: 'd',
+    sprite: 'bat',
   },
   bouncer: {
     tasks: [move.cycle(move.flip, move.forward)],
     short: 'b',
+    sprite: 'blueblob',
   },
   charger: {
     tasks: [move.target(move.forward, { reset_look: true })],
     short: 'c',
-    opts: { speed: 3, dxy: [0, 0] },
+    sprite: 'beholder',
+    opts: { sight: 4, speed: 4, dxy: [0, 0] },
   },
 }
 
@@ -31,6 +36,8 @@ type_map.names.forEach(name => {
   type_map.short2type[type.short] = name
 })
 
-type_map.player = {}
+type_map.player = {
+  sprite: 'warrior',
+}
 
 export default type_map

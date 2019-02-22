@@ -1,4 +1,6 @@
 import uR from 'unrest.io'
+import types from '../piece/types'
+import control from '../piece/system'
 
 const ready = new uR.Ready()
 
@@ -31,7 +33,7 @@ class RenderBoard extends uR.db.Model {
   }
   getClass() {
     const { W, H } = this.board
-    return `board w${W} h${H}`
+    return `board w-${W} h-${H}`
   }
   update() {
     if (!this.container) {
@@ -50,19 +52,36 @@ class RenderBoard extends uR.db.Model {
     this.cache[piece.id].className = getClassName(piece)
   }
   removePiece = piece => {
-    this.cache[piece.id].remove()
+    this.cache[piece.id].classList.add('dead')
+    this.cache[piece.id] = undefined
   }
 }
 
 const getClassName = entity => {
-  const { xy, color, name, type, dxy } = entity
-  let className = `${name} ${type} x${xy[0]} y${xy[1]} w1 h1`
-  if (color) {
-    className += ` color-${color}`
+  const { xy, color, name, type, dxy, waiting } = entity
+  const { sprite } = types[type]
+  const last_move = control.last_move[entity.id]
+  const extras = {
+    sprite,
+    color,
+    waiting,
+    dxy: dxy.join(''),
+    damage: last_move && last_move.damage && dxy.join(''),
+    x: xy[0],
+    y: xy[1],
   }
-  if (dxy) {
-    className += ` dxy-${dxy.join('')}`
+
+  if (entity.target_dxy) {
+    extras.waiting = 0
   }
+
+  let className = `${name} ${type} w-1 h-1 sprite`
+  Object.entries(extras).forEach(([key, value]) => {
+    if (value === undefined) {
+      return
+    }
+    className += ` ${key}-${value}`
+  })
   return className
 }
 
@@ -79,7 +98,7 @@ class RenderOne extends uR.db.Model {
   }
   getClass() {
     const { xy, color } = this.obj
-    return `${this.type} x${xy[0]} y${xy[1]} w1 h1 color-${color}`
+    return `${this.type} x-${xy[0]} y-${xy[1]} w-1 h-1 color-${color}`
   }
   draw = () => {
     this.sprite = uR.element.create('div', {

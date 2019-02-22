@@ -1,0 +1,67 @@
+@_shift: 0.5em;
+.piece {
+  animation-duration: 0.4s; /* a bit longer than the rest */
+  &.damage-10 {
+    animation-name: damage-10;
+  }
+  &.damage--10 {
+    animation-name: damage--10;
+  }
+  &.damage-01 {
+    animation-name: damage-01;
+  }
+  &.damage-0-1 {
+    animation-name: damage-0-1;
+  }
+  &.dead {
+    opacity: 0;
+  }
+}
+
+@keyframes damage-10 {
+  0% {
+    transform: translateX(0)
+  }
+  50% {
+    transform: translateX(@_shift)
+  }
+  100% {
+    transform: translateX(0)
+  }
+}
+
+@keyframes damage--10 {
+  0% {
+    transform: translateX(0)
+  }
+  50% {
+    transform: translateX(-@_shift)
+  }
+  100% {
+    transform: translateX(0)
+  }
+}
+
+@keyframes damage-01 {
+  0% {
+    transform: translateY(0)
+  }
+  50% {
+    transform: translateY(@_shift)
+  }
+  100% {
+    transform: translateY(0)
+  }
+}
+
+@keyframes damage-0-1 {
+  0% {
+    transform: translateY(0)
+  }
+  50% {
+    transform: translateY(-@_shift)
+  }
+  100% {
+    transform: translateY(0)
+  }
+}

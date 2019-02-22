@@ -1,5 +1,7 @@
 import types from './types'
 
+const last_move = {}
+
 const getMove = piece => {
   let move = {}
   types[piece.type].tasks.find(task => {
@@ -11,7 +13,8 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, { xy, dxy = piece.dxy, damage, afterMove }) => {
+const applyMove = (piece, move) => {
+  const { xy, dxy = piece.dxy, damage, afterMove } = move
   if (damage) {
     const target_square = piece.board.getSquare(damage.xy)
     applyDamage(target_square, damage.count)
@@ -21,8 +24,9 @@ const applyMove = (piece, { xy, dxy = piece.dxy, damage, afterMove }) => {
   }
   piece.dxy = dxy
   if (afterMove) {
-    afterMove(piece)
+    afterMove(piece, move)
   }
+  last_move[piece.id] = move
 }
 
 const applyDamage = (square, count) => {
@@ -58,4 +62,5 @@ export default {
   canAttackSquare,
   canAttackPiece,
   canMoveOn,
+  last_move,
 }
