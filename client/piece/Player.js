@@ -18,6 +18,7 @@ const getMove = (player, dxy) => {
     return {
       damage: { xy: square.xy, count: player.damage },
       done: true,
+      dxy,
     }
   }
 

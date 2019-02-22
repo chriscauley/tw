@@ -45,7 +45,7 @@ export const forwardRandomly = (piece, move = {}) => {
   for (const dxy of Random.fp.shuffle(piece, dxy_list)) {
     move = forward(piece, move, dxy)
     if (move.done) {
-      move.turn = geo.dxy.ZERO
+      move.dxy = geo.dxy.ZERO
       return move
     }
   }
