@@ -1,5 +1,14 @@
 // this will eventually be a ur-canvas library
 
+export const loadImage = src =>
+  new Promise(resolve => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve({ status: 'error', img })
+
+    img.src = src
+  })
+
 export const fillBucket = (
   canvas,
   { color_distance = 0, x, y, fill_color = [0, 0, 0, 0], log },
