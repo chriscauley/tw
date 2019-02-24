@@ -10,13 +10,18 @@ const FILENAME_CHOICES = [
   'ProjectUtumno_full.png',
 ]
 
-export class Sheet extends Model {
-  static slug = 'server.Sheet'
-  static manager = APIManager
-  static editable_fieldnames = ['name', 'filename']
+class NamedModel extends Model {
   static fields = {
     id: Int(),
     name: String(),
+  }
+}
+
+export class Sheet extends NamedModel {
+  static manager = APIManager
+  static slug = 'server.Sheet'
+  static editable_fieldnames = ['name', 'filename']
+  static fields = {
     filename: String('', { choices: FILENAME_CHOICES }),
   }
   __str__() {
@@ -24,17 +29,25 @@ export class Sheet extends Model {
   }
 }
 
-export class Sprite extends Model {
-  static slug = 'server.Sprite'
+export class Sprite extends NamedModel {
   static manager = APIManager
+  static slug = 'server.Sprite'
   static editable_fieldnames = ['name']
   static fields = {
-    id: Int(),
-    name: String(),
     sheet: ForeignKey(Sheet),
     scale: Int(),
     x: Int(),
     y: Int(),
     dataURL: String(),
+  }
+}
+
+export class CompositeSprite extends NamedModel {
+  static manager = APIManager
+  static slug = 'server.CompositeSprite'
+  static editable_fieldnames = ['name', 'scale', 'recipe']
+  static fields = {
+    scale: Int(),
+    recipe: String(),
   }
 }

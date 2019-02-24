@@ -1,13 +1,22 @@
 // this will eventually be a ur-canvas library
 
-export const loadImage = src =>
-  new Promise(resolve => {
+export const loadImage = src => {
+  if (loadImage.cache[src]) {
+    return Promise.resolve(loadImage.cache[src])
+  }
+  return new Promise(resolve => {
     const img = new Image()
-    img.onload = () => resolve(img)
+    img.onload = () => {
+      loadImage.cache[src] = img
+      resolve(img)
+    }
     img.onerror = () => resolve({ status: 'error', img })
 
     img.src = src
   })
+}
+
+loadImage.cache = {}
 
 export const changePixel = (canvas, { x, y, color }) => {
   const ctx = canvas.getContext('2d')

@@ -33,7 +33,7 @@ class RenderBoard extends uR.db.Model {
   }
   getClass() {
     const { W, H } = this.board
-    return `board w-${W} h-${H}`
+    return `board w-${W} h-${H} tile tile-chessfloor`
   }
   update() {
     if (!this.container) {

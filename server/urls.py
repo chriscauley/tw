@@ -8,7 +8,7 @@ from unrest.nopass.views import create as nopass_create
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/nopass/', include('unrest.nopass.urls')),
-    re_path('api/(server).(Sheet|Sprite)/$', unrest.views.superuser_api_view),
+    re_path('api/(server).([^/]+)/$', unrest.views.superuser_api_view),
     path("user.json", unrest.views.user_json),
     path("api/auth/register/", nopass_create),
 ]
