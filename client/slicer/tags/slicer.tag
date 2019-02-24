@@ -1,7 +1,7 @@
 import uR from 'unrest.io'
 import { Sheet, Sprite } from '../models'
 import _ from "lodash"
-import { loadImage, fillBucket } from '../../canvas'
+import { loadImage, fillBucket, changePixel } from '../../canvas'
 
 
 <ur-slicer>
@@ -114,9 +114,16 @@ this.onMouseDown = e => {
 
 removeColor(e) {
   const { offsetX, offsetY } = e
-  const x = Math.floor(0.5*offsetX / zoom)
-  const y = Math.floor(0.5*offsetY / zoom)
-  fillBucket(this.canvas,{ x, y })
+  const opts = {
+    x: Math.floor(0.5*offsetX / zoom),
+    y: Math.floor(0.5*offsetY / zoom),
+    color: e.ctrlKey?[0,0,0,255]:[0,0,0,0],
+  }
+  if (e.shiftKey) {
+    changePixel(this.canvas, opts)
+  } else {
+    fillBucket(this.canvas, opts)
+  }
   this.refs.bgout.style.backgroundImage = `url(${this.canvas.toDataURL()})`
 }
 

@@ -9,9 +9,16 @@ export const loadImage = src =>
     img.src = src
   })
 
+export const changePixel = (canvas, { x, y, color }) => {
+  const ctx = canvas.getContext('2d')
+  const id = ctx.createImageData(1, 1)
+  id.data.forEach((_, i) => (id.data[i] = color[i]))
+  ctx.putImageData(id, x, y)
+}
+
 export const fillBucket = (
   canvas,
-  { color_distance = 0, x, y, fill_color = [0, 0, 0, 0], log },
+  { color_distance = 0, x, y, color = [0, 0, 0, 0], log },
 ) => {
   const { width, height } = canvas
   const context = canvas.getContext('2d')
@@ -29,8 +36,8 @@ export const fillBucket = (
   }
 
   // filling alternative aplha not supported yet
-  // const final_alpha = fill_color[4]
-  fill_color[4] = 255
+  // const final_alpha = color[4]
+  color[4] = 255
 
   let pixel_position = 4 * (y * width + x)
   function getColor(data, p) {
@@ -76,19 +83,19 @@ export const fillBucket = (
     if (!matchColorDistance(node_color, target_color)) {
       continue
     }
-    // this next line only matters if fill_color and target_color are within the matchColorDistance
-    if (sameColor(node_color, fill_color)) {
+    // this next line only matters if color and target_color are within the matchColorDistance
+    if (sameColor(node_color, color)) {
       return
     }
     pixels += 1
-    cld[pixel_position] = fill_color[0]
-    cld[pixel_position + 1] = fill_color[1]
-    cld[pixel_position + 2] = fill_color[2]
-    cld[pixel_position + 3] = fill_color[3]
-    fld[pixel_position] = fill_color[0]
-    fld[pixel_position + 1] = fill_color[1]
-    fld[pixel_position + 2] = fill_color[2]
-    fld[pixel_position + 3] = fill_color[3]
+    cld[pixel_position] = color[0]
+    cld[pixel_position + 1] = color[1]
+    cld[pixel_position + 2] = color[2]
+    cld[pixel_position + 3] = color[3]
+    fld[pixel_position] = color[0]
+    fld[pixel_position + 1] = color[1]
+    fld[pixel_position + 2] = color[2]
+    fld[pixel_position + 3] = color[3]
 
     if (x !== 0) {
       pixel_stack.push([x - 1, y])
