@@ -29,7 +29,7 @@ const type_map = {
     opts: { sight: 4, speed: 4, dxy: [0, 0] },
   },
   jumper: {
-    tasks: [move.wait(2), move.follow, move.forwardRandomly],
+    tasks: [move.wait(1), move.follow, move.forwardRandomly],
     short: 'j',
     sprite: 'goblin',
     opts: { speed: 2 },

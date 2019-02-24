@@ -42,6 +42,10 @@ class RenderBoard extends uR.db.Model {
     this.board.className = this.getClass()
     this.squares.forEach(square => square.update())
     this.board.pieces.forEach(this.renderPiece)
+    const [x, y] = this.board.pieces[0].xy
+    const { style } = this.container
+    style.marginLeft = `-${x + 0.5}em`
+    style.marginTop = `-${y + 0.5}em`
   }
   renderPiece = piece => {
     if (!this.cache[piece.id]) {

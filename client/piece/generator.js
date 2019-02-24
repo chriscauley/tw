@@ -1,7 +1,7 @@
 import types from '../piece/types'
 
 export const randomPiece = game => {
-  const enemies = 'ssjj'
+  const enemies = 'ssjjc'
   const { board } = game
 
   return () => {
