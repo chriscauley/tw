@@ -17,8 +17,8 @@ export default class extends Random.Mixin(Model) {
   }
   constructor(opts) {
     super(opts)
-    this.W = this.W || this.random.int(10)
-    this.H = this.H || this.random.int(10)
+    this.W = 20 //this.W || this.random.int(10)
+    this.H = 20 //this.W || this.random.int(10)
     this.reset()
   }
   getSquare([x, y]) {

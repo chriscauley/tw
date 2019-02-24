@@ -1,11 +1,14 @@
 import types from '../piece/types'
+import _ from 'lodash'
 
 export const randomPiece = game => {
-  const enemies = 'ssjjc'
+  const enemies = 'sjcdwb'
+  const enemy_count = 50
   const { board } = game
 
   return () => {
-    enemies.split('').forEach(short => {
+    _.range(enemy_count).forEach(i => {
+      const short = enemies[i % enemies.length]
       let xy
       while (!xy) {
         //#! TODO this should it's own randomness

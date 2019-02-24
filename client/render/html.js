@@ -22,13 +22,13 @@ class RenderBoard extends uR.db.Model {
       className: this.getClass(),
       parent: this.parent,
     })
-    this.squares = this.board.squares.map(
+    /*this.squares = this.board.squares.map(
       square =>
         new RenderSquare({
           obj: square,
           parent: this.container,
         }),
-    )
+    )*/
     this.update()
   }
   getClass() {
@@ -40,7 +40,7 @@ class RenderBoard extends uR.db.Model {
       return
     }
     this.board.className = this.getClass()
-    this.squares.forEach(square => square.update())
+    //this.squares.forEach(square => square.update())
     this.board.pieces.forEach(this.renderPiece)
     const [x, y] = this.board.pieces[0].xy
     const { style } = this.container

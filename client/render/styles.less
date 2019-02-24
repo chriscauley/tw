@@ -3,7 +3,6 @@
 
 .loop(@counter) when (@counter > -1) {
   .loop((@counter - 1));
-  @c: @counter + 1;
   @w: ~"w-@{counter}";
   .@{w} {
     width: (@scale * @counter);
@@ -11,9 +10,6 @@
   @h: ~"h-@{counter}";
   .@{h} {
     height: (@scale * @counter);
-    &.board {
-      font-size: 100vh / (@counter+1);
-    }
   }
   @x: ~"x-@{counter}";
   .@{x} {
@@ -32,13 +28,14 @@
 #html-renderer {
   .pixelated;
   align-items: center;
-  background: #333;
+  background: black;
   display: flex;
   height: 100%;
+  margin: 0 auto;
   justify-content: space-around;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: 100vh;
   .loop(20);
   &:empty { display: none; }
   &:not(:focus):before {
@@ -60,6 +57,7 @@
 
 #html-renderer {
   .board {
+    font-size: 100vh / 9;
     position: absolute;
     top: 50%;
     left: 50%;
