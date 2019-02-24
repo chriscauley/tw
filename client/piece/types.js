@@ -20,7 +20,8 @@ const type_map = {
   bouncer: {
     tasks: [move.cycle(move.flip, move.forward)],
     short: 'b',
-    sprite: 'blueblob',
+    opts: { sight: 0 },
+    sprite: 'blueslime',
   },
   charger: {
     tasks: [move.target(move.forward, { reset_look: true })],
@@ -45,6 +46,7 @@ type_map.names.forEach(name => {
 
 type_map.player = {
   sprite: 'warrior',
+  opts: { health: 1000 },
 }
 
 export default type_map

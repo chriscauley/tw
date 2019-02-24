@@ -25,6 +25,7 @@ const PIECE_DEFAULTS = {
   sight: 3, // follow friends/enemies this many squares away
   loss_sight: 3, // loses sight at sight+loss_sight distance
   wait_time: 1, // wait this many turns inbetween moves
+  i_cycle: 0,
   damage: 1,
   health: 1,
   team: 0,
@@ -44,6 +45,7 @@ const newPiece = opts => {
       'speed',
       '_PRNG',
       'waiting',
+      'i_cycle',
     ]),
     name: 'piece',
   })

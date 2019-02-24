@@ -4,10 +4,9 @@ const last_move = {}
 
 const getMove = piece => {
   let move = {}
-  types[piece.type].tasks.find((task, i) => {
+  types[piece.type].tasks.find(task => {
     move = task(piece, move)
     if (move.done) {
-      move.priority = i
       return move
     }
   })

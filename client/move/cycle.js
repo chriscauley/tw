@@ -1,11 +1,10 @@
 export default (...actions) => {
-  let i = 0
+  const tick = piece => (piece.i_cycle = (piece.i_cycle + 1) % actions.length)
+
   return (piece, move) => {
-    const task = actions[i]
+    const task = actions[piece.i_cycle]
     move = task(piece, move)
-    if (move.done) {
-      move.afterMove = () => (i = (i + 1) % actions.length)
-    }
+    move.afterMove = tick
     return move
   }
 }
