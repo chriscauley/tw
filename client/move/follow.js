@@ -4,7 +4,7 @@ import control from '../piece/system'
 
 export default (piece, move) => {
   if (!piece.following) {
-    return
+    return move
   }
   const target = piece.following
   const [dx, dy] = geo.vector.subtract(target.xy, piece.xy)

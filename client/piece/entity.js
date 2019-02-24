@@ -21,10 +21,12 @@ const newEntity = (opts = {}) => {
 }
 
 const PIECE_DEFAULTS = {
-  speed: 1,
+  speed: 1, // moves this many spaces
+  sight: 3, // follow friends/enemies this many squares away
+  loss_sight: 3, // loses sight at sight+loss_sight distance
+  wait_time: 1, // wait this many turns inbetween moves
   damage: 1,
   health: 1,
-  sight: 3,
   team: 0,
 }
 

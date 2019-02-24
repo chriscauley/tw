@@ -49,4 +49,5 @@ export const forwardRandomly = (piece, move = {}) => {
       return move
     }
   }
+  return move
 }

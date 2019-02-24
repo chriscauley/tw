@@ -1,6 +1,5 @@
 import attackNearby from './attackNearby'
 
-import findEnemy from './findEnemy'
 import follow from './follow'
 
 import flip from './flip'
@@ -13,7 +12,6 @@ import wait from './wait'
 export default {
   attackNearby,
 
-  findEnemy,
   follow,
 
   flip,

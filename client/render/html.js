@@ -58,13 +58,14 @@ class RenderBoard extends uR.db.Model {
 }
 
 const getClassName = entity => {
-  const { xy, color, name, type, dxy, waiting } = entity
+  const { xy, color, name, type, dxy, waiting, follow_order } = entity
   const { sprite } = types[type]
   const last_move = control.last_move[entity.id]
   const extras = {
     sprite,
     color,
     waiting,
+    follow_order,
     dxy: dxy.join(''),
     damage: last_move && last_move.damage && dxy.join(''),
     x: xy[0],

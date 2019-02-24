@@ -6,6 +6,7 @@ window.riot = riot
 import { newPlayer } from './piece/entity'
 import piece_controller from './piece/system'
 import * as player_controller from './piece/Player'
+import follow from './piece/follow'
 import Board from './board/Board'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
@@ -50,10 +51,10 @@ export default class Game extends uR.db.Model {
     if (this.checkVictory()) {
       this.spawnPieces()
     } else {
-      this.board.pieces.forEach(piece => {
-        if (piece.type === 'player') {
-          return
-        }
+      // pieces should eventually handle which team is moving
+      const pieces = this.board.pieces.filter(p => p.type !== 'player')
+      follow(pieces) // #! TODO this takes upto 15ms!
+      pieces.forEach(piece => {
         const move = piece_controller.getMove(piece)
         if (move) {
           piece_controller.applyMove(piece, move)

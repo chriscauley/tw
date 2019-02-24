@@ -4,15 +4,16 @@ const type_map = {
   walker: {
     short: 'w',
     sprite: 'zombie',
+    opts: { sight: 0 },
     tasks: [move.wait(1), move.forward, move.flip],
   },
   seeker: {
     short: 's',
     sprite: 'skeleton',
-    tasks: [move.findEnemy, move.wait(1), move.follow],
+    tasks: [move.wait(1), move.follow],
   },
   drifter: {
-    tasks: [move.wait(1), move.attackNearby, move.forwardRandomly],
+    tasks: [move.wait(1), move.follow, move.forwardRandomly],
     short: 'd',
     sprite: 'bat',
   },
@@ -26,6 +27,12 @@ const type_map = {
     short: 'c',
     sprite: 'beholder',
     opts: { sight: 4, speed: 4, dxy: [0, 0] },
+  },
+  jumper: {
+    tasks: [move.wait(2), move.follow, move.forwardRandomly],
+    short: 'j',
+    sprite: 'goblin',
+    opts: { speed: 2 },
   },
 }
 
