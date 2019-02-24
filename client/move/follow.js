@@ -8,9 +8,8 @@ export default (piece, move) => {
   }
   const target = piece.following
   const [dx, dy] = geo.vector.subtract(target.xy, piece.xy)
-  const distance = Math.abs(dx) + Math.abs(dy)
 
-  if (target.health <= 0 || distance > piece.sight * 2) {
+  if (target.health <= 0) {
     return {
       ...move,
       afterMove: () => (piece.following = undefined),
