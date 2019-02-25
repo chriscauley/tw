@@ -6,30 +6,29 @@ const forward = (piece, move, dxy = piece.dxy) => {
   // move forward up to piece.speed squraes
   // if an enemy is in the way, attack that enemy
   const dxys = geo.look.line[dxy][piece.speed]
-  const squares = geo.look.lookMany(piece.square, dxys)
 
-  squares.find(square => {
-    // update move until a square is blocked
-    if (control.canAttackSquare(piece, square)) {
+  // update move until a square is blocked or damage is done
+  geo.look.lookMany(piece.xy, dxys).find(xy => {
+    if (control.canAttack(piece, xy)) {
       move = {
         ...move,
-        damage: { xy: square.xy, count: piece.damage },
-        dxy: dxy,
+        damage: { xy, count: piece.damage },
+        dxy,
         done: true,
       }
+      return true
     }
 
-    if (!control.canMoveOn(piece, square, dxy)) {
-      // can't move onto square, continue
-      return move
+    if (!control.canMoveOn(piece, xy, dxy)) {
+      return true
     }
 
-    // square is open, modify move to move ont square
+    // square is open, modify move to move onto square
     // return nothing to check next square
     move = {
       ...move,
-      xy: square.xy,
-      dxy: dxy,
+      xy,
+      dxy,
       done: true,
     }
   })

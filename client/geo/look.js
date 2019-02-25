@@ -10,14 +10,11 @@ const look = {}
 window.LOOK = look
 export default look
 
-look.lookMany = (square, deltas, dxy = [0, 0]) =>
-  // #! TODO why was the third argument, dxy, here?
-  square.board.getSquares(
-    deltas.map(delta => vector.sum([square.xy, delta, dxy])),
-  )
+// #! TODO why was the third argument, dxy, here?
+look.lookMany = (xy, deltas, dxy = [0, 0]) =>
+  deltas.map(delta => vector.sum([xy, delta, dxy]))
 
-look.lookOne = (square, dxy) =>
-  square.board.getSquare(vector.add(square.xy, dxy))
+look.lookOne = (xy, dxy) => vector.add(xy, dxy)
 
 look.Mixin = superclass =>
   class extends superclass {

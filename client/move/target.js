@@ -7,8 +7,8 @@ export default (
   action,
   {
     geometry = 'line',
-    pass, // pass(piece,square) will trigger targeting
-    fail, // fail(piece,square) will break search
+    pass, // pass(piece,xy) will trigger targeting
+    fail, // fail(piece,xy) will break search
     reset_look, // look [0,0] after doAction
     instant, // triggers instantly
     wait_triggered, // triggers instantly if wait is exhausted
@@ -16,14 +16,10 @@ export default (
   },
 ) => {
   if (!pass) {
-    pass = (piece, square) => {
-      return control.canAttackSquare(piece, square)
-    }
+    pass = (piece, xy) => control.canAttack(piece, xy)
   }
   if (!fail) {
-    fail = (piece, square) => {
-      return !control.canMoveOn(piece, square)
-    }
+    fail = (piece, xy) => !control.canMoveOn(piece, xy)
   }
 
   const afterMove = piece => {
@@ -38,12 +34,12 @@ export default (
 
   const acquireTarget = (piece, move) => {
     for (const dxy of DXYS) {
-      const squares = geo.look.lookMany(
-        piece.square,
+      const xys = geo.look.lookMany(
+        piece.xy,
         geometries[dxy][range || piece.sight],
       )
-      for (const square of squares) {
-        if (square && pass(piece, square)) {
+      for (const xy of xys) {
+        if (pass(piece, xy)) {
           if (instant || (wait_triggered && !piece.waiting)) {
             return doAction(piece, { afterMove }, dxy)
           }
@@ -55,7 +51,7 @@ export default (
             },
           }
         }
-        if (!square || fail(piece, square)) {
+        if (fail(piece, xy)) {
           break
         }
       }

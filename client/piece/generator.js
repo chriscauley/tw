@@ -1,22 +1,27 @@
 import types from '../piece/types'
+import control from '../piece/system'
 import _ from 'lodash'
 
 export const randomPiece = game => {
-  const enemies = 'sjcdwb'
-  const enemy_count = 50
+  const enemies = 'bsjcdw'
+  const enemy_count = 6
   const { board } = game
 
   return () => {
     _.range(enemy_count).forEach(i => {
       const short = enemies[i % enemies.length]
       let xy
-      while (!xy) {
+      let tries = 0
+      /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+      while (true) {
+        tries++
+        if (tries > 100) {
+          throw 'unable to find square!'
+        }
         //#! TODO this should it's own randomness
-        const x = board.random.int(board.W)
-        const y = board.random.int(board.H)
-        const square = board.getSquare([x, y])
-        if (!square.piece) {
-          xy = square.xy
+        xy = [board.random.int(board.W), board.random.int(board.H)]
+        if (control.canMoveOn({ board }, xy)) {
+          break
         }
       }
       board.newPiece({

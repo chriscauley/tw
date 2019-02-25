@@ -1,5 +1,3 @@
-import attackNearby from './attackNearby'
-
 import follow from './follow'
 
 import flip from './flip'
@@ -10,8 +8,6 @@ import cycle from './cycle'
 import wait from './wait'
 
 export default {
-  attackNearby,
-
   follow,
 
   flip,

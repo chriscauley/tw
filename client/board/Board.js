@@ -3,59 +3,97 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 import Random from 'ur-random'
 
-import Square from './Square'
 import { newPiece } from '../piece/entity'
 
-const { Int, Model, List } = uR.db
+const { Int, Model } = uR.db
 
 export default class extends Random.Mixin(Model) {
   static slug = 'board.Board'
   static fields = {
     W: Int(0),
     H: Int(0),
-    squares: List(Square),
   }
+  static opts = {
+    room_generator: undefined,
+  }
+  i2xy = i => [i % this.W, Math.floor(i / this.W)]
+  xy2i = ([x, y]) => x + y * this.W
+
   constructor(opts) {
     super(opts)
     this.W = 20 //this.W || this.random.int(10)
     this.H = 20 //this.W || this.random.int(10)
+
     this.reset()
   }
-  getSquare([x, y]) {
-    if (x < 0 || x >= this.W) {
+
+  getOne = (type, xy) => {
+    if (!_.inRange(xy[0], 0, this.W) || !_.inRange(xy[1], 0, this.H)) {
       return undefined
     }
-    return this.squares[x + y * this.W]
-  }
-  getSquares(xys) {
-    return xys.map(xy => this.getSquare(xy)).filter(s => s)
-  }
-  reset() {
-    this.rows = _.range(this.H).map(y =>
-      _.range(this.W).map(x => new Square({ xy: [x, y], board: this })),
-    )
-    this.squares = _.concat(...this.rows)
-    this.pieces = []
+    return this.entities[type][this.xy2i(xy)]
   }
 
-  addPiece(piece) {
-    if (piece.board === this) {
-      return // idempotent
+  getMany(type, xys) {
+    return xys.map(xy => this.getOne(type, xy)).filter(i => i)
+  }
+
+  setOne(type, xy, obj) {
+    this.entities[type][this.xy2i(xy)] = obj
+  }
+
+  setPiece(xy, piece) {
+    const i = this.xy2i(xy)
+
+    const old = this.entities.piece[i]
+    if (old && old !== piece) {
+      throw 'Pauli Exclusion error'
     }
-    if (piece.board) {
+
+    if (piece.xy && piece.board) {
+      // remove from old position
       piece.board.removePiece(piece)
     }
+
     piece.board = this
-    this.pieces.push(piece)
+    piece.xy = xy
+    this.entities.piece[i] = piece
+  }
+
+  getPieces() {
+    return Object.values(this.entities.piece)
+  }
+
+  reset() {
+    this.entities = {
+      square: {}, // it exists!
+      wall: {},
+      piece: {},
+      color: {}, // used in debug only... for now
+    }
+
+    const rooms = this.room_generator({})
+    this.pieces = {}
+    this.walls = {}
+    this.W = 0
+    this.H = 0
+    rooms.forEach(({ x_max, y_max }) => {
+      this.W = Math.max(x_max + 1, this.W)
+      this.H = Math.max(y_max + 1, this.H)
+    })
+    rooms.forEach(({ xys, walls }) => {
+      xys.forEach(xy => this.setOne('square', xy, true))
+      walls.forEach(xy => this.setOne('wall', xy, 1))
+    })
   }
 
   newPiece(opts) {
     const piece = newPiece(opts)
-    this.getSquare(piece.xy).addPiece(piece)
+    this.setPiece(piece.xy, piece)
   }
 
   removePiece(piece) {
-    _.remove(this.pieces, piece)
+    delete this.entities.piece[this.xy2i(piece.xy)]
     this.renderer.removePiece(piece)
   }
 }

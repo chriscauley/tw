@@ -13,16 +13,15 @@ const addMoves = (...moves) => {
 
 const getMove = (player, dxy) => {
   let xy = vector.add(player.xy, dxy)
-  const square = player.board.getSquare(xy)
-  if (control.canAttackSquare(player, square)) {
+  if (control.canAttack(player, xy)) {
     return {
-      damage: { xy: square.xy, count: player.damage },
+      damage: { xy, count: player.damage },
       done: true,
       dxy,
     }
   }
 
-  if (!control.canMoveOn(player, square)) {
+  if (!control.canMoveOn(player, xy)) {
     xy = undefined
   }
   return {

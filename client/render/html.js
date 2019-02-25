@@ -13,8 +13,10 @@ class RenderBoard extends uR.db.Model {
   constructor(opts) {
     super(opts)
     this.board.renderer = this
-    this.pieces = []
-    this.cache = {}
+    this.cache = {
+      piece: {},
+      wall: {},
+    }
     this.draw()
   }
   draw = () => {
@@ -22,13 +24,7 @@ class RenderBoard extends uR.db.Model {
       className: this.getClass(),
       parent: this.parent,
     })
-    /*this.squares = this.board.squares.map(
-      square =>
-        new RenderSquare({
-          obj: square,
-          parent: this.container,
-        }),
-    )*/
+    Object.entries(this.board.entities.wall).forEach(this.renderWall)
     this.update()
   }
   getClass() {
@@ -40,25 +36,49 @@ class RenderBoard extends uR.db.Model {
       return
     }
     this.board.className = this.getClass()
-    //this.squares.forEach(square => square.update())
-    this.board.pieces.forEach(this.renderPiece)
-    const [x, y] = this.board.pieces[0].xy
+    Object.values(this.board.entities.piece).forEach(this.renderPiece)
+    const [x, y] = this.board.player.xy
     const { style } = this.container
     style.marginLeft = `-${x + 0.5}em`
     style.marginTop = `-${y + 0.5}em`
   }
   renderPiece = piece => {
-    if (!this.cache[piece.id]) {
-      this.cache[piece.id] = uR.element.create('div', {
+    if (!this.cache.piece[piece.id]) {
+      this.cache.piece[piece.id] = uR.element.create('div', {
         parent: this.container,
       })
     }
-    this.cache[piece.id].className = getClassName(piece)
+    this.cache.piece[piece.id].className = getClassName(piece)
   }
   removePiece = piece => {
-    this.cache[piece.id].classList.add('dead')
-    this.cache[piece.id] = undefined
+    if (!piece.health) {
+      this.cache.piece[piece.id].classList.add('dead')
+      this.cache.piece[piece.id] = undefined
+    }
   }
+  renderWall = ([i, value]) => {
+    if (!this.cache.wall[i]) {
+      this.cache.wall[i] = uR.element.create('div', {
+        parent: this.container,
+      })
+    }
+    const [x, y] = this.board.i2xy(i)
+    const sprite = 'wall' + value
+    const opts = { w: 1, h: 1, x, y, sprite }
+
+    this.cache.wall[i].className = 'square sprite ' + objToClassString(opts)
+  }
+}
+
+const objToClassString = obj => {
+  const items = []
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value === undefined) {
+      return
+    }
+    items.push(`${key}-${value}`)
+  })
+  return items.join(' ')
 }
 
 const getClassName = entity => {
@@ -80,48 +100,12 @@ const getClassName = entity => {
     extras.waiting = 0
   }
 
-  let className = `${name} ${type} w-1 h-1 sprite`
-  Object.entries(extras).forEach(([key, value]) => {
-    if (value === undefined) {
-      return
-    }
-    className += ` ${key}-${value}`
-  })
+  let className = `${name} ${type} w-1 h-1 sprite `
+  className += objToClassString(extras)
   return className
-}
-
-class RenderOne extends uR.db.Model {
-  static opts = {
-    parent: uR.REQUIRED,
-    obj: uR.REQUIRED,
-  }
-  constructor(opts) {
-    super(opts)
-    this.type = this.constructor.slug.split('.')[1].toLowerCase()
-    this.obj.renderer = this
-    this.draw()
-  }
-  getClass() {
-    const { xy, color } = this.obj
-    return `${this.type} x-${xy[0]} y-${xy[1]} w-1 h-1 color-${color}`
-  }
-  draw = () => {
-    this.sprite = uR.element.create('div', {
-      className: this.getClass(),
-      parent: this.parent,
-    })
-  }
-  update() {
-    this.sprite.className = this.getClass()
-  }
-}
-
-class RenderSquare extends RenderOne {
-  static slug = 'render_html.Square'
 }
 
 export default {
   ready,
   RenderBoard,
-  RenderSquare,
 }

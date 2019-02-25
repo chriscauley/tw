@@ -33,11 +33,12 @@ export default (piece, move) => {
   }
 
   for (const direction of dirs) {
-    const square = geo.look.lookOne(piece.square, direction)
-    if (!square) {
+    const xy = geo.look.lookOne(piece.xy, direction)
+    if (!piece.board.getOne('square', xy)) {
       continue
     }
-    if (square.piece === piece.following || control.canMoveOn(piece, square)) {
+    const target = piece.board.getOne('piece', xy)
+    if (target === piece.following || control.canMoveOn(piece, xy)) {
       // get it!
       return forward(piece, move, direction)
     }

@@ -10,6 +10,7 @@ import follow from './piece/follow'
 import Board from './board/Board'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
+import room from './board/Room'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
@@ -18,6 +19,7 @@ export default class Game extends uR.db.Model {
     parent: '#html-renderer',
     piece_generator: () => {},
     victory_condition: killAllEnemies,
+    room_generator: room.zelda,
   }
   constructor(opts) {
     super(opts)
@@ -52,7 +54,7 @@ export default class Game extends uR.db.Model {
       this.spawnPieces()
     } else {
       // pieces should eventually handle which team is moving
-      const pieces = this.board.pieces.filter(p => p.type !== 'player')
+      const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
       pieces.forEach(piece => {
         const move = piece_controller.getMove(piece)
@@ -66,17 +68,19 @@ export default class Game extends uR.db.Model {
 
   makeBoard() {
     this.board = new Board({
+      room_generator: this.room_generator,
       _SEED: 11111111,
     })
   }
 
-  makePlayer() {
+  makePlayer(xy = [2, 2]) {
     this.player = newPlayer({
       type: 'player',
-      xy: [4, 4],
       dxy: [0, 1],
+      xy,
     })
-    this.board.addPiece(this.player)
+    this.board.player = this.player
+    this.board.setPiece(xy, this.player)
   }
 
   makeRenderer = () => {

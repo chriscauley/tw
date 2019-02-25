@@ -38,10 +38,8 @@ export default pieces => {
   // find and follow enemy, mark non-enemies as "could follow"
   needs_following = needs_following.filter(piece => {
     const dxys = geo.look.circle['1,0'][piece.sight] // should accomodate cross
-    const target_pieces = geo.look
-      .lookMany(piece.square, dxys)
-      .map(square => square.piece)
-      .filter(p => p)
+    const xys = geo.look.lookMany(piece.xy, dxys)
+    const target_pieces = piece.board.getMany('piece', xys)
 
     // these should be sorted by proximity, follow nearest enemy
     const enemy = target_pieces.find(target => _isEnemy(piece, target))
