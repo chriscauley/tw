@@ -3,8 +3,8 @@ import control from '../piece/system'
 import _ from 'lodash'
 
 export const randomPiece = game => {
-  const enemies = 'bsjcdw'
-  const enemy_count = 6
+  const enemies = 's' //'bsjcdw'
+  const enemy_count = 12
   const { board } = game
 
   return () => {

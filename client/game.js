@@ -49,7 +49,7 @@ export default class Game extends uR.db.Model {
     this.spawnPieces = this.piece_generator(this)
   }
 
-  nextTurn() {
+  nextTurn = uR.performance.timeIt('nextTurn', () => {
     if (this.checkVictory()) {
       this.spawnPieces()
     } else {
@@ -64,7 +64,7 @@ export default class Game extends uR.db.Model {
       })
     }
     this.trigger('nextturn')
-  }
+  })
 
   makeBoard() {
     this.board = new Board({

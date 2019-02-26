@@ -3,6 +3,7 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 import Random from 'ur-random'
 
+import { connectRooms } from './Room'
 import { newPiece } from '../piece/entity'
 
 const { Int, Model } = uR.db
@@ -70,21 +71,23 @@ export default class extends Random.Mixin(Model) {
       wall: {},
       piece: {},
       color: {}, // used in debug only... for now
+      path: {}, // path to walk down
     }
 
-    const rooms = this.room_generator({})
+    this.rooms = this.room_generator({})
     this.pieces = {}
     this.walls = {}
     this.W = 0
     this.H = 0
-    rooms.forEach(({ x_max, y_max }) => {
+    this.rooms.forEach(({ x_max, y_max }) => {
       this.W = Math.max(x_max + 1, this.W)
       this.H = Math.max(y_max + 1, this.H)
     })
-    rooms.forEach(({ xys, walls }) => {
+    this.rooms.forEach(({ xys, walls }) => {
       xys.forEach(xy => this.setOne('square', xy, true))
       walls.forEach(xy => this.setOne('wall', xy, 1))
     })
+    connectRooms(this)
   }
 
   newPiece(opts) {

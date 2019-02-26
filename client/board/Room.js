@@ -1,9 +1,5 @@
-// #! TODO
-// a square a can be in a board and a room
-// the big difference between a board and a room is that the square's coordinate
-// system matches the board, not the room
-
 import _ from 'lodash'
+import geo from '../geo'
 
 /* A room generator should output 
    {
@@ -65,14 +61,50 @@ const printRoom = ({
 //printRoom(room({ W: 4, H: 4, x0: 5, y0: 2 }))
 /* eslint-enable */
 
-export const zelda = ({ room_count = 1, room_size = 6, spacing = 1 }) => {
-  return _.range(room_count).map(i => {
-    const x0 = i * (room_size + spacing)
-    const y0 = 0
-    return room({ x0, y0, W: room_size, H: room_size })
+export const zelda = ({ room_count = 5, room_size = 9, spacing = 3 }) => {
+  return _.flatten(
+    _.range(room_count).map(y => {
+      const y0 = y * (room_size + spacing)
+      return _.range(room_count).map(x => {
+        // _x is [0...room_count] or the reverse dependent on
+        const _x = y % 2 ? room_count - x - 1 : x
+        const x0 = _x * (room_size + spacing)
+        return room({ x0, y0, W: room_size, H: room_size })
+      })
+    }),
+  )
+}
+
+export const connectRooms = board => {
+  const { rooms } = board
+  const centers = rooms.map(r => r.center)
+  let last_center = (board.start = centers[0])
+  let xy = [...last_center]
+  board.setOne('path', xy, true)
+
+  centers.slice(1).map(center => {
+    const dxys = geo.vector.iterDifference(last_center, center)
+    dxys.forEach(dxy => {
+      // take a step, make a path, tear down any walls
+      xy = geo.vector.subtract(xy, dxy)
+      board.setOne('square', xy, true)
+      board.setOne('path', xy, true)
+      board.setOne('wall', xy, 0)
+
+      // check for non-squares next to path, turn them into walls
+      geo.vector.splitDxy(dxy).forEach(side_dxy => {
+        const xy2 = geo.vector.add(xy, side_dxy)
+        if (!board.getOne('square', xy2)) {
+          board.setOne('square', xy2, true)
+          board.setOne('wall', xy2, 1)
+        }
+      })
+    })
+    last_center = center
   })
 }
 
 export default {
   zelda,
+  connectRooms,
 }
