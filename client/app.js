@@ -13,3 +13,5 @@ uR.ready(() => {
     slicer.css.createAllSpriteCSS()
   })
 })
+
+import './performance'

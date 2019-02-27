@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 export const randomPiece = game => {
   const enemies = 's' //'bsjcdw'
-  const enemy_count = 12
+  const enemy_count = 120
   const { board } = game
 
   return () => {
