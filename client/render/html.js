@@ -43,8 +43,9 @@ class RenderBoard extends uR.db.Model {
       piece: {},
       wall: {},
       path: {},
+      void: {},
     }
-    this.names = ['wall', 'path', 'piece']
+    this.names = ['wall', 'path', 'piece', 'void']
     this.draw()
   }
   draw = () => {
@@ -88,10 +89,15 @@ class RenderBoard extends uR.db.Model {
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
     const results = {}
+    let value
     this.names.forEach(name => {
       results[name] = []
       xys.forEach(xy => {
-        const value = this.board.getOne(name, xy)
+        if (name === 'void') {
+          value = !this.board.getOne('square', xy)
+        } else {
+          value = this.board.getOne(name, xy)
+        }
         if (value) {
           results[name].push([xy, value])
         }
