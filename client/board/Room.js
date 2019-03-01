@@ -100,7 +100,17 @@ export const connectRooms = board => {
         }
       })
     })
+
     last_center = center
+  })
+
+  // paths are done, determine their directionality
+  Object.entries(board.entities.path).forEach(([i, _true]) => {
+    const xy = board.i2xy(i)
+    const path_connections = geo.dxy.list.map(dxy =>
+      board.getOne('path', geo.vector.add(xy, dxy)) ? 1 : 0,
+    )
+    board.setOne('path', xy, path_connections.join(''))
   })
 }
 

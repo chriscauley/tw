@@ -13,25 +13,32 @@ class RenderBoard extends uR.db.Model {
   constructor(opts) {
     super(opts)
     this.board.renderer = this
+    this.sprites = {
+      wall: 'dwarfwall',
+      path: 'blood',
+    }
     this.cache = {
       piece: {},
       wall: {},
+      path: {},
     }
     this.draw()
+    this.update = uR.performance.wrapFunction('update', this.update)
   }
   draw = () => {
     this.container = uR.element.create('div', {
       className: this.getClass(),
       parent: this.parent,
     })
-    Object.entries(this.board.entities.wall).forEach(this.renderWall)
+    Object.entries(this.board.entities.wall).forEach(this.renderOne('wall'))
+    Object.entries(this.board.entities.path).forEach(this.renderOne('path'))
     this.update()
   }
   getClass() {
     const { W, H } = this.board
     return `board w-${W} h-${H} tile tile-chessfloor`
   }
-  update() {
+  update = () => {
     if (!this.container) {
       return
     }
@@ -56,17 +63,17 @@ class RenderBoard extends uR.db.Model {
       this.cache.piece[piece.id] = undefined
     }
   }
-  renderWall = ([i, value]) => {
-    if (!this.cache.wall[i]) {
-      this.cache.wall[i] = uR.element.create('div', {
+  renderOne = type => ([i, value]) => {
+    if (!this.cache[type][i]) {
+      this.cache[type][i] = uR.element.create('div', {
         parent: this.container,
       })
     }
     const [x, y] = this.board.i2xy(i)
-    const sprite = 'wall' + value
+    const sprite = this.sprites[type] + value
     const opts = { w: 1, h: 1, x, y, sprite }
 
-    this.cache.wall[i].className = 'square sprite ' + objToClassString(opts)
+    this.cache[type][i].className = 'square sprite ' + objToClassString(opts)
   }
 }
 

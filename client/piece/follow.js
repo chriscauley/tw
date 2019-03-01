@@ -21,6 +21,9 @@ const _canStillFollow = (piece, target, match) => {
 export default pieces => {
   // pieces without sight cannot see
   pieces = pieces.filter(p => p.sight)
+
+  // order is useful in optimizing performance as it tracks iterations of follow
+  // currently not in use anywhere
   pieces.forEach(p => (p.follow_order = undefined))
 
   // track who is and isn't following
