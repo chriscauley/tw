@@ -17,8 +17,8 @@ export default class extends Random.Mixin(Model) {
   static opts = {
     room_generator: undefined,
   }
-  i2xy = i => [i % this.W, Math.floor(i / this.W)]
-  xy2i = ([x, y]) => x + y * this.W
+  i2xy = i => this._i2xy[i]
+  xy2i = xy => this._xy2i[xy[0]][xy[1]]
 
   constructor(opts) {
     super(opts)
@@ -29,9 +29,6 @@ export default class extends Random.Mixin(Model) {
   }
 
   getOne = (type, xy) => {
-    if (!_.inRange(xy[0], 0, this.W) || !_.inRange(xy[1], 0, this.H)) {
-      return undefined
-    }
     return this.entities[type][this.xy2i(xy)]
   }
 
@@ -65,6 +62,21 @@ export default class extends Random.Mixin(Model) {
     return Object.values(this.entities.piece)
   }
 
+  cacheCoordinates() {
+    this._xy2i = {}
+    this._i2xy = {}
+    // 8 rows of buffer
+    // #! TOOD buffer should be made with xy, offset in rooms
+    _.range(-8, this.H + 8).forEach(x => (this._xy2i[x] = {}))
+
+    _.range(this.W).forEach(x => {
+      _.range(this.H).forEach(y => {
+        const i = (this._xy2i[x][y] = x + y * this.W)
+        this._i2xy[i] = [x, y]
+      })
+    })
+  }
+
   reset() {
     this.entities = {
       square: {}, // it exists!
@@ -83,6 +95,7 @@ export default class extends Random.Mixin(Model) {
       this.W = Math.max(x_max + 1, this.W)
       this.H = Math.max(y_max + 1, this.H)
     })
+    this.cacheCoordinates()
     this.rooms.forEach(({ xys, walls }) => {
       xys.forEach(xy => this.setOne('square', xy, true))
       walls.forEach(xy => this.setOne('wall', xy, 1))
