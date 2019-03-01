@@ -1,8 +1,16 @@
+import _ from 'lodash'
+
 import uR from 'unrest.io'
 import types from '../piece/types'
 import control from '../piece/system'
+import geo from '../geo'
 
 const ready = new uR.Ready()
+
+// javascript has no actual modulo operator
+const mod = (n, m) => {
+  return ((n % m) + m) % m
+}
 
 class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
@@ -13,6 +21,20 @@ class RenderBoard extends uR.db.Model {
   constructor(opts) {
     super(opts)
     this.board.renderer = this
+    // _r = "radius", but for a square not diamond...
+    // should be 2 larger than actual visible radius
+    // this hides the "poping" as element show/hide
+    this._r = 6
+    this.size = this._r * 2 + 1
+    this.dxys = []
+    const dimension = _.range(-this._r, this._r + 1)
+
+    dimension.forEach(dx => {
+      dimension.forEach(dy => {
+        this.dxys.push([dx, dy])
+      })
+    })
+
     this.sprites = {
       wall: 'dwarfwall',
       path: 'blood',
@@ -22,59 +44,92 @@ class RenderBoard extends uR.db.Model {
       wall: {},
       path: {},
     }
+    this.names = ['wall', 'path', 'piece']
     this.draw()
-    this.update = uR.performance.wrapFunction('update', this.update)
   }
   draw = () => {
     this.container = uR.element.create('div', {
       className: this.getClass(),
       parent: this.parent,
     })
-    Object.entries(this.board.entities.wall).forEach(this.renderOne('wall'))
-    Object.entries(this.board.entities.path).forEach(this.renderOne('path'))
+
+    this.floor = this.newDiv('__floor')
+
     this.update()
   }
   getClass() {
     const { W, H } = this.board
     const extra = window.location.search.includes('huge') ? 'huge' : ''
-    return `board w-${W} h-${H} tile tile-chessfloor ${extra}`
+    return `board w-${W} h-${H} ${extra}`
+  }
+
+  getFloorClass(xy) {
+    const x = xy[0] - this._r
+    const y = xy[1] - this._r
+    const opts = {
+      x,
+      y,
+      w: this.size,
+      h: this.size,
+      offset: `${mod(x, 2)}${mod(y, 2)}`,
+    }
+    return `floor tile tile-chessfloor ${objToClassString(opts)}`
   }
   update = () => {
     if (!this.container) {
       return
     }
-    this.board.className = this.getClass()
-    Object.values(this.board.entities.piece).forEach(this.renderPiece)
-    const [x, y] = this.board.player.xy
+    const { xy } = this.board.player
+    this.floor.className = this.getFloorClass(xy)
     const { style } = this.container
-    style.marginLeft = `-${x + 0.5}em`
-    style.marginTop = `-${y + 0.5}em`
-  }
-  renderPiece = piece => {
-    if (!this.cache.piece[piece.id]) {
-      this.cache.piece[piece.id] = uR.element.create('div', {
-        parent: this.container,
+    style.marginLeft = `-${xy[0] + 0.5}em`
+    style.marginTop = `-${xy[1] + 0.5}em`
+
+    // get lists of all the items to draw by entity name
+    const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
+    const results = {}
+    this.names.forEach(name => {
+      results[name] = []
+      xys.forEach(xy => {
+        const value = this.board.getOne(name, xy)
+        if (value) {
+          results[name].push([xy, value])
+        }
       })
-    }
-    this.cache.piece[piece.id].className = getClassName(piece)
+    })
+
+    this.names.forEach(name => {
+      results[name].forEach(([xy, value], index) => {
+        if (name === 'piece') {
+          index = value.id
+        }
+        if (!this.cache[name][index]) {
+          this.cache[name][index] = this.newDiv(`${name}-${index}`)
+        }
+        this.cache[name][index].className = this.renderOne(name)([xy, value])
+      })
+    })
+  }
+
+  newDiv(id) {
+    return uR.element.create('div', { parent: this.container, id })
   }
   removePiece = piece => {
     if (!piece.health) {
-      this.cache.piece[piece.id].classList.add('dead')
+      const element = this.cache.piece[piece.id]
+      element.classList.add('dead')
       this.cache.piece[piece.id] = undefined
+      setTimeout(() => element.remove(), 2000)
     }
   }
-  renderOne = type => ([i, value]) => {
-    if (!this.cache[type][i]) {
-      this.cache[type][i] = uR.element.create('div', {
-        parent: this.container,
-      })
+  renderOne = name => ([xy, value]) => {
+    if (name === 'piece') {
+      return renderEntity(value)
     }
-    const [x, y] = this.board.i2xy(i)
-    const sprite = this.sprites[type] + value
-    const opts = { w: 1, h: 1, x, y, sprite }
+    const sprite = this.sprites[name] + value
+    const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite }
 
-    this.cache[type][i].className = 'square sprite ' + objToClassString(opts)
+    return `square sprite ${name} ${objToClassString(opts)}`
   }
 }
 
@@ -89,7 +144,8 @@ const objToClassString = obj => {
   return items.join(' ')
 }
 
-const getClassName = entity => {
+// pieces and anything which is not a primative needs fancy rendering
+const renderEntity = entity => {
   const { xy, color, name, type, dxy, waiting, follow_order } = entity
   const { sprite } = types[type]
   const last_move = control.last_move[entity.id]

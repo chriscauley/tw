@@ -1,7 +1,7 @@
 @scale: 1em;
 @red: #a00;
 
-.loop(@counter) when (@counter > -1) {
+.loop(@counter) when (@counter > -8) {
   .loop((@counter - 1));
   @w: ~"w-@{counter}";
   .@{w} {
@@ -51,11 +51,17 @@
     top: 50%;
     left: 50%;
     margin: -9/2 * @scale;
-    z-index: 1;
+    z-index: 10;
   }
 }
 
 #html-renderer {
+  .path, .wall, .floor {
+    z-index: 0
+  }
+  .piece {
+    z-index: 1;
+  }
   .board {
     font-size: 100vh / 9;
     position: absolute;
@@ -64,6 +70,22 @@
     transition: margin 0.25s;
     &.huge {
       font-size: 100vh / 18;
+    }
+  }
+  .floor {
+    z-index: 0;
+    position: absolute;
+    &.offset-10 {
+      background-position: 1em 0;
+    }
+    &.offset-00 {
+      background-position: 0 0;
+    }
+    &.offset-01 {
+      background-position: 0 1em;
+    }
+    &.offset-11 {
+      background-position: 1em 1em;
     }
   }
   .square {
