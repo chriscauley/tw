@@ -36,7 +36,8 @@ class RenderBoard extends uR.db.Model {
   }
   getClass() {
     const { W, H } = this.board
-    return `board w-${W} h-${H} tile tile-chessfloor`
+    const extra = window.location.search.includes('huge') ? 'huge' : ''
+    return `board w-${W} h-${H} tile tile-chessfloor ${extra}`
   }
   update = () => {
     if (!this.container) {
