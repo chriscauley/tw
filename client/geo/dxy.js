@@ -1,8 +1,8 @@
 const MAP = new Map([
   ['N', [0, -1]], // up
-  ['S', [1, 0]], // down
-  ['W', [0, 1]], // left
-  ['E', [-1, 0]], // right
+  ['E', [1, 0]], // right
+  ['S', [0, 1]], // down
+  ['W', [-1, 0]], // left
 ])
 
 const dxy = {

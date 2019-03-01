@@ -21,6 +21,7 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
     <label>
       Zoom:
       <select ref="zoom" onchange={update}>
+        <option>1</option>
         <option>2</option>
         <option selected="selected">4</option>
         <option>6</option>
