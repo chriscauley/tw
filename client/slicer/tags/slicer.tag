@@ -22,8 +22,8 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
       Zoom:
       <select ref="zoom" onchange={update}>
         <option>1</option>
-        <option>2</option>
-        <option selected="selected">4</option>
+        <option selected="selected">2</option>
+        <option>4</option>
         <option>6</option>
       </select>
     </label>
@@ -111,6 +111,7 @@ this.onMouseDown = e => {
     0,0,w,h // destination coordinates
   )
   this.refs.bgout.style.backgroundImage = `url(${this.canvas.toDataURL()})`
+  setTimeout(() => document.querySelector("#__name").focus())
 }
 
 removeColor(e) {

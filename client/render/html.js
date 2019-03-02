@@ -37,7 +37,7 @@ class RenderBoard extends uR.db.Model {
 
     this.sprites = {
       wall: 'dwarfwall',
-      path: 'blood',
+      path: 'vine',
     }
     this.cache = {
       piece: {},
