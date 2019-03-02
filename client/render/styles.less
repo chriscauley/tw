@@ -30,28 +30,46 @@
   align-items: center;
   background: black;
   display: flex;
-  height: 100%;
   margin: 0 auto;
   justify-content: space-around;
   overflow: hidden;
   position: relative;
-  width: 100vh;
   .loop(60);
   &:empty { display: none; }
   &:not(:focus):before {
+    @size: 6em;
+    align-items: center;
     background: rgba(255,255,255,0.75);
     content: "click me!";
     cursor: pointer;
     display: flex;
-    align-items: center;
+    font-size: 0.5em;
+    height: @size;
     justify-content: center;
-    width: @scale * 9;
-    height: @scale * 9;
+    left: 50%;
     position: absolute;
     top: 50%;
-    left: 50%;
-    margin: -9/2 * @scale;
+    margin: -@size/2;
+    width: @size;
     z-index: 10;
+  }
+}
+
+#html-renderer {
+  @size: 9em;
+  height: @size;
+  width: @size;
+  font-size: 128px;
+  &.huge {
+    font-size: 64px;
+    height: @size*2;
+    width: @size*2;
+  }
+  @media (max-height: 128px*8) {
+    font-size: 64px;
+    &.huge {
+      font-size: 32px;
+    }
   }
 }
 
@@ -63,14 +81,10 @@
     z-index: 1;
   }
   .board {
-    font-size: 100vh / 9;
     position: absolute;
     top: 50%;
     left: 50%;
     transition: margin 0.25s;
-    &.huge {
-      font-size: 100vh / 18;
-    }
   }
   .floor {
     z-index: 0;

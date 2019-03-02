@@ -60,8 +60,10 @@ class RenderBoard extends uR.db.Model {
   }
   getClass() {
     const { W, H } = this.board
-    const extra = window.location.search.includes('huge') ? 'huge' : ''
-    return `board w-${W} h-${H} ${extra}`
+    if (window.location.search.includes('huge')) {
+      this.parent.classList.add('huge')
+    }
+    return `board w-${W} h-${H}`
   }
 
   getFloorClass(xy) {
