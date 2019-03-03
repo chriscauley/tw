@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Sheet, Sprite
+from .models import Sheet, Sprite, CompositeSprite
 
 
 @admin.register(Sheet)
@@ -16,3 +16,8 @@ class SpriteAdmin(admin.ModelAdmin):
     def img(self, obj):
         img = "<img src='%s' width=64/>" % obj.data['dataURL']
         return mark_safe(img)
+
+
+@admin.register(CompositeSprite)
+class CompositeSpriteAdmin(admin.ModelAdmin):
+    pass
