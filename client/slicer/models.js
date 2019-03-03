@@ -15,6 +15,9 @@ class NamedModel extends Model {
     id: Int(),
     name: String(),
   }
+  __str__() {
+    return this.name
+  }
 }
 
 export class Sheet extends NamedModel {
@@ -23,9 +26,6 @@ export class Sheet extends NamedModel {
   static editable_fieldnames = ['name', 'filename']
   static fields = {
     filename: String('', { choices: FILENAME_CHOICES }),
-  }
-  __str__() {
-    return this.name
   }
 }
 
