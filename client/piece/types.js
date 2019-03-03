@@ -18,6 +18,24 @@ const type_map = {
     tasks: [move.wait(1), move.follow],
     opts: { health: 8 },
   },
+  purpledragon: {
+    short: 'P',
+    sprite: ' sprite1x2-purpledragon',
+    tasks: [move.wait(1), move.follow],
+    opts: { health: 8 },
+  },
+  greydragon: {
+    short: 'G',
+    sprite: ' sprite1x2-greydragon',
+    tasks: [move.wait(1), move.follow],
+    opts: { health: 8 },
+  },
+  reddragon: {
+    short: 'R',
+    sprite: ' sprite1x2-reddragon',
+    tasks: [move.wait(1), move.follow],
+    opts: { health: 8 },
+  },
   drifter: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
     short: 'd',
