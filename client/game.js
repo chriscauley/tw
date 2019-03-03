@@ -20,6 +20,7 @@ export default class Game extends uR.db.Model {
     piece_generator: () => {},
     victory_condition: killAllEnemies,
     room_generator: room.zelda,
+    room_count: 1,
   }
   constructor(opts) {
     super(opts)

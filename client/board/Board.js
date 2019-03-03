@@ -16,6 +16,7 @@ export default class extends Random.Mixin(Model) {
   }
   static opts = {
     room_generator: undefined,
+    room_count: 1,
   }
   i2xy = i => this._i2xy[i]
   xy2i = xy => this._xy2i[xy[0]][xy[1]]
@@ -86,8 +87,7 @@ export default class extends Random.Mixin(Model) {
       path: {}, // path to walk down
     }
 
-    this.rooms = this.room_generator({})
-    this.pieces = {}
+    this.rooms = this.room_generator(this)
     this.walls = {}
     this.W = 0
     this.H = 0
@@ -101,6 +101,11 @@ export default class extends Random.Mixin(Model) {
       walls.forEach(xy => this.setOne('wall', xy, 1))
     })
     connectRooms(this)
+  }
+
+  listPieces() {
+    // used only in debugging from console
+    return Object.values(this.entities.pieces)
   }
 
   newPiece(opts) {
