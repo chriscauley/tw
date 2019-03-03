@@ -132,7 +132,13 @@ class RenderBoard extends uR.db.Model {
   }
   renderOne = name => ([xy, value]) => {
     if (name === 'piece') {
-      return renderEntity(value)
+      const { health, max_health } = value
+      const extras = {}
+      if (max_health > 1) {
+        extras.health = Math.ceil(health / this.board.player.damage)
+        extras.health = Math.min(extras.health, 5)
+      }
+      return renderEntity(value, extras)
     }
     const sprite = this.sprites[name] + value
     const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite }
@@ -153,11 +159,12 @@ const objToClassString = obj => {
 }
 
 // pieces and anything which is not a primative needs fancy rendering
-const renderEntity = entity => {
+const renderEntity = (entity, extras = {}) => {
   const { xy, color, name, type, dxy, waiting, follow_order } = entity
   const { sprite } = types[type]
   const last_move = control.last_move[entity.id]
-  const extras = {
+  extras = {
+    ...extras,
     sprite,
     color,
     waiting,

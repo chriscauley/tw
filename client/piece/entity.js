@@ -46,11 +46,15 @@ const newPiece = opts => {
       '_PRNG',
       'waiting',
       'i_cycle',
+      'max_health',
     ]),
     name: 'piece',
   })
   if (!piece.dxy) {
     piece.dxy = Random.fp.choice(piece, geo.dxy.list)
+  }
+  if (!piece.max_health) {
+    piece.max_health = piece.health
   }
   return piece
 }

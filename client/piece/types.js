@@ -16,6 +16,7 @@ const type_map = {
     short: 'B',
     sprite: ' sprite1x2-bluedragon',
     tasks: [move.wait(1), move.follow],
+    opts: { health: 8 },
   },
   drifter: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],

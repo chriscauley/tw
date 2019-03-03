@@ -194,6 +194,36 @@
     line-height: 1em;
   }*/
   @import "./_damage.less";
+  .health-1, .health-2, .health-3, .health-4, .health-5 {
+    &:before {
+      background-image: url('./img/sprites/heart64.png');
+      background-size: auto 100%;
+      bottom: 100%;
+      content: "";
+      height: 0.25em;
+      left: -0.1em; /* for border */
+      position: absolute;
+      width: 1em; /* 4 and above */
+    }
+  }
+  .health-1:before {
+    width: 0.25em;
+  }
+  .health-2:before {
+    width: 0.5em;
+  }
+  .health-3:before {
+    width: 0.75em;
+  }
+  .health-5 {
+    /* anything greater than 5 defaults to this */
+    &:before {
+      background-image: url('./img/sprites/heart64.png'), url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4ElEQVRYR+2V0QnEMAxD200yVkfsWNnkjkIPiutIVhwIB+lvLPtFset9m/ztk+tvC2A50OVArecHNW8pRzhvOJAV9YAiICGAnuI/IAZBAbzipRzNF6j1fJ0hCAhAije1DZ0bLwE8bi7pLktu7UsnJWolsZ4D5+IAShIGgJxjTejNu/T2yP7rjAGEliUaU9Y3KYBgYXjR4QDmH0Hz0wD0BtYBZreXqxtgRPFUEzYA5AvJAmOjHVM5nywIzaUQ9L8AysZDhnQ7kNkVT6AF0O3AbaO0LYf+CYVJg6FZB9Ic0wG+SNtiIdduLB4AAAAASUVORK5CYII=");
+      background-repeat: no-repeat;
+      background-position: 0.25em center, 0.5em center;
+      background-size: auto 100%, auto 100%;
+    }
+  }
 }
 
 .sprite {

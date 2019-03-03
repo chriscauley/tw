@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 export const randomPiece = game => {
   const enemies = 'Bs' //'bsjcdw'
-  const enemy_count = 120
+  const enemy_count = 10
   const { board } = game
 
   return () => {
@@ -25,9 +25,8 @@ export const randomPiece = game => {
         }
       }
       board.newPiece({
-        xy: xy,
+        xy,
         type: types.short2type[short],
-        health: 1,
         _PRNG: board.random.int(), //# !TODO ibid
       })
     })
