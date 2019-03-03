@@ -30,7 +30,9 @@ const createSpriteCSS = ({
 }
 
 const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
-  const rows = recipe.split(';').map(row => row.split(','))
+  const rows = recipe
+    .split(';')
+    .map(row => row.split(',').map(cell => cell.split('+')))
   const W = Math.max(...rows.map(r => r.length))
   const H = rows.length
   const canvas = uR.element.create('canvas', {
@@ -41,18 +43,20 @@ const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
   const promises = []
   const frames = []
   rows.forEach((row, ir) => {
-    row.forEach((name, ic) => {
-      const sprite = Sprite.objects.all().find(s => s.name === name)
-      if (!sprite) {
-        return console.error(name, 'has no sprite')
-      }
-      const { dataURL } = sprite
-      frames.push({
-        x: ic,
-        y: ir,
-        dataURL,
+    row.forEach((names, ic) => {
+      names.forEach(name => {
+        const sprite = Sprite.objects.all().find(s => s.name === name)
+        if (!sprite) {
+          return console.error(name, 'has no sprite')
+        }
+        const { dataURL } = sprite
+        frames.push({
+          x: ic,
+          y: ir,
+          dataURL,
+        })
+        promises.push(loadImage(dataURL))
       })
-      promises.push(loadImage(dataURL))
     })
   })
   Promise.all(promises)
