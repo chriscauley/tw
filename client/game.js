@@ -16,7 +16,7 @@ export default class Game extends uR.db.Model {
   static slug = 'game.Game'
   static opts = {
     RenderBoard: render_html.RenderBoard,
-    parent: '#html-renderer',
+    parent: '.html-renderer',
     piece_generator: () => {},
     victory_condition: killAllEnemies,
     room_generator: room.zelda,

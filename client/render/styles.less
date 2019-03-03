@@ -25,7 +25,7 @@
   }*/
 }
 
-#html-renderer {
+.html-renderer {
   .pixelated;
   align-items: center;
   background: black;
@@ -36,7 +36,7 @@
   position: relative;
   .loop(60);
   &:empty { display: none; }
-  &:not(:focus):before {
+  &[tabindex]:not(:focus):before {
     @size: 6em;
     align-items: center;
     background: rgba(255,255,255,0.75);
@@ -55,7 +55,7 @@
   }
 }
 
-#html-renderer {
+.html-renderer {
   @size: 9em;
   height: @size;
   width: @size;
@@ -73,7 +73,7 @@
   }
 }
 
-#html-renderer {
+.html-renderer {
   .path, .wall, .floor {
     z-index: 0
   }
