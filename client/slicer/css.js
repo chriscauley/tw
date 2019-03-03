@@ -42,7 +42,11 @@ const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
   const frames = []
   rows.forEach((row, ir) => {
     row.forEach((name, ic) => {
-      const { dataURL } = Sprite.objects.all().find(s => s.name === name)
+      const sprite = Sprite.objects.all().find(s => s.name === name)
+      if (!sprite) {
+        return console.error(name, 'has no sprite')
+      }
+      const { dataURL } = sprite
       frames.push({
         x: ic,
         y: ir,
