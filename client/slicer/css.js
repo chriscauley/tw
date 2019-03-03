@@ -65,7 +65,7 @@ const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
       createSpriteCSS({
         name,
         dataURL: canvas.toDataURL(),
-        prefix: '.tile.tile-',
+        prefix: `.sprite.sprite${W}x${H}-`,
         extra: `background-size: ${W}em ${H}em`,
       }),
     )

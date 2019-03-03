@@ -76,7 +76,7 @@ class RenderBoard extends uR.db.Model {
       h: this.size,
       offset: `${mod(x, 2)}${mod(y, 2)}`,
     }
-    return `floor tile tile-chessfloor ${objToClassString(opts)}`
+    return `floor sprite sprite2x2-chessfloor ${objToClassString(opts)}`
   }
   update = () => {
     if (!this.container) {

@@ -89,6 +89,7 @@
   .floor {
     z-index: 0;
     position: absolute;
+    background-repeat: repeat;
     &.offset-10 {
       background-position: 1em 0;
     }
@@ -128,6 +129,13 @@
     transition: 0.25s;
     height: 0.8 * @scale;
     width: 0.8 * @scale;
+    &.sprite1x2-bluedragon {
+      background-size: 1em auto;
+      background-position: top;
+      height: 1.6 * @scale;
+      margin: -0.6em 0 0;
+      width: 1em;
+    }
   }
   .piece {
     border: 0.1 * @scale solid transparent;

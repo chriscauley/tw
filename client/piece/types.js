@@ -12,6 +12,11 @@ const type_map = {
     sprite: 'skeleton',
     tasks: [move.wait(1), move.follow],
   },
+  bluedragon: {
+    short: 'B',
+    sprite: ' sprite1x2-bluedragon',
+    tasks: [move.wait(1), move.follow],
+  },
   drifter: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
     short: 'd',
