@@ -7,10 +7,10 @@ ur-slicer [ref=bg] {
   .pixelated;
   background-repeat: no-repeat;
   background-size: contain;
+  box-sizing: content-box;
   position: relative;
   [ref=box] {
     border: black solid;
-    box-sizing: content-box;
     height: 1em;
     position: absolute;
     width: 1em;
@@ -20,6 +20,17 @@ ur-slicer [ref=bg] {
     height: 100%;
     position: relative;
     width: 100%;
+  }
+  .sprite-box {
+    border: 1px solid black;
+    color: black;
+    background: rgba(255,255,255,0.9);
+    font-size: 12px;
+    position: absolute;
+    &:hover {
+      background: transparent;
+      color: transparent;
+    }
   }
 }
 

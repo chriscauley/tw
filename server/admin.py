@@ -11,6 +11,7 @@ class SheetAdmin(admin.ModelAdmin):
 
 @admin.register(Sprite)
 class SpriteAdmin(admin.ModelAdmin):
+    search_fields = ["data"]
     list_display = ["__str__", "img"]
 
     def img(self, obj):

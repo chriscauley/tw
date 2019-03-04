@@ -8,6 +8,8 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
   <div ref="bg" onmousemove={onMouseMove} onmousedown={onMouseDown}>
     <div ref="box"></div>
     <div ref="hover"></div>
+    <div if={show_sprites} each={sprite,i in sprites} class="sprite-box"
+         style={sprite.style}>{sprite.name}</div>
   </div>
   <div class="inputs">
     <label>
@@ -26,6 +28,10 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
         <option>4</option>
         <option>6</option>
       </select>
+    </label>
+    <label>
+      Highlight Sprites
+      <input ref="show_sprites" onchange={update} type="checkbox" />
     </label>
   </div>
   <div class="outputs" hide={!show_output}>
@@ -70,6 +76,22 @@ this.on("update", () => {
   bg.style.backgroundImage = `url(${src})`
   bg.style.width = width * zoom + "px"
   bg.style.height = height * zoom + "px"
+  this.show_sprites = this.refs.show_sprites.checked
+  if (!this.sprites || this.last_zoom !== zoom) {
+    this.last_zoom = zoom
+    this.sprites = Sprite.objects.all()
+      .filter(s => s.sheet === this.sheet)
+      .map( sprite => {
+        const { x, y, scale, name } = sprite
+        const style = {
+          width: scale * zoom,
+          height: scale * zoom,
+          top: y * zoom,
+          left: x * zoom,
+        }
+        return { name, style }
+      })
+  }
 })
 
 this.on("before-mount", () => {
@@ -143,6 +165,7 @@ saveSprite(form) {
   if (obj) { data.id = obj }
   Sprite.objects.create(data).then(() => {
     this.hideOutput()
+    this.sprites = undefined
     this.update()
   })
 }
