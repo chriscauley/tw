@@ -4,11 +4,12 @@ import uR from 'unrest.io'
 import Random from 'ur-random'
 
 import { connectRooms } from './Room'
+import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
 
 const { Int, Model } = uR.db
 
-export default class extends Random.Mixin(Model) {
+export default class extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'board.Board'
   static fields = {
     W: Int(0),
@@ -17,6 +18,7 @@ export default class extends Random.Mixin(Model) {
   static opts = {
     room_generator: undefined,
     room_count: 1,
+    game: undefined,
   }
   i2xy = i => this._i2xy[i]
   xy2i = xy => this._xy2i[xy[0]][xy[1]]
@@ -101,6 +103,7 @@ export default class extends Random.Mixin(Model) {
       walls.forEach(xy => this.setOne('wall', xy, 1))
     })
     connectRooms(this)
+    this.resetDialog()
   }
 
   listPieces() {
