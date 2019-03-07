@@ -63,12 +63,14 @@ export default class Game extends uR.db.Model {
           piece_controller.applyMove(piece, move)
         }
       })
+      this.board.checkDialog()
     }
     this.trigger('nextturn')
   }
 
   makeBoard() {
     this.board = new Board({
+      game: this,
       room_generator: this.room_generator,
       _SEED: 11111111,
     })
