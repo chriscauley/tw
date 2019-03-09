@@ -59,6 +59,11 @@ const type_map = {
     sprite: 'goblin',
     opts: { speed: 2 },
   },
+  boo: {
+    sprite: 'wisp',
+    short: 'u',
+    tasks: [move.ifLookedAt(move.booOff), move.doTwice(move.follow)],
+  },
 }
 
 type_map.names = Object.keys(type_map)

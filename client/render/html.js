@@ -160,8 +160,11 @@ const objToClassString = obj => {
 
 // pieces and anything which is not a primative needs fancy rendering
 const renderEntity = (entity, extras = {}) => {
-  const { xy, color, name, type, dxy, waiting, follow_order } = entity
-  const { sprite } = types[type]
+  const { xy, color, name, type, dxy, waiting, follow_order, _sprite } = entity
+  let { sprite } = types[type]
+  if (_sprite) {
+    sprite += _sprite
+  }
   const last_move = control.last_move[entity.id]
   extras = {
     ...extras,

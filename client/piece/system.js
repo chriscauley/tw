@@ -14,7 +14,10 @@ const getMove = piece => {
 }
 
 const applyMove = (piece, move) => {
-  const { xy, dxy = piece.dxy, damage, afterMove } = move
+  if (piece.preMove) {
+    piece.preMove()
+  }
+  const { xy, dxy = piece.dxy, damage, afterMove, preMove } = move
   if (damage) {
     const target = piece.board.getOne('piece', damage.xy)
     applyDamage(target, damage.count)
@@ -27,6 +30,7 @@ const applyMove = (piece, move) => {
     afterMove(piece, move)
   }
   last_move[piece.id] = move
+  piece.preMove = preMove
 }
 
 const applyDamage = (piece, count) => {
