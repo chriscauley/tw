@@ -27,6 +27,7 @@ class RenderBoard extends uR.db.Model {
     this._r = 6
     this.size = this._r * 2 + 1
     this.dxys = []
+    this.all_divs = []
     const dimension = _.range(-this._r, this._r + 1)
 
     dimension.forEach(dx => {
@@ -106,13 +107,17 @@ class RenderBoard extends uR.db.Model {
       })
     })
 
+    this.all_divs.forEach(d => (d.className = ''))
+
     this.names.forEach(name => {
       results[name].forEach(([xy, value], index) => {
         if (name === 'piece') {
           index = value.id
         }
         if (!this.cache[name][index]) {
-          this.cache[name][index] = this.newDiv(`${name}-${index}`)
+          this.all_divs.push(
+            (this.cache[name][index] = this.newDiv(`${name}-${index}`)),
+          )
         }
         this.cache[name][index].className = this.renderOne(name)([xy, value])
       })
