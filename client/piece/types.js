@@ -62,7 +62,8 @@ const type_map = {
   boo: {
     sprite: 'wisp',
     short: 'u',
-    tasks: [move.ifLookedAt(move.booOff), move.doTwice(move.follow)],
+    opts: { turns: 2 },
+    tasks: [move.ifLookedAt(move.booOff), move.follow],
   },
 }
 
@@ -75,7 +76,7 @@ type_map.names.forEach(name => {
 
 type_map.player = {
   sprite: 'warrior',
-  opts: { health: 1000 },
+  opts: { health: 4 },
 }
 
 export default type_map

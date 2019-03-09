@@ -7,7 +7,6 @@ import target from './target'
 import cycle from './cycle'
 import wait from './wait'
 
-import doTwice from './doTwice'
 import ifLookedAt from './ifLookedAt'
 import booOff from './booOff'
 
@@ -22,7 +21,6 @@ export default {
   cycle,
   wait,
 
-  doTwice,
   ifLookedAt,
   booOff,
 }

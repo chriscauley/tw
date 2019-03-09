@@ -58,9 +58,11 @@ export default class Game extends uR.db.Model {
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
       pieces.forEach(piece => {
-        const move = piece_controller.getMove(piece)
-        if (move) {
-          piece_controller.applyMove(piece, move)
+        for (let i = 0; i < piece.turns; i++) {
+          const move = piece_controller.getMove(piece)
+          if (move) {
+            piece_controller.applyMove(piece, move)
+          }
         }
       })
       this.board.checkDialog()

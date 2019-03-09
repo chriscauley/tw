@@ -29,6 +29,7 @@ const PIECE_DEFAULTS = {
   damage: 1,
   health: 1,
   team: 0,
+  turns: 1,
 }
 
 const newPiece = opts => {
