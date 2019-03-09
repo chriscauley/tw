@@ -231,5 +231,9 @@
 .sprite {
   background: center no-repeat;
   background-size: .8 * @scale;
+  &.hide {
+    filter: grayscale(1);
+    opacity: 0.5
+  }
 }
 

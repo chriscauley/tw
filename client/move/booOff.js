@@ -3,7 +3,7 @@ export default (piece, move) => {
     ...move,
     done: true,
     afterMove: () => {
-      piece._sprite = 'hide'
+      piece._sprite = ' hide'
       piece.invulnerable = true
     },
     preMove: () => {
