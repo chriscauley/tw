@@ -94,7 +94,7 @@ const type_map = {
   fireball: {
     sprite: 'fireball',
     short: 'f',
-    tasks: [move.forward, move.burnout],
+    tasks: [move.ifDidDamage(move.forward, move.burnout), move.burnout],
   },
   spitter: {
     sprite: 'o-eye',

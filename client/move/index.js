@@ -9,6 +9,8 @@ import wait from './wait'
 
 import ifLookedAt from './ifLookedAt'
 import ifHit from './ifHit'
+import ifDidDamage from './ifDidDamage'
+
 import booOff from './booOff'
 import teleport from './teleport'
 
@@ -32,6 +34,7 @@ export default {
 
   ifLookedAt,
   ifHit,
+  ifDidDamage,
   booOff,
   teleport,
 
