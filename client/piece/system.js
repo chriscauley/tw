@@ -22,6 +22,7 @@ const applyMove = (piece, move, turn) => {
     const target = piece.board.getOne('piece', damage.xy)
     applyDamage(target, damage.count)
     target._damaged_turn = turn
+    target._last_damage = damage
   }
   if (xy) {
     piece.board.setPiece(xy, piece)

@@ -80,6 +80,17 @@ const type_map = {
       move.follow,
     ],
   },
+  ball: {
+    sprite: 'ball',
+    short: 'a',
+    opts: { max_energy: 5, health: 100 },
+    tasks: [
+      move.ifHit(move.chain(move.refillEnergy, move.forward.fromHit)),
+      move.useEnergy,
+      move.forward,
+      move.flip,
+    ],
+  },
 }
 
 type_map.names = Object.keys(type_map)

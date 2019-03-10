@@ -51,3 +51,14 @@ export const forwardRandomly = (piece, move = {}) => {
   }
   return move
 }
+
+forward.fromHit = (piece, move) => {
+  const dxy = piece._last_damage.dxy
+  move = forward(piece, move, dxy)
+  if (!move.done) {
+    // if forward didn't work, bounce off wall
+    move.dxy = geo.vector.times(dxy, -1)
+    move.done = true
+  }
+  return move
+}

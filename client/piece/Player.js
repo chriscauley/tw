@@ -15,7 +15,7 @@ const getMove = (player, dxy) => {
   let xy = vector.add(player.xy, dxy)
   if (control.canAttack(player, xy)) {
     return {
-      damage: { xy, count: player.damage },
+      damage: { dxy, xy, count: player.damage },
       done: true,
       dxy,
     }
