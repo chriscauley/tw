@@ -58,6 +58,7 @@ const canMoveOn = (piece, xy, _dxy) => {
 export default {
   getMove,
   applyMove,
+  applyDamage,
   canAttack,
   canMoveOn,
   last_move,

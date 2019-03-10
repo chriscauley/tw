@@ -16,6 +16,9 @@ import chain from './chain'
 import refillEnergy from './refillEnergy'
 import useEnergy from './useEnergy'
 
+import shoot from './shoot'
+import burnout from './burnout'
+
 export default {
   follow,
 
@@ -35,4 +38,7 @@ export default {
   chain,
   refillEnergy,
   useEnergy,
+
+  shoot,
+  burnout,
 }

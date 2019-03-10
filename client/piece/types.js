@@ -91,6 +91,16 @@ const type_map = {
       move.flip,
     ],
   },
+  fireball: {
+    sprite: 'fireball',
+    short: 'f',
+    tasks: [move.forward, move.burnout],
+  },
+  spitter: {
+    sprite: 'o-eye',
+    short: 'p',
+    tasks: [move.wait(3), move.shoot('fireball')],
+  },
 }
 
 type_map.names = Object.keys(type_map)
