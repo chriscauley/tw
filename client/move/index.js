@@ -8,7 +8,9 @@ import cycle from './cycle'
 import wait from './wait'
 
 import ifLookedAt from './ifLookedAt'
+import ifHit from './ifHit'
 import booOff from './booOff'
+import teleport from './teleport'
 
 export default {
   follow,
@@ -22,5 +24,7 @@ export default {
   wait,
 
   ifLookedAt,
+  ifHit,
   booOff,
+  teleport,
 }

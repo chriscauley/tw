@@ -62,8 +62,23 @@ const type_map = {
   boo: {
     sprite: 'wisp',
     short: 'u',
+    tasks: [move.ifLookedAt(move.booOff), move.follow],
+  },
+  bootoo: {
+    sprite: 'shade',
+    short: '2',
     opts: { turns: 2 },
     tasks: [move.ifLookedAt(move.booOff), move.follow],
+  },
+  boohoo: {
+    sprite: 'wraith',
+    short: 'h',
+    opts: { turns: 3, health: 3, sight: 5 },
+    tasks: [
+      move.ifHit(move.teleport(4)),
+      move.ifLookedAt(move.booOff),
+      move.follow,
+    ],
   },
 }
 

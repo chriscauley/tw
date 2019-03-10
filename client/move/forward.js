@@ -15,6 +15,7 @@ const forward = (piece, move, dxy = piece.dxy) => {
         damage: { xy, count: piece.damage },
         dxy,
         done: true,
+        end: true,
       }
       return true
     }
