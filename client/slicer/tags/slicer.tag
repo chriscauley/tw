@@ -39,6 +39,8 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
       <div class="bgout" ref="bgout" onclick={removeColor}></div>
     </div>
     <div if={show_output}>
+      x: {sprite_data.x/sprite_data.scale}
+      y: {sprite_data.y/sprite_data.scale}
       <ur-form model={uR.db.server.Sprite} initial={sprite_data} submit={saveSprite}></ur-form>
     </div>
   </div>
