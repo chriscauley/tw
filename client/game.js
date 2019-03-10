@@ -21,6 +21,7 @@ export default class Game extends uR.db.Model {
     victory_condition: killAllEnemies,
     room_generator: room.zelda,
     room_count: 1,
+    turn: 0,
   }
   constructor(opts) {
     super(opts)
@@ -61,13 +62,17 @@ export default class Game extends uR.db.Model {
         for (let i = 0; i < piece.turns; i++) {
           const move = piece_controller.getMove(piece)
           if (move) {
-            piece_controller.applyMove(piece, move)
+            piece_controller.applyMove(piece, move, this.turn)
+            if (move.end) {
+              break
+            }
           }
         }
       })
       this.board.checkDialog()
     }
     this.trigger('nextturn')
+    this.turn++
   }
 
   makeBoard() {
@@ -109,6 +114,7 @@ export default class Game extends uR.db.Model {
         dxy: this.key_map[e.key],
         shiftKey: e.shiftKey,
         ctrlKey: e.ctrlKey,
+        turn: this.turn,
       }
       if (input.dxy) {
         player_controller.move(this.player, input)

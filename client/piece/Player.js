@@ -30,13 +30,13 @@ const getMove = (player, dxy) => {
   }
 }
 
-const move = (player, { dxy, shiftKey, _ctrlKey }) => {
+const move = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
   let move = getMove(player, dxy)
 
-  control.applyMove(player, move)
+  control.applyMove(player, move, turn)
   if (shiftKey) {
     const move2 = getMove(player, dxy)
-    control.applyMove(player, move2)
+    control.applyMove(player, move2, turn)
     move = addMoves(move, move2)
   }
   return move

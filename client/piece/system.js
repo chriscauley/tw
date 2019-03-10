@@ -13,7 +13,7 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, move) => {
+const applyMove = (piece, move, turn) => {
   if (piece.preMove) {
     piece.preMove()
   }
@@ -21,6 +21,7 @@ const applyMove = (piece, move) => {
   if (damage) {
     const target = piece.board.getOne('piece', damage.xy)
     applyDamage(target, damage.count)
+    target._damaged_turn = turn
   }
   if (xy) {
     piece.board.setPiece(xy, piece)
