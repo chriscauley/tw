@@ -108,11 +108,12 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
 
   listPieces() {
     // used only in debugging from console
-    return Object.values(this.entities.pieces)
+    return Object.values(this.entities.piece)
   }
 
   newPiece(opts) {
     const piece = newPiece(opts)
+    piece._turn = piece._turn || this.game.turn
     this.setPiece(piece.xy, piece)
   }
 

@@ -48,6 +48,8 @@ const newPiece = opts => {
       'waiting',
       'i_cycle',
       'max_health',
+      'turns',
+      '_turn',
     ]),
     name: 'piece',
   })

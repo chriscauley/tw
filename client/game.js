@@ -55,24 +55,41 @@ export default class Game extends uR.db.Model {
     if (this.checkVictory()) {
       this.spawnPieces()
     } else {
+      this.deferred = []
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
-      pieces.forEach(piece => {
-        for (let i = 0; i < piece.turns; i++) {
-          const move = piece_controller.getMove(piece)
-          if (move) {
-            piece_controller.applyMove(piece, move, this.turn)
-            if (move.end) {
-              break
-            }
-          }
-        }
-      })
+      pieces.forEach(piece => this.doTurn(piece))
+      this.doDeferred()
       this.board.checkDialog()
     }
     this.trigger('nextturn')
     this.turn++
+  }
+
+  doDeferred() {
+    const deferred = this.deferred
+    this.deferred = []
+    deferred.forEach(([turns, piece]) => this.doTurn(piece, turns))
+    if (this.deferred.length !== deferred.length) {
+      this.doDeferred()
+    }
+  }
+
+  doTurn(piece, turns = piece.turns) {
+    for (let i = 0; i < turns; i++) {
+      const move = piece_controller.getMove(piece)
+      if (move.defer) {
+        this.deferred.push([turns - i, piece])
+        break
+      }
+      if (move) {
+        piece_controller.applyMove(piece, move, this.turn)
+        if (move.end) {
+          break
+        }
+      }
+    }
   }
 
   makeBoard() {
@@ -83,7 +100,7 @@ export default class Game extends uR.db.Model {
     })
   }
 
-  makePlayer(xy = [2, 2]) {
+  makePlayer(xy = [3, 3]) {
     this.player = newPlayer({
       type: 'player',
       dxy: [0, 1],

@@ -29,10 +29,14 @@ const applyMove = (piece, move, turn) => {
   }
   piece.dxy = dxy
   if (afterMove) {
-    afterMove(piece, move)
+    piece.board.game.one('nextturn', () => afterMove(piece, move))
   }
   last_move[piece.id] = move
   piece.preMove = preMove
+  piece._turn = turn // indicates this moved this turn
+  if (move.now) {
+    move.now()
+  }
 }
 
 const applyDamage = (piece, count) => {

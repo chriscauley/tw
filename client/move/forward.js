@@ -1,6 +1,8 @@
+import Random from 'ur-random'
+
 import geo from '../geo'
 import control from '../piece/system'
-import Random from 'ur-random'
+import defer from './defer'
 
 const forward = (piece, move, dxy = piece.dxy) => {
   // move forward up to piece.speed squraes
@@ -17,6 +19,11 @@ const forward = (piece, move, dxy = piece.dxy) => {
         done: true,
         end: true,
       }
+      return true
+    }
+
+    if (defer(piece, xy)) {
+      move.defer = true
       return true
     }
 
