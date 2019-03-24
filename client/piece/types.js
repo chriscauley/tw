@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import move from '../move'
 
 const type_map = {
@@ -101,11 +102,18 @@ const type_map = {
     short: 'p',
     tasks: [move.wait(3), move.shoot('fireball')],
   },
+  pentagram: {
+    sprite: 'pentagram',
+    short: '5',
+    opts: { invulnerable: true },
+    tasks: [move.ifHit(move.shoot('fireball'))],
+  },
 }
 
-type_map.names = Object.keys(type_map)
+type_map.NAMES = Object.keys(type_map)
+type_map.NAMES.sort()
 type_map.short2type = {}
-type_map.names.forEach(name => {
+type_map.NAMES.forEach(name => {
   const type = type_map[name]
   type_map.short2type[type.short] = name
 })

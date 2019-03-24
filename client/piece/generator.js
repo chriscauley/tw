@@ -1,6 +1,20 @@
+import _ from 'lodash'
+
+import uR from 'unrest.io'
+import { NamedModel } from '../models'
 import types from '../piece/types'
 import control from '../piece/system'
-import _ from 'lodash'
+
+const { List, APIManager } = uR.db
+
+export class PieceGenerator extends NamedModel {
+  static slug = 'server.PieceGenerator'
+  static fields = {
+    pieces: List('', { choices: types.NAMES }),
+  }
+  static manager = APIManager
+  static editable_fieldnames = ['name', 'pieces']
+}
 
 export const randomPiece = game => {
   const enemies = 'p' //'bsjcdw'

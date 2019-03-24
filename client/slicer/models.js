@@ -1,7 +1,9 @@
 import uR from 'unrest.io'
+
+import { NamedModel } from '../models'
 export * from './css'
 
-const { Model, Int, String, APIManager, ForeignKey } = uR.db
+const { Int, String, APIManager, ForeignKey } = uR.db
 
 const FILENAME_CHOICES = [
   '16_colors_14.png',
@@ -9,16 +11,6 @@ const FILENAME_CHOICES = [
   'checkers.png',
   'ProjectUtumno_full.png',
 ]
-
-class NamedModel extends Model {
-  static fields = {
-    id: Int(),
-    name: String(),
-  }
-  __str__() {
-    return this.name
-  }
-}
 
 export class Sheet extends NamedModel {
   static manager = APIManager
