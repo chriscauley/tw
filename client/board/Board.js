@@ -7,10 +7,12 @@ import { connectRooms } from './Room'
 import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
 
-const { Int, Model } = uR.db
+const { Int, Model, APIManager } = uR.db
 
 export default class extends DialogMixin(Random.Mixin(Model)) {
-  static slug = 'board.Board'
+  static slug = 'server.Board'
+  static manager = APIManager
+  static editable_fieldnames = ['W', 'H']
   static fields = {
     W: Int(0),
     H: Int(0),
@@ -25,8 +27,6 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
 
   constructor(opts) {
     super(opts)
-    this.W = 20 //this.W || this.random.int(10)
-    this.H = 20 //this.W || this.random.int(10)
 
     this.reset()
   }
