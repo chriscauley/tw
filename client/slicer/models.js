@@ -13,7 +13,6 @@ const FILENAME_CHOICES = [
 ]
 
 export class Sheet extends NamedModel {
-  static manager = APIManager
   static slug = 'server.Sheet'
   static editable_fieldnames = ['name', 'filename']
   static fields = {
@@ -21,8 +20,9 @@ export class Sheet extends NamedModel {
   }
 }
 
+new APIManager(Sheet)
+
 export class Sprite extends NamedModel {
-  static manager = APIManager
   static slug = 'server.Sprite'
   static editable_fieldnames = ['name']
   static fields = {
@@ -34,8 +34,9 @@ export class Sprite extends NamedModel {
   }
 }
 
+new APIManager(Sprite)
+
 export class CompositeSprite extends NamedModel {
-  static manager = APIManager
   static slug = 'server.CompositeSprite'
   static editable_fieldnames = ['name', 'scale', 'recipe']
   static fields = {
@@ -43,3 +44,5 @@ export class CompositeSprite extends NamedModel {
     recipe: String(),
   }
 }
+
+new APIManager(CompositeSprite)

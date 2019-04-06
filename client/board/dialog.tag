@@ -14,7 +14,7 @@ export default superclass => class extends superclass {
     //this.dialog.bind(this,[3,3],{ name: 'noone' },"testing")
   }
   checkDialog() {
-    this.dialog.update()
+    this.dialog && this.dialog.update()
   }
 }
 

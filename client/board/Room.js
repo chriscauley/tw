@@ -61,7 +61,9 @@ const printRoom = ({
 //printRoom(room({ W: 4, H: 4, x0: 5, y0: 2 }))
 /* eslint-enable */
 
-export const zelda = ({ room_count = 3, room_size = 9, spacing = 3 }) => {
+const generators = new Map()
+
+generators.set('zelda', ({ room_count = 3, room_size = 9, spacing = 3 }) => {
   return _.flatten(
     _.range(room_count).map(y => {
       const y0 = y * (room_size + spacing)
@@ -73,7 +75,7 @@ export const zelda = ({ room_count = 3, room_size = 9, spacing = 3 }) => {
       })
     }),
   )
-}
+})
 
 export const connectRooms = board => {
   const { rooms } = board
@@ -115,6 +117,6 @@ export const connectRooms = board => {
 }
 
 export default {
-  zelda,
+  generators,
   connectRooms,
 }

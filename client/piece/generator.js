@@ -12,9 +12,10 @@ export class PieceGenerator extends NamedModel {
   static fields = {
     pieces: List('', { choices: types.NAMES }),
   }
-  static manager = APIManager
   static editable_fieldnames = ['name', 'pieces']
 }
+
+new APIManager(PieceGenerator)
 
 export const randomPiece = game => {
   const enemies = 'p' //'bsjcdw'

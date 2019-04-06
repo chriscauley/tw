@@ -3,32 +3,25 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 import Random from 'ur-random'
 
-import { connectRooms } from './Room'
+import Room from './Room'
 import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
 
 const { Int, Model, APIManager } = uR.db
 
-export default class extends DialogMixin(Random.Mixin(Model)) {
+class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
-  static manager = APIManager
-  static editable_fieldnames = ['W', 'H']
+  static editable_fieldnames = ['W', 'H', 'room_generator', 'room_count']
   static fields = {
-    W: Int(0),
-    H: Int(0),
-  }
-  static opts = {
-    room_generator: undefined,
-    room_count: 1,
-    game: undefined,
+    id: Int(),
+    room_generator: String('zelda', { choices: () => Room.generators.keys() }),
+    room_count: Int(1, { choices: _.range(5) }),
   }
   i2xy = i => this._i2xy[i]
   xy2i = xy => this._xy2i[xy[0]][xy[1]]
 
   constructor(opts) {
     super(opts)
-
-    this.reset()
   }
 
   getOne = (type, xy) => {
@@ -89,7 +82,7 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
       path: {}, // path to walk down
     }
 
-    this.rooms = this.room_generator(this)
+    this.rooms = Room.generators.get(this.room_generator)(this)
     this.walls = {}
     this.W = 0
     this.H = 0
@@ -102,8 +95,8 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
       xys.forEach(xy => this.setOne('square', xy, true))
       walls.forEach(xy => this.setOne('wall', xy, 1))
     })
-    connectRooms(this)
-    this.resetDialog()
+    Room.connectRooms(this)
+    //this.resetDialog()
   }
 
   listPieces() {
@@ -113,7 +106,6 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
 
   newPiece(opts) {
     const piece = newPiece(opts)
-    piece._turn = piece._turn || this.game.turn
     this.setPiece(piece.xy, piece)
   }
 
@@ -122,3 +114,7 @@ export default class extends DialogMixin(Random.Mixin(Model)) {
     this.renderer.removePiece(piece)
   }
 }
+
+new APIManager(Board)
+
+export default Board

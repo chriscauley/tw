@@ -1,16 +1,12 @@
 import uR from 'unrest.io'
 import riot from 'riot'
 
-window.riot = riot
-
 import { newPlayer } from './piece/entity'
 import piece_controller from './piece/system'
 import * as player_controller from './piece/Player'
 import follow from './piece/follow'
-import Board from './board/Board'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
-import room from './board/Room'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
@@ -19,22 +15,22 @@ export default class Game extends uR.db.Model {
     parent: '.html-renderer',
     piece_generator: () => {},
     victory_condition: killAllEnemies,
-    room_generator: room.zelda,
     room_count: 1,
-    turn: 0,
+    board: uR.REQUIRED,
   }
   constructor(opts) {
     super(opts)
     window.GAME = this
     riot.observable(this)
+    this.board.game = this
     this.ready = new uR.Ready()
     if (typeof this.parent === 'string') {
       this.parent = document.querySelector(this.parent)
     }
 
     this.ready(() => {
-      this.makeBoard()
       this.makeVictoryContition()
+      this.board.reset()
       this.makePlayer()
       this.bindKeys()
       this.makePieceGenerator()
@@ -64,7 +60,7 @@ export default class Game extends uR.db.Model {
       this.board.checkDialog()
     }
     this.trigger('nextturn')
-    this.turn++
+    this.board.turn++
   }
 
   doDeferred() {
@@ -84,20 +80,12 @@ export default class Game extends uR.db.Model {
         break
       }
       if (move) {
-        piece_controller.applyMove(piece, move, this.turn)
+        piece_controller.applyMove(piece, move, this.board.turn)
         if (move.end) {
           break
         }
       }
     }
-  }
-
-  makeBoard() {
-    this.board = new Board({
-      game: this,
-      room_generator: this.room_generator,
-      _SEED: 11111111,
-    })
   }
 
   makePlayer(xy = [3, 3]) {
