@@ -130,9 +130,11 @@ class RenderBoard extends uR.db.Model {
   removePiece = piece => {
     if (!piece.health) {
       const element = this.cache.piece[piece.id]
-      element.classList.add('dead')
-      this.cache.piece[piece.id] = undefined
-      setTimeout(() => element.remove(), 2000)
+      if (element) {
+        element.classList.add('dead')
+        delete this.cache.piece[piece.id]
+        setTimeout(() => element.remove(), 2000)
+      }
     }
   }
   renderOne = name => ([xy, value]) => {
