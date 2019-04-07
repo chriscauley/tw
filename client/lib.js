@@ -7,3 +7,5 @@ export {
 } from './piece/lib'
 
 export { movePlayer } from './piece/Player'
+
+export { randomEmptyXY } from './board/lib'
