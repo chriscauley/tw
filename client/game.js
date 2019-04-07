@@ -58,20 +58,27 @@ export default class Game extends uR.db.Model {
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
-      pieces.forEach(piece => this.doTurn(piece))
-      this.doDeferred()
+      pieces.forEach(piece => {
+        piece.can_defer = true
+        this.doTurn(piece)
+      })
+      this.doDeferred(true)
       this.board.checkDialog()
     }
     this.trigger('nextturn')
     this.turn++
   }
 
-  doDeferred() {
+  doDeferred(can_defer) {
     const deferred = this.deferred
+    deferred.reverse()
     this.deferred = []
-    deferred.forEach(([turns, piece]) => this.doTurn(piece, turns))
-    if (this.deferred.length !== deferred.length) {
-      this.doDeferred()
+    deferred.forEach(([turns, piece]) => {
+      piece.can_defer = can_defer
+      this.doTurn(piece, turns)
+    })
+    if (can_defer || this.deferred.length !== deferred.length) {
+      this.doDeferred(false)
     }
   }
 

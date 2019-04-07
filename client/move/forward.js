@@ -59,6 +59,31 @@ export const forwardRandomly = (piece, move = {}) => {
   return move
 }
 
+forward.turnRandomly = (piece, move, dxy = piece.dxy) => {
+  const dir = Random.fp.choice(piece, [1, -1])
+  const moveLeft = forward(piece, move, geo.vector.turn(dxy, dir))
+  if (moveLeft.done) {
+    return moveLeft
+  }
+  return forward(piece, move, geo.vector.turn(dxy, -dir))
+}
+
+forward.back = (piece, move, dxy = piece.dxy) =>
+  forward(piece, move, geo.vector.times(dxy, -1))
+
+forward.turnOrFlip = (piece, move, dxy = piece.dxy) => {
+  const target_dxys = Random.fp.shuffle(piece, [
+    geo.vector.turn(dxy, 1),
+    geo.vector.turn(dxy, -1),
+    geo.vector.times(dxy, -1),
+  ])
+  const moves = target_dxys.map(target_dxy => forward(piece, move, target_dxy))
+  return {
+    ...move,
+    ...moves.find(move => move.done),
+  }
+}
+
 forward.fromHit = (piece, move) => {
   const dxy = piece._last_damage.dxy
   move = forward(piece, move, dxy)

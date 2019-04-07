@@ -93,7 +93,7 @@ const type_map = {
   },
   fly: {
     sprite: 'fly',
-    tasks: [move.forward, move.followWall],
+    tasks: [move.forward, move.forward.turnOrFlip],
   },
   flyball: {
     sprite: '',
@@ -102,7 +102,7 @@ const type_map = {
       move.ifHit(move.chain(move.refillEnergy, move.forward.fromHit)),
       move.useEnergy,
       move.forward,
-      move.followWall,
+      move.forward.turnOrFlip,
     ],
   },
 }

@@ -2,9 +2,9 @@ import _ from 'lodash'
 
 import control from '../piece/system'
 
-const randomEmptyXY = board => {
+const randomEmptyXY = (board, xys) => {
   for (let _i = 0; _i < 100; _i++) {
-    const xy = [board.random.int(board.W), board.random.int(board.H)]
+    const xy = board.random.choice(xys)
     if (control.canMoveOn({ board }, xy)) {
       return xy
     }
@@ -15,12 +15,14 @@ const randomEmptyXY = board => {
 export const randomPiece = ({ board }) => {
   const enemy_count = 3
   return () => {
-    _.range(enemy_count).forEach(() => {
-      const name = board.random.choice(board.pieces)
-      board.newPiece({
-        xy: randomEmptyXY(board),
-        type: name,
-        _PRNG: board.random.int(),
+    board.rooms.forEach(room => {
+      _.range(enemy_count).forEach(() => {
+        const name = board.random.choice(board.pieces)
+        board.newPiece({
+          xy: randomEmptyXY(board, room.xys),
+          type: name,
+          _PRNG: board.random.int(),
+        })
       })
     })
   }

@@ -31,6 +31,7 @@ export default {
   times: ([dx, dy], num) => [dx * num, dy * num],
   sum: dxys => dxys.reduce(add, [...ZERO]),
   getDistance: (dxy1, dxy2) => magnitude(subtract(dxy1, dxy2)),
+  turn: ([dx, dy], dir) => [dy * dir, dx * dir],
   magnitude,
   sign,
   subtract,
