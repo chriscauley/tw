@@ -6,16 +6,27 @@ import Random from 'ur-random'
 import Room from './Room'
 import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
+import types from '../piece/types'
 
-const { Int, Model, APIManager } = uR.db
+const { Model, APIManager, List, Int } = uR.db
 
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
-  static editable_fieldnames = ['W', 'H', 'room_generator', 'room_count']
+  static editable_fieldnames = [
+    'name',
+    'room_generator',
+    'room_count',
+    'pieces',
+  ]
   static fields = {
     id: Int(),
+    name: '',
     room_generator: String('zelda', { choices: () => Room.generators.keys() }),
     room_count: Int(1, { choices: _.range(5) }),
+    pieces: List('', { choices: types.NAMES }),
+  }
+  __str__() {
+    return this.name
   }
   i2xy = i => this._i2xy[i]
   xy2i = xy => this._xy2i[xy[0]][xy[1]]

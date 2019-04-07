@@ -1,48 +1,26 @@
 import _ from 'lodash'
 
-import uR from 'unrest.io'
-import { NamedModel } from '../models'
-import types from '../piece/types'
 import control from '../piece/system'
 
-const { List, APIManager } = uR.db
-
-export class PieceGenerator extends NamedModel {
-  static slug = 'server.PieceGenerator'
-  static fields = {
-    pieces: List('', { choices: types.NAMES }),
+const randomEmptyXY = board => {
+  for (let _i = 0; _i < 100; _i++) {
+    const xy = [board.random.int(board.W), board.random.int(board.H)]
+    if (control.canMoveOn({ board }, xy)) {
+      return xy
+    }
   }
-  static editable_fieldnames = ['name', 'pieces']
+  throw 'unable to find square!'
 }
 
-new APIManager(PieceGenerator)
-
-export const randomPiece = game => {
-  const enemies = 'p' //'bsjcdw'
+export const randomPiece = ({ board }) => {
   const enemy_count = 3
-  const { board } = game
-
   return () => {
-    _.range(enemy_count).forEach(i => {
-      const short = enemies[i % enemies.length]
-      let xy
-      let tries = 0
-      /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
-      while (true) {
-        tries++
-        if (tries > 100) {
-          throw 'unable to find square!'
-        }
-        //#! TODO this should it's own randomness
-        xy = [board.random.int(board.W), board.random.int(board.H)]
-        if (control.canMoveOn({ board }, xy)) {
-          break
-        }
-      }
+    _.range(enemy_count).forEach(() => {
+      const name = board.random.choice(board.pieces)
       board.newPiece({
-        xy,
-        type: types.short2type[short],
-        _PRNG: board.random.int(), //# !TODO ibid
+        xy: randomEmptyXY(board),
+        type: name,
+        _PRNG: board.random.int(),
       })
     })
   }
