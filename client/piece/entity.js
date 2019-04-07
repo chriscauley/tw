@@ -3,6 +3,7 @@ import Random from 'ur-random'
 
 import geo from '../geo'
 import types from './types'
+import item from '../item'
 
 let id_tracker = 0
 const entity_list = []
@@ -50,6 +51,7 @@ const newPiece = opts => {
       'max_health',
       'turns',
       '_turn',
+      'equipment',
     ]),
     name: 'piece',
   })
@@ -66,6 +68,7 @@ const newPlayer = opts =>
   newPiece({
     ...opts,
     team: 1,
+    equipment: { ...item.default_equipment },
   })
 
 export { newEntity, newPiece, newPlayer, getEntity }
