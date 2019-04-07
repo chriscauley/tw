@@ -10,6 +10,9 @@ import { killAllEnemies } from './board/goal'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
+  static fields = {
+    turn: 0,
+  }
   static opts = {
     RenderBoard: render_html.RenderBoard,
     parent: '.html-renderer',
@@ -60,7 +63,7 @@ export default class Game extends uR.db.Model {
       this.board.checkDialog()
     }
     this.trigger('nextturn')
-    this.board.turn++
+    this.turn++
   }
 
   doDeferred() {
@@ -80,7 +83,7 @@ export default class Game extends uR.db.Model {
         break
       }
       if (move) {
-        piece_controller.applyMove(piece, move, this.board.turn)
+        piece_controller.applyMove(piece, move, this.turn)
         if (move.end) {
           break
         }
