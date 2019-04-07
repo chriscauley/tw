@@ -1,6 +1,6 @@
 import geo from '../geo'
 import Random from 'ur-random'
-import control from '../piece/system'
+import lib from '../piece/lib'
 
 const _circle = geo.look._circle['1,0']
 
@@ -9,7 +9,7 @@ export default range => (piece, move, _dxy) => {
   Random.fp.shuffle(piece, dxys)
   dxys.find(target_dxy => {
     const target_xy = geo.vector.add(piece.xy, target_dxy)
-    if (control.canMoveOn(piece, target_xy)) {
+    if (lib.canMoveOn(piece, target_xy)) {
       move = {
         ...move,
         xy: target_xy,

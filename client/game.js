@@ -2,7 +2,7 @@ import uR from 'unrest.io'
 import riot from 'riot'
 
 import { newPlayer } from './piece/entity'
-import piece_controller from './piece/system'
+import lib from './piece/lib'
 import * as player_controller from './piece/Player'
 import follow from './piece/follow'
 import render_html from './render/html'
@@ -84,13 +84,13 @@ export default class Game extends uR.db.Model {
 
   doTurn(piece, turns = piece.turns) {
     for (let i = 0; i < turns; i++) {
-      const move = piece_controller.getMove(piece)
+      const move = lib.getMove(piece)
       if (move.defer) {
         this.deferred.push([turns - i, piece])
         break
       }
       if (move) {
-        piece_controller.applyMove(piece, move, this.turn)
+        lib.applyMove(piece, move, this.turn)
         if (move.end) {
           break
         }

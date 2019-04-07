@@ -1,6 +1,6 @@
 import forward from './forward'
 import geo from '../geo'
-import control from '../piece/system'
+import lib from '../piece/lib'
 
 export default (piece, move) => {
   if (!piece.following) {
@@ -38,7 +38,7 @@ export default (piece, move) => {
       continue
     }
     const target = piece.board.getOne('piece', xy)
-    if (target === piece.following || control.canMoveOn(piece, xy)) {
+    if (target === piece.following || lib.canMoveOn(piece, xy)) {
       // get it!
       return forward(piece, move, direction)
     }

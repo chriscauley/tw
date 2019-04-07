@@ -1,5 +1,5 @@
 import geo from '../geo'
-import control from '../piece/system'
+import lib from '../piece/lib'
 
 const DXYS = [...geo.dxy.list]
 
@@ -16,10 +16,10 @@ export default (
   },
 ) => {
   if (!pass) {
-    pass = (piece, xy) => control.canAttack(piece, xy)
+    pass = (piece, xy) => lib.canAttack(piece, xy)
   }
   if (!fail) {
-    fail = (piece, xy) => !control.canMoveOn(piece, xy)
+    fail = (piece, xy) => !lib.canMoveOn(piece, xy)
   }
 
   const afterMove = piece => {

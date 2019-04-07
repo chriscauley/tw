@@ -1,11 +1,11 @@
 import _ from 'lodash'
 
-import control from '../piece/system'
+import lib from '../piece/lib'
 
 const randomEmptyXY = (board, xys) => {
   for (let _i = 0; _i < 100; _i++) {
     const xy = board.random.choice(xys)
-    if (control.canMoveOn({ board }, xy)) {
+    if (lib.canMoveOn({ board }, xy)) {
       return xy
     }
   }

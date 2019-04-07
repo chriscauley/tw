@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import uR from 'unrest.io'
 import types from '../piece/types'
-import control from '../piece/system'
+import lib from '../piece/lib'
 import geo from '../geo'
 
 const ready = new uR.Ready()
@@ -172,7 +172,7 @@ const renderEntity = (entity, extras = {}) => {
   if (_sprite) {
     sprite += _sprite
   }
-  const last_move = control.last_move[entity.id]
+  const last_move = lib.last_move[entity.id]
   extras = {
     ...extras,
     sprite,
