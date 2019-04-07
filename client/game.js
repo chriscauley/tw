@@ -2,8 +2,7 @@ import uR from 'unrest.io'
 import riot from 'riot'
 
 import { newPlayer } from './piece/entity'
-import lib from './piece/lib'
-import * as player_controller from './piece/Player'
+import { getMove, applyMove, movePlayer } from './lib'
 import follow from './piece/follow'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
@@ -84,13 +83,13 @@ export default class Game extends uR.db.Model {
 
   doTurn(piece, turns = piece.turns) {
     for (let i = 0; i < turns; i++) {
-      const move = lib.getMove(piece)
+      const move = getMove(piece)
       if (move.defer) {
         this.deferred.push([turns - i, piece])
         break
       }
       if (move) {
-        lib.applyMove(piece, move, this.turn)
+        applyMove(piece, move, this.turn)
         if (move.end) {
           break
         }
@@ -132,7 +131,7 @@ export default class Game extends uR.db.Model {
         turn: this.turn,
       }
       if (input.dxy) {
-        player_controller.move(this.player, input)
+        movePlayer(this.player, input)
         this.nextTurn()
         this.renderer.update()
       }

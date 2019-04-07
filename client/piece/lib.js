@@ -1,8 +1,6 @@
 import types from './types'
 
-const last_move = {}
-
-const getMove = piece => {
+export const getMove = piece => {
   let move = {}
   types[piece.type].tasks.find(task => {
     move = task(piece, move)
@@ -13,7 +11,7 @@ const getMove = piece => {
   return move
 }
 
-const applyMove = (piece, move, turn) => {
+export const applyMove = (piece, move, turn) => {
   if (piece.preMove) {
     piece.preMove()
   }
@@ -31,7 +29,7 @@ const applyMove = (piece, move, turn) => {
   if (afterMove) {
     piece.board.game.one('nextturn', () => afterMove(piece, move))
   }
-  last_move[piece.id] = move
+  piece.last_move = move
   piece.preMove = preMove
   piece._turn = turn // indicates this moved this turn
   if (move.now) {
@@ -39,14 +37,14 @@ const applyMove = (piece, move, turn) => {
   }
 }
 
-const applyDamage = (piece, count) => {
+export const applyDamage = (piece, count) => {
   piece.health -= count
   if (piece.health <= 0) {
     piece.board.removePiece(piece)
   }
 }
 
-const canAttack = (piece, xy) => {
+export const canAttack = (piece, xy) => {
   const target = piece.board.getOne('piece', xy)
   if (!target || target.invulnerable) {
     return
@@ -54,16 +52,7 @@ const canAttack = (piece, xy) => {
   return target.team !== piece.team
 }
 
-const canMoveOn = (piece, xy, _dxy) => {
+export const canMoveOn = (piece, xy, _dxy) => {
   const { getOne } = piece.board
   return getOne('square', xy) && !getOne('piece', xy) && !getOne('wall', xy)
-}
-
-export default {
-  getMove,
-  applyMove,
-  applyDamage,
-  canAttack,
-  canMoveOn,
-  last_move,
 }

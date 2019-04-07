@@ -1,5 +1,5 @@
 import geo from '../../geo'
-import lib from '../../piece/lib'
+import { canAttack } from '../../lib'
 
 const { vector, look } = geo
 
@@ -11,7 +11,7 @@ export default (weapon, piece, move, dxy) => {
     piece.xy,
     look[weapon.geometry][dxy][weapon.range],
   )
-  const damage_xys = target_xys.filter(xy => lib.canAttack(piece, xy))
+  const damage_xys = target_xys.filter(xy => canAttack(piece, xy))
   if (damage_xys.length) {
     return {
       ...move,

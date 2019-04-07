@@ -1,7 +1,7 @@
 import Random from 'ur-random'
 
 import geo from '../geo'
-import lib from '../piece/lib'
+import { canAttack, canMoveOn } from '../piece/lib'
 import defer from './defer'
 
 const forward = (piece, move, dxy = piece.dxy) => {
@@ -11,7 +11,7 @@ const forward = (piece, move, dxy = piece.dxy) => {
 
   // update move until a square is blocked or damage is done
   geo.look.lookMany(piece.xy, dxys).find(xy => {
-    if (lib.canAttack(piece, xy)) {
+    if (canAttack(piece, xy)) {
       move = {
         ...move,
         damage: { xy, count: piece.damage, source: piece },
@@ -27,7 +27,7 @@ const forward = (piece, move, dxy = piece.dxy) => {
       return true
     }
 
-    if (!lib.canMoveOn(piece, xy, dxy)) {
+    if (!canMoveOn(piece, xy, dxy)) {
       return true
     }
 

@@ -1,10 +1,10 @@
-import lib from '../piece/lib'
+import { canAttack, canMoveOn } from '../lib'
 import geo from '../geo'
 
 export default type => (piece, move, dxy = piece.dxy) => {
   const { board } = piece
   const xy = geo.vector.add(piece.xy, dxy)
-  if (lib.canAttack(piece, xy)) {
+  if (canAttack(piece, xy)) {
     return {
       ...move,
       damage: { xy, count: piece.damage, source: piece },
@@ -16,7 +16,7 @@ export default type => (piece, move, dxy = piece.dxy) => {
     ...move,
     done: true,
     afterMove: () => {
-      if (!lib.canMoveOn({ board }, xy)) {
+      if (!canMoveOn({ board }, xy)) {
         return
       }
       piece.board.newPiece({

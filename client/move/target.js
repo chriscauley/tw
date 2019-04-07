@@ -1,5 +1,5 @@
 import geo from '../geo'
-import lib from '../piece/lib'
+import { canAttack, canMoveOn } from '../piece/lib'
 
 const DXYS = [...geo.dxy.list]
 
@@ -16,10 +16,10 @@ export default (
   },
 ) => {
   if (!pass) {
-    pass = (piece, xy) => lib.canAttack(piece, xy)
+    pass = canAttack
   }
   if (!fail) {
-    fail = (piece, xy) => !lib.canMoveOn(piece, xy)
+    fail = (piece, xy) => !canMoveOn(piece, xy)
   }
 
   const afterMove = piece => {

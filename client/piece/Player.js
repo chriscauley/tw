@@ -1,6 +1,6 @@
 import vector from '../geo/vector'
 import _ from 'lodash'
-import lib from './lib'
+import { applyMove, canAttack, canMoveOn } from '../lib'
 
 const addMoves = (...moves) => {
   // add all moves together to make one big move
@@ -13,7 +13,7 @@ const addMoves = (...moves) => {
 
 const getMove = (player, dxy) => {
   let xy = vector.add(player.xy, dxy)
-  if (lib.canAttack(player, xy)) {
+  if (canAttack(player, xy)) {
     return {
       damage: { dxy, xy, count: player.damage, source: player },
       done: true,
@@ -21,7 +21,7 @@ const getMove = (player, dxy) => {
     }
   }
 
-  if (!lib.canMoveOn(player, xy)) {
+  if (!canMoveOn(player, xy)) {
     xy = undefined
   }
   return {
@@ -30,16 +30,14 @@ const getMove = (player, dxy) => {
   }
 }
 
-const move = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
+export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
   let move = getMove(player, dxy)
 
-  lib.applyMove(player, move, turn)
+  applyMove(player, move, turn)
   if (shiftKey) {
     const move2 = getMove(player, dxy)
-    lib.applyMove(player, move2, turn)
+    applyMove(player, move2, turn)
     move = addMoves(move, move2)
   }
   return move
 }
-
-export { move }
