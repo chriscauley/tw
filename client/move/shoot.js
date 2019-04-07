@@ -7,7 +7,7 @@ export default type => (piece, move, dxy = piece.dxy) => {
   if (control.canAttack(piece, xy)) {
     return {
       ...move,
-      damage: { xy, count: piece.damage },
+      damage: { xy, count: piece.damage, source: piece },
       dxy,
       done: true,
     }
