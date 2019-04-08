@@ -4,24 +4,27 @@ import uR from 'unrest.io'
 import Random from 'ur-random'
 
 import Room from './Room'
+import Item from '../item'
 import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
 import types from '../piece/types'
 
-const { Model, APIManager, List, Int } = uR.db
+const { Model, APIManager, List, Int, String } = uR.db
 
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
   static editable_fieldnames = [
     'name',
     'room_generator',
+    'item_generators',
     'room_count',
     'pieces',
   ]
   static fields = {
     id: Int(),
     name: '',
-    room_generator: String('zelda', { choices: () => Room.generators.keys() }),
+    room_generator: String('zelda', { choices: () => Room.generators }),
+    item_generators: List('', { choices: Item.generators }),
     room_count: Int(1, { choices: _.range(5) }),
     pieces: List('', { choices: types.NAMES }),
   }
@@ -91,6 +94,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       piece: {},
       color: {}, // used in debug only... for now
       path: {}, // path to walk down
+      item: {},
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
@@ -108,6 +112,9 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     })
     Room.connectRooms(this)
     //this.resetDialog()
+    this.item_generators.forEach(name => {
+      Item.generators.get(name)(this)
+    })
   }
 
   listPieces() {

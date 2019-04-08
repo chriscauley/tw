@@ -165,7 +165,7 @@ saveSprite(form) {
   const data = _.merge(form.getData(),this.sprite_data,img_data)
   const obj = Sprite.objects.all().find(s => s.name === data.name)
   if (obj) { data.id = obj }
-  Sprite.objects.create(data).then(() => {
+  return Sprite.objects.create(data).then(() => {
     this.hideOutput()
     this.sprites = undefined
     this.update()

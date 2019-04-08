@@ -1,4 +1,5 @@
 import weapon from './weapon'
+import generators from './generators'
 
 const default_equipment = {
   weapon: weapon.types.get('knife'),
@@ -7,4 +8,5 @@ const default_equipment = {
 export default {
   default_equipment,
   weapon,
+  generators,
 }

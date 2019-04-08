@@ -43,9 +43,10 @@ class RenderBoard extends uR.db.Model {
       piece: {},
       wall: {},
       path: {},
+      item: {},
       void: {},
     }
-    this.names = ['wall', 'path', 'piece', 'void']
+    this.names = ['wall', 'path', 'piece', 'void', 'item']
     this.draw()
   }
   draw = () => {
@@ -146,7 +147,10 @@ class RenderBoard extends uR.db.Model {
       }
       return renderEntity(value, extras)
     }
-    const sprite = this.sprites[name] + value
+    let sprite = this.sprites[name] + value
+    if (name === 'item') {
+      sprite = value.name
+    }
     const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite }
 
     return `square sprite ${name} ${objToClassString(opts)}`
