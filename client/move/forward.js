@@ -14,7 +14,7 @@ const forward = (piece, move, dxy = piece.dxy) => {
     if (canAttack(piece, xy)) {
       move = {
         ...move,
-        damage: { xy, count: piece.damage, source: piece },
+        damages: [{ dxy, xy, count: piece.damage, source: piece }],
         dxy,
         done: true,
         end: true,

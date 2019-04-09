@@ -15,12 +15,14 @@ export const applyMove = (piece, move, turn) => {
   if (piece.preMove) {
     piece.preMove()
   }
-  const { xy, dxy = piece.dxy, damage, afterMove, preMove } = move
-  if (damage) {
-    damage.turn = turn
-    const target = piece.board.getOne('piece', damage.xy)
-    applyDamage(target, damage.count)
-    target._last_damage = damage
+  const { xy, dxy = piece.dxy, damages, afterMove, preMove } = move
+  if (damages && damages.length) {
+    damages.forEach(damage => {
+      damage.turn = turn
+      const target = piece.board.getOne('piece', damage.xy)
+      applyDamage(target, damage)
+      target._last_damage = damage
+    })
   }
   if (xy) {
     piece.board.setPiece(xy, piece)
@@ -37,7 +39,7 @@ export const applyMove = (piece, move, turn) => {
   }
 }
 
-export const applyDamage = (piece, count) => {
+export const applyDamage = (piece, { count }) => {
   piece.health -= count
   if (piece.health <= 0) {
     piece.board.removePiece(piece)

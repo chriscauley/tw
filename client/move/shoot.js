@@ -1,3 +1,4 @@
+import forward from './forward'
 import { canAttack, canMoveOn } from '../lib'
 import geo from '../geo'
 
@@ -5,12 +6,8 @@ export default type => (piece, move, dxy = piece.dxy) => {
   const { board } = piece
   const xy = geo.vector.add(piece.xy, dxy)
   if (canAttack(piece, xy)) {
-    return {
-      ...move,
-      damage: { xy, count: piece.damage, source: piece },
-      dxy,
-      done: true,
-    }
+    // do damage to piece immediately in front
+    return forward(piece, move, dxy)
   }
   return {
     ...move,

@@ -1,7 +1,6 @@
 import types from './types'
-import getAttack from './getAttack'
+export { getAttack } from './lib'
 
 export default {
   types,
-  getAttack,
 }

@@ -1,6 +1,9 @@
-import vector from '../geo/vector'
+import geo from '../geo/'
 import _ from 'lodash'
-import { applyMove, canAttack, canMoveOn } from '../lib'
+import { applyMove, canMoveOn } from '../lib'
+import { getAttack } from '../item/weapon' // #! TODO move to lib?
+
+const { vector } = geo
 
 const addMoves = (...moves) => {
   // add all moves together to make one big move
@@ -12,34 +15,49 @@ const addMoves = (...moves) => {
 }
 
 const getMove = (player, dxy) => {
-  let xy = vector.add(player.xy, dxy)
-  if (canAttack(player, xy)) {
+  const { weapon } = player.equipment
+  const attacks = getAttack(weapon, player, dxy)
+  if (attacks.length) {
     return {
-      damage: { dxy, xy, count: player.damage, source: player },
+      damages: attacks.map(({ xy, dxy }) => ({
+        dxy, // damage direction
+        xy, // target square
+        // #! TODO needs to calculate bonus damage from other items, buffs
+        count: weapon.damage,
+        source: player,
+      })),
       done: true,
-      dxy,
+      dxy, // move direction
+      xy: player.xy,
     }
   }
 
-  if (!canMoveOn(player, xy)) {
-    xy = undefined
-  }
+  const xy = vector.add(player.xy, dxy)
+
   return {
+    xy: canMoveOn(player, xy) ? xy : undefined,
     dxy,
-    xy,
+    done: true,
   }
 }
 
 export const swapItem = player => {
   const { board, equipment, xy } = player
   const floor_item = board.getOne('item', xy)
-  if (floor_item) {
-    const { slot } = floor_item
-    const old_item = equipment[slot]
-    player.equipment[slot] = floor_item
-    board.setOne('item', xy, old_item)
-    return { xy, dxy: [0, 0] }
+  const move = {
+    xy,
+    dxy: [0, 0],
+    done: !!floor_item,
   }
+  if (floor_item) {
+    move.afterMove = () => {
+      const { slot } = floor_item
+      const old_item = equipment[slot]
+      player.equipment[slot] = floor_item
+      board.setOne('item', xy, old_item)
+    }
+  }
+  return move
 }
 
 export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
