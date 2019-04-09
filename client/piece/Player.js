@@ -30,7 +30,24 @@ const getMove = (player, dxy) => {
   }
 }
 
+export const swapItem = player => {
+  const { board, equipment, xy } = player
+  const floor_item = board.getOne('item', xy)
+  if (floor_item) {
+    const { slot } = floor_item
+    const old_item = equipment[slot]
+    player.equipment[slot] = floor_item
+    board.setOne('item', xy, old_item)
+    return { xy, dxy: [0, 0] }
+  }
+}
+
 export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
+  if (vector.isZero(dxy)) {
+    const move = swapItem(player)
+    applyMove(player, move, turn)
+    return move
+  }
   let move = getMove(player, dxy)
 
   applyMove(player, move, turn)
