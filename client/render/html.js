@@ -1,10 +1,12 @@
 import _ from 'lodash'
+import riot from 'riot'
 
 import uR from 'unrest.io'
 import types from '../piece/types'
 import geo from '../geo'
 
 const ready = new uR.Ready()
+const observer = riot.observable()
 
 // javascript has no actual modulo operator
 const mod = (n, m) => {
@@ -27,6 +29,7 @@ class RenderBoard extends uR.db.Model {
     this.size = this._r * 2 + 1
     this.dxys = []
     this.all_divs = []
+    this.animations = []
     const dimension = _.range(-this._r, this._r + 1)
 
     dimension.forEach(dx => {
@@ -38,15 +41,11 @@ class RenderBoard extends uR.db.Model {
     this.sprites = {
       wall: 'dwarfwall',
       path: 'vine',
+      animation: '',
     }
-    this.cache = {
-      piece: {},
-      wall: {},
-      path: {},
-      item: {},
-      void: {},
-    }
-    this.names = ['wall', 'path', 'piece', 'void', 'item']
+    this.cache = {}
+    this.names = ['wall', 'path', 'piece', 'void', 'item', 'animation']
+    this.names.forEach(name => (this.cache[name] = {}))
     this.draw()
   }
   draw = () => {
@@ -83,6 +82,7 @@ class RenderBoard extends uR.db.Model {
     if (!this.container) {
       return
     }
+    this.afterAnimation
     const { xy } = this.board.player
     this.floor.className = this.getFloorClass(xy)
     const { style } = this.container
@@ -91,15 +91,27 @@ class RenderBoard extends uR.db.Model {
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
+
+    // animations are in an arry, need a map for lookup
+    const animation_map = {}
+    this.animations.forEach(({ xy, sprite }) => {
+      animation_map[xy] = sprite
+    })
     const results = {}
     let value
+
     this.names.forEach(name => {
       results[name] = []
       xys.forEach(xy => {
-        if (name === 'void') {
-          value = !this.board.getOne('square', xy)
-        } else {
-          value = this.board.getOne(name, xy)
+        switch (name) {
+          case 'void':
+            value = !this.board.getOne('square', xy)
+            break
+          case 'animation':
+            value = animation_map[xy]
+            break
+          default:
+            value = this.board.getOne(name, xy)
         }
         if (value) {
           results[name].push([xy, value])
@@ -119,9 +131,25 @@ class RenderBoard extends uR.db.Model {
             (this.cache[name][index] = this.newDiv(`${name}-${index}`)),
           )
         }
-        this.cache[name][index].className = this.renderOne(name)([xy, value])
+        const element = this.cache[name][index]
+        element.className = this.renderOne(name)([xy, value])
+        if (name === 'piece') {
+          const { last_move, dxy } = value
+          if (last_move && last_move.damages) {
+            observer.one('animate', () =>
+              element.classList.add(`damage-${dxy.join('')}`),
+            )
+          }
+        }
+        if (name === 'animation') {
+          observer.one('animate', () => element.classList.add('fade'))
+        }
       })
     })
+    if (this.animations.length) {
+      setTimeout(() => observer.trigger('animate'), 0)
+    }
+    this.animations = []
   }
 
   newDiv(id) {
@@ -175,7 +203,6 @@ const renderEntity = (entity, extras = {}) => {
   if (_sprite) {
     sprite += _sprite
   }
-  const { last_move } = entity
   extras = {
     ...extras,
     sprite,
@@ -183,7 +210,6 @@ const renderEntity = (entity, extras = {}) => {
     waiting,
     follow_order,
     dxy: dxy.join(''),
-    damage: last_move && last_move.damage && dxy.join(''),
     x: xy[0],
     y: xy[1],
   }

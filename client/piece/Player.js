@@ -25,6 +25,7 @@ const getMove = (player, dxy) => {
         // #! TODO needs to calculate bonus damage from other items, buffs
         count: weapon.damage,
         source: player,
+        sprite: weapon.name,
       })),
       done: true,
       dxy, // move direction

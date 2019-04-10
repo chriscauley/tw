@@ -256,3 +256,26 @@
     }
   }
 }
+
+
+.html-renderer .animation {
+  background-size: 70%;
+  z-index: 999999;
+}
+
+.sprite.fade {
+  animation-duration: 0.3s;
+  animation-name: fadeout;
+  opacity: 0;
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
