@@ -52,12 +52,14 @@ export const forwardRandomly = (piece, move = {}) => {
   for (const dxy of Random.fp.shuffle(piece, dxy_list)) {
     move = forward(piece, move, dxy)
     if (move.done) {
-      move.dxy = geo.dxy.ZERO
       return move
     }
   }
   return move
 }
+
+// #! TODO remove export above
+forward.random = forwardRandomly
 
 forward.turnRandomly = (piece, move, dxy = piece.dxy) => {
   const dir = Random.fp.choice(piece, [1, -1])
@@ -91,6 +93,16 @@ forward.fromHit = (piece, move) => {
     // if forward didn't work, bounce off wall
     move.dxy = geo.vector.times(dxy, -1)
     move.done = true
+  }
+  return move
+}
+
+forward.attackNearby = (piece, move) => {
+  const target_dxy = geo.look.circle['0,1'][1].find(dxy => {
+    return canAttack(piece, geo.look.lookOne(piece.xy, dxy))
+  })
+  if (target_dxy) {
+    return forward(piece, move, target_dxy)
   }
   return move
 }
