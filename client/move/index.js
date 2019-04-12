@@ -1,3 +1,5 @@
+import find from './find'
+
 import follow from './follow'
 
 import flip from './flip'
@@ -22,6 +24,7 @@ import shoot from './shoot'
 import burnout from './burnout'
 
 export default {
+  find,
   follow,
 
   flip,
