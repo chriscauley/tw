@@ -1,18 +1,16 @@
+import after from './after'
+
 export default turns => {
   const tick = piece => piece.waiting--
   const reset = piece => (piece.waiting = turns)
 
   return (piece, move) => {
     if (!piece.waiting) {
-      return {
-        ...move,
-        afterMove: reset,
-      }
+      return after(move, reset)
     }
     return {
-      ...move,
+      ...after(move, tick),
       done: true,
-      afterMove: tick,
     }
   }
 }

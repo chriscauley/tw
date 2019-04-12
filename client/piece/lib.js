@@ -4,7 +4,7 @@ export const getMove = piece => {
   let move = {}
   types[piece.type].tasks.find(task => {
     move = task(piece, move)
-    if (move.done) {
+    if (move && move.done) {
       return move
     }
   })
@@ -15,7 +15,7 @@ export const applyMove = (piece, move, turn) => {
   if (piece.preMove) {
     piece.preMove()
   }
-  const { xy, dxy = piece.dxy, damages, afterMove, preMove } = move
+  const { xy, dxy = piece.dxy, damages, after = [], preMove } = move
   if (damages && damages.length) {
     damages.forEach(damage => {
       damage.turn = turn
@@ -28,9 +28,7 @@ export const applyMove = (piece, move, turn) => {
     piece.board.setPiece(xy, piece)
   }
   piece.dxy = dxy
-  if (afterMove) {
-    piece.board.game.one('nextturn', () => afterMove(piece, move))
-  }
+  after.forEach(f => piece.board.game.one('nextturn', () => f(piece, move)))
   piece.last_move = move
   piece.preMove = preMove
   piece._turn = turn // indicates this moved this turn

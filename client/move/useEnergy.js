@@ -1,3 +1,5 @@
+import after from './after'
+
 export default (piece, move, _dxy) => {
   if (!piece.energy || piece.energy < 0) {
     return {
@@ -5,10 +7,5 @@ export default (piece, move, _dxy) => {
       done: true,
     }
   }
-  return {
-    ...move,
-    afterMove: () => {
-      piece.energy--
-    },
-  }
+  return after(move, () => piece.energy--)
 }

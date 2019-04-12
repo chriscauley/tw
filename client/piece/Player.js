@@ -1,3 +1,4 @@
+import after from '../move/after'
 import geo from '../geo/'
 import _ from 'lodash'
 import { applyMove, canMoveOn } from '../lib'
@@ -51,12 +52,12 @@ export const swapItem = player => {
     done: !!floor_item,
   }
   if (floor_item) {
-    move.afterMove = () => {
+    return after(move, () => {
       const { slot } = floor_item
       const old_item = equipment[slot]
       player.equipment[slot] = floor_item
       board.setOne('item', xy, old_item)
-    }
+    })
   }
   return move
 }

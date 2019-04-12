@@ -1,3 +1,4 @@
+import after from './after'
 import forward from './forward'
 import geo from '../geo'
 import { canMoveOn } from '../piece/lib'
@@ -10,10 +11,7 @@ export default (piece, move) => {
   const [dx, dy] = geo.vector.subtract(target.xy, piece.xy)
 
   if (target.health <= 0) {
-    return {
-      ...move,
-      afterMove: () => (piece.following = undefined),
-    }
+    return after(move, () => (piece.following = undefined))
   }
 
   // defaults to check x direction first

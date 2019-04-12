@@ -1,3 +1,4 @@
+import after from './after'
 import geo from '../geo'
 import { canAttack, canMoveOn } from '../piece/lib'
 
@@ -30,7 +31,8 @@ export default (
   }
 
   const geometries = geo.look[geometry]
-  const doAction = (piece, move, dxy) => action(piece, { afterMove }, dxy)
+  const doAction = (piece, move, dxy) =>
+    action(piece, after(move, afterMove), dxy)
 
   const acquireTarget = (piece, move) => {
     for (const dxy of DXYS) {
@@ -41,14 +43,13 @@ export default (
       for (const xy of xys) {
         if (pass(piece, xy)) {
           if (instant || (wait_triggered && !piece.waiting)) {
-            return doAction(piece, { afterMove }, dxy)
+            return doAction(piece, move, dxy)
           }
+          after(move, () => (piece.target_dxy = dxy))
           return {
+            ...move,
             dxy,
             done: true,
-            afterMove: () => {
-              piece.target_dxy = dxy
-            },
           }
         }
         if (fail(piece, xy)) {
