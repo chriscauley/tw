@@ -6,22 +6,26 @@ import flip from './flip'
 import forward, { forwardRandomly } from './forward'
 
 import target from './target'
-import cycle from './cycle'
 import wait from './wait'
 
+// contitionals
 import ifLookedAt from './ifLookedAt'
 import ifHit from './ifHit'
 import ifDidDamage from './ifDidDamage'
 
+// actions piece does to self
 import booOff from './booOff'
+import burnout from './burnout'
 import teleport from './teleport'
 
 import chain from './chain'
-import refillEnergy from './refillEnergy'
-import useEnergy from './useEnergy'
+import cycle from './cycle'
 
+import summon from './summon'
 import shoot from './shoot'
-import burnout from './burnout'
+
+import energy from './energy'
+import _switch from './switch'
 
 export default {
   find,
@@ -33,18 +37,20 @@ export default {
 
   target,
   cycle,
+  switch: _switch,
+  chain,
   wait,
 
   ifLookedAt,
   ifHit,
   ifDidDamage,
+
   booOff,
   teleport,
+  burnout,
 
-  chain,
-  refillEnergy,
-  useEnergy,
+  energy,
 
   shoot,
-  burnout,
+  summon,
 }
