@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import move from '../move'
+import flyking from './flyking'
 
 const type_map = {
+  flyking, //#! todo needs to be in some kind of boss file
   walker: {
     sprite: 'zombie',
     opts: { sight: 0 },
@@ -70,12 +72,13 @@ const type_map = {
   },
   ball: {
     sprite: 'ball',
-    opts: { max_energy: 5, health: 100 },
+    opts: { health: 100 },
     tasks: [
-      move.ifHit(move.chain(move.refillEnergy, move.forward.fromHit)),
-      move.useEnergy,
-      move.forward,
-      move.flip,
+      move.ifHit(
+        move.chain(move.energy.add('energy', 10), move.forward.fromHit),
+      ),
+
+      move.energy.use('energy', 1, move.find([move.forward, move.flip])),
     ],
   },
   fireball: {
@@ -84,7 +87,7 @@ const type_map = {
   },
   spitter: {
     sprite: 'o-eye',
-    tasks: [move.wait(3), move.shoot('fireball')],
+    tasks: [move.shoot('fireball')],
   },
   pentagram: {
     sprite: 'pentagram',
@@ -97,12 +100,16 @@ const type_map = {
   },
   flyball: {
     sprite: '',
-    opts: { max_energy: 5, health: 100 },
+    opts: { health: 100 },
     tasks: [
-      move.ifHit(move.chain(move.refillEnergy, move.forward.fromHit)),
-      move.useEnergy,
-      move.forward,
-      move.forward.turnOrFlip,
+      move.ifHit(
+        move.chain(move.energy.add('energy', 6), move.forward.fromHit),
+      ),
+      move.energy.use(
+        'energy',
+        1,
+        move.find([move.forward, move.forward.turnOrFlip]),
+      ),
     ],
   },
 }
