@@ -18,14 +18,19 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     'room_generator',
     'item_generators',
     'room_count',
+    'piece_count',
     'pieces',
   ]
   static fields = {
     id: Int(),
-    name: '',
+    name: String(),
     room_generator: String('zelda', { choices: () => Room.generators }),
-    item_generators: List('', { choices: Item.generators }),
-    room_count: Int(1, { choices: _.range(5) }),
+    item_generators: List('', {
+      choices: Item.generators,
+      initial: ['randomWeapon'],
+    }),
+    room_count: Int(1, { choices: _.range(1, 5) }),
+    piece_count: Int(3, { choices: _.range(1, 10) }),
     pieces: List('', { choices: types.NAMES }),
   }
   __str__() {
