@@ -50,7 +50,7 @@ export const canAttack = (piece, xy) => {
   if (!target || target.invulnerable) {
     return
   }
-  return target.team !== piece.team
+  return target.team !== piece.team || types[piece.type].friendly_fire
 }
 
 export const canMoveOn = (piece, xy, _dxy) => {
