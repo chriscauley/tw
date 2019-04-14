@@ -4,7 +4,6 @@ import follow from './follow'
 
 import flip from './flip'
 import forward, { forwardRandomly } from './forward'
-import turnZero from './turnZero'
 
 import target from './target'
 import wait from './wait'
@@ -28,6 +27,7 @@ import shoot from './shoot'
 import morph from './morph'
 
 import energy from './energy'
+import setAfter from './setAfter'
 
 export default {
   find,
@@ -36,7 +36,6 @@ export default {
   flip,
   forward,
   forwardRandomly,
-  turnZero,
 
   target,
   cycle,
@@ -51,6 +50,7 @@ export default {
   booOff,
   teleport,
   burnout,
+  setAfter,
 
   energy,
 

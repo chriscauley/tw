@@ -2,6 +2,14 @@ import move from '../../move'
 import boos from './boos'
 import blind_mooks from './blind_mooks'
 
+const zeroOut = move.setAfter(
+  {
+    dxy: [0, 0],
+    energy: 0,
+  },
+  true,
+)
+
 export default {
   ...boos,
   ...blind_mooks,
@@ -17,7 +25,12 @@ export default {
     sprite: 'beholder',
     opts: { sight: 4, dxy: [0, 0], turns: 4 },
     tasks: [
-      move.energy.use(1).chain([move.turnZero, move.forward]),
+      move.energy
+        .use(1)
+        .chain([
+          move.energy.has(1).then(zeroOut),
+          move.find([move.ifDidDamage(move.forward, zeroOut), zeroOut]),
+        ]),
       move.target(move.energy.add(4)),
     ],
   },

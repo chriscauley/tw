@@ -49,6 +49,43 @@ export default class Game extends uR.db.Model {
     this.spawnPieces = this.piece_generator(this)
   }
 
+  _doTurn(piece) {
+    if (piece.dead) {
+      // piece was killed during turn by another piece
+      return
+    }
+    const move = getMove(piece)
+    if (!move || move.defer) {
+      return
+    }
+    applyMove(piece, move, this.turn)
+    this.piece_turns[piece.id]--
+    if (move.end) {
+      this.piece_turns[piece.id] = 0
+    }
+  }
+
+  doTurns(pieces, defer) {
+    let last_count = Infinity
+    let current_count = 0
+    pieces.forEach(p => (p.can_defer = defer))
+    while (current_count !== last_count) {
+      // first move with deferral until no pieces make a move
+      last_count = current_count
+      current_count = 0
+      pieces.forEach(piece => {
+        // everyone takes one turn
+        this._doTurn(piece)
+        current_count += this.piece_turns[piece.id]
+      })
+      pieces = pieces.filter(p => this.piece_turns[p.id] > 0)
+    }
+    if (defer) {
+      // Repeat with deferral off
+      this.doTurns(pieces, false)
+    }
+  }
+
   nextTurn = () => {
     if (this.checkVictory()) {
       this.spawnPieces()
@@ -57,52 +94,22 @@ export default class Game extends uR.db.Model {
       // pieces.filter(p => types[piece.type].priority_tasks)
 
       // #! TODO need a way to sort pieces (do balls first)
-      this.deferred = []
+
+      // figure out how many turns each piece can take
+      this.piece_turns = {}
+      this.board
+        .getPieces()
+        .filter(p => p.type !== 'player')
+        .forEach(p => (this.piece_turns[p.id] = p.turns))
+
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
-      pieces.forEach(piece => {
-        piece.can_defer = true
-        this.doTurn(piece)
-      })
-      this.doDeferred(true)
+      this.doTurns(pieces, true)
       this.board.checkDialog()
     }
     this.trigger('nextturn')
     this.turn++
-  }
-
-  doDeferred(can_defer) {
-    const deferred = this.deferred
-    deferred.reverse()
-    this.deferred = []
-    deferred.forEach(([turns, piece]) => {
-      piece.can_defer = can_defer
-      this.doTurn(piece, turns)
-    })
-    if (can_defer || this.deferred.length !== deferred.length) {
-      this.doDeferred(false)
-    }
-  }
-
-  doTurn(piece, turns = piece.turns) {
-    if (piece.dead) {
-      // piece was killed during turn by another piece
-      return
-    }
-    for (let i = 0; i < turns; i++) {
-      const move = getMove(piece)
-      if (move.defer) {
-        this.deferred.push([turns - i, piece])
-        break
-      }
-      if (move) {
-        applyMove(piece, move, this.turn)
-        if (move.end) {
-          break
-        }
-      }
-    }
   }
 
   makePlayer(xy = [3, 3]) {

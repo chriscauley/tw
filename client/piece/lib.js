@@ -39,11 +39,11 @@ export const applyMove = (piece, move, turn) => {
 
 export const applyDamage = (piece, { count, xy, dxy, sprite }) => {
   piece.health -= count
+  piece.board.renderer.animations.push({ xy, dxy, sprite })
   if (piece.health <= 0) {
+    // #! TODO should also do death animation
     piece.dead = true
     piece.board.removePiece(piece)
-  } else {
-    piece.board.renderer.animations.push({ xy, dxy, sprite })
   }
 }
 
