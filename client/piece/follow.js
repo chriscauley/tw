@@ -1,3 +1,5 @@
+// #! move into lib as doFollow
+
 import geo from '../geo'
 
 const _isEnemy = (piece, target) => target.team !== piece.team

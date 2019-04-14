@@ -4,11 +4,12 @@ import move from '../move'
 const momentum = move.energy('momentum')
 
 const roll = move.find([move.ifDidDamage(move.forward, move.flip), move.flip])
+const opts = { health: 255, sight: 0 }
 
 const ball = {
+  opts,
   sprite: 'ball',
   friendly_fire: 'true',
-  opts: { health: 255 },
   // #! TODO resolve balls colliding before tasks
   // maybe priority tasks?
   tasks: [
@@ -21,6 +22,7 @@ const ball = {
 }
 
 const fireball = {
+  opts: { sight: 0 },
   sprite: 'fireball',
   tasks: [move.ifDidDamage(move.forward, move.burnout), move.burnout],
 }

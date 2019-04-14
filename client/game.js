@@ -53,6 +53,10 @@ export default class Game extends uR.db.Model {
     if (this.checkVictory()) {
       this.spawnPieces()
     } else {
+      // #! TODO do priority tasks before (balls colliding head on)
+      // pieces.filter(p => types[piece.type].priority_tasks)
+
+      // #! TODO need a way to sort pieces (do balls first)
       this.deferred = []
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
@@ -82,6 +86,10 @@ export default class Game extends uR.db.Model {
   }
 
   doTurn(piece, turns = piece.turns) {
+    if (piece.dead) {
+      // piece was killed during turn by another piece
+      return
+    }
     for (let i = 0; i < turns; i++) {
       const move = getMove(piece)
       if (move.defer) {

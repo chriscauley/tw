@@ -40,9 +40,11 @@ export const applyMove = (piece, move, turn) => {
 export const applyDamage = (piece, { count, xy, dxy, sprite }) => {
   piece.health -= count
   if (piece.health <= 0) {
+    piece.dead = true
     piece.board.removePiece(piece)
+  } else {
+    piece.board.renderer.animations.push({ xy, dxy, sprite })
   }
-  piece.board.renderer.animations.push({ xy, dxy, sprite })
 }
 
 export const canAttack = (piece, xy) => {

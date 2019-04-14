@@ -17,12 +17,10 @@ import types from '../../piece/types'
           </a>
         </div>
       </div>
-      <ur-form model={model} cancel={false} instance={instance} theme={"none"}/>
     </div>
   </div>
 <script>
 this.mixin(uR.css.ThemeMixin)
-this.model = Board
 this.on("mount", () => this.update())
 this.on("update", () => {
   this.boards = Board.objects.all()

@@ -18,5 +18,13 @@ const playBoard = (path, data) => {
 export default {
   '^#/board/(\\d+)/$': playBoard,
   '^$': uR.router.routeElement('board-menu'),
-  '^/board/edit/(\\d+)/$': uR.router.routeElement('board-menu'),
+  '^#!/board/new/$': uR.router.routeElement('ur-form', {
+    model: Board,
+  }),
+  '^#!/board/edit/(\\d+)/$': uR.router.routeElement(
+    'ur-form',
+    (_path, data) => ({
+      object: Board.objects.get(data.matches[1]),
+    }),
+  ),
 }
