@@ -19,13 +19,14 @@ import burnout from './burnout'
 import teleport from './teleport'
 
 import chain from './chain'
+import _switch from './switch'
 import cycle from './cycle'
 
 import summon from './summon'
 import shoot from './shoot'
+import morph from './morph'
 
 import energy from './energy'
-import _switch from './switch'
 
 export default {
   find,
@@ -53,4 +54,5 @@ export default {
 
   shoot,
   summon,
+  morph,
 }

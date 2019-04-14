@@ -1,14 +1,10 @@
 import after from './after'
+import ifThen from './ifThen'
+import { curry } from 'lodash'
 
-const use = (type, amount, action) => (piece, move, dxy) => {
-  if (piece[type] >= amount) {
-    move = after(move, () => (piece[type] -= amount))
-    return action(piece, move, dxy)
-  }
-  return move
-}
+const use = (type, amount) => ifThen(piece => piece[type] >= amount)
 
-const add = (type, amount = 1) => (piece, move) => {
+const add = (type, amount) => (piece, move) => {
   if (!piece[type]) {
     piece[type] = 0
   }
@@ -16,7 +12,18 @@ const add = (type, amount = 1) => (piece, move) => {
   return move
 }
 
-export default {
-  add,
-  use,
-}
+const set = (type, amount) => (piece, move) =>
+  after(move, () => (piece[type] = amount))
+
+const has = (type, amount) => ifThen(piece => piece[type] >= amount)
+
+const energy = type => ({
+  use: curry(use)(type),
+  has: curry(has)(type),
+  add: curry(add)(type),
+  set: curry(set)(type),
+})
+
+Object.assign(energy, { add, use, has, set })
+
+export default energy
