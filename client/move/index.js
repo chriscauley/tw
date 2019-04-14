@@ -4,6 +4,7 @@ import follow from './follow'
 
 import flip from './flip'
 import forward, { forwardRandomly } from './forward'
+import turnZero from './turnZero'
 
 import target from './target'
 import wait from './wait'
@@ -35,6 +36,7 @@ export default {
   flip,
   forward,
   forwardRandomly,
+  turnZero,
 
   target,
   cycle,

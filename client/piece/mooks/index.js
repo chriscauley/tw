@@ -14,10 +14,14 @@ export default {
     sprite: 'bat',
   },
   charger: {
-    tasks: [move.target(move.forward, { reset_look: true })],
     sprite: 'beholder',
-    opts: { sight: 4, speed: 4, dxy: [0, 0] },
+    opts: { sight: 4, dxy: [0, 0], turns: 4 },
+    tasks: [
+      move.energy.use(1).chain([move.turnZero, move.forward]),
+      move.target(move.energy.add(4)),
+    ],
   },
+
   jumper: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
     sprite: 'goblin',
