@@ -4,9 +4,14 @@ import types from '../../piece/types'
 
 <board-menu>
   <div class={theme.outer}>
+    <div class={theme.header}>
+      <div class={theme.header_title}>Choose a board</div>
+    </div>
     <div class={theme.content}>
       <div class="board-list">
         <div each={board in boards} class={theme.outer}>
+          <a class="edit btn btn-primary fa fa-pencil"
+             href="#!/board/edit/{board.id}/"/>
           <a class={theme.content} href="#/board/{board.id}/"
              onclick={() => this.parent.unmount()}>
             <div class="images">

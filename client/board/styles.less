@@ -7,15 +7,11 @@ dialog-box .outer {
   z-index: 10;
 }
 
-board-menu {
-  .board-list {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    .card {
-      max-width: 12rem;
-    }
-  }
+board-menu .board-list {
+  display: flex;
+  justify-content: center;
+  margin: 0 -0.5rem;
+  flex-wrap: wrap;
   .name {
     text-align: center;
   }
@@ -27,6 +23,21 @@ board-menu {
       font-size: 2rem;
       height: 1em;
       width: 1em;
+    }
+  }
+  .card {
+    margin: 0 0.25rem 0.5rem;
+    max-width: 12rem;
+    position: relative;
+    .edit {
+      display: none;
+      line-height: 1.25;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    &:hover .edit {
+      display: block;
     }
   }
 }
