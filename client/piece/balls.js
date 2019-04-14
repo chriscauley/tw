@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import move from '../move'
 
 const momentum = move.energy('momentum')

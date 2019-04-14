@@ -1,5 +1,4 @@
-import _ from 'lodash'
-import move from '../move'
+import move from '../../move'
 
 const summonSome = geometry =>
   move.summon({
