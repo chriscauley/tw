@@ -2,18 +2,19 @@ import balls from './balls'
 import mooks from './mooks'
 import bosses from './bosses'
 
-const type_map = {
+const boss_map = new Map(Object.entries(bosses).sort())
+const mook_map = new Map(Object.entries(mooks).sort())
+const ball_map = new Map(Object.entries(balls).sort())
+
+export default {
   ...balls,
   ...mooks,
   ...bosses,
+  boss_map,
+  mook_map,
+  ball_map,
+  player: {
+    sprite: 'warrior',
+    opts: { health: 4 },
+  },
 }
-
-type_map.NAMES = Object.keys(type_map)
-type_map.NAMES.sort()
-
-type_map.player = {
-  sprite: 'warrior',
-  opts: { health: 4 },
-}
-
-export default type_map

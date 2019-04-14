@@ -3,3 +3,9 @@ __pycache__/
 node_modules
 dist/
 .cache/
+
+unrest # symlinked python package for development
+
+# CCC random notes
+notes.org
+todo.org
