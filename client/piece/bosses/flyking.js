@@ -1,14 +1,15 @@
 import move from '../../move'
 
-const summonSome = geometry =>
-  move.summon({
+const summonSome = (geometry, count) => {
+  return move.summon({
     types: ['fly'],
     geometry,
     range: 2,
+    count,
   })
-
-const summonFew = summonSome('circle')
-const summonMany = summonSome('circle')
+}
+const summonFew = summonSome('_lrfb', 2)
+const summonMany = summonSome('_lrfb')
 
 const defendOrAttack = move.switch.health({
   low: move.follow,
@@ -16,18 +17,25 @@ const defendOrAttack = move.switch.health({
   high: move.forward.random,
 })
 
+const ultimate = move.energy('ultimate')
+
 const tasks = [
-  move.ifHit(move.chain(move.energy.add('ultimate'), move.teleport(4))),
-  move.energy.use('ultimate', 1, summonMany),
+  move.ifHit(move.chain([ultimate.add(1), move.teleport(4)])),
+  ultimate.use(1).then(summonMany),
   move.wait(1),
-  move.energy.add('energy'),
-  move.energy.use('energy', 4, summonFew),
-  move.forward.attackNearby,
-  defendOrAttack,
+  move.energy.use(4).then(summonFew),
+  move.chain([
+    move.energy.add(1),
+    move.find([move.forward.attackNearby, defendOrAttack]),
+  ]),
 ]
 
 export default {
   sprite: 'flyking',
   tasks,
   opts: { health: 8 },
+  /*paints: [
+    move.energy.has(8).then(
+      getGeometry(
+  ]*/
 }
