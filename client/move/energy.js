@@ -6,6 +6,7 @@ const use = (type, amount) =>
   ifThen((piece, move) => {
     const pass = piece[type] >= amount
     if (pass) {
+      move.done = true
       after(move, () => {
         piece[type] -= amount
       })
@@ -14,7 +15,7 @@ const use = (type, amount) =>
   })
 
 const add = (type, amount) => (piece, move) => {
-  if (!piece[type]) {
+  if (piece[type] === undefined) {
     piece[type] = 0
   }
   after(move, () => (piece[type] += amount))
