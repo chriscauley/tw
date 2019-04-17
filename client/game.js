@@ -1,9 +1,10 @@
 import uR from 'unrest.io'
 import riot from 'riot'
 
-import { newPlayer } from './piece/entity'
 import { getMove, applyMove, movePlayer } from './lib'
+import { newPlayer } from './piece/entity'
 import follow from './piece/follow'
+import { randomPiece, randomBoss } from './piece/generator'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
 
@@ -15,13 +16,14 @@ export default class Game extends uR.db.Model {
   static opts = {
     RenderBoard: render_html.RenderBoard,
     parent: '.html-renderer',
-    piece_generator: () => {},
     victory_condition: killAllEnemies,
     room_count: 1,
     board: uR.REQUIRED,
   }
   constructor(opts) {
     super(opts)
+    this.piece_generator = randomPiece
+    this.boss_generator = randomBoss
     window.GAME = this
     riot.observable(this)
     this.board.game = this
@@ -35,7 +37,6 @@ export default class Game extends uR.db.Model {
       this.board.reset()
       this.makePlayer()
       this.bindKeys()
-      this.makePieceGenerator()
       this.spawnPieces()
       this.makeRenderer()
     })
@@ -45,8 +46,9 @@ export default class Game extends uR.db.Model {
     this.checkVictory = this.victory_condition(this)
   }
 
-  makePieceGenerator() {
-    this.spawnPieces = this.piece_generator(this)
+  spawnPieces = () => {
+    this.piece_generator(this)
+    this.boss_generator(this)
   }
 
   _doTurn(piece) {
