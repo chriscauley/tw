@@ -59,3 +59,11 @@ export const canMoveOn = (piece, xy, _dxy) => {
   const { getOne } = piece.board
   return getOne('square', xy) && !getOne('piece', xy) && !getOne('wall', xy)
 }
+
+export const friendFoeOrEmpty = (piece, xy, _dxy) => {
+  const { getOne } = piece.board
+  if (getOne('piece', xy)) {
+    return true
+  }
+  return getOne('square', xy) && !getOne('wall', xy)
+}
