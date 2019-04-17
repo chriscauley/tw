@@ -20,7 +20,13 @@ const defendOrAttack = move.switch.health({
 const ultimate = move.energy('ultimate')
 
 const tasks = [
-  move.ifHit(move.chain([ultimate.add(1), move.teleport(4)])),
+  move.ifHit(
+    move.chain([
+      ultimate.add(1),
+      move.teleport(4),
+      move.setAfter({ energy: 0 }),
+    ]),
+  ),
   ultimate.use(1).then(summonMany),
   move.wait(1),
   move.energy.use(4).then(summonFew),

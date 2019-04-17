@@ -23,7 +23,7 @@ export default {
   },
   charger: {
     sprite: 'beholder',
-    opts: { sight: 4, dxy: [0, 0], turns: 4 },
+    opts: { sight: 4, dxy: [0, 0], turns: 4 }, // #! TODO Sight should be in target
     tasks: [
       move.energy
         .use(1)
