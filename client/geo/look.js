@@ -34,11 +34,13 @@ look.GEOMETRIES = [
   'close',
   'circle',
   'f', // forward
+  'b', //back
   'r', // right
   'l', // left
   'd', // forward-right (dexter)
   's', // forward-left (sinister)
   'lr', // left+right
+  'lrfb', // left+right+forward+back
   'fd', // forward + forward-right
   'fs', // forward + forward-left
   'three',
@@ -62,18 +64,20 @@ for (const dxy of geo_dxy.list) {
     const [f] = (look._f[dxy][range] = look._line[dxy][range] = [
       vector.times(dxy, range),
     ])
+    const [b] = (look._b[dxy][range] = [vector.times(f, -1)])
+    const [l] = (look._l[dxy][range] = [[f[1], f[0]]])
+    const [r] = (look._r[dxy][range] = [[-f[1], -f[0]]])
     const [s] = (look._s[dxy][range] = [
       [f[0] + Math.sign(f[1]), f[1] - Math.sign(f[0])],
     ])
     const [d] = (look._d[dxy][range] = [
       [f[0] - Math.sign(f[1]), f[1] + Math.sign(f[0])],
     ])
-    const [l] = (look._l[dxy][range] = [[f[1], f[0]]])
-    const [r] = (look._r[dxy][range] = [[-f[1], -f[0]]])
     look._lr[dxy][range] = [l, r]
     look._fs[dxy][range] = [f, s]
     look._fd[dxy][range] = [f, d]
     look._three[dxy][range] = [f, s, d]
+    look._lrfb[dxy][range] = [l, r, f, b]
 
     look._cone[dxy][range] = []
     look._close[dxy][range] = []
