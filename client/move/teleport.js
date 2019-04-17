@@ -10,11 +10,12 @@ export default range => (piece, move) => {
     geo.look.lookMany(piece.xy, _circle[range]),
   )
   const [dx, dy] = geo.vector.subtract(piece.xy, target_xy)
-  const dxy = geo.vector.sign(Random.fp.choice(piece, [[dx, 0], [0, dy]]))
+  const target_dxys = [[dx, 0], [0, dy]].filter(dxy => !geo.vector.isZero(dxy))
+  const dxy = geo.vector.sign(Random.fp.choice(piece, target_dxys))
   return {
     ...move,
     xy: target_xy,
-    dxy: dxy,
+    dxy,
     done: true,
     end: true, // takes all turns
   }
