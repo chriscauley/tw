@@ -11,6 +11,10 @@ const playBoard = (path, data) => {
   })
 
   game.ready.start()
+  uR.router.one('route', () => {
+    console.warn('TODO: unmount game!')
+    uR.element.emptyElement(document.querySelector('#main > .html-renderer'))
+  })
 }
 
 export default {
