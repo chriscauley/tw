@@ -31,7 +31,7 @@ look.Mixin = superclass =>
 look.GEOMETRIES = [
   'line', // #! TODO? depracate in favor of f?
   'cone',
-  'close',
+  'arrow', // like an inverted cone
   'circle',
   'f', // forward
   'b', //back
@@ -43,7 +43,7 @@ look.GEOMETRIES = [
   'lrfb', // left+right+forward+back
   'fd', // forward + forward-right
   'fs', // forward + forward-left
-  'three',
+  'three', //  forward + forward-left + forward-right
 ]
 
 look._GEOMETRIES = look.GEOMETRIES.map(g => {
@@ -80,11 +80,11 @@ for (const dxy of geo_dxy.list) {
     look._lrfb[dxy][range] = [l, r, f, b]
 
     look._cone[dxy][range] = []
-    look._close[dxy][range] = []
+    look._arrow[dxy][range] = []
     for (let j = 1 - range; j < range; j++) {
       look._cone[dxy][range].push([dx * range + j * dy, dy * range + j * dx])
       const i = range - Math.abs(j) - 1
-      look._close[dxy][range].push([dx + i * dx + j * dy, dy + i * dy + j * dx])
+      look._arrow[dxy][range].push([dx + i * dx + j * dy, dy + i * dy + j * dx])
     }
 
     look._circle[dxy][range] = []

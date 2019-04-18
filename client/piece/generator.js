@@ -19,7 +19,7 @@ export const randomBoss = ({ board }) => {
   const room = board.rooms[board.rooms.length - 1]
   board.newPiece({
     xy: randomEmptyXY(board, room.xys),
-    type: 'flyking',
+    type: 'greydragon',
     _PRNG: board.random.int(),
   })
 }
