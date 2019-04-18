@@ -16,5 +16,6 @@ export default {
   player: {
     sprite: 'warrior',
     opts: { health: 4 },
+    tasks: [],
   },
 }

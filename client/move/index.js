@@ -4,6 +4,7 @@ import follow from './follow'
 
 import flip from './flip'
 import forward, { forwardRandomly } from './forward'
+import ultimate from './ultimate'
 
 import target from './target'
 import wait from './wait'
@@ -57,4 +58,5 @@ export default {
   shoot,
   summon,
   morph,
+  ultimate,
 }

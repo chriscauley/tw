@@ -3,6 +3,7 @@ import riot from 'riot'
 
 import uR from 'unrest.io'
 import types from '../piece/types'
+import paint from '../move/paint'
 import geo from '../geo'
 
 const ready = new uR.Ready()
@@ -92,16 +93,18 @@ class RenderBoard extends uR.db.Model {
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
 
-    // animations are in an arry, need a map for lookup
     const animation_map = {}
-    this.animations.forEach(({ xy, sprite }) => {
-      animation_map[xy] = sprite
-    })
     const results = {}
     let value
 
     this.names.forEach(name => {
       results[name] = []
+      if (name === 'animation') {
+        // animations are in an arry, need a map for lookup
+        this.animations.forEach(({ xy, sprite }) => {
+          animation_map[xy] = sprite
+        })
+      }
       xys.forEach(xy => {
         switch (name) {
           case 'void':
@@ -115,6 +118,13 @@ class RenderBoard extends uR.db.Model {
         }
         if (value) {
           results[name].push([xy, value])
+          if (name === 'piece') {
+            const { tasks } = types[value.type]
+            paint
+              .paintTasks(tasks, value)
+              .filter(Boolean)
+              .forEach(result => this.animations.push(result))
+          }
         }
       })
     })
@@ -141,14 +151,12 @@ class RenderBoard extends uR.db.Model {
             )
           }
         }
-        if (name === 'animation') {
-          observer.one('animate', () => element.classList.add('fade'))
+        if (name === 'animation' && value.className) {
+          observer.one('animate', () => element.classList.add(value.className))
         }
       })
     })
-    if (this.animations.length) {
-      setTimeout(() => observer.trigger('animate'), 0)
-    }
+    setTimeout(() => observer.trigger('animate'), 0)
     this.animations = []
   }
 

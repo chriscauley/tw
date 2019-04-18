@@ -1,10 +1,16 @@
 import chain from './chain'
 
-const _if = conditional => action => (piece, move, dxy) => {
-  if (conditional(piece, move, dxy)) {
-    return action(piece, move, dxy)
+const _if = conditional => action => {
+  const wrapped = (piece, move, dxy) => {
+    if (conditional(piece, move, dxy)) {
+      return action(piece, move, dxy)
+    }
+    return move
   }
-  return move
+  if (action.paint) {
+    wrapped.paint = piece => conditional(piece) && action.paint(piece)
+  }
+  return wrapped
 }
 
 const ifThen = conditional => ({

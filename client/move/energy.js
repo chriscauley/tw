@@ -5,7 +5,8 @@ import { curry } from 'lodash'
 const use = (type, amount) =>
   ifThen((piece, move) => {
     const pass = piece[type] >= amount
-    if (pass) {
+    if (pass && move) {
+      // paint doesn't pass move in
       move.done = true
       after(move, () => {
         piece[type] -= amount
