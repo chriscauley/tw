@@ -25,9 +25,13 @@ class CompositeSprite(AbstractModel):
     pass
 
 
-class PieceGenerator(AbstractModel):
+class Board(AbstractModel):
     pass
 
 
-class Board(AbstractModel):
+class BossSet(AbstractModel):
+    pass
+
+
+class MookSet(AbstractModel):
     pass

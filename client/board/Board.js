@@ -19,7 +19,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     'item_generators',
     'room_count',
     'mook_count',
-    'mooks',
   ]
   static fields = {
     id: Int(),
@@ -32,6 +31,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     room_count: Int(1, { choices: _.range(1, 5) }),
     mook_count: Int(3, { choices: _.range(1, 10) }),
     mooks: List('', { choices: types.mook_map }),
+    boss: String('', { choices: types.boss_map }),
   }
   __str__() {
     return this.name
