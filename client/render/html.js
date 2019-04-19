@@ -83,7 +83,6 @@ class RenderBoard extends uR.db.Model {
     if (!this.container) {
       return
     }
-    this.afterAnimation
     const { xy } = this.board.player
     this.floor.className = this.getFloorClass(xy)
     const { style } = this.container

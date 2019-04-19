@@ -19,17 +19,17 @@ const LookPreview = {
       this.update()
     }
 
-    this.game = new Game({})
+    this.game = new Game({ board: uR.db.server.Board.objects.get(1) })
 
     this.game.on("nextturn", () => {
       const { board, player } = this.game
       const { geometry, range } = this.data
-      board.squares.forEach(s => s.color = undefined)
       const xys = geo.look[geometry][player.dxy][range].map(
         dxy => geo.vector.add(player.xy,dxy)
       )
-      board.getSquares(xys).forEach(square => square.color = "red")
-      this.game.renderer.update()
+      xys.forEach(
+        xy=> board.renderer.animations.push({ xy, sprite: 'red', })
+      )
     })
 
     this.on("mount", () => {
