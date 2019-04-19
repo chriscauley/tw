@@ -41,6 +41,7 @@ look.GEOMETRIES = [
   's', // forward-left (sinister)
   'lr', // left+right
   'lrfb', // left+right+forward+back
+  'diagonals',
   'fd', // forward + forward-right
   'fs', // forward + forward-left
   'three', //  forward + forward-left + forward-right
@@ -78,6 +79,12 @@ for (const dxy of geo_dxy.list) {
     look._fd[dxy][range] = [f, d]
     look._three[dxy][range] = [f, s, d]
     look._lrfb[dxy][range] = [l, r, f, b]
+    look._diagonals[dxy][range] = [
+      [range, range],
+      [range, -range],
+      [-range, range],
+      [-range, -range],
+    ]
 
     look._cone[dxy][range] = []
     look._arrow[dxy][range] = []
