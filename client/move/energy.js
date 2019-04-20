@@ -2,39 +2,42 @@ import after from './after'
 import ifThen from './ifThen'
 import { curry } from 'lodash'
 
-const use = (type, amount) =>
+const use = (energy_type, amount) =>
   ifThen((piece, move) => {
-    const pass = piece[type] >= amount
+    const pass = piece[energy_type] >= amount
     if (pass && move) {
       // paint doesn't pass move in
       move.done = true
       after(move, () => {
-        piece[type] -= amount
+        piece[energy_type] -= amount
       })
     }
     return pass
   })
 
-const add = (type, amount) => (piece, move) => {
-  if (piece[type] === undefined) {
-    piece[type] = 0
+const add = (energy_type, amount) => (piece, move) => {
+  if (piece[energy_type] === undefined) {
+    piece[energy_type] = 0
   }
-  after(move, () => (piece[type] += amount))
+  after(move, () => (piece[energy_type] += amount))
   return move
 }
 
-const set = (type, amount) => (piece, move) =>
-  after(move, () => (piece[type] = amount))
+const set = (energy_type, amount) => (piece, move) =>
+  after(move, () => (piece[energy_type] = amount))
 
-const has = (type, amount) => ifThen(piece => piece[type] >= amount)
-const hasNot = (type, amount) => ifThen(piece => piece[type] < amount)
+const has = (energy_type, amount) =>
+  ifThen(piece => piece[energy_type] >= amount)
 
-const energy = type => ({
-  use: curry(use)(type),
-  has: curry(has)(type),
-  hasNot: curry(hasNot)(type),
-  add: curry(add)(type),
-  set: curry(set)(type),
+const hasNot = (energy_type, amount) =>
+  ifThen(piece => piece[energy_type] < amount)
+
+const energy = energy_type => ({
+  use: curry(use)(energy_type),
+  has: curry(has)(energy_type),
+  hasNot: curry(hasNot)(energy_type),
+  add: curry(add)(energy_type),
+  set: curry(set)(energy_type),
 })
 
 Object.assign(energy, energy('energy'))
