@@ -37,11 +37,16 @@ look.GEOMETRIES = [
   'b', //back
   'r', // right
   'l', // left
-  'd', // forward-right (dexter)
-  's', // forward-left (sinister)
   'lr', // left+right
   'lrfb', // left+right+forward+back
+  'x1',
+  'x3',
+  'x5',
+  'x7',
   'diagonals',
+
+  'd', // forward-right (dexter)
+  's', // forward-left (sinister)
   'fd', // forward + forward-right
   'fs', // forward + forward-left
   'three', //  forward + forward-left + forward-right
@@ -85,6 +90,10 @@ for (const dxy of geo_dxy.list) {
       [-range, range],
       [-range, -range],
     ]
+    look._x1[dxy][range] = look._diagonals[0]
+    look._x3[dxy][range] = look._diagonals[1]
+    look._x5[dxy][range] = look._diagonals[2]
+    look._x7[dxy][range] = look._diagonals[3]
 
     look._cone[dxy][range] = []
     look._arrow[dxy][range] = []
