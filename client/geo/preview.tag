@@ -17,9 +17,13 @@ const LookPreview = {
     this.submit = form => {
       this.data = form.getData()
       this.update()
+      return Promise.resolve()
     }
 
-    this.game = new Game({ board: uR.db.server.Board.objects.get(1) })
+    this.game = new Game({
+      board: uR.db.server.Board.objects.get(1),
+      enemies: false,
+    })
 
     this.game.on("nextturn", () => {
       const { board, player } = this.game

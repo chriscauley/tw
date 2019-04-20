@@ -19,6 +19,7 @@ export default class Game extends uR.db.Model {
     victory_condition: killAllEnemies,
     room_count: 1,
     board: uR.REQUIRED,
+    enemies: true,
   }
   constructor(opts) {
     super(opts)
@@ -47,6 +48,9 @@ export default class Game extends uR.db.Model {
   }
 
   spawnPieces = () => {
+    if (!this.enemies) {
+      return
+    }
     this.piece_generator(this)
     this.boss_generator(this)
   }
