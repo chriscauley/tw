@@ -17,6 +17,7 @@ const LookPreview = {
     this.submit = form => {
       this.data = form.getData()
       this.update()
+      setTimeout(() => this.game.board.renderer.update(),100)
       return Promise.resolve()
     }
 
@@ -39,6 +40,7 @@ const LookPreview = {
     this.on("mount", () => {
       this.game.ready.start()
       this.update()
+      setTimeout(() => this.game.board.renderer.update(),100)
     })
     this.on("update",() => {
       this.game.trigger("nextturn")
