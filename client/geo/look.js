@@ -39,10 +39,10 @@ look.GEOMETRIES = [
   'l', // left
   'lr', // left+right
   'lrfb', // left+right+forward+back
-  'x1',
-  'x3',
-  'x5',
-  'x7',
+  'xfl',
+  'xfr',
+  'xbl',
+  'xbr',
   'diagonals',
 
   'd', // forward-right (dexter)
@@ -60,6 +60,7 @@ look._GEOMETRIES = look.GEOMETRIES.map(g => {
 look.ALL_GEOMETRIES = look.GEOMETRIES.concat(look._GEOMETRIES)
 look.MAX_RANGE = 8
 look.RANGES = _.range(1, look.MAX_RANGE + 1)
+const _diagonals = ['_xfl', '_xbl', '_xbr', '_xfr']
 
 for (const dxy of geo_dxy.list) {
   const [dx, dy] = dxy
@@ -70,30 +71,24 @@ for (const dxy of geo_dxy.list) {
     const [f] = (look._f[dxy][range] = look._line[dxy][range] = [
       vector.times(dxy, range),
     ])
+    const sign_x = Math.sign(f[0])
+    const sign_y = Math.sign(f[1])
+    const [r] = (look._r[dxy][range] = [vector.turn(f, 1)])
+    const [l] = (look._l[dxy][range] = [vector.turn(f, -1)])
     const [b] = (look._b[dxy][range] = [vector.times(f, -1)])
-    const [l] = (look._l[dxy][range] = [[f[1], f[0]]])
-    const [r] = (look._r[dxy][range] = [[-f[1], -f[0]]])
-    const [s] = (look._s[dxy][range] = [
-      [f[0] + Math.sign(f[1]), f[1] - Math.sign(f[0])],
-    ])
-    const [d] = (look._d[dxy][range] = [
-      [f[0] - Math.sign(f[1]), f[1] + Math.sign(f[0])],
-    ])
+    const [s] = (look._s[dxy][range] = [[f[0] + sign_y, f[1] - sign_x]])
+    const [d] = (look._d[dxy][range] = [[f[0] - sign_y, f[1] + sign_x]])
     look._lr[dxy][range] = [l, r]
     look._fs[dxy][range] = [f, s]
     look._fd[dxy][range] = [f, d]
     look._three[dxy][range] = [f, s, d]
     look._lrfb[dxy][range] = [l, r, f, b]
-    look._diagonals[dxy][range] = [
-      [range, range],
-      [range, -range],
-      [-range, range],
-      [-range, -range],
-    ]
-    look._x1[dxy][range] = look._diagonals[0]
-    look._x3[dxy][range] = look._diagonals[1]
-    look._x5[dxy][range] = look._diagonals[2]
-    look._x7[dxy][range] = look._diagonals[3]
+
+    look._xfl[dxy][range] = [vector.add(f, l)]
+    look._xbl[dxy][range] = [vector.add(b, l)]
+    look._xbr[dxy][range] = [vector.add(b, r)]
+    look._xfr[dxy][range] = [vector.add(f, r)]
+    look._diagonals[dxy][range] = _diagonals.map(i => look[i][dxy][range][0])
 
     look._cone[dxy][range] = []
     look._arrow[dxy][range] = []
