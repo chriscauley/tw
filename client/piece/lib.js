@@ -24,7 +24,7 @@ export const applyMove = (piece, move, turn) => {
       target._last_damage = damage
     })
   }
-  if (xy) {
+  if (xy && xy !== piece.xy) {
     piece.board.setPiece(xy, piece)
   }
   piece.dxy = dxy
