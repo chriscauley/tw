@@ -1,6 +1,7 @@
 import move from '../../move'
 import boos from './boos'
 import blind_mooks from './blind_mooks'
+import chess from './chess'
 
 const zeroOut = move.setAfter(
   {
@@ -11,6 +12,7 @@ const zeroOut = move.setAfter(
 )
 
 export default {
+  ...chess,
   ...boos,
   ...blind_mooks,
   seeker: {

@@ -7,7 +7,7 @@ import defer from './defer'
 const forward = (piece, move, dxy = piece.dxy) => {
   // move forward up to piece.speed squraes
   // if an enemy is in the way, attack that enemy
-  const dxys = geo.look.line[dxy][piece.speed]
+  const dxys = geo.look.line[dxy][piece.speed] // #! TODO use type's geometry?
 
   // update move until a square is blocked or damage is done
   geo.look.lookMany(piece.xy, dxys).find(xy => {
@@ -105,4 +105,9 @@ forward.attackNearby = (piece, move) => {
     return forward(piece, move, target_dxy)
   }
   return move
+}
+
+forward.noAttack = (piece, move, dxy) => {
+  const move2 = forward(piece, move, dxy)
+  return move2.damages ? move : move2
 }

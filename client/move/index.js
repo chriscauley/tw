@@ -1,6 +1,6 @@
 import done from './done'
+import chess from './chess'
 import find from './find'
-
 import follow from './follow'
 
 import flip from './flip'
@@ -13,6 +13,7 @@ import wait from './wait'
 // contitionals
 import ifLookedAt from './ifLookedAt'
 import ifHit from './ifHit'
+import ifMoved from './ifMoved'
 import ifDidDamage from './ifDidDamage'
 
 // actions piece does to self
@@ -34,6 +35,7 @@ import respawn from './respawn'
 
 export default {
   done,
+  chess,
   find,
   follow,
 
@@ -49,6 +51,7 @@ export default {
 
   ifLookedAt,
   ifHit,
+  ifMoved,
   ifDidDamage,
 
   booOff,
