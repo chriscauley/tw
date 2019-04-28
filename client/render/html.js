@@ -26,7 +26,7 @@ class RenderBoard extends uR.db.Model {
     // _r = "radius", but for a square not diamond...
     // should be 2 larger than actual visible radius
     // this hides the "poping" as element show/hide
-    this._r = 6
+    this._r = 8
     this.size = this._r * 2 + 1
     this.dxys = []
     this.all_divs = []
