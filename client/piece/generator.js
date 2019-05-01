@@ -1,27 +1,26 @@
 import _ from 'lodash'
 import uR from 'unrest.io'
 import types from './types'
+import { NamedModel } from '../models'
 
 import { randomEmptyXY } from '../lib'
 
-const { List, Int, APIManager, Model } = uR.db
+const { List, APIManager } = uR.db
 
-class MookSet extends Model {
+class MookSet extends NamedModel {
   static slug = 'server.MookSet'
   static fields = {
-    id: Int(0),
     mooks: List('', { choices: types.mook_map }),
   }
-  static editable_fieldnames = ['mooks']
+  static editable_fieldnames = ['name', 'mooks']
 }
 
-class BossSet extends Model {
+class BossSet extends NamedModel {
   static slug = 'server.BossSet'
   static fields = {
-    id: Int(0),
     bosses: List('', { choices: types.boss_map }),
   }
-  static editable_fieldnames = ['bosses']
+  static editable_fieldnames = ['name', 'bosses']
 }
 
 new APIManager(BossSet)

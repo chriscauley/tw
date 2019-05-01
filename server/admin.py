@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Sheet, Sprite, CompositeSprite
+from .models import Sheet, Sprite, CompositeSprite, MookSet, BossSet, Level
 
 
 @admin.register(Sheet)
@@ -21,4 +21,19 @@ class SpriteAdmin(admin.ModelAdmin):
 
 @admin.register(CompositeSprite)
 class CompositeSpriteAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(MookSet)
+class MookSetAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(BossSet)
+class BossSetAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Level)
+class LevelAdmin(admin.ModelAdmin):
     pass

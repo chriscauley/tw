@@ -29,6 +29,10 @@ class Board(AbstractModel):
     pass
 
 
+class Level(AbstractModel):
+    pass
+
+
 class BossSet(AbstractModel):
     pass
 

@@ -5,7 +5,7 @@ export default {
     sprite: 'wisp',
     tasks: [move.ifLookedAt(move.booOff), move.follow],
   },
-  bootoo: {
+  boo2: {
     sprite: 'shade',
     opts: { turns: 2 },
     tasks: [move.ifLookedAt(move.booOff), move.follow],
