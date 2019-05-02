@@ -52,6 +52,6 @@ export default ({ types, geometry = 'forward', range = 1, count }) => {
     })
   }
 
-  action.paint = paint.spriteXYs(getXYs)
+  action.paint = paint.spriteXYs(getXYs, 'pentagram')
   return action
 }

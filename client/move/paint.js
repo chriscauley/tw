@@ -19,9 +19,9 @@ const manyActions = func => actions => {
   return wrapped
 }
 
-const spriteXYs = getXYs => (piece, move, dxy) => {
-  const xys = getXYs(piece, move, dxy)
-  return xys.map(xy => ({ sprite: 'pentagram', xy }))
+const spriteXYs = (getXYs, sprite) => (piece, move, dxy) => {
+  const xys = getXYs(piece, move, dxy) || []
+  return xys.map(xy => ({ sprite, xy }))
 }
 
 const paintTasks = (tasks, piece) => {
