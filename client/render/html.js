@@ -205,7 +205,7 @@ const objToClassString = obj => {
 
 // pieces and anything which is not a primative needs fancy rendering
 const renderEntity = (entity, extras = {}) => {
-  const { xy, color, name, type, dxy, waiting, follow_order, _sprite } = entity
+  const { xy, color, name, type, dxy, follow_order, _sprite } = entity
   let { sprite } = types[type]
   if (_sprite) {
     sprite += _sprite
@@ -214,15 +214,10 @@ const renderEntity = (entity, extras = {}) => {
     ...extras,
     sprite,
     color,
-    waiting,
     follow_order,
     dxy: dxy.join(''),
     x: xy[0],
     y: xy[1],
-  }
-
-  if (entity.target_dxy) {
-    extras.waiting = 0
   }
 
   let className = `${name} ${type} w-1 h-1 sprite `

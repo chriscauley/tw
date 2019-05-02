@@ -1,16 +1,28 @@
 import after from './after'
 
 export default turns => {
-  const tick = piece => piece.waiting--
-  const reset = piece => (piece.waiting = turns)
+  const tick = piece => piece.wait++
+  const reset = piece => (piece.wait = 0)
 
-  return (piece, move) => {
-    if (!piece.waiting) {
-      return after(move, reset)
+  const action = (piece, move) => {
+    if (piece.wait === undefined) {
+      piece.wait = 0
     }
-    return {
-      ...after(move, tick),
-      done: true,
+    if (piece.wait < turns) {
+      return {
+        ...after(move, tick),
+        done: true,
+      }
     }
+    return after(move, reset)
   }
+
+  action.paint = (piece, _move, _dxy) => [
+    {
+      xy: piece.xy,
+      sprite: piece.wait >= turns ? 'wait-ready' : 'wait',
+    },
+  ]
+
+  return action
 }

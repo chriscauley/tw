@@ -176,24 +176,6 @@
     }
   }
 
-  .waiting-0, .waiting-1, .waiting-2, .waiting-3 {
-    &:after {
-      background-color: grey;
-      bottom: 0;
-      content: "";
-      display: block;
-      height: 0.2 * @scale;
-      position: absolute;
-      right: 0;
-      width: 0.2 * @scale;
-    }
-  }
-  .waiting-0 {
-    &:after {
-      background-color: red;
-    }
-  }
-
   /*.piece:before {
     font-size: 0.5em;
     position: absolute;
@@ -271,6 +253,14 @@
 .html-renderer .animation {
   background-size: 70%;
   z-index: 999999;
+  &.sprite-wait, &.sprite-wait-ready {
+    background-color: grey;
+    border-radius: 100%;
+    z-index: 0;
+  }
+  &.sprite-wait-ready {
+    background-color: #A00;
+  }
 }
 
 .sprite.fade {
