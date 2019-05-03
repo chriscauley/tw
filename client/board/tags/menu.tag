@@ -10,7 +10,7 @@ import types from '../../piece/types'
     <div class={theme.content}>
       <div class="board-list">
         <div each={board in boards} class={theme.outer}>
-          <a class="edit btn btn-primary fa fa-pencil"
+          <a if={show_edit} class="edit btn btn-primary fa fa-pencil"
              href="#!/board/edit/{board.id}/"/>
           <a class={theme.content} href="#/board/{board.id}/"
              onclick={() => this.parent.unmount()}>
@@ -30,6 +30,7 @@ import types from '../../piece/types'
 this.mixin(uR.css.ThemeMixin)
 this.on("mount", () => this.update())
 this.on("update", () => {
+  this.show_edit = uR.auth.user && uR.auth.user.is_superuser
   this.boards = Board.objects.all()
 })
 getSprite(mook) {
