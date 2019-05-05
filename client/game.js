@@ -7,6 +7,7 @@ import follow from './piece/follow'
 import { randomPiece, randomBoss } from './piece/generator'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
+import './render/ui.tag'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
@@ -129,6 +130,7 @@ export default class Game extends uR.db.Model {
   }
 
   makeRenderer = () => {
+    uR.element.create('tw-ui', { parent: this.parent }, { game: this })
     this.renderer = new this.RenderBoard({
       board: this.board,
       parent: this.parent,
