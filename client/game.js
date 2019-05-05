@@ -165,4 +165,9 @@ export default class Game extends uR.db.Model {
       })
     })
   }
+
+  unmount = () => {
+    this.controller.unmount()
+    uR.element.emptyElement(document.querySelector('#main > .html-renderer'))
+  }
 }
