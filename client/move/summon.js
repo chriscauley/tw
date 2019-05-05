@@ -2,7 +2,7 @@ import Random from 'ur-random'
 
 import geo from '../geo'
 import after from './after'
-import { canAttack, canMoveOn, friendFoeOrEmpty } from '../lib'
+import { applyDamage, canAttack, canMoveOn, friendFoeOrEmpty } from '../lib'
 import paint from './paint'
 
 // #! TODO instead of geometry, range, use getXys = pieceLook(piece,geometry,range)
@@ -46,8 +46,10 @@ export default ({ types, geometry = 'forward', range = 1, count }) => {
 
       target_xys
         .filter(xy => canAttack(piece, xy))
-        .forEach(_xy => {
-          console.log('attacking') // eslint-disable-line
+        .forEach(xy => {
+          const target = piece.board.getOne('piece', xy)
+          const sprite = 'fireball'
+          applyDamage(target, { count: 1, xy, dxy, sprite })
         })
     })
   }
