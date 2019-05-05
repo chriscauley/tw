@@ -9,10 +9,6 @@ const BASE = {
 const types = {
   knife: {},
 
-  spear: {
-    range: 2,
-  },
-
   longsword: {
     range: 2,
     splash: true,
@@ -20,18 +16,26 @@ const types = {
   },
 
   katana: {
+    geometry: 'three',
+    splash: true,
+  },
+
+  spear: {
     range: 2,
+    step: true,
   },
 
   scythe: {
     range: 2,
-    geometry: '_cone',
+    geometry: '_three',
     splash: true,
+    step: true,
   },
 
   jambiya: {
     geometry: 'lr',
     splash: true,
+    step: true,
   },
 }
 

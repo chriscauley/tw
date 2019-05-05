@@ -7,7 +7,7 @@ const randomWeapon = board => {
   board.setOne(
     'item',
     randomEmptyXY(board, room.xys),
-    weapon.types.get('jambiya'),
+    weapon.types.get('scythe'),
   )
 }
 

@@ -1,11 +1,11 @@
 import after from '../move/after'
 import geo from '../geo/'
 import _ from 'lodash'
-import { applyMove, canMoveOn } from '../lib'
-import { getAttack } from '../item/weapon' // #! TODO move to lib?
+import { applyMove, canAttack, canMoveOn } from '../lib'
 
-const { vector } = geo
+const { vector, look } = geo
 
+// #! TODO move to move when used by any other unit
 const addMoves = (...moves) => {
   // add all moves together to make one big move
   const dxys = moves.map(move => move.dxy).filter(dxy => dxy)
@@ -15,11 +15,36 @@ const addMoves = (...moves) => {
   }
 }
 
-const getMove = (player, dxy) => {
-  const { weapon } = player.equipment
-  const attacks = getAttack(weapon, player, dxy)
+export const getAttack = (weapon, player, dxy) => {
+  if (!dxy || vector.isZero(dxy)) {
+    return
+  }
+  const { range, geometry, splash, step } = weapon
+  let move = {
+    dxy, // move direction
+    xy: player.xy,
+  }
+
+  if (step) {
+    move = getStep(player, dxy)
+    if (!move.xy) {
+      return
+    }
+  }
+
+  // #! TODO should check 0 to range-1 to make sure weapon isn't blocked
+  // this could include a way for "phasing" weapons to attack through things
+  const target_dxys = look[geometry][dxy][range]
+  let attacks = target_dxys
+    .map(dxy => ({ dxy, xy: vector.add(player.xy, dxy) }))
+    .filter(({ xy }) => canAttack(player, xy))
+  if (!splash) {
+    attacks = attacks.slice(0, 1)
+  }
   if (attacks.length) {
     return {
+      ...move,
+      done: true,
       damages: attacks.map(({ xy, dxy }) => ({
         dxy, // damage direction
         xy, // target square
@@ -28,12 +53,11 @@ const getMove = (player, dxy) => {
         source: player,
         sprite: weapon.name,
       })),
-      done: true,
-      dxy, // move direction
-      xy: player.xy,
     }
   }
+}
 
+const getStep = (player, dxy) => {
   const xy = vector.add(player.xy, dxy)
 
   return {
@@ -41,6 +65,12 @@ const getMove = (player, dxy) => {
     dxy,
     done: true,
   }
+}
+
+const getMove = (player, dxy) => {
+  const { weapon } = player.equipment
+  const attackMove = getAttack(weapon, player, dxy)
+  return attackMove || getStep(player, dxy)
 }
 
 export const swapItem = player => {
