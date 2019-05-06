@@ -11,7 +11,6 @@
   <script>
 this.on("mount",() => {
   this.opts.game.ui = this
-  console.log(this.opts.game.ui)
   this.update()
 })
 this.on("update", () => {

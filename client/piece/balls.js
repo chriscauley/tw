@@ -23,6 +23,7 @@ const ball = {
 const fireball = {
   opts: { sight: 0 },
   sprite: 'fireball',
+  damage_animation: 'explode',
   tasks: [move.ifDidDamage(move.forward, move.burnout), move.burnout],
 }
 

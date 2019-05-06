@@ -37,8 +37,11 @@ export const applyMove = (piece, move, turn) => {
   }
 }
 
-export const applyDamage = (piece, { count, xy, dxy, sprite }) => {
+export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
   piece.health -= count
+  if (!sprite) {
+    sprite = types[source.type].damage_animation || source.type
+  }
   piece.board.renderer.animations.push({ xy, dxy, sprite, className: 'fade' })
   if (piece.health <= 0) {
     // #! TODO should also do death animation
