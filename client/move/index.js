@@ -1,3 +1,4 @@
+import done from './done'
 import find from './find'
 
 import follow from './follow'
@@ -29,8 +30,10 @@ import morph from './morph'
 
 import energy from './energy'
 import setAfter from './setAfter'
+import respawn from './respawn'
 
 export default {
+  done,
   find,
   follow,
 
@@ -59,4 +62,5 @@ export default {
   summon,
   morph,
   ultimate,
+  respawn,
 }

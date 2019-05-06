@@ -28,7 +28,7 @@ new APIManager(MookSet)
 
 export const randomPiece = ({ board }) => {
   return board.rooms.forEach(room => {
-    _.range(board.mook_count).forEach(() => {
+    _.range(0 && board.mook_count).forEach(() => {
       const name = board.random.choice(board.mooks)
       board.newPiece({
         xy: randomEmptyXY(board, room.xys),

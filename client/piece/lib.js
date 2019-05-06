@@ -67,3 +67,20 @@ export const friendFoeOrEmpty = (piece, xy, _dxy) => {
   }
   return getOne('square', xy) && !getOne('wall', xy)
 }
+
+const _respawn = {}
+
+export const respawn = player => {
+  const { id, xy, dxy, team, board } = player
+  if (!_respawn[id]) {
+    board.removePiece(player)
+    _respawn[id] = board.newPiece({
+      type: 'respawn',
+      team,
+      xy,
+      dxy,
+    })
+    _respawn[id].spawns = player
+    _respawn[id].remove = () => (_respawn[id] = undefined)
+  }
+}

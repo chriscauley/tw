@@ -2,7 +2,8 @@
 
 import geo from '../geo'
 
-const _isEnemy = (piece, target) => target.team !== piece.team
+const _isEnemy = (piece, target) =>
+  !target.invulnerable && target.team !== piece.team
 
 const _canStillFollow = (piece, target, match) => {
   if (target && match(piece, target)) {

@@ -1,7 +1,7 @@
 import uR from 'unrest.io'
 import riot from 'riot'
 
-import { getMove, applyMove, movePlayer } from './lib'
+import { getMove, applyMove, movePlayer, respawn } from './lib'
 import { newPlayer } from './piece/entity'
 import follow from './piece/follow'
 import { randomPiece, randomBoss } from './piece/generator'
@@ -115,6 +115,9 @@ export default class Game extends uR.db.Model {
       this.doTurns(pieces, true)
       this.board.checkDialog()
     }
+    if (this.player.health <= 0) {
+      respawn(this.player)
+    }
     this.trigger('nextturn')
     this.turn++
   }
@@ -154,7 +157,9 @@ export default class Game extends uR.db.Model {
         turn: this.turn,
       }
       if (input.dxy) {
-        movePlayer(this.player, input)
+        if (this.player.health > 0) {
+          movePlayer(this.player, input)
+        }
         this.nextTurn()
         this.renderer.update()
       }

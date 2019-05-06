@@ -52,6 +52,7 @@ const newPiece = opts => {
       'turns',
       '_turn',
       'equipment',
+      'lives',
     ]),
     name: 'piece',
   })
@@ -69,6 +70,7 @@ const newPlayer = opts =>
     ...opts,
     team: 1,
     equipment: { ...item.default_equipment },
+    lives: 3,
   })
 
 export { newEntity, newPiece, newPlayer, getEntity }
