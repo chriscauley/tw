@@ -5,6 +5,8 @@
         <i data-energy={ e } each={ e,i in item.energy }></i>
       </div>
     </div>
+    <div class="box sprite sprite-reincarnation w-1 h-1 badge" data-badge={lives}>
+    </div>
   </div>
   <script>
 this.on("mount",() => {
@@ -13,7 +15,9 @@ this.on("mount",() => {
   this.update()
 })
 this.on("update", () => {
-  this.equipment = Object.values(this.opts.game.player.equipment)
+  const { player } = this.opts.game
+  this.equipment = Object.values(player.equipment)
+  this.lives = player.lives
 })
 getClass(item) {
   const { slot, name } = item

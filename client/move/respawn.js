@@ -6,6 +6,6 @@ export default (piece, move, _dxy) =>
     board.removePiece(piece)
     board.setPiece(xy, spawns)
     spawns.health = spawns.max_health
-    spawns.lives--
+    spawns.dead = false
     piece.remove()
   })

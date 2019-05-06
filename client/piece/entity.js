@@ -70,7 +70,7 @@ const newPlayer = opts =>
     ...opts,
     team: 1,
     equipment: { ...item.default_equipment },
-    lives: 3,
+    lives: 2,
   })
 
 export { newEntity, newPiece, newPlayer, getEntity }

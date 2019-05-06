@@ -8,6 +8,7 @@ import { randomPiece, randomBoss } from './piece/generator'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
 import './render/ui.tag'
+import './render/gameover.tag'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
@@ -116,6 +117,9 @@ export default class Game extends uR.db.Model {
       this.board.checkDialog()
     }
     if (this.player.health <= 0) {
+      if (!this.player.lives > 0) {
+        return this.gameover()
+      }
       respawn(this.player)
     }
     this.trigger('nextturn')
@@ -157,7 +161,7 @@ export default class Game extends uR.db.Model {
         turn: this.turn,
       }
       if (input.dxy) {
-        if (this.player.health > 0) {
+        if (this.player.health > 0 && !this.player.dead) {
           movePlayer(this.player, input)
         }
         this.nextTurn()
@@ -176,5 +180,10 @@ export default class Game extends uR.db.Model {
   unmount = () => {
     this.controller.unmount()
     uR.element.emptyElement(document.querySelector('#main > .html-renderer'))
+  }
+
+  gameover() {
+    this.controller.unmount()
+    uR.element.create('tw-gameover', { parent: this.parent }, { game: this })
   }
 }

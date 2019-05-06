@@ -22,13 +22,35 @@ ur-row {
   z-index: 9999;
 }
 
-tw-ui {
+tw-ui .equipment {
+  display: flex;
+  margin: 0.5rem;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
   .box {
-    border: 0.1em solid #44a;
+    border: 0.1em solid #5755d9;
     border-radius: 0.1em;
+    margin-right: 0.5rem;
   }
+  .badge {
+    position: relative;
+    &:after {
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 0;
+      bottom: -0.25rem;
+      box-shadow: none;
+      position: absolute;
+      right: -0.25rem;
+      transform: none;
+    }
+  }
+}
+
+tw-gameover {
+  background: white;
+  font-size: 1rem;
+  padding: 2rem;
+  z-index: 9999;
 }
