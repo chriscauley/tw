@@ -46,13 +46,17 @@ const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
     row.forEach((names, ic) => {
       names.forEach(name => {
         const sprite = Sprite.objects.all().find(s => s.name === name)
+        // #!TODO need a way to scale down bat and move to center
+        // at very least this needs to be in the db somehow
+        const extra_y = name === 'bat' ? 0.3 : 0
         if (!sprite) {
           return console.error(name, 'has no sprite')
         }
         const { dataURL } = sprite
         frames.push({
+          name,
           x: ic,
-          y: ir,
+          y: ir + extra_y,
           dataURL,
         })
         promises.push(loadImage(dataURL))
