@@ -1,5 +1,4 @@
 import './routes'
-import './tags'
 import { Sheet, Sprite, CompositeSprite } from './models'
 import css from './css'
 

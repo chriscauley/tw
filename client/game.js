@@ -7,8 +7,6 @@ import follow from './piece/follow'
 import { randomPiece, randomBoss } from './piece/generator'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
-import './render/ui.tag'
-import './render/gameover.tag'
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'
