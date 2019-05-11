@@ -21,10 +21,27 @@ const ball = {
 }
 
 const fireball = {
-  opts: { sight: 0 },
   sprite: 'fireball',
   damage_animation: 'explode',
   tasks: [move.ifDidDamage(move.forward, move.burnout), move.burnout],
+  opts: { sight: 0 },
+}
+
+const fireball_bat = {
+  ...fireball,
+  sprite: ' sprite1x1-fireball_bat',
+  tasks: [
+    move.ifDidDamage(move.forward, move.burnout),
+    move.chain([
+      move.burnout, // dies
+      move.summon({
+        // replace with bat
+        types: 'drifter',
+        range: 0,
+        //buff: { type: 'haste', charges: 4 },
+      }),
+    ]),
+  ],
 }
 
 /*const flyball = {
@@ -42,4 +59,4 @@ const fireball = {
   ],
 }*/
 
-export default { ball, fireball }
+export default { ball, fireball, fireball_bat }

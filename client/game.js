@@ -68,6 +68,13 @@ export default class Game extends uR.db.Model {
     }
     applyMove(piece, move, this.turn)
     this.piece_turns[piece.id]--
+    if (move.turns) {
+      this.piece_turns[piece.id] += move.turns
+      if (this.piece_turns[piece.id] > 100) {
+        // This is an easy place to accidentally make an inifinte loop
+        throw 'Piece was given too many turns'
+      }
+    }
     if (move.end) {
       this.piece_turns[piece.id] = 0
     }

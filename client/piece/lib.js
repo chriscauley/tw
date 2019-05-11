@@ -1,13 +1,18 @@
 import types from './types'
+import { applyBuff } from '../move/buff'
 
 export const getMove = piece => {
-  let move = {}
+  let move = applyBuff(piece, {})
+  if (move.done) {
+    return move
+  }
   types[piece.type].tasks.find(task => {
     move = task(piece, move)
     if (move && move.done) {
       return move
     }
   })
+
   return move
 }
 
@@ -33,7 +38,7 @@ export const applyMove = (piece, move, turn) => {
   piece.preMove = preMove
   piece._turn = turn // indicates this moved this turn
   if (move.now) {
-    move.now()
+    move.now(piece)
   }
 }
 

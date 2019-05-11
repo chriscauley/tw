@@ -2,6 +2,7 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 import types from './types'
 import { NamedModel } from '../models'
+//import { addBuff } from '../move/buff'
 
 import { randomEmptyXY } from '../lib'
 
@@ -27,8 +28,16 @@ new APIManager(BossSet)
 new APIManager(MookSet)
 
 export const randomPiece = ({ board }) => {
-  return board.rooms.forEach(room => {
-    _.range(0 && board.mook_count).forEach(() => {
+  /*const piece = board.newPiece({
+    type: 'drifter',
+    xy: [5,5],
+    _PRNG: board.random.int(),
+  })
+  addBuff(piece,{ type: 'haste', charges: 4})
+  window.P = piece
+  */
+  board.rooms.forEach(room => {
+    _.range(board.mook_count).forEach(() => {
       const name = board.random.choice(board.mooks)
       board.newPiece({
         xy: randomEmptyXY(board, room.xys),
@@ -37,6 +46,7 @@ export const randomPiece = ({ board }) => {
       })
     })
   })
+  board.mook_count++
 }
 
 export const randomBoss = ({ board }) => {

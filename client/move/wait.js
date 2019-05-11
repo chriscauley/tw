@@ -10,7 +10,7 @@ export default turns => {
     }
     if (piece.wait < turns) {
       return {
-        ...after(move, tick),
+        now: tick,
         done: true,
       }
     }
