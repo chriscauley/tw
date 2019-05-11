@@ -2,8 +2,6 @@ import uR from 'unrest.io'
 import Board from './Board'
 import Game from '../game'
 
-import './tags'
-
 const playBoard = (path, data) => {
   const board = Board.objects.get(data.matches[1])
   const game = new Game({

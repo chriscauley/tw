@@ -1,6 +1,6 @@
 import uR from 'unrest.io'
-import Board from '../Board'
-import types from '../../piece/types'
+import Board from '../board/Board'
+import types from '../piece/types'
 
 <board-menu>
   <div class={theme.outer}>
