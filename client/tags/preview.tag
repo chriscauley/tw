@@ -2,7 +2,7 @@ import _ from 'lodash'
 import uR from 'unrest.io'
 
 import Game from '../game'
-import geo from './index'
+import geo from '../geo'
 
 
 const LookPreview = {
