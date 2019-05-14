@@ -1,21 +1,3 @@
-import types from './types'
-import { applyBuff } from '../move/buff'
-
-export const getMove = piece => {
-  let move = applyBuff(piece, {})
-  if (move.done) {
-    return move
-  }
-  types[piece.type].tasks.find(task => {
-    move = task(piece, move)
-    if (move && move.done) {
-      return move
-    }
-  })
-
-  return move
-}
-
 export const applyMove = (piece, move, turn) => {
   if (piece.preMove) {
     piece.preMove()
@@ -44,10 +26,13 @@ export const applyMove = (piece, move, turn) => {
 
 export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
   piece.health -= count
-  if (!sprite) {
-    sprite = types[source.type].damage_animation || source.type
-  }
-  piece.board.renderer.animations.push({ xy, dxy, sprite, className: 'fade' })
+  piece.board.renderer.animations.push({
+    xy,
+    dxy,
+    sprite,
+    className: 'fade',
+    damage_source: source && source.type,
+  })
   if (piece.health <= 0) {
     // #! TODO should also do death animation
     piece.dead = true
@@ -60,7 +45,10 @@ export const canAttack = (piece, xy) => {
   if (!target || target.invulnerable) {
     return
   }
-  return target.team !== piece.team || types[piece.type].friendly_fire
+  // #! TODO Ball is currently able to "friendly fire", but this will need to be generalized
+  // either friendly_fire tag or something other than move.forward
+  // or maybe balls can't attack friendly pieces (in which case they need to be pushable)
+  return target.team !== piece.team || piece.type === 'ball'
 }
 
 export const canMoveOn = (piece, xy, _dxy) => {

@@ -1,7 +1,6 @@
 import uR from 'unrest.io'
 
 import { NamedModel } from '../models'
-export * from './css'
 
 const { Int, String, APIManager, ForeignKey } = uR.db
 

@@ -1,12 +1,31 @@
 import uR from 'unrest.io'
 import riot from 'riot'
 
-import { getMove, applyMove, movePlayer, respawn } from './lib'
+import { applyMove, movePlayer, respawn } from './lib'
 import { newPlayer } from './piece/entity'
 import follow from './piece/follow'
 import { randomPiece, randomBoss } from './piece/generator'
 import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
+
+// moved these imports down because getMove should probably be in it's own file
+// getMove is originally from piece/lib, but was causing circular import
+import { applyBuff } from './move/buff'
+import types from './piece/types'
+export const getMove = piece => {
+  let move = applyBuff(piece, {})
+  if (move.done) {
+    return move
+  }
+  types[piece.type].tasks.find(task => {
+    move = task(piece, move)
+    if (move && move.done) {
+      return move
+    }
+  })
+
+  return move
+}
 
 export default class Game extends uR.db.Model {
   static slug = 'game.Game'

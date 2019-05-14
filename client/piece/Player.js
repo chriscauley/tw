@@ -1,7 +1,7 @@
 import after from '../move/after'
 import geo from '../geo/'
 import _ from 'lodash'
-import { applyMove, canAttack, canMoveOn } from '../lib'
+import { applyMove, canAttack, canMoveOn } from './lib'
 
 const { vector, look } = geo
 

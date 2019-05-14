@@ -1,5 +1,4 @@
 export {
-  getMove,
   applyMove,
   applyDamage,
   canAttack,

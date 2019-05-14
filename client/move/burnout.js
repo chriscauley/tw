@@ -1,4 +1,4 @@
-import { applyDamage } from '../lib'
+import { applyDamage } from '../piece/lib'
 
 export default (piece, move, _dxy) => {
   return {

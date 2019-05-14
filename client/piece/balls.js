@@ -8,9 +8,6 @@ const opts = { health: 255, sight: 0 }
 const ball = {
   opts,
   sprite: 'ball',
-  friendly_fire: 'true',
-  // #! TODO resolve balls colliding before tasks
-  // maybe priority tasks?
   tasks: [
     move.ifHit(move.chain([momentum.add(1), move.forward.fromHit])),
 

@@ -100,7 +100,11 @@ class RenderBoard extends uR.db.Model {
       results[name] = []
       if (name === 'animation') {
         // animations are in an arry, need a map for lookup
-        this.animations.forEach(({ xy, sprite }) => {
+        this.animations.forEach(({ xy, sprite, damage_source }) => {
+          const source = types[damage_source]
+          if (source && source.damage_animation) {
+            sprite = source.damage_animation
+          }
           animation_map[xy] = sprite
         })
       }
