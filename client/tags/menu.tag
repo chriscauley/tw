@@ -14,13 +14,9 @@ import types from '../piece/types'
              href="#!/board/edit/{board.id}/"/>
           <a class={theme.content} href="#/board/{board.id}/"
              onclick={() => this.parent.unmount()}>
-            <div class="images">
-              <div class="sprite sprite-{getSprite(mook)}" each={mook in board.mooks}
-                   title={mook} />
-              <div if={board.boss} title={board.boss}
-                   class="sprite sprite-{getSprite(board.boss)}"></div>
-            </div>
             <div class="name">{board.name}</div>
+            <div class="template">Template: {board.room_generator}</div>
+            <div class="room_count">Rooms: {board.room_count}</div>
           </a>
         </div>
       </div>
