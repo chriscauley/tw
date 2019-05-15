@@ -49,11 +49,22 @@ class RenderBoard extends uR.db.Model {
     this.names.forEach(name => (this.cache[name] = {}))
     this.draw()
   }
+
+  click = e => {
+    if (!e.target.hasOwnProperty('xy')) {
+      return
+    }
+    const { xy } = e.target
+    console.log(this.board.getOne('piece', xy)) // eslint-disable-line
+  }
+
   draw = () => {
     this.container = uR.element.create('div', {
       className: this.getClass(),
       parent: this.parent,
     })
+
+    this.container.addEventListener('click', this.click)
 
     this.floor = this.newDiv('__floor')
 
@@ -145,8 +156,10 @@ class RenderBoard extends uR.db.Model {
           )
         }
         const element = this.cache[name][index]
+        element.xy = xy
         element.className = this.renderOne(name)([xy, value])
         if (name === 'piece') {
+          element.piece_id = value.id
           const { last_move, dxy } = value
           if (last_move && last_move.damages) {
             observer.one('animate', () =>
