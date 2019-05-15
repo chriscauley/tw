@@ -8,7 +8,7 @@ import { randomEmptyXY } from '../lib'
 
 const { List, APIManager } = uR.db
 
-class MookSet extends NamedModel {
+export class MookSet extends NamedModel {
   static slug = 'server.MookSet'
   static fields = {
     mooks: List('', { choices: types.mook_map }),
@@ -16,7 +16,7 @@ class MookSet extends NamedModel {
   static editable_fieldnames = ['name', 'mooks']
 }
 
-class BossSet extends NamedModel {
+export class BossSet extends NamedModel {
   static slug = 'server.BossSet'
   static fields = {
     bosses: List('', { choices: types.boss_map }),

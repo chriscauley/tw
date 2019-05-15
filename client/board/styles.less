@@ -7,7 +7,7 @@ dialog-box .outer {
   z-index: 10;
 }
 
-board-menu .board-list {
+board-menu .list {
   display: flex;
   justify-content: center;
   margin: 0 -0.5rem;
@@ -19,16 +19,22 @@ board-menu .board-list {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    .sprite {
-      font-size: 2rem;
-      height: 1em;
-      width: 1em;
-    }
+  }
+  .sprite {
+    font-size: 2rem;
+    height: 1em;
+    image-rendering: pixelated;
+    width: 1em;
+  }
+  .tall .sprite {
+    height: 2em;
   }
   .card {
+    cursor: pointer;
     margin: 0 0.25rem 0.5rem;
     max-width: 12rem;
     position: relative;
+    text-align: center;
     .edit {
       display: none;
       line-height: 1.25;
