@@ -8,6 +8,7 @@ import Item from '../item'
 import DialogMixin from './dialog'
 import { newPiece } from '../piece/entity'
 import types from '../piece/types'
+import { RenderBoard } from '../render/html'
 
 const { Model, APIManager, List, Int, String } = uR.db
 
@@ -41,6 +42,13 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
 
   constructor(opts) {
     super(opts)
+  }
+
+  setPlayer = player => {
+    // sets the board is now set to the players perspective
+    this.player = player
+    this.setPiece(player.xy, player)
+    this.renderer.update(true)
   }
 
   getOne = (type, xy) => {
@@ -93,6 +101,11 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   reset() {
+    if (!this.renderer) {
+      this.renderer = new RenderBoard({
+        board: this,
+      })
+    }
     this.entities = {
       square: {}, // it exists!
       wall: {},

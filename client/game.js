@@ -5,7 +5,6 @@ import { applyMove, movePlayer, respawn } from './lib'
 import { newPlayer } from './piece/entity'
 import follow from './piece/follow'
 import { randomPiece, randomBoss } from './piece/generator'
-import render_html from './render/html'
 import { killAllEnemies } from './board/goal'
 
 // moved these imports down because getMove should probably be in it's own file
@@ -33,7 +32,6 @@ export default class Game extends uR.db.Model {
     turn: 0,
   }
   static opts = {
-    RenderBoard: render_html.RenderBoard,
     parent: '.html-renderer',
     victory_condition: killAllEnemies,
     room_count: 1,
@@ -156,16 +154,12 @@ export default class Game extends uR.db.Model {
       dxy: [0, 1],
       xy,
     })
-    this.board.player = this.player
-    this.board.setPiece(xy, this.player)
+    this.board.setPlayer(this.player)
   }
 
   makeRenderer = () => {
     uR.element.create('tw-ui', { parent: this.parent }, { game: this })
-    this.renderer = new this.RenderBoard({
-      board: this.board,
-      parent: this.parent,
-    })
+    this.board.renderer.update()
   }
 
   bindKeys() {
@@ -189,7 +183,7 @@ export default class Game extends uR.db.Model {
           movePlayer(this.player, input)
         }
         this.nextTurn()
-        this.renderer.update()
+        this.board.renderer.update()
       }
     }
 

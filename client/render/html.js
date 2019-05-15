@@ -6,7 +6,6 @@ import types from '../piece/types'
 import paint from '../move/paint'
 import geo from '../geo'
 
-const ready = new uR.Ready()
 const observer = riot.observable()
 
 // javascript has no actual modulo operator
@@ -14,11 +13,11 @@ const mod = (n, m) => {
   return ((n % m) + m) % m
 }
 
-class RenderBoard extends uR.db.Model {
+export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
   static opts = {
     board: uR.REQURIED,
-    parent: uR.REQUIRED,
+    parent: '.html-renderer',
   }
   constructor(opts) {
     super(opts)
@@ -32,6 +31,8 @@ class RenderBoard extends uR.db.Model {
     this.all_divs = []
     this.animations = []
     const dimension = _.range(-this._r, this._r + 1)
+    this.health_divisor = 1
+    this.center_xy = [4, 4] // #! TODO should be center of board
 
     dimension.forEach(dx => {
       dimension.forEach(dy => {
@@ -70,6 +71,7 @@ class RenderBoard extends uR.db.Model {
 
     this.update()
   }
+
   getClass() {
     const { W, H } = this.board
     if (window.location.search.includes('huge')) {
@@ -90,13 +92,28 @@ class RenderBoard extends uR.db.Model {
     }
     return `floor sprite sprite2x2-chessfloor ${objToClassString(opts)}`
   }
-  update = () => {
-    if (!this.container) {
+
+  normalize() {
+    // base parameters to normalize all sprites too
+    const { player } = this.board
+    if (this.board.player) {
+      this.center_xy = player.xy
+      this.health_divisor = player.damage
+    }
+  }
+
+  update = instant => {
+    if (!this.container || !this.board.entities) {
       return
     }
-    const { xy } = this.board.player
+    this.normalize()
+    const xy = this.center_xy
     this.floor.className = this.getFloorClass(xy)
     const { style } = this.container
+    if (instant) {
+      style.transition = '0s'
+      setTimeout(() => (style.transition = null), 0)
+    }
     style.marginLeft = `-${xy[0] + 0.5}em`
     style.marginTop = `-${xy[1] + 0.5}em`
 
@@ -194,7 +211,7 @@ class RenderBoard extends uR.db.Model {
       const { health, max_health } = value
       const extras = {}
       if (max_health > 1) {
-        extras.health = Math.ceil(health / this.board.player.damage)
+        extras.health = Math.ceil(health / this.health_divisor)
         extras.health = Math.min(extras.health, 5)
       }
       return renderEntity(value, extras)
@@ -240,9 +257,4 @@ const renderEntity = (entity, extras = {}) => {
   let className = `${name} ${type} w-1 h-1 sprite `
   className += objToClassString(extras)
   return className
-}
-
-export default {
-  ready,
-  RenderBoard,
 }
