@@ -82,9 +82,22 @@ const MenuMixin = {
       <div data-is="board-list" boards={boards}></div>
       <div data-is="mook-list" mooksets={mooksets}></div>
       <div data-is="boss-list" bosssets={bosssets}></div>
+      <div if={error} class={css.error}>{error}</div>
+      <button class={css.btn.primary} onClick={startGame}>Start</button>
     </div>
   </div>
 <script>
 this.mixin(MenuMixin)
+startGame() {
+  console.log(this.css)
+  const { board_id, mookset_id, bossset_id } = shared
+  if (!board_id || !mookset_id || !bossset_id) {
+    this.error = "Please select a board, mook set, and boss set to continue"
+    this.update()
+  } else {
+    const url = `#/board/${board_id}/${mookset_id}/${bossset_id}/`
+    uR.router.route(url)
+  }
+}
 </script>
 </board-menu>
