@@ -28,17 +28,9 @@ new APIManager(BossSet)
 new APIManager(MookSet)
 
 export const randomPiece = ({ board }) => {
-  /*const piece = board.newPiece({
-    type: 'drifter',
-    xy: [5,5],
-    _PRNG: board.random.int(),
-  })
-  addBuff(piece,{ type: 'haste', charges: 4})
-  window.P = piece
-  */
   board.rooms.forEach(room => {
     _.range(board.mook_count).forEach(() => {
-      const name = board.random.choice(board.mooks)
+      const name = board.random.choice(board.mookset.mooks)
       board.newPiece({
         xy: randomEmptyXY(board, room.xys),
         type: name,
@@ -51,9 +43,10 @@ export const randomPiece = ({ board }) => {
 
 export const randomBoss = ({ board }) => {
   const room = board.rooms[board.rooms.length - 1]
+  const name = board.random.choice(board.bossset.bosses)
   board.newPiece({
     xy: randomEmptyXY(board, room.xys),
-    type: 'greydragon',
+    type: name,
     _PRNG: board.random.int(),
   })
 }

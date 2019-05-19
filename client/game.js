@@ -36,6 +36,8 @@ export default class Game extends uR.db.Model {
     victory_condition: killAllEnemies,
     room_count: 1,
     board: uR.REQUIRED,
+    mookset: uR.REQUIRED,
+    bossset: uR.REQUIRED,
     enemies: true,
   }
   constructor(opts) {
@@ -45,6 +47,8 @@ export default class Game extends uR.db.Model {
     window.GAME = this
     riot.observable(this)
     this.board.game = this
+    this.board.mookset = this.mookset
+    this.board.bossset = this.bossset
     this.ready = new uR.Ready()
     if (typeof this.parent === 'string') {
       this.parent = document.querySelector(this.parent)

@@ -21,6 +21,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     'room_count',
     'mook_count',
   ]
+  static opts = {
+    mookset: undefined,
+    bossset: undefined,
+  }
   static fields = {
     id: Int(),
     name: String(),

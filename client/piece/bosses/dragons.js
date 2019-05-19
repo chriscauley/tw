@@ -36,7 +36,7 @@ const dragon = (color, spell_opts, ultimate_opts) =>
   })
 
 dragon('grey', { geometry: 'f', range: 1 }, { geometry: '_lrfb', range: 1 })
-dragon('blue')
+dragon('blue', { geometry: 'f', range: 1 }, { geometry: '_lrfb', range: 2 })
 dragon('red', { geometry: 'f', range: 1 }, { recharge: 2 })
 dragon('purple', { geometry: 'lr', range: 1 }, { range: 2 })
 

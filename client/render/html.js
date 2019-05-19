@@ -56,7 +56,7 @@ export class RenderBoard extends uR.db.Model {
       return
     }
     const { xy } = e.target
-    console.log(this.board.getOne('piece', xy)) // eslint-disable-line
+    console.log("CLICKED:",this.board.getOne('piece', xy)) // eslint-disable-line
   }
 
   draw = () => {
