@@ -52,8 +52,17 @@
     top: 50%;
     margin: -@size/2;
     width: @size;
-    z-index: 10;
   }
+}
+
+.html-renderer.editor:before {
+  background: rgba(0,0,128,0.5);
+  asrtcontent: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
 .html-renderer {
@@ -75,38 +84,57 @@
 }
 
 .html-renderer {
-  .path, .wall, .floor {
-    z-index: 0
+  .path, .wall {
+    z-index: 10;
+  }
+  .item {
+    z-index: 20;
   }
   .piece {
-    z-index: 1;
+    z-index: 30;
+    &.sprite1x2- {
+      &bluedragon, &purpledragon, &greydragon, &reddragon {
+        z-index: 31;
+      }
+    }
   }
+  .animation {
+    z-index: 40;
+    &.sprite-wait, &.sprite-wait-ready {
+      z-index: 29;
+    }
+  }
+  &[tabindex]:not(:focus):before,
+  &.editor:before {
+    z-index: 100;
+  }
+  .hover-box {
+    z-index: 90;
+  }
+}
+
+.html-renderer .hover-box {
+  border: 2px blue solid;
+  height: 1em;
+  position: absolute;
+  width: 1em;
+}
+
+.html-renderer .hover-mask {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.html-renderer {
   .board {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     transition: margin 0.25s;
-  }
-  .floor {
-    position: absolute;
-    background-repeat: repeat;
-    &.offset-10 {
-      background-position: 1em 0;
-    }
-    &.offset-00 {
-      background-position: 0 0;
-    }
-    &.offset-01 {
-      background-position: 0 1em;
-    }
-    &.offset-11 {
-      background-position: 1em 1em;
-    }
-  }
-  .void {
-    height: @scale;
-    width: @scale;
-    background: black;
   }
   .square {
     background-size: cover;
@@ -136,7 +164,6 @@
         height: 1.5 * @scale;
         margin: -0.6em 0 0;
         width: 1em;
-        z-index: 3;
       }
     }
     &.flyking {
@@ -252,11 +279,9 @@
 
 .html-renderer .animation {
   background-size: 70%;
-  z-index: 999999;
   &.sprite-wait, &.sprite-wait-ready {
     background-color: grey;
     border-radius: 100%;
-    z-index: 0;
   }
   &.sprite-wait-ready {
     background-color: #A00;

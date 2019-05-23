@@ -1,5 +1,6 @@
+import './edit-board'
+import './gameover'
 import './menu'
 import './preview'
-import './gameover'
 import './ui'
 import '../slicer/tags'

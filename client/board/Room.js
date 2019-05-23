@@ -9,6 +9,8 @@ import geo from '../geo'
    }
 */
 
+const OFFSET = 8
+
 const room = ({
   W, // width
   H, // height
@@ -66,11 +68,11 @@ const generators = new Map()
 generators.set('zelda', ({ room_count = 3, room_size = 9, spacing = 3 }) => {
   return _.flatten(
     _.range(room_count).map(y => {
-      const y0 = y * (room_size + spacing) + 2
+      const y0 = y * (room_size + spacing) + OFFSET
       return _.range(room_count).map(x => {
         // _x is [0...room_count] or the reverse dependent on
         const _x = y % 2 ? room_count - x - 1 : x
-        const x0 = _x * (room_size + spacing) + 2
+        const x0 = _x * (room_size + spacing) + OFFSET
         return room({ x0, y0, W: room_size, H: room_size })
       })
     }),

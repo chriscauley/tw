@@ -16,6 +16,7 @@ const playBoard = (path, data) => {
 
 export default {
   '^#/board/(\\d+)/(\\d+)/(\\d+)/$': playBoard,
+  '^#/board/edit/(\\d+)/$': uR.router.routeElement('edit-board'),
   '^$': uR.router.routeElement('board-menu'),
   '^#!/board/new/$': uR.router.routeElement('ur-form', {
     model: Board,

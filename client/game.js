@@ -152,11 +152,11 @@ export default class Game extends uR.db.Model {
     this.turn++
   }
 
-  makePlayer(xy = [3, 3]) {
+  makePlayer() {
     this.player = newPlayer({
       type: 'player',
       dxy: [0, 1],
-      xy,
+      xy: this.board.rooms[0].center,
     })
     this.board.setPlayer(this.player)
   }

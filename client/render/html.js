@@ -8,10 +8,8 @@ import geo from '../geo'
 
 const observer = riot.observable()
 
-// javascript has no actual modulo operator
-const mod = (n, m) => {
-  return ((n % m) + m) % m
-}
+// how many squares are rendered outside of view (radially)
+const OVERFLOW = 2
 
 export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
@@ -22,17 +20,24 @@ export class RenderBoard extends uR.db.Model {
   constructor(opts) {
     super(opts)
     this.board.renderer = this
+    if (typeof this.parent === 'string') {
+      this.parent = document.querySelector(this.parent)
+    }
     // _r = "radius", but for a square not diamond...
     // should be 2 larger than actual visible radius
     // this hides the "poping" as element show/hide
     this._r = 8
-    this.size = this._r * 2 + 1
+    this.size = this._r * OVERFLOW + 1
+    this.scale = 48
+
+    // amount not visible is "extra margin"
+    this.extra_margin = -this._r / 2 - OVERFLOW + 0.5
     this.dxys = []
     this.all_divs = []
     this.animations = []
     const dimension = _.range(-this._r, this._r + 1)
     this.health_divisor = 1
-    this.center_xy = [4, 4] // #! TODO should be center of board
+    this.center_xy = [0, 0]
 
     dimension.forEach(dx => {
       dimension.forEach(dy => {
@@ -44,18 +49,31 @@ export class RenderBoard extends uR.db.Model {
       wall: 'dwarfwall',
       path: 'vine',
       animation: '',
+      square: 'floor',
     }
     this.cache = {}
-    this.names = ['wall', 'path', 'piece', 'void', 'item', 'animation']
+    this.names = ['wall', 'path', 'piece', 'square', 'item', 'animation']
     this.names.forEach(name => (this.cache[name] = {}))
     this.draw()
   }
 
   click = e => {
-    if (!e.target.hasOwnProperty('xy')) {
-      return
+    let xy = this.hover_xy || e.target.xy
+    if (!xy) {
+      const mouse_xy = [
+        Math.floor(
+          e.offsetX / this.scale - this._r + OVERFLOW + this.extra_margin,
+        ),
+        Math.floor(
+          e.offsetY / this.scale - this._r + OVERFLOW + this.extra_margin,
+        ),
+      ]
+      xy = geo.vector.add(mouse_xy, this.center_xy)
     }
-    const { xy } = e.target
+    if (this.click) {
+      this.click(xy)
+    }
+    this.update()
     console.log("CLICKED:",this.board.getOne('piece', xy)) // eslint-disable-line
   }
 
@@ -65,9 +83,7 @@ export class RenderBoard extends uR.db.Model {
       parent: this.parent,
     })
 
-    this.container.addEventListener('click', this.click)
-
-    this.floor = this.newDiv('__floor')
+    this.parent.addEventListener('click', this.click)
 
     this.update()
   }
@@ -80,25 +96,14 @@ export class RenderBoard extends uR.db.Model {
     return `board w-${W} h-${H}`
   }
 
-  getFloorClass(xy) {
-    const x = xy[0] - this._r
-    const y = xy[1] - this._r
-    const opts = {
-      x,
-      y,
-      w: this.size,
-      h: this.size,
-      offset: `${mod(x, 2)}${mod(y, 2)}`,
-    }
-    return `floor sprite sprite2x2-chessfloor ${objToClassString(opts)}`
-  }
-
   normalize() {
     // base parameters to normalize all sprites too
     const { player } = this.board
-    if (this.board.player) {
+    if (player) {
       this.center_xy = player.xy
       this.health_divisor = player.damage
+    } else {
+      this.center_xy = this.board.rooms[0].center
     }
   }
 
@@ -108,14 +113,13 @@ export class RenderBoard extends uR.db.Model {
     }
     this.normalize()
     const xy = this.center_xy
-    this.floor.className = this.getFloorClass(xy)
     const { style } = this.container
     if (instant) {
       style.transition = '0s'
       setTimeout(() => (style.transition = null), 0)
     }
-    style.marginLeft = `-${xy[0] + 0.5}em`
-    style.marginTop = `-${xy[1] + 0.5}em`
+    style.marginLeft = `-${xy[0] + this.extra_margin}em`
+    style.marginTop = `-${xy[1] + this.extra_margin}em`
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
@@ -138,8 +142,14 @@ export class RenderBoard extends uR.db.Model {
       }
       xys.forEach(xy => {
         switch (name) {
-          case 'void':
-            value = !this.board.getOne('square', xy)
+          case 'square':
+            if (
+              !this.board.getOne('square', xy) ||
+              this.board.getOne('wall', xy)
+            ) {
+              return
+            }
+            value = ((xy[0] % 2) + xy[1]) % 2
             break
           case 'animation':
             value = animation_map[xy]
@@ -147,7 +157,7 @@ export class RenderBoard extends uR.db.Model {
           default:
             value = this.board.getOne(name, xy)
         }
-        if (value) {
+        if (value !== undefined) {
           results[name].push([xy, value])
           if (name === 'piece') {
             const { tasks } = types[value.type]
