@@ -69,17 +69,9 @@
   @size: 12em;
   height: @size;
   width: @size;
-  font-size: 48px;
   &.huge {
-    font-size: 32px;
     height: @size*2;
     width: @size*2;
-  }
-  @media (max-height: 128px*8) {
-    font-size: 48px;
-    &.huge {
-      font-size: 32px;
-    }
   }
 }
 
@@ -108,7 +100,7 @@
   &.editor:before {
     z-index: 100;
   }
-  .hover-box {
+  .box {
     z-index: 90;
   }
 }

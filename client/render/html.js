@@ -10,6 +10,7 @@ const observer = riot.observable()
 
 // how many squares are rendered outside of view (radially)
 const OVERFLOW = 2
+const MIRRORS = [[0, 0], [0, 2], [2, 0], [2, 2]]
 
 export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
@@ -23,19 +24,39 @@ export class RenderBoard extends uR.db.Model {
     if (typeof this.parent === 'string') {
       this.parent = document.querySelector(this.parent)
     }
+
+    this.sprites = {
+      wall: 'dwarfwall',
+      path: 'vine',
+      animation: '',
+      square: 'floor',
+      box: '',
+    }
+    this.all_divs = []
+    this.hover_xys = []
+    this.cache = {}
+    this.names = ['wall', 'path', 'piece', 'square', 'item', 'animation', 'box']
+    this.names.forEach(name => (this.cache[name] = {}))
+    this.setZoom()
+  }
+
+  setZoom = (opts = {}) => {
+    const { radius = 8, offset = 0.5, box_count = 0 } = opts
     // _r = "radius", but for a square not diamond...
     // should be 2 larger than actual visible radius
     // this hides the "poping" as element show/hide
-    this._r = 8
-    this.size = this._r * OVERFLOW + 1
-    this.scale = 48
+    this._r = radius
+    this.offset = offset
+    this.box_count = box_count
+    this.size = radius * 2 + 1
+    this.scale = 32
 
     // amount not visible is "extra margin"
-    this.extra_margin = -this._r / 2 - OVERFLOW + 0.5
+    this.extra_margin = -radius / 2 - OVERFLOW + offset
+    this.visible_size = 2 * (radius - OVERFLOW)
     this.dxys = []
-    this.all_divs = []
     this.animations = []
-    const dimension = _.range(-this._r, this._r + 1)
+    const dimension = _.range(-radius, radius + 1)
     this.health_divisor = 1
     this.center_xy = [0, 0]
 
@@ -44,21 +65,15 @@ export class RenderBoard extends uR.db.Model {
         this.dxys.push([dx, dy])
       })
     })
+    this.parent.style.fontSize = this.scale + 'px'
+    this.parent.style.height = this.visible_size + 'em'
+    this.parent.style.width = this.visible_size + 'em'
 
-    this.sprites = {
-      wall: 'dwarfwall',
-      path: 'vine',
-      animation: '',
-      square: 'floor',
-    }
-    this.cache = {}
-    this.names = ['wall', 'path', 'piece', 'square', 'item', 'animation']
-    this.names.forEach(name => (this.cache[name] = {}))
     this.draw()
   }
 
   click = e => {
-    let xy = this.hover_xy || e.target.xy
+    let xy = e.target.xy
     if (!xy) {
       const mouse_xy = [
         Math.floor(
@@ -130,6 +145,10 @@ export class RenderBoard extends uR.db.Model {
 
     this.names.forEach(name => {
       results[name] = []
+      if (name === 'box') {
+        // handled outside of this because there's only 0-4 of them
+        return
+      }
       if (name === 'animation') {
         // animations are in an arry, need a map for lookup
         this.animations.forEach(({ xy, sprite, damage_source }) => {
@@ -170,6 +189,8 @@ export class RenderBoard extends uR.db.Model {
       })
     })
 
+    this.hover_xys.forEach(xy => results.box.push([xy, 'hover0']))
+
     this.all_divs.forEach(d => (d.className = ''))
 
     this.names.forEach(name => {
@@ -201,6 +222,16 @@ export class RenderBoard extends uR.db.Model {
     })
     setTimeout(() => observer.trigger('animate'), 0)
     this.animations = []
+  }
+
+  setHoverXY = xy => {
+    const [hover_x, hover_y] = xy
+    const dx_center = hover_x - this.center_xy[0]
+    const dy_center = hover_y - this.center_xy[1]
+    this.hover_xys = _.range(this.box_count).map(i => [
+      hover_x - dx_center * MIRRORS[i][0],
+      hover_y - dy_center * MIRRORS[i][1],
+    ])
   }
 
   newDiv(id) {
