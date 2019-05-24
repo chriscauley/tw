@@ -41,7 +41,7 @@ export class RenderBoard extends uR.db.Model {
   }
 
   setZoom = (opts = {}) => {
-    const { radius = 8, offset = 0.5, box_count = 0 } = opts
+    const { radius = 8, offset = 0.5, box_count = 0, scale = 32 } = opts
     // _r = "radius", but for a square not diamond...
     // should be 2 larger than actual visible radius
     // this hides the "poping" as element show/hide
@@ -49,7 +49,7 @@ export class RenderBoard extends uR.db.Model {
     this.offset = offset
     this.box_count = box_count
     this.size = radius * 2 + 1
-    this.scale = 32
+    this.scale = scale
 
     // amount not visible is "extra margin"
     this.extra_margin = -radius / 2 - OVERFLOW + offset

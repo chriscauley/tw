@@ -36,8 +36,6 @@ const XYMixin = {
   }
 }
 
-const scale = 48
-
 <edit-board>
   <div class={theme.outer}>
     <div class={theme.content}>
@@ -53,7 +51,7 @@ window.B = this.board = Board.objects.get(this.opts.matches[1])
 this.on('mount', () => {
   this.board.parent = this.root.querySelector(".html-renderer")
   this.board.reset()
-  this.board.renderer.setZoom({ radius: 12, offset: 0, box_count: 4 })
+  this.board.renderer.setZoom({ radius: 20, offset: 0, box_count: 4, scale: 16 })
   this.board.renderer.click = () => {
     this.board.renderer.hover_xys.forEach( xy => {
       this.board.setOne('square', xy, true)
