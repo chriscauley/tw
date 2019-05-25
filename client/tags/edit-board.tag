@@ -1,5 +1,6 @@
 import uR from 'unrest.io'
 import Board from '../board/Board'
+import geo from '../geo'
 
 const XYMixin = {
   init: function() {
@@ -26,11 +27,11 @@ const XYMixin = {
     }
     this.mouseX = x
     this.mouseY = y
-    const { center_xy, extra_margin } = this.board.renderer
+    const { setHoverXY, visible_size, center_xy } = this.board.renderer
 
-    this.board.renderer.setHoverXY([
-      x+center_xy[0]+extra_margin,
-      y+center_xy[1]+extra_margin,
+    setHoverXY([
+      x - visible_size/2 + center_xy[0],
+      y - visible_size/2 + center_xy[1],
     ])
     this.board.renderer.update()
   }
@@ -42,6 +43,7 @@ const XYMixin = {
       <div class="html-renderer editor" onmousemove={onMouseMove}>
         <div class="hover-mask"></div>
       </div>
+      <ur-form if={renderer} object={renderer} success={success}></ur-form>
     </div>
   </div>
 <script>
@@ -51,13 +53,23 @@ window.B = this.board = Board.objects.get(this.opts.matches[1])
 this.on('mount', () => {
   this.board.parent = this.root.querySelector(".html-renderer")
   this.board.reset()
-  this.board.renderer.setZoom({ radius: 20, offset: 0, box_count: 4, scale: 16 })
+  this.board.renderer.setZoom({
+    radius: 20,
+    offset: 0,
+    box_count: 4,
+    scale: 16,
+    center_xy: this.board.rooms[0].center
+  })
   this.board.renderer.click = () => {
     this.board.renderer.hover_xys.forEach( xy => {
-      this.board.setOne('square', xy, true)
+      this.board.setOne('square', geo.vector.floor(xy), true)
     })
   }
+  this.renderer = this.board.renderer
   this.update()
 })
+success() {
+  this.board.renderer.setZoom(this.board.renderer)
+}
 </script>
 </edit-board>

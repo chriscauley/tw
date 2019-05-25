@@ -32,6 +32,7 @@ export default {
   sum: dxys => dxys.reduce(add, [...ZERO]),
   getDistance: (dxy1, dxy2) => magnitude(subtract(dxy1, dxy2)),
   turn: ([dx, dy], dir) => [-dy * dir, dx * dir],
+  floor: dxy => [Math.floor(dxy[0]), Math.floor(dxy[1])],
   magnitude,
   sign,
   subtract,

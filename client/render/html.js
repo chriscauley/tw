@@ -6,7 +6,13 @@ import types from '../piece/types'
 import paint from '../move/paint'
 import geo from '../geo'
 
+//const { List } = uR.db
 const observer = riot.observable()
+
+// javascript's % is remainder, not modulus
+const mod = (n, m) => {
+  return ((n % m) + m) % m
+}
 
 // how many squares are rendered outside of view (radially)
 const OVERFLOW = 2
@@ -14,11 +20,21 @@ const MIRRORS = [[0, 0], [0, 2], [2, 0], [2, 2]]
 
 export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
+  static fields = {
+    radius: 8,
+    offset: 0.5,
+    box_count: 0,
+    scale: 32,
+    center_xy: [0, 0],
+  }
+  static editable_fieldnames = ['radius', 'offset', 'box_count', 'scale']
+
   static opts = {
     board: uR.REQURIED,
     parent: '.html-renderer',
   }
   constructor(opts) {
+    opts.center_xy = opts.center_xy || opts.board.start
     super(opts)
     this.board.renderer = this
     if (typeof this.parent === 'string') {
@@ -41,24 +57,14 @@ export class RenderBoard extends uR.db.Model {
   }
 
   setZoom = (opts = {}) => {
-    const { radius = 8, offset = 0.5, box_count = 0, scale = 32 } = opts
-    // _r = "radius", but for a square not diamond...
-    // should be 2 larger than actual visible radius
-    // this hides the "poping" as element show/hide
-    this._r = radius
-    this.offset = offset
-    this.box_count = box_count
-    this.size = radius * 2 + 1
-    this.scale = scale
+    this.deserialize(opts)
+    this.size = this.radius * 2 + 1
 
-    // amount not visible is "extra margin"
-    this.extra_margin = -radius / 2 - OVERFLOW + offset
-    this.visible_size = 2 * (radius - OVERFLOW)
+    this.visible_size = 2 * (this.radius - OVERFLOW)
     this.dxys = []
     this.animations = []
-    const dimension = _.range(-radius, radius + 1)
+    const dimension = _.range(-this.radius, this.radius + 1)
     this.health_divisor = 1
-    this.center_xy = [0, 0]
 
     dimension.forEach(dx => {
       dimension.forEach(dy => {
@@ -68,7 +74,6 @@ export class RenderBoard extends uR.db.Model {
     this.parent.style.fontSize = this.scale + 'px'
     this.parent.style.height = this.visible_size + 'em'
     this.parent.style.width = this.visible_size + 'em'
-
     this.draw()
   }
 
@@ -77,10 +82,10 @@ export class RenderBoard extends uR.db.Model {
     if (!xy) {
       const mouse_xy = [
         Math.floor(
-          e.offsetX / this.scale - this._r + OVERFLOW + this.extra_margin,
+          e.offsetX / this.scale - this.radius + OVERFLOW - this.offset,
         ),
         Math.floor(
-          e.offsetY / this.scale - this._r + OVERFLOW + this.extra_margin,
+          e.offsetY / this.scale - this.radius + OVERFLOW - this.offset,
         ),
       ]
       xy = geo.vector.add(mouse_xy, this.center_xy)
@@ -89,17 +94,21 @@ export class RenderBoard extends uR.db.Model {
       this.click(xy)
     }
     this.update()
-    console.log("CLICKED:",this.board.getOne('piece', xy)) // eslint-disable-line
+    if (this.board._xy2i[xy[0]]) {
+      console.log("CLICKED:",this.board.getOne('piece', xy)) // eslint-disable-line
+    }
   }
 
   draw = () => {
-    this.container = uR.element.create('div', {
-      className: this.getClass(),
-      parent: this.parent,
-    })
+    if (!this.container) {
+      this.container = uR.element.create('div', {
+        parent: this.parent,
+      })
 
-    this.parent.addEventListener('click', this.click)
+      this.parent.addEventListener('click', this.click)
+    }
 
+    this.container.className = this.getClass()
     this.update()
   }
 
@@ -117,8 +126,6 @@ export class RenderBoard extends uR.db.Model {
     if (player) {
       this.center_xy = player.xy
       this.health_divisor = player.damage
-    } else {
-      this.center_xy = this.board.rooms[0].center
     }
   }
 
@@ -133,8 +140,12 @@ export class RenderBoard extends uR.db.Model {
       style.transition = '0s'
       setTimeout(() => (style.transition = null), 0)
     }
-    style.marginLeft = `-${xy[0] + this.extra_margin}em`
-    style.marginTop = `-${xy[1] + this.extra_margin}em`
+    style.marginLeft = `${this.visible_size / 2 -
+      this.center_xy[0] -
+      this.offset}em`
+    style.marginTop = `${this.visible_size / 2 -
+      this.center_xy[1] -
+      this.offset}em`
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
@@ -168,7 +179,7 @@ export class RenderBoard extends uR.db.Model {
             ) {
               return
             }
-            value = ((xy[0] % 2) + xy[1]) % 2
+            value = mod(mod(xy[0], 2) + xy[1], 2)
             break
           case 'animation':
             value = animation_map[xy]
@@ -189,7 +200,19 @@ export class RenderBoard extends uR.db.Model {
       })
     })
 
-    this.hover_xys.forEach(xy => results.box.push([xy, 'hover0']))
+    const boxy = (xy, sprite) => {
+      if (xy[0] % 1) {
+        sprite += ' mx-half'
+      }
+      if (xy[1] % 1) {
+        sprite += ' my-half'
+      }
+      results.box.push([[Math.floor(xy[0]), Math.floor(xy[1])], sprite])
+    }
+
+    this.hover_xys.forEach(xy => boxy(xy, 'hover0'))
+    boxy(this.center_xy, 'hover1')
+    boxy([0, 0], 'hover1')
 
     this.all_divs.forEach(d => (d.className = ''))
 

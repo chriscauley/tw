@@ -90,15 +90,14 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   cacheCoordinates() {
-    const BUFFER = 8
     this.W = 100
     this.H = 100
     this._xy2i = {}
     this._i2xy = {}
-    _.range(-BUFFER, this.H + BUFFER + 1).forEach(x => (this._xy2i[x] = {}))
+    _.range(-this.H, this.H + 1).forEach(x => (this._xy2i[x] = {}))
 
-    _.range(-BUFFER, this.W + BUFFER + 1).forEach(x => {
-      _.range(-BUFFER, this.H + BUFFER + 1).forEach(y => {
+    _.range(-this.W, this.W + 1).forEach(x => {
+      _.range(-this.H, this.H + 1).forEach(y => {
         const i = (this._xy2i[x][y] = x + y * this.W)
         this._i2xy[i] = [x, y]
       })
