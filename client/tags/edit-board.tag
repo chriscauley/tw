@@ -2,10 +2,33 @@ import uR from 'unrest.io'
 import Board from '../board/Board'
 import geo from '../geo'
 
+const TOOLS = [
+  {
+    name: 'square',
+    click: (xy,board) => {
+      board.setOne('square', xy, !board.getOne('square',xy))
+    },
+    selected: true,
+  },
+  {
+    name: 'wall',
+    click: (xy,board) => {
+      if (board.getOne('wall',xy)) {
+        board.setOne('wall', xy, 0)
+      } else {
+        board.setOne('square', xy, true)
+        board.setOne('wall', xy, 1)
+      }
+    }
+  },
+]
+
 const XYMixin = {
   init: function() {
     this.mouseX = this.mouseY = 0
     this.zoom = 1
+    this.tools = TOOLS
+    this.selected_tool = this.tools[0]
     this.boxes = []
 
     if (this.opts.continuous) {
@@ -20,6 +43,12 @@ const XYMixin = {
       ]
     }
   },
+
+  onToolChange: function(e) {
+    this.selected_tool = this.tools.find(tool => tool.name === e.target.value)
+    console.log(this.selected_tool)
+  },
+
   onMouseMove: function(e) {
     const [x, y] = this.getXY(e)
     if (this.mouseX === x && this.mouseY === y) {
@@ -43,7 +72,13 @@ const XYMixin = {
       <div class="html-renderer editor" onmousemove={onMouseMove}>
         <div class="hover-mask"></div>
       </div>
-      <ur-form if={renderer} object={renderer} success={success}></ur-form>
+      <ur-form if={renderer} object={renderer} success={success}>
+        <yield to="pre-form">
+          <select ref="tool-select" onchange={parent.onToolChange}>
+            <option each={tool in parent.tools}>{tool.name}</option>
+          </select>
+        </yield>
+      </ur-form>
     </div>
   </div>
 <script>
@@ -61,8 +96,12 @@ this.on('mount', () => {
     center_xy: this.board.rooms[0].center
   })
   this.board.renderer.click = () => {
+    const done = {}
     this.board.renderer.hover_xys.forEach( xy => {
-      this.board.setOne('square', geo.vector.floor(xy), true)
+      if (!done[xy]) {
+        this.selected_tool.click(geo.vector.floor(xy),this.board)
+        done[xy] = true
+      }
     })
   }
   this.renderer = this.board.renderer
