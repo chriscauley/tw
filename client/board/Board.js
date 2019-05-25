@@ -145,6 +145,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   newPiece(opts) {
+    opts._PRNG = opts._PRNG || this.random.int()
     const piece = newPiece(opts)
     piece._turn = this.game.turn
     this.setPiece(piece.xy, piece)

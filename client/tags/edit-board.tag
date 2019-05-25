@@ -2,6 +2,26 @@ import uR from 'unrest.io'
 import Board from '../board/Board'
 import geo from '../geo'
 
+const toggleEntity = (xy,board, name, value, _default) => {
+  if (board.getOne(name,xy)) {
+    value=_default
+  }
+  board.setOne(name,xy,value)
+}
+
+const pieceTool = name => ({
+  name,
+  click: (xy,board) => {
+    const piece = board.getOne('piece',xy)
+    board.setOne('square', xy, true)
+    if (piece) {
+      board.removePiece(piece)
+    } else {
+      board.newPiece({ xy, type: name })
+    }
+  },
+})
+
 const TOOLS = [
   {
     name: 'square',
@@ -21,6 +41,7 @@ const TOOLS = [
       }
     }
   },
+  pieceTool('spitter'),
 ]
 
 const XYMixin = {
@@ -87,6 +108,7 @@ this.mixin(XYMixin)
 window.B = this.board = Board.objects.get(this.opts.matches[1])
 this.on('mount', () => {
   this.board.parent = this.root.querySelector(".html-renderer")
+  this.board.game = {turn: 0} // necessary for board.newPiece
   this.board.reset()
   this.board.renderer.setZoom({
     radius: 20,
