@@ -65,6 +65,12 @@ const XYMixin = {
     }
   },
 
+  save: function() {
+    this.board.constructor.objects.create(this.board.serialize()).then(board => {
+      window.location.reload()
+    })
+  },
+
   onToolChange: function(e) {
     this.selected_tool = this.tools.find(tool => tool.name === e.target.value)
     console.log(this.selected_tool)
@@ -83,23 +89,29 @@ const XYMixin = {
       x - visible_size/2 + center_xy[0],
       y - visible_size/2 + center_xy[1],
     ])
+    if (this.mouse_down) {
+      this.board.renderer.click({ target: { xy: [x,y] } })
+    }
     this.board.renderer.update()
+  },
+  onMouseUp: function(e) {
+    this.mouse_down = false
   }
 }
 
 <edit-board>
   <div class={theme.outer}>
     <div class={theme.content}>
-      <div class="html-renderer editor" onmousemove={onMouseMove}>
+      <div class="html-renderer editor" onmousemove={onMouseMove} onmouseup={onMouseUp}>
         <div class="hover-mask"></div>
       </div>
-      <ur-form if={renderer} object={renderer} success={success}>
-        <yield to="pre-form">
-          <select ref="tool-select" onchange={parent.onToolChange}>
-            <option each={tool in parent.tools}>{tool.name}</option>
-          </select>
-        </yield>
-      </ur-form>
+      <div>
+        <select ref="tool-select" onchange={onToolChange}>
+          <option each={tool in tools}>{tool.name}</option>
+        </select>
+        <button class={css.btn.primary} onclick={save}>Save</button>
+        <ur-form if={renderer} object={renderer} success={success} />
+      </div>
     </div>
   </div>
 <script>
@@ -119,6 +131,7 @@ this.on('mount', () => {
   })
   this.board.renderer.click = () => {
     const done = {}
+    this.mouse_down = true
     this.board.renderer.hover_xys.forEach( xy => {
       if (!done[xy]) {
         this.selected_tool.click(geo.vector.floor(xy),this.board)

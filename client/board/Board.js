@@ -10,7 +10,7 @@ import { newPiece } from '../piece/entity'
 import types from '../piece/types'
 import { RenderBoard } from '../render/html'
 
-const { Model, APIManager, List, Int, String } = uR.db
+const { Model, APIManager, List, Int, String, Field } = uR.db
 
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
@@ -37,6 +37,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     mook_count: Int(3, { choices: _.range(1, 10) }),
     mooks: List('', { choices: types.mook_map }),
     boss: String('', { choices: types.boss_map }),
+    _entities: Field({}),
   }
   __str__() {
     return this.name
@@ -120,6 +121,15 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
+    if (this._entities) {
+      this.entities = this._entities
+      this.cacheCoordinates()
+      Object.values(this._entities.piece).forEach(piece => {
+        this.setOne('piece', piece.xy, undefined)
+        this.newPiece(piece)
+      })
+      return
+    }
     this.walls = {}
     this.W = 0
     this.H = 0
@@ -155,6 +165,19 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   removePiece(piece) {
     delete this.entities.piece[this.xy2i(piece.xy)]
     this.renderer.removePiece(piece)
+  }
+
+  serialize(keys) {
+    const out = super.serialize(keys)
+    out._entities = JSON.parse(
+      JSON.stringify(this.entities, (key, value) => {
+        if (key === 'board') {
+          return
+        }
+        return value
+      }),
+    )
+    return out
   }
 }
 

@@ -27,7 +27,7 @@ export class RenderBoard extends uR.db.Model {
     scale: 32,
     center_xy: [0, 0],
   }
-  static editable_fieldnames = ['radius', 'offset', 'box_count', 'scale']
+  static editable_fieldnames = ['radius', 'box_count', 'scale']
 
   static opts = {
     board: uR.REQURIED,
@@ -105,7 +105,7 @@ export class RenderBoard extends uR.db.Model {
         parent: this.parent,
       })
 
-      this.parent.addEventListener('click', this.click)
+      this.parent.addEventListener('mousedown', this.click)
     }
 
     this.container.className = this.getClass()
@@ -130,7 +130,7 @@ export class RenderBoard extends uR.db.Model {
   }
 
   update = instant => {
-    if (!this.container || !this.board.entities) {
+    if (!this.container || !this.board.entities || !this.board.rooms) {
       return
     }
     this.normalize()
