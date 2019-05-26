@@ -129,7 +129,7 @@ this.on('mount', () => {
     scale: 16,
     center_xy: this.board.rooms[0].center
   })
-  this.board.renderer.click = () => {
+  this.board.renderer.onClick = () => {
     const done = {}
     this.mouse_down = true
     this.board.renderer.hover_xys.forEach( xy => {

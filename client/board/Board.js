@@ -6,6 +6,7 @@ import Random from 'ur-random'
 import Room from './Room'
 import Item from '../item'
 import DialogMixin from './dialog'
+import geo from '../geo'
 import { newPiece } from '../piece/entity'
 import types from '../piece/types'
 import { RenderBoard } from '../render/html'
@@ -90,6 +91,19 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     return Object.values(this.entities.piece)
   }
 
+  addEnergy(value, xy, dxy, state = this.entities) {
+    const i = this.xy2i(xy)
+    const { energy, dxy_energy } = state
+    if (energy[i]) {
+      energy[i] += value
+      dxy_energy[i] = geo.vector.sign(geo.vector.add(dxy_energy[i], dxy))
+    } else {
+      energy[i] = value
+      dxy_energy[i] = dxy
+    }
+    this.renderer.animations.push({ xy, sprite: 'fireball', dxy })
+  }
+
   cacheCoordinates() {
     this.W = 100
     this.H = 100
@@ -118,11 +132,14 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       color: {}, // used in debug only... for now
       path: {}, // path to walk down
       item: {},
+      energy: {},
+      dxy_energy: {},
+      ash: {},
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
     if (this._entities) {
-      this.entities = this._entities
+      Object.assign(this.entities, this._entities)
       this.cacheCoordinates()
       Object.values(this._entities.piece).forEach(piece => {
         this.setOne('piece', piece.xy, undefined)
@@ -160,6 +177,39 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     piece._turn = this.game.turn
     this.setPiece(piece.xy, piece)
     return piece
+  }
+
+  moveEnergy() {
+    const new_state = {
+      energy: {},
+      dxy_energy: {},
+    }
+    Object.entries(this.entities.energy).forEach(([i, value]) => {
+      const dxy = this.entities.dxy_energy[i]
+      const xy = geo.vector.add(this.i2xy(i), dxy)
+      if (this.getOne('wall', xy)) {
+        // #! TODO drop ash and do animations
+        return
+      }
+      this.addEnergy(value, xy, dxy, new_state)
+    })
+    Object.assign(this.entities, new_state)
+  }
+
+  applyEnergy() {
+    // this function gets applied 3 times a turn! Make as efficient as possible
+    // 1. before moving energy (in case piee moved into energy)
+    // 2. after moving energy (collide moved energy with stationary pieces)
+    // 3. after moving pieces (collide moved pieces with stationary energy)
+    const { energy, dxy_energy, piece } = this.entities
+    Object.entries(energy).forEach(([i, value]) => {
+      const xy = this.i2xy(i)
+      const dxy = dxy_energy[i]
+      if (piece[i]) {
+        console.log("TODO collide piece with energy",value,xy,dxy) // eslint-disable-line
+        delete energy[i]
+      }
+    })
   }
 
   removePiece(piece) {

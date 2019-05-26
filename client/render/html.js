@@ -51,7 +51,16 @@ export class RenderBoard extends uR.db.Model {
     this.all_divs = []
     this.hover_xys = []
     this.cache = {}
-    this.names = ['wall', 'path', 'piece', 'square', 'item', 'animation', 'box']
+    this.names = [
+      'wall',
+      'path',
+      'piece',
+      'square',
+      'item',
+      'animation',
+      'box',
+      'energy',
+    ]
     this.names.forEach(name => (this.cache[name] = {}))
     this.setZoom()
   }
@@ -90,8 +99,8 @@ export class RenderBoard extends uR.db.Model {
       ]
       xy = geo.vector.add(mouse_xy, this.center_xy)
     }
-    if (this.click) {
-      this.click(xy)
+    if (this.onClick) {
+      this.onClick(xy)
     }
     this.update()
     if (this.board._xy2i[xy[0]]) {
@@ -162,12 +171,15 @@ export class RenderBoard extends uR.db.Model {
       }
       if (name === 'animation') {
         // animations are in an arry, need a map for lookup
-        this.animations.forEach(({ xy, sprite, damage_source }) => {
+        /*this.animations.forEach(({ dxy, xy, sprite, damage_source }) => {
           const source = types[damage_source]
           if (source && source.damage_animation) {
             sprite = source.damage_animation
           }
           animation_map[xy] = sprite
+          })*/
+        this.animations.forEach(opts => {
+          animation_map[opts.xy] = opts
         })
       }
       xys.forEach(xy => {
@@ -186,6 +198,15 @@ export class RenderBoard extends uR.db.Model {
             break
           default:
             value = this.board.getOne(name, xy)
+        }
+        if (value && name === 'energy') {
+          value = {
+            xy,
+            value: value,
+            dxy: this.board.getOne('dxy_energy', xy),
+            type: 'fireball',
+            name: 'piece',
+          }
         }
         if (value !== undefined) {
           results[name].push([xy, value])
@@ -211,8 +232,10 @@ export class RenderBoard extends uR.db.Model {
     }
 
     this.hover_xys.forEach(xy => boxy(xy, 'hover0'))
-    boxy(this.center_xy, 'hover1')
-    boxy([0, 0], 'hover1')
+    if (!this.board.player) {
+      boxy(this.center_xy, 'hover1')
+      boxy([0, 0], 'hover1')
+    }
 
     this.all_divs.forEach(d => (d.className = ''))
 
@@ -280,11 +303,25 @@ export class RenderBoard extends uR.db.Model {
       }
       return renderEntity(value, extras)
     }
-    let sprite = this.sprites[name] + value
+    if (name === 'energy') {
+      return '' //return renderEntity(value)
+    }
+
+    let sprite, dxy
     if (name === 'item') {
       sprite = value.name
+    } else if (name === 'animation' && value.dxy) {
+      dxy = value.dxy.join('')
+      sprite = value.sprite
+      const source = types[value.damage_source]
+      if (source && source.damage_animation) {
+        sprite = source.damage_animation
+      }
+    } else {
+      sprite = this.sprites[name] + value
     }
-    const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite }
+
+    const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite, dxy }
 
     return `square sprite ${name} ${objToClassString(opts)}`
   }

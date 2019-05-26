@@ -18,7 +18,11 @@ export default {
   spitter: {
     sprite: 'o-eye',
     opts,
-    tasks: [move.shoot('fireball')],
+    tasks: [
+      move.energy.use(2).then(move.shoot('fireball')),
+      move.energy.add(1),
+      move.done,
+    ],
   },
   pentagram: {
     sprite: 'pentagram',

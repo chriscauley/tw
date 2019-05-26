@@ -72,8 +72,8 @@ export default class Game extends uR.db.Model {
     if (!this.enemies) {
       return
     }
-    this.piece_generator(this)
-    this.boss_generator(this)
+    // this.piece_generator(this)
+    // this.boss_generator(this)
   }
 
   _doTurn(piece) {
@@ -139,8 +139,12 @@ export default class Game extends uR.db.Model {
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
+      this.board.applyEnergy()
+      this.board.moveEnergy()
+      this.board.applyEnergy()
       this.doTurns(pieces, true)
       this.board.checkDialog()
+      this.board.applyEnergy()
     }
     if (this.player.health <= 0) {
       if (!this.player.lives > 0) {
