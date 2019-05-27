@@ -225,7 +225,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     const out = super.serialize(keys)
     out._entities = JSON.parse(
       JSON.stringify(this.entities, (key, value) => {
-        if (key === 'board') {
+        if (key === 'board' || key === '_type') {
           return
         }
         return value

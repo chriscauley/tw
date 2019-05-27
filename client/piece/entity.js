@@ -62,6 +62,7 @@ const newPiece = opts => {
   if (!piece.max_health) {
     piece.max_health = piece.health
   }
+  piece._type = type
   return piece
 }
 
