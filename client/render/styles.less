@@ -126,7 +126,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    transition: margin 0.25s;
+    transition: margin 0.25s linear;
   }
   .square {
     background-size: cover;
@@ -144,10 +144,10 @@
   }
   .piece {
     line-height: 1;
-    text-align: center;
     margin: 0.1 * @scale;
-    transition: 0.25s;
     height: 0.8 * @scale;
+    text-align: center;
+    transition: 0.25s;
     width: 0.8 * @scale;
     &.sprite1x2- {
       &bluedragon, &purpledragon, &greydragon, &reddragon {
@@ -254,17 +254,8 @@
 }
 
 .sprite {
-  &-fireball, &.fireball, &.fireball_bat, &.spitter {
+  &-fireball {
     border-color: transparent !important;
-    &.dxy-0-1 {
-      transform: rotate(180deg)
-    }
-    &.dxy--10 {
-      transform: rotate(90deg)
-    }
-    &.dxy-10 {
-      transform: rotate(270deg)
-    }
   }
 }
 

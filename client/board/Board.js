@@ -94,6 +94,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   addEnergy(value, xy, dxy, state = this.entities) {
     const i = this.xy2i(xy)
     const { energy, dxy_energy } = state
+    if (this.getOne('wall', xy) || !this.getOne('square', xy)) {
+      // #! TODO drop ash and do animations
+      return
+    }
     if (energy[i]) {
       energy[i] += value
       dxy_energy[i] = geo.vector.sign(geo.vector.add(dxy_energy[i], dxy))
@@ -101,7 +105,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       energy[i] = value
       dxy_energy[i] = dxy
     }
-    this.renderer.animations.push({ xy, sprite: 'fireball', dxy })
   }
 
   cacheCoordinates() {
@@ -179,6 +182,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     return piece
   }
 
+  canAddEnergy = xy => this.getOne('wall', xy) || !this.getOne('square', xy)
   moveEnergy() {
     const new_state = {
       energy: {},
@@ -187,8 +191,8 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     Object.entries(this.entities.energy).forEach(([i, value]) => {
       const dxy = this.entities.dxy_energy[i]
       const xy = geo.vector.add(this.i2xy(i), dxy)
-      if (this.getOne('wall', xy)) {
-        // #! TODO drop ash and do animations
+      if (!this.canAddEnergy(xy)) {
+        // #! TODO drop ash
         return
       }
       this.addEnergy(value, xy, dxy, new_state)

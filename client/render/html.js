@@ -61,6 +61,7 @@ export class RenderBoard extends uR.db.Model {
       'box',
       'energy',
     ]
+    this.energy_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))
     this.setZoom()
   }
@@ -149,17 +150,22 @@ export class RenderBoard extends uR.db.Model {
       style.transition = '0s'
       setTimeout(() => (style.transition = null), 0)
     }
-    style.marginLeft = `${this.visible_size / 2 -
-      this.center_xy[0] -
-      this.offset}em`
-    style.marginTop = `${this.visible_size / 2 -
-      this.center_xy[1] -
-      this.offset}em`
+    if (!window.lock) {
+      style.marginLeft = `${this.visible_size / 2 -
+        this.center_xy[0] -
+        this.offset}em`
+      style.marginTop = `${this.visible_size / 2 -
+        this.center_xy[1] -
+        this.offset}em`
+      //window.lock = true
+    }
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
 
+    // animations are in an arry, need a map for lookup
     const animation_map = {}
+    this.animations.forEach(opts => (animation_map[opts.xy] = opts))
     const results = {}
     let value
 
@@ -168,19 +174,6 @@ export class RenderBoard extends uR.db.Model {
       if (name === 'box') {
         // handled outside of this because there's only 0-4 of them
         return
-      }
-      if (name === 'animation') {
-        // animations are in an arry, need a map for lookup
-        /*this.animations.forEach(({ dxy, xy, sprite, damage_source }) => {
-          const source = types[damage_source]
-          if (source && source.damage_animation) {
-            sprite = source.damage_animation
-          }
-          animation_map[xy] = sprite
-          })*/
-        this.animations.forEach(opts => {
-          animation_map[opts.xy] = opts
-        })
       }
       xys.forEach(xy => {
         switch (name) {
@@ -200,12 +193,14 @@ export class RenderBoard extends uR.db.Model {
             value = this.board.getOne(name, xy)
         }
         if (value && name === 'energy') {
+          const dxy = this.board.getOne('dxy_energy', xy)
           value = {
             xy,
+            dxy,
             value: value,
-            dxy: this.board.getOne('dxy_energy', xy),
             type: 'fireball',
             name: 'piece',
+            moved: dxy.join(''),
           }
         }
         if (value !== undefined) {
@@ -239,28 +234,43 @@ export class RenderBoard extends uR.db.Model {
 
     this.all_divs.forEach(d => (d.className = ''))
 
+    Object.values(this.cache.energy).forEach(e => e.parentNode.removeChild(e))
+    this.cache.energy = {}
+
     this.names.forEach(name => {
       results[name].forEach(([xy, value], index) => {
+        if (name === 'energy') {
+          index = this.energy_counter++
+        }
         if (name === 'piece') {
           index = value.id
         }
         if (!this.cache[name][index]) {
-          this.all_divs.push(
-            (this.cache[name][index] = this.newDiv(`${name}-${index}`)),
-          )
+          this.cache[name][index] = this.newDiv(`${name}-${index}`)
+          if (name !== 'enegy') {
+            this.all_divs.push(this.cache[name][index])
+          }
         }
         const element = this.cache[name][index]
         element.xy = xy
-        element.className = this.renderOne(name)([xy, value])
         if (name === 'piece') {
           element.piece_id = value.id
           const { last_move, dxy } = value
-          if (last_move && last_move.damages) {
-            observer.one('animate', () =>
-              element.classList.add(`damage-${dxy.join('')}`),
-            )
+          if (last_move) {
+            if (last_move.damages) {
+              observer.one('animate', () =>
+                element.classList.add(`damage-${dxy.join('')}`),
+              )
+            }
           }
         }
+        if (value.moved) {
+          element.classList.remove(`moved-${value.moved}`)
+          observer.one('animate', () => {
+            element.classList.remove(`moved-${value.moved}`)
+          })
+        }
+        element.className = this.renderOne(name)([xy, value])
         if (name === 'animation' && value.className) {
           observer.one('animate', () => element.classList.add(value.className))
         }
@@ -304,7 +314,7 @@ export class RenderBoard extends uR.db.Model {
       return renderEntity(value, extras)
     }
     if (name === 'energy') {
-      return '' //return renderEntity(value)
+      return renderEntity(value)
     }
 
     let sprite, dxy
@@ -340,13 +350,14 @@ const objToClassString = obj => {
 
 // pieces and anything which is not a primative needs fancy rendering
 const renderEntity = (entity, extras = {}) => {
-  const { xy, color, name, type, dxy, follow_order, _sprite } = entity
+  const { xy, color, name, type, dxy, follow_order, _sprite, moved } = entity
   let { sprite } = types[type]
   if (_sprite) {
     sprite += _sprite
   }
   extras = {
     ...extras,
+    moved,
     sprite,
     color,
     follow_order,

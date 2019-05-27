@@ -86,6 +86,35 @@ const createCompositeSpriteCSS = ({ recipe, scale, name }) => {
 const createAllSpriteCSS = () => {
   Sprite.objects.all().forEach(createSpriteCSS)
   CompositeSprite.objects.all().forEach(createCompositeSpriteCSS)
+
+  const rotations = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+  const names = ['fireball', 'o-eye']
+  const sprites = Sprite.objects
+    .all()
+    .filter(({ name }) => names.includes(name))
+  sprites.forEach(sprite => {
+    const { scale, name } = sprite
+    loadImage(sprite.dataURL).then(img => {
+      const canvas = uR.element.create('canvas', {
+        width: scale,
+        height: scale,
+      })
+      const ctx = canvas.getContext('2d')
+      rotations.forEach((dxy, i) => {
+        ctx.clearRect(0, 0, scale, scale)
+        ctx.translate(scale / 2, scale / 2)
+        ctx.rotate((i * Math.PI) / 2)
+        ctx.drawImage(img, -scale / 2, -scale / 2)
+        ctx.rotate((-i * Math.PI) / 2)
+        ctx.translate(-scale / 2, -scale / 2)
+        createSpriteCSS({
+          name,
+          prefix: `.dxy-${dxy.join('')}.sprite.sprite-`,
+          dataURL: canvas.toDataURL(),
+        })
+      })
+    })
+  })
 }
 
 export default {

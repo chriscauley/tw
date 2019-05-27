@@ -17,9 +17,9 @@ export default {
   },
   spitter: {
     sprite: 'o-eye',
-    opts,
+    opts: { sight: 0, invulnerable: true, energy: 4 },
     tasks: [
-      move.energy.use(2).then(move.shoot('fireball')),
+      move.energy.use(3).then(move.shoot('fireball')),
       move.energy.add(1),
       move.done,
     ],
