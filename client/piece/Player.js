@@ -59,9 +59,11 @@ export const getAttack = (weapon, player, dxy) => {
 
 const getStep = (player, dxy) => {
   const xy = vector.add(player.xy, dxy)
+  const empty = canMoveOn(player, xy)
 
   return {
-    xy: canMoveOn(player, xy) ? xy : undefined,
+    xy: empty ? xy : undefined,
+    push: !empty && { xy, dxy },
     dxy,
     done: true,
   }

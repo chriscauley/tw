@@ -22,6 +22,12 @@ export const applyMove = (piece, move, turn) => {
   if (move.now) {
     move.now(piece)
   }
+  if (move.push) {
+    const target = piece.board.getOne('piece', move.push.xy)
+    if (target && target._type && target._type.onPush) {
+      target._type.onPush(target, move.push.dxy)
+    }
+  }
 }
 
 export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
