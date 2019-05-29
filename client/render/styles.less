@@ -3,20 +3,16 @@
 
 .loop(@counter) when (@counter > -60) {
   .loop((@counter - 1));
-  @w: ~"w-@{counter}";
-  .@{w} {
+  .w-@{counter} {
     width: (@scale * @counter);
   }
-  @h: ~"h-@{counter}";
-  .@{h} {
+  .h-@{counter} {
     height: (@scale * @counter);
   }
-  @x: ~"x-@{counter}";
-  .@{x} {
+  .x-@{counter} {
     left: (@scale * @counter);
   }
-  @y: ~"y-@{counter}";
-  .@{y} {
+  .y-@{counter} {
     top: (@scale * @counter);
   }
   /*@order: ~"follow_order-@{counter}:before";
