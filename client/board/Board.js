@@ -134,6 +134,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       energy: {},
       dxy_energy: {},
       ash: {},
+      floor_dxy: {}, // arrow tiles
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
@@ -179,13 +180,12 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   canAddEnergy = xy => !this.getOne('wall', xy) && this.getOne('square', xy)
-  moveEnergy(indexes=Object.keys(this.entities.energy)) {
+  moveEnergy() {
     const new_state = {
       energy: {},
       dxy_energy: {},
     }
-    indexes.forEach(index => {
-      const value = this.entities.energy[index]
+    Object.entries(this.entities.energy).forEach(([index, value]) => {
       const dxy = this.entities.dxy_energy[index]
       const xy = geo.vector.add(this.i2xy(index), dxy)
       if (!this.canAddEnergy(xy)) {
@@ -209,6 +209,23 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       if (piece[i]) {
         console.log("TODO collide piece with energy",value,xy,dxy) // eslint-disable-line
         delete energy[i]
+      }
+    })
+  }
+
+  applyFloor() {
+    // #! TODO apply to pieces as well
+    const { floor_dxy, energy, _piece } = this.entities
+    Object.entries(floor_dxy).forEach(([index, dxy]) => {
+      if (energy[index]) {
+        // #! TODO this is copypasta from moveEnergy
+        const xy = geo.vector.add(this.i2xy(index), dxy)
+        if (!this.canAddEnergy(xy)) {
+          // #! TODO drop ash
+          return
+        }
+        this.addEnergy(energy[index], xy, dxy)
+        delete energy[index]
       }
     })
   }

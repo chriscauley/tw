@@ -143,6 +143,7 @@ export default class Game extends uR.db.Model {
       this.board.moveEnergy()
       this.board.applyEnergy()
       this.doTurns(pieces, true)
+      this.board.applyFloor()
       this.board.checkDialog()
       this.board.applyEnergy()
     }

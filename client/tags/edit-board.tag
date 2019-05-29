@@ -32,7 +32,7 @@ const TOOLS = [
   },
   {
     name: 'wall',
-    click: (xy,board) => {
+    click: (xy, board) => {
       if (board.getOne('wall',xy)) {
         board.setOne('wall', xy, 0)
       } else {
@@ -42,7 +42,23 @@ const TOOLS = [
     }
   },
   pieceTool('spitter'),
+  {
+    name: 'arrow',
+    click: (xy, board, event) => {
+      if (event.shiftKey) {
+        board.setOne('floor_dxy', xy, undefined)
+        return
+      }
+      const dxy = board.getOne('floor_dxy', xy)
+      if (!dxy) {
+        board.setOne('floor_dxy', xy, [0,1])
+        return
+      }
+      board.setOne('floor_dxy', xy, geo.vector.turn(dxy,1))
+    }
+  }
 ]
+
 
 const XYMixin = {
   init: function() {
@@ -73,7 +89,6 @@ const XYMixin = {
 
   onToolChange: function(e) {
     this.selected_tool = this.tools.find(tool => tool.name === e.target.value)
-    console.log(this.selected_tool)
   },
 
   onMouseMove: function(e) {
@@ -129,12 +144,12 @@ this.on('mount', () => {
     scale: 16,
     center_xy: this.board.rooms[0].center
   })
-  this.board.renderer.onClick = () => {
+  this.board.renderer.onClick = (_xy, event) => {
     const done = {}
     this.mouse_down = true
     this.board.renderer.hover_xys.forEach( xy => {
       if (!done[xy]) {
-        this.selected_tool.click(geo.vector.floor(xy),this.board)
+        this.selected_tool.click(geo.vector.floor(xy),this.board, event)
         done[xy] = true
       }
     })

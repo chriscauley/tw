@@ -46,6 +46,7 @@ export class RenderBoard extends uR.db.Model {
       path: 'vine',
       animation: '',
       square: 'floor',
+      floor_dxy: 'greenarrow',
       box: '',
     }
     this.all_divs = []
@@ -60,6 +61,7 @@ export class RenderBoard extends uR.db.Model {
       'animation',
       'box',
       'energy',
+      'floor_dxy',
     ]
     this.energy_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))
@@ -101,7 +103,7 @@ export class RenderBoard extends uR.db.Model {
       xy = geo.vector.add(mouse_xy, this.center_xy)
     }
     if (this.onClick) {
-      this.onClick(xy)
+      this.onClick(xy, event)
     }
     this.update()
     if (this.board._xy2i[xy[0]]) {
@@ -191,6 +193,9 @@ export class RenderBoard extends uR.db.Model {
             break
           default:
             value = this.board.getOne(name, xy)
+        }
+        if (value && name === 'floor_dxy') {
+          value = value.join('')
         }
         if (value && name === 'energy') {
           const dxy = this.board.getOne('dxy_energy', xy)
