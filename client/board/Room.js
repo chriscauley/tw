@@ -91,7 +91,7 @@ export const connectRooms = board => {
     dxys.forEach(dxy => {
       // take a step, make a path, tear down any walls
       xy = geo.vector.subtract(xy, dxy)
-      board.setOne('square', xy, true)
+      board.setOne('square', xy, 1)
       board.setOne('path', xy, true)
       board.setOne('wall', xy, 0)
 
@@ -99,7 +99,7 @@ export const connectRooms = board => {
       geo.vector.splitDxy(dxy).forEach(side_dxy => {
         const xy2 = geo.vector.add(xy, side_dxy)
         if (!board.getOne('square', xy2)) {
-          board.setOne('square', xy2, true)
+          board.setOne('square', xy2, 1)
           board.setOne('wall', xy2, 1)
         }
       })

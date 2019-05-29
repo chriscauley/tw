@@ -138,7 +138,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
-    if (this._entities) {
+    if (this._entities && this._entities.piece) {
       Object.assign(this.entities, this._entities)
       this.cacheCoordinates()
       Object.values(this._entities.piece).forEach(piece => {
@@ -156,7 +156,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     })
     this.cacheCoordinates()
     this.rooms.forEach(({ xys, walls }) => {
-      xys.forEach(xy => this.setOne('square', xy, true))
+      xys.forEach(xy => this.setOne('square', xy, 1))
       walls.forEach(xy => this.setOne('wall', xy, 1))
     })
     Room.connectRooms(this)

@@ -13,7 +13,7 @@ const pieceTool = name => ({
   name,
   click: (xy,board) => {
     const piece = board.getOne('piece',xy)
-    board.setOne('square', xy, true)
+    board.setOne('square', xy, 1)
     if (piece) {
       board.removePiece(piece)
     } else {
@@ -26,7 +26,7 @@ const TOOLS = [
   {
     name: 'square',
     click: (xy,board) => {
-      board.setOne('square', xy, !board.getOne('square',xy))
+      board.setOne('square', xy, board.getOne('square',xy) ? 0 : 1)
     },
     selected: true,
   },
@@ -36,7 +36,7 @@ const TOOLS = [
       if (board.getOne('wall',xy)) {
         board.setOne('wall', xy, 0)
       } else {
-        board.setOne('square', xy, true)
+        board.setOne('square', xy, 1)
         board.setOne('wall', xy, 1)
       }
     }
@@ -131,7 +131,7 @@ const XYMixin = {
           <option each={tool in tools}>{tool.name}</option>
         </select>
         <button class={css.btn.primary} onclick={save}>Save</button>
-        <button class={css.btn.danger} onclick={clear}>Clear</button>
+        <button class={css.btn.cancel} onclick={clear}>Clear</button>
         <ur-form if={renderer} object={renderer} success={success} />
       </div>
     </div>
