@@ -107,6 +107,11 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
   if (shiftKey) {
     const move2 = getMove(player, dxy)
     applyMove(player, move2, turn)
+    if (move2.xy && move.xy && player.board.getOne('floor_dxy', move.xy)) {
+      // set tile of first move to dash direction
+      player.board.setOne('floor_dxy', move.xy, dxy)
+      move.flip_floor = dxy
+    }
     move = addMoves(move, move2)
   }
   return move
