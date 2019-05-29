@@ -87,6 +87,12 @@ const XYMixin = {
     })
   },
 
+  clear: function() {
+    this.board._entities = {piece:{}}
+    this.board.reset()
+    this.board.renderer.update()
+  },
+
   onToolChange: function(e) {
     this.selected_tool = this.tools.find(tool => tool.name === e.target.value)
   },
@@ -125,6 +131,7 @@ const XYMixin = {
           <option each={tool in tools}>{tool.name}</option>
         </select>
         <button class={css.btn.primary} onclick={save}>Save</button>
+        <button class={css.btn.danger} onclick={clear}>Clear</button>
         <ur-form if={renderer} object={renderer} success={success} />
       </div>
     </div>
