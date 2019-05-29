@@ -87,7 +87,16 @@ const createAllSpriteCSS = () => {
   Sprite.objects.all().forEach(createSpriteCSS)
   CompositeSprite.objects.all().forEach(createCompositeSpriteCSS)
 
-  const rotations = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+  const rotations = [
+    [0, 1],
+    [-1, 1],
+    [-1, 0],
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+  ]
   const names = ['fireball', 'o-eye']
   const sprites = Sprite.objects
     .all()
@@ -103,9 +112,9 @@ const createAllSpriteCSS = () => {
       rotations.forEach((dxy, i) => {
         ctx.clearRect(0, 0, scale, scale)
         ctx.translate(scale / 2, scale / 2)
-        ctx.rotate((i * Math.PI) / 2)
+        ctx.rotate((i * Math.PI) / 4)
         ctx.drawImage(img, -scale / 2, -scale / 2)
-        ctx.rotate((-i * Math.PI) / 2)
+        ctx.rotate((-i * Math.PI) / 4)
         ctx.translate(-scale / 2, -scale / 2)
         createSpriteCSS({
           name,
