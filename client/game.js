@@ -139,13 +139,13 @@ export default class Game extends uR.db.Model {
       // pieces should eventually handle which team is moving
       const pieces = this.board.getPieces().filter(p => p.type !== 'player')
       follow(pieces) // #! TODO this takes upto 15ms!
-      this.board.applyEnergy()
-      this.board.moveEnergy()
-      this.board.applyEnergy()
+      this.board.applyFire()
+      this.board.moveFire()
+      this.board.applyFire()
       this.doTurns(pieces, true)
       this.board.applyFloor()
       this.board.checkDialog()
-      this.board.applyEnergy()
+      this.board.applyFire()
     }
     if (this.player.health <= 0) {
       if (!this.player.lives > 0) {

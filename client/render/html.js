@@ -60,10 +60,10 @@ export class RenderBoard extends uR.db.Model {
       'item',
       'animation',
       'box',
-      'energy',
+      'fire',
       'floor_dxy',
     ]
-    this.energy_counter = 0
+    this.fire_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))
     this.setZoom()
   }
@@ -197,8 +197,8 @@ export class RenderBoard extends uR.db.Model {
         if (value && name === 'floor_dxy') {
           value = value.join('')
         }
-        if (value && name === 'energy') {
-          const dxy = this.board.getOne('dxy_energy', xy)
+        if (value && name === 'fire') {
+          const dxy = this.board.getOne('dxy_fire', xy)
           value = {
             xy,
             dxy,
@@ -239,13 +239,13 @@ export class RenderBoard extends uR.db.Model {
 
     this.all_divs.forEach(d => (d.className = ''))
 
-    Object.values(this.cache.energy).forEach(e => e.parentNode.removeChild(e))
-    this.cache.energy = {}
+    Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
+    this.cache.fire = {}
 
     this.names.forEach(name => {
       results[name].forEach(([xy, value], index) => {
-        if (name === 'energy') {
-          index = this.energy_counter++
+        if (name === 'fire') {
+          index = this.fire_counter++
         }
         if (name === 'piece') {
           index = value.id
@@ -318,7 +318,7 @@ export class RenderBoard extends uR.db.Model {
       }
       return renderEntity(value, extras)
     }
-    if (name === 'energy') {
+    if (name === 'fire') {
       return renderEntity(value)
     }
 

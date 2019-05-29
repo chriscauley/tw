@@ -20,7 +20,7 @@ export default {
     opts: { sight: 0, invulnerable: true },
     onPush: (piece, dxy) => (piece.dxy = dxy),
     tasks: [
-      move.energy.use(3).then(move.shoot('fireball')),
+      move.energy.use(2).then(move.shoot('fireball')),
       move.energy.add(1),
       move.done,
     ],

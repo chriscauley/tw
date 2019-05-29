@@ -91,15 +91,15 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     return Object.values(this.entities.piece)
   }
 
-  addEnergy(value, xy, dxy, state = this.entities) {
+  addFire(value, xy, dxy, state = this.entities) {
     const i = this.xy2i(xy)
-    const { energy, dxy_energy } = state
-    if (energy[i]) {
-      energy[i] += value
-      dxy_energy[i] = geo.vector.sign(geo.vector.add(dxy_energy[i], dxy))
+    const { fire, dxy_fire } = state
+    if (fire[i]) {
+      fire[i] += value
+      dxy_fire[i] = geo.vector.sign(geo.vector.add(dxy_fire[i], dxy))
     } else {
-      energy[i] = value
-      dxy_energy[i] = dxy
+      fire[i] = value
+      dxy_fire[i] = dxy
     }
   }
 
@@ -131,8 +131,8 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       color: {}, // used in debug only... for now
       path: {}, // path to walk down
       item: {},
-      energy: {},
-      dxy_energy: {},
+      fire: {},
+      dxy_fire: {},
       ash: {},
       floor_dxy: {}, // arrow tiles
     }
@@ -179,53 +179,53 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     return piece
   }
 
-  canAddEnergy = xy => !this.getOne('wall', xy) && this.getOne('square', xy)
-  moveEnergy() {
+  canAddFire = xy => !this.getOne('wall', xy) && this.getOne('square', xy)
+  moveFire() {
     const new_state = {
-      energy: {},
-      dxy_energy: {},
+      fire: {},
+      dxy_fire: {},
     }
-    Object.entries(this.entities.energy).forEach(([index, value]) => {
-      const dxy = this.entities.dxy_energy[index]
+    Object.entries(this.entities.fire).forEach(([index, value]) => {
+      const dxy = this.entities.dxy_fire[index]
       const xy = geo.vector.add(this.i2xy(index), dxy)
-      if (!this.canAddEnergy(xy)) {
+      if (!this.canAddFire(xy)) {
         // #! TODO drop ash
         return
       }
-      this.addEnergy(value, xy, dxy, new_state)
+      this.addFire(value, xy, dxy, new_state)
     })
     Object.assign(this.entities, new_state)
   }
 
-  applyEnergy() {
+  applyFire() {
     // this function gets applied 3 times a turn! Make as efficient as possible
-    // 1. before moving energy (in case piee moved into energy)
-    // 2. after moving energy (collide moved energy with stationary pieces)
-    // 3. after moving pieces (collide moved pieces with stationary energy)
-    const { energy, dxy_energy, piece } = this.entities
-    Object.entries(energy).forEach(([i, value]) => {
+    // 1. before moving fire (in case piee moved into fire)
+    // 2. after moving fire (collide moved fire with stationary pieces)
+    // 3. after moving pieces (collide moved pieces with stationary fire)
+    const { fire, dxy_fire, piece } = this.entities
+    Object.entries(fire).forEach(([i, value]) => {
       const xy = this.i2xy(i)
-      const dxy = dxy_energy[i]
+      const dxy = dxy_fire[i]
       if (piece[i]) {
-        console.log("TODO collide piece with energy",value,xy,dxy) // eslint-disable-line
-        delete energy[i]
+        console.log("TODO collide piece with fire",value,xy,dxy) // eslint-disable-line
+        delete fire[i]
       }
     })
   }
 
   applyFloor() {
     // #! TODO apply to pieces as well
-    const { floor_dxy, energy, _piece } = this.entities
+    const { floor_dxy, fire, _piece } = this.entities
     Object.entries(floor_dxy).forEach(([index, dxy]) => {
-      if (energy[index]) {
-        // #! TODO this is copypasta from moveEnergy
+      if (fire[index]) {
+        // #! TODO this is copypasta from moveFire
         const xy = geo.vector.add(this.i2xy(index), dxy)
-        if (!this.canAddEnergy(xy)) {
+        if (!this.canAddFire(xy)) {
           // #! TODO drop ash
           return
         }
-        this.addEnergy(energy[index], xy, dxy)
-        delete energy[index]
+        this.addFire(fire[index], xy, dxy)
+        delete fire[index]
       }
     })
   }
