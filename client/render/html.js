@@ -48,6 +48,7 @@ export class RenderBoard extends uR.db.Model {
       square: 'floor',
       floor_dxy: 'greenarrow',
       box: '',
+      ash: 'ash-',
     }
     this.all_divs = []
     this.hover_xys = []
@@ -62,6 +63,7 @@ export class RenderBoard extends uR.db.Model {
       'box',
       'fire',
       'floor_dxy',
+      'ash',
     ]
     this.fire_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))
