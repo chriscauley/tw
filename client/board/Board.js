@@ -191,15 +191,28 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       const xy = geo.vector.add(this.i2xy(index), dxy)
       if (!this.canAddFire(xy)) {
         // #! TODO this should be add ash function
-        this.entities.ash[index] = Math.min(
-          this.MAX_ASH,
-          (this.entities.ash[index] || 0) + 1,
-        )
+        this.entities.ash[index] = (this.entities.ash[index] || 0) + 1
         return
       }
       this.addFire(value, xy, dxy, new_state)
     })
     Object.assign(this.entities, new_state)
+  }
+
+  resolveAsh() {
+    Object.keys(this.entities.ash).forEach(index => {
+      const value = this.entities.ash[index]
+      if (value > this.MAX_ASH) {
+        const xy = this.i2xy(index)
+        if (!this.entities.piece[index]) {
+          this.entities.ash[index]--
+          this.newPiece({
+            xy,
+            type: 'drifter',
+          })
+        }
+      }
+    })
   }
 
   applyFire() {

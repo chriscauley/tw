@@ -35,6 +35,9 @@ const PIECE_DEFAULTS = {
 
 const newPiece = opts => {
   const type = types[opts.type]
+  if (!type) {
+    throw `Unknown type "${opts.type}" for piece`
+  }
   const piece = newEntity({
     ...PIECE_DEFAULTS,
     ...type.opts,

@@ -167,10 +167,9 @@ export class RenderBoard extends uR.db.Model {
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
 
-    // animations are in an arry, need a map for lookup
-    const animation_map = {}
-    this.animations.forEach(opts => (animation_map[opts.xy] = opts))
     const results = {}
+    const animation_map = {}
+    this.animations = []
     let value
 
     this.names.forEach(name => {
@@ -178,6 +177,11 @@ export class RenderBoard extends uR.db.Model {
       if (name === 'box') {
         // handled outside of this because there's only 0-4 of them
         return
+      }
+      if (name === 'animation') {
+        // animations are in an array, need a map for lookup
+        // must run after pieces to get task animations
+        this.animations.forEach(opts => (animation_map[opts.xy] = opts))
       }
       xys.forEach(xy => {
         switch (name) {
@@ -284,7 +288,6 @@ export class RenderBoard extends uR.db.Model {
       })
     })
     setTimeout(() => observer.trigger('animate'), 0)
-    this.animations = []
   }
 
   setHoverXY = xy => {
@@ -324,11 +327,11 @@ export class RenderBoard extends uR.db.Model {
       return renderEntity(value)
     }
 
-    let sprite, dxy
+    let sprite
+    const dxy = value.dxy && value.dxy.join('')
     if (name === 'item') {
       sprite = value.name
-    } else if (name === 'animation' && value.dxy) {
-      dxy = value.dxy.join('')
+    } else if (name === 'animation') {
       sprite = value.sprite
       const source = types[value.damage_source]
       if (source && source.damage_animation) {

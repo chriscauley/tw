@@ -146,6 +146,7 @@ export default class Game extends uR.db.Model {
       this.board.applyFloor()
       this.board.checkDialog()
       this.board.applyFire()
+      this.board.resolveAsh()
     }
     if (this.player.health <= 0) {
       if (!this.player.lives > 0) {
