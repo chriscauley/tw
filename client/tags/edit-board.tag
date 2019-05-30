@@ -41,7 +41,6 @@ const TOOLS = [
       }
     }
   },
-  pieceTool('spitter'),
   {
     name: 'arrow',
     click: (xy, board, event) => {
@@ -56,7 +55,20 @@ const TOOLS = [
       }
       board.setOne('floor_dxy', xy, geo.vector.turn(dxy,1))
     }
-  }
+  },
+  {
+    name: 'ash',
+    click: (xy, board, event) => {
+      if (event.shiftKey) {
+        board.setOne('floor_dxy', xy, undefined)
+        return
+      }
+      const current = board.getOne('ash', xy) || 0
+      const value = (current + 1) % (board.MAX_ASH +1)// 1 indexed
+      board.setOne('ash', xy, value || undefined)
+    },
+  },
+  pieceTool('spitter'),
 ]
 
 

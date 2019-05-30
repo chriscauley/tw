@@ -303,6 +303,13 @@
   }
 }
 
+.ashloop(@counter) when (@counter > 0) {
+  &.sprite-ash-@{counter}:before {
+    content: "@{counter}";
+  }
+  .ashloop(@counter - 1)
+}
+
 .html-renderer .ash {
   background: #333;
   border-radius: 50%;
@@ -312,19 +319,5 @@
   margin: 0.1em;
   text-align: center;
   width: 0.8em;
-  &:before {
-    font-size: 0.75em;
-  }
-  &.sprite-ash-1:before {
-    content: "1";
-  }
-  &.sprite-ash-2:before {
-    content: "2";
-  }
-  &.sprite-ash-3:before {
-    content: "3";
-  }
-  &.sprite-ash-4:before {
-    content: "4";
-  }
+  .ashloop(16)
 }

@@ -48,6 +48,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
 
   constructor(opts) {
     super(opts)
+    this.MAX_ASH = this.MAX_ASH || 8
   }
 
   setPlayer = player => {
@@ -191,7 +192,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       if (!this.canAddFire(xy)) {
         // #! TODO this should be add ash function
         this.entities.ash[index] = Math.min(
-          this.MAX_ASH || 4, // #! TODO
+          this.MAX_ASH,
           (this.entities.ash[index] || 0) + 1,
         )
         return
