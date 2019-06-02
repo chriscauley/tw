@@ -3,6 +3,7 @@ __pycache__/
 node_modules
 dist/
 .cache/
+server/settings/local.py
 
 unrest # symlinked python package for development
 
