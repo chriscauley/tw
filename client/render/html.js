@@ -91,18 +91,18 @@ export class RenderBoard extends uR.db.Model {
     this.draw()
   }
 
+  eventToXY = e => {
+    const mouse_xy = [
+      Math.floor(e.offsetX / this.scale - this.radius + OVERFLOW - this.offset),
+      Math.floor(e.offsetY / this.scale - this.radius + OVERFLOW - this.offset),
+    ]
+    return geo.vector.add(mouse_xy, this.center_xy)
+  }
+
   click = e => {
     let xy = e.target.xy
     if (!xy) {
-      const mouse_xy = [
-        Math.floor(
-          e.offsetX / this.scale - this.radius + OVERFLOW - this.offset,
-        ),
-        Math.floor(
-          e.offsetY / this.scale - this.radius + OVERFLOW - this.offset,
-        ),
-      ]
-      xy = geo.vector.add(mouse_xy, this.center_xy)
+      xy = this.eventToXY(e)
     }
     if (this.onClick) {
       this.onClick(xy, event)
@@ -169,7 +169,6 @@ export class RenderBoard extends uR.db.Model {
 
     const results = {}
     const animation_map = {}
-    this.animations = []
     let value
 
     this.names.forEach(name => {
@@ -227,6 +226,8 @@ export class RenderBoard extends uR.db.Model {
       })
     })
 
+    // reset animations for next time
+    this.animations = []
     const boxy = (xy, sprite) => {
       if (xy[0] % 1) {
         sprite += ' mx-half'
