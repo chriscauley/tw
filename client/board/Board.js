@@ -70,6 +70,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.entities[type][this.xy2i(xy)] = obj
   }
 
+  removeOne(type, xy) {
+    delete this.entities[type][this.xy2i(xy)]
+  }
+
   setPiece(xy, piece) {
     const i = this.xy2i(xy)
 

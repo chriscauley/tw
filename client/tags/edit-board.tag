@@ -3,99 +3,7 @@ import { range } from 'lodash'
 import uR from 'unrest.io'
 import Board from '../board/Board'
 import geo from '../geo'
-
-const toggleEntity = (xy,board, name, value, _default) => {
-  if (board.getOne(name,xy)) {
-    value=_default
-  }
-  board.setOne(name,xy,value)
-}
-
-const pieceTool = name => ({
-  name,
-  click: (xy,board) => {
-    const piece = board.getOne('piece',xy)
-    board.setOne('square', xy, 1)
-    if (piece) {
-      board.removePiece(piece)
-    } else {
-      board.newPiece({ xy, type: name })
-    }
-  },
-})
-
-let start_xy, end_xy
-
-const TOOLS = [
-  {
-    name: 'square',
-    click: (xy,board) => {
-      board.setOne('square', xy, board.getOne('square',xy) ? 0 : 1)
-    },
-  },
-
-  {
-    name: 'room',
-    click: (xy, board) => {
-      start_xy = xy
-      end_xy = undefined
-    },
-    drag: (xy, board) => {
-      end_xy = xy
-      const [x0, y0] = start_xy
-      const [x1, y1] = end_xy
-      range(y0,y1+1).forEach( y => {
-        range(x0,x1+1).forEach( x => {
-          board.renderer.animations.push({xy: [x,y], sprite: 'red'})
-        })
-      })
-    },
-  },
-
-  {
-    name: 'wall',
-    click: (xy, board) => {
-      if (board.getOne('wall',xy)) {
-        board.setOne('wall', xy, 0)
-      } else {
-        board.setOne('square', xy, 1)
-        board.setOne('wall', xy, 1)
-      }
-    }
-  },
-
-  {
-    name: 'arrow',
-    click: (xy, board, event) => {
-      if (event.shiftKey) {
-        board.setOne('floor_dxy', xy, undefined)
-        return
-      }
-      const dxy = board.getOne('floor_dxy', xy)
-      if (!dxy) {
-        board.setOne('floor_dxy', xy, [0,1])
-        return
-      }
-      board.setOne('floor_dxy', xy, geo.vector.turn(dxy,1))
-    }
-  },
-
-  {
-    name: 'ash',
-    click: (xy, board, event) => {
-      if (event.shiftKey) {
-        board.setOne('floor_dxy', xy, undefined)
-        return
-      }
-      const current = board.getOne('ash', xy) || 0
-      const value = (current + 1) % (board.MAX_ASH +1)// 1 indexed
-      board.setOne('ash', xy, value || undefined)
-    },
-  },
-
-  pieceTool('spitter'),
-]
-
+import TOOLS from '../editor/tools'
 
 const XYMixin = {
   init() {
@@ -137,7 +45,7 @@ const XYMixin = {
   _selectTool(target_tool) {
     this.tools.forEach(tool => {
       tool.className = this.css.btn.default
-      if (tool.name === target_tool.name) {
+      if (tool === target_tool) {
         this.selected_tool = tool
         tool.className = this.css.btn.primary
       }
@@ -212,6 +120,7 @@ this.on('mount', () => {
   this.board.parent = this.root.querySelector(".html-renderer")
   this.board.game = {turn: 0} // necessary for board.newPiece
   this.board.reset()
+  this.tools.forEach(tool => tool.bindBoard(this.board))
   this.board.renderer.setZoom({
     radius: 20,
     offset: 0,
@@ -224,7 +133,7 @@ this.on('mount', () => {
     this.mouse_down = true
     this.board.renderer.hover_xys.forEach( xy => {
       if (!done[xy]) {
-        this.selected_tool.click(geo.vector.floor(xy),this.board, event)
+        this.selected_tool.click(geo.vector.floor(xy), event)
         done[xy] = true
       }
     })
