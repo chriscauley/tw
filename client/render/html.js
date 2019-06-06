@@ -18,6 +18,70 @@ const mod = (n, m) => {
 const OVERFLOW = 2
 const MIRRORS = [[0, 0], [0, 2], [2, 0], [2, 2]]
 
+const base_layer = {
+  getValue(xy, board) {
+    return this._getValue(xy, board)
+  },
+  _getValue(xy, board) {
+    return board.getOne(this.name, xy)
+  },
+}
+
+const layers = {
+  wall: {},
+  path: {},
+  piece: {},
+  square: {
+    getValue(xy, board) {
+      // any layer with full sprites should not show squares
+      if (!board.getOne('square', xy) || board.getOne('wall', xy)) {
+        return
+      }
+      return mod(mod(xy[0], 2) + xy[1], 2)
+    },
+  },
+  item: {},
+  animation: {
+    map: {},
+    getValue(xy, _board) {
+      return this.map[xy]
+    },
+  },
+  box: {},
+  fire: {
+    getValue(xy, board) {
+      const value = this._getValue(xy, board)
+      if (!value) {
+        return
+      }
+      const dxy = board.getOne('dxy_fire', xy)
+      return {
+        xy,
+        dxy,
+        value,
+        type: 'fireball',
+        name: 'piece',
+        moved: dxy.join(''),
+      }
+    },
+  },
+  floor_dxy: {
+    getValue(xy, board) {
+      const value = this._getValue(xy, board)
+      return value && value.join('')
+    },
+  },
+  ash: {},
+}
+
+Object.entries(layers).forEach(([name, layer]) => {
+  layers[name] = {
+    name,
+    ...base_layer,
+    ...layer,
+  }
+})
+
 export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
   static fields = {
@@ -168,10 +232,10 @@ export class RenderBoard extends uR.db.Model {
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
 
     const results = {}
-    const animation_map = {}
-    let value
+    layers.animation.map = {} // #! TODO layer.reset?
 
     this.names.forEach(name => {
+      // #! TODO This loop should be in layer.getResults
       results[name] = []
       if (name === 'box') {
         // handled outside of this because there's only 0-4 of them
@@ -180,53 +244,29 @@ export class RenderBoard extends uR.db.Model {
       if (name === 'animation') {
         // animations are in an array, need a map for lookup
         // must run after pieces to get task animations
-        this.animations.forEach(opts => (animation_map[opts.xy] = opts))
+        this.animations.forEach(opts => (layers.animation.map[opts.xy] = opts))
       }
       xys.forEach(xy => {
-        switch (name) {
-          case 'square':
-            if (
-              !this.board.getOne('square', xy) ||
-              this.board.getOne('wall', xy)
-            ) {
-              return
-            }
-            value = mod(mod(xy[0], 2) + xy[1], 2)
-            break
-          case 'animation':
-            value = animation_map[xy]
-            break
-          default:
-            value = this.board.getOne(name, xy)
+        const value = layers[name].getValue(xy, this.board)
+        if (value === undefined) {
+          return
         }
-        if (value && name === 'floor_dxy') {
-          value = value.join('')
-        }
-        if (value && name === 'fire') {
-          const dxy = this.board.getOne('dxy_fire', xy)
-          value = {
-            xy,
-            dxy,
-            value: value,
-            type: 'fireball',
-            name: 'piece',
-            moved: dxy.join(''),
-          }
-        }
-        if (value !== undefined) {
-          results[name].push([xy, value])
-          if (name === 'piece') {
-            const { tasks } = types[value.type]
-            paint
-              .paintTasks(tasks, value)
-              .filter(Boolean)
-              .forEach(result => this.animations.push(result))
-          }
+        results[name].push([xy, value])
+
+        // Pieces need thier tasks rendered as animations
+        // #! TODO maybe make part of layers.piece.getValue?
+        if (name === 'piece') {
+          const { tasks } = types[value.type]
+          paint
+            .paintTasks(tasks, value)
+            .filter(Boolean)
+            .forEach(result => this.animations.push(result))
         }
       })
     })
 
     // reset animations for next time
+    // #! add to animations.getResults?
     this.animations = []
     const boxy = (xy, sprite) => {
       if (xy[0] % 1) {
@@ -246,6 +286,7 @@ export class RenderBoard extends uR.db.Model {
 
     this.all_divs.forEach(d => (d.className = ''))
 
+    // because fire is handled similarly to pieces there's a problem associated with re-using divs
     Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
     this.cache.fire = {}
 
@@ -264,7 +305,11 @@ export class RenderBoard extends uR.db.Model {
           }
         }
         const element = this.cache[name][index]
+
+        // This is currently used in the click handler to determine clicked element
+        // #! TODO remove and use click mask exclusively
         element.xy = xy
+
         if (name === 'piece') {
           element.piece_id = value.id
           const { last_move, dxy } = value
