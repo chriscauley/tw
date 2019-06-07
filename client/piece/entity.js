@@ -34,6 +34,9 @@ const PIECE_DEFAULTS = {
 }
 
 const newPiece = opts => {
+  if (opts.type === 'spike_switch') {
+    opts.type = 'drifter' // #! TODO
+  }
   const type = types[opts.type]
   if (!type) {
     throw `Unknown type "${opts.type}" for piece`

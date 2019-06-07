@@ -25,12 +25,37 @@ const base_layer = {
   _getValue(xy, board) {
     return board.getOne(this.name, xy)
   },
+  getResults(xys, board) {
+    const results = []
+    xys.forEach(xy => {
+      const value = this.getValue(xy, board)
+      value !== undefined && results.push([xy, value])
+    })
+    return results
+  },
 }
 
 const layers = {
   wall: {},
   path: {},
-  piece: {},
+  piece: {
+    getResults(xys, board, renderer) {
+      const results = []
+      xys.forEach(xy => {
+        const value = board.getOne('piece', xy)
+        if (value) {
+          results.push([xy, value])
+
+          // Pieces need thier tasks rendered as animations
+          paint
+            .paintTasks(value._type.tasks, value)
+            .filter(Boolean)
+            .forEach(result => renderer.animations.push(result))
+        }
+      })
+      return results
+    },
+  },
   square: {
     getValue(xy, board) {
       // any layer with full sprites should not show squares
@@ -124,7 +149,7 @@ export class RenderBoard extends uR.db.Model {
       'square',
       'item',
       'animation',
-      'box',
+      // 'box', #! TODO
       'fire',
       'floor_dxy',
       'ash',
@@ -236,7 +261,7 @@ export class RenderBoard extends uR.db.Model {
 
     this.names.forEach(name => {
       // #! TODO This loop should be in layer.getResults
-      results[name] = []
+      results[name] = layers[name].getResults(xys, this.board, this)
       if (name === 'box') {
         // handled outside of this because there's only 0-4 of them
         return
@@ -246,23 +271,6 @@ export class RenderBoard extends uR.db.Model {
         // must run after pieces to get task animations
         this.animations.forEach(opts => (layers.animation.map[opts.xy] = opts))
       }
-      xys.forEach(xy => {
-        const value = layers[name].getValue(xy, this.board)
-        if (value === undefined) {
-          return
-        }
-        results[name].push([xy, value])
-
-        // Pieces need thier tasks rendered as animations
-        // #! TODO maybe make part of layers.piece.getValue?
-        if (name === 'piece') {
-          const { tasks } = types[value.type]
-          paint
-            .paintTasks(tasks, value)
-            .filter(Boolean)
-            .forEach(result => this.animations.push(result))
-        }
-      })
     })
 
     // reset animations for next time
