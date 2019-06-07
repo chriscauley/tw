@@ -72,7 +72,27 @@ const layers = {
       return this.map[xy]
     },
   },
-  box: {},
+  box: {
+    getResults(xys, board, renderer) {
+      const results = []
+      const boxy = (xy, sprite) => {
+        if (xy[0] % 1) {
+          sprite += ' mx-half'
+        }
+        if (xy[1] % 1) {
+          sprite += ' my-half'
+        }
+        results.push([[Math.floor(xy[0]), Math.floor(xy[1])], sprite])
+      }
+
+      renderer.hover_xys.forEach(xy => boxy(xy, 'hover0'))
+      if (!board.player) {
+        boxy(renderer.center_xy, 'hover1')
+        boxy([0, 0], 'hover1')
+      }
+      return results
+    },
+  },
   fire: {
     getValue(xy, board) {
       const value = this._getValue(xy, board)
@@ -131,7 +151,7 @@ export class RenderBoard extends uR.db.Model {
     }
 
     this.sprites = {
-      wall: 'dwarfwall',
+      wall: 'dirt-',
       path: 'vine',
       animation: '',
       square: 'floor',
@@ -149,7 +169,7 @@ export class RenderBoard extends uR.db.Model {
       'square',
       'item',
       'animation',
-      // 'box', #! TODO
+      'box',
       'fire',
       'floor_dxy',
       'ash',
@@ -276,21 +296,6 @@ export class RenderBoard extends uR.db.Model {
     // reset animations for next time
     // #! add to animations.getResults?
     this.animations = []
-    const boxy = (xy, sprite) => {
-      if (xy[0] % 1) {
-        sprite += ' mx-half'
-      }
-      if (xy[1] % 1) {
-        sprite += ' my-half'
-      }
-      results.box.push([[Math.floor(xy[0]), Math.floor(xy[1])], sprite])
-    }
-
-    this.hover_xys.forEach(xy => boxy(xy, 'hover0'))
-    if (!this.board.player) {
-      boxy(this.center_xy, 'hover1')
-      boxy([0, 0], 'hover1')
-    }
 
     this.all_divs.forEach(d => (d.className = ''))
 
