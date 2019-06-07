@@ -139,6 +139,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       fire: {},
       dxy_fire: {},
       ash: {},
+      gold: {},
       floor_dxy: {}, // arrow tiles
     }
 
@@ -190,12 +191,12 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       fire: {},
       dxy_fire: {},
     }
-    Object.entries(this.entities.fire).forEach(([index, value]) => {
-      const dxy = this.entities.dxy_fire[index]
-      const xy = geo.vector.add(this.i2xy(index), dxy)
+    Object.entries(this.entities.fire).forEach(([old_index, value]) => {
+      const dxy = this.entities.dxy_fire[old_index]
+      const xy = geo.vector.add(this.i2xy(old_index), dxy)
       if (!this.canAddFire(xy)) {
         // #! TODO this should be add ash function
-        this.entities.ash[index] = (this.entities.ash[index] || 0) + 1
+        this.entities.ash[old_index] = (this.entities.ash[old_index] || 0) + 1
         return
       }
       this.addFire(value, xy, dxy, new_state)

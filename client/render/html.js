@@ -117,6 +117,7 @@ const layers = {
     },
   },
   ash: {},
+  gold: {},
 }
 
 Object.entries(layers).forEach(([name, layer]) => {
@@ -158,6 +159,7 @@ export class RenderBoard extends uR.db.Model {
       floor_dxy: 'greenarrow',
       box: '',
       ash: 'ash-',
+      gold: 'gold-',
     }
     this.all_divs = []
     this.hover_xys = []
@@ -173,6 +175,7 @@ export class RenderBoard extends uR.db.Model {
       'fire',
       'floor_dxy',
       'ash',
+      'gold',
     ]
     this.fire_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))

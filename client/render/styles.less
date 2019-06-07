@@ -303,24 +303,33 @@
   }
 }
 
-.ashloop(@counter) when (@counter > 0) {
-  &.sprite-ash-@{counter}:before {
+.spriteloop(@slug, @counter) when (@counter > 0) {
+  &.sprite-@{slug}-@{counter}:before {
     content: "@{counter}";
   }
-  .ashloop(@counter - 1)
+  .spriteloop(@slug, @counter - 1)
 }
 
-.html-renderer .ash {
-  background: #333;
-  border-radius: 50%;
-  color: white;
-  height: 0.8em;
-  line-height: 1;
-  margin: 0.1em;
-  text-align: center;
-  width: 0.8em;
-  &:before {
-    font-size: 0.75em;
+.html-renderer {
+  .ash, .gold {
+    border-radius: 50%;
+    height: 0.8em;
+    line-height: 1;
+    margin: 0.1em;
+    text-align: center;
+    width: 0.8em;
+    &:before {
+      font-size: 0.75em;
+    }
   }
-  .ashloop(16)
+  .ash {
+    background: #333;
+    color: white;
+    .spriteloop(ash, 16)
+  }
+  .gold {
+    background: #883;
+    color: white;
+    .spriteloop(gold, 16)
+  }
 }

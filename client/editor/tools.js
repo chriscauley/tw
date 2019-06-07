@@ -110,6 +110,11 @@ export default [
     values: range(1, 9),
   }),
 
+  new CycleTool({
+    layer: 'gold',
+    values: range(1, 9),
+  }),
+
   new PieceTool({
     type: 'spitter',
   }),
