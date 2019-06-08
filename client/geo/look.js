@@ -50,6 +50,8 @@ look.GEOMETRIES = [
   'fd', // forward + forward-right
   'fs', // forward + forward-left
   'three', //  forward + forward-left + forward-right
+
+  'square',
 ]
 
 look._GEOMETRIES = look.GEOMETRIES.map(g => {
@@ -97,6 +99,15 @@ for (const dxy of geo_dxy.list) {
       const i = range - Math.abs(j) - 1
       look._arrow[dxy][range].push([dx + i * dx + j * dy, dy + i * dy + j * dx])
     }
+
+    const _square = []
+    _.range(-range, range).forEach(d => {
+      _square.push([d, range])
+      _square.push([-d, -range])
+      _square.push([range, -d])
+      _square.push([-range, d])
+    })
+    look._square[dxy][range] = _square
 
     look._circle[dxy][range] = []
     for (let j = -range; j < range; j++) {
