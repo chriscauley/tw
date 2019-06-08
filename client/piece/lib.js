@@ -42,6 +42,7 @@ export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
   if (piece.health <= 0) {
     // #! TODO should also do death animation
     piece.dead = true
+    piece.board._addGold(piece.board.xy2i(xy), 1)
     piece.board.removePiece(piece)
   }
 }

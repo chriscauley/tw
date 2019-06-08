@@ -186,6 +186,12 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   canAddFire = xy => !this.getOne('wall', xy) && this.getOne('square', xy)
+  _addAsh = (old_index, value) =>
+    (this.entities.ash[old_index] = (this.entities.ash[old_index] || 0) + value)
+  _addGold = (old_index, value) =>
+    (this.entities.gold[old_index] =
+      (this.entities.gold[old_index] || 0) + value)
+
   moveFire() {
     const new_state = {
       fire: {},
@@ -195,11 +201,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       const dxy = this.entities.dxy_fire[old_index]
       const xy = geo.vector.add(this.i2xy(old_index), dxy)
       if (!this.canAddFire(xy)) {
-        // #! TODO this should be add ash function
-        this.entities.ash[old_index] = (this.entities.ash[old_index] || 0) + 1
-        return
+        this._addAsh(old_index, 1)
+      } else {
+        this.addFire(value, xy, dxy, new_state)
       }
-      this.addFire(value, xy, dxy, new_state)
     })
     Object.assign(this.entities, new_state)
   }
@@ -218,6 +223,32 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         }
       }
     })
+  }
+
+  isGoldOverThreshold() {
+    const values = Object.values(this.entities.gold)
+    const total = _.sum(values)
+    this.GOLD_THRESHOLD = 2 // #! TODO
+    return total >= this.GOLD_THRESHOLD
+  }
+
+  consumeGold() {
+    const entries = Object.entries(this.entities.gold)
+    if (this.isGoldOverThreshold()) {
+      entries.forEach(entry => {
+        if (!this.entities.piece[entry[0]]) {
+          this.newPiece({
+            xy: this.i2xy(entry[0]),
+            type: 'drifter',
+          })
+        }
+      })
+    } else {
+      entries.forEach(entry => {
+        this._addAsh(entry[0], entry[1])
+      })
+    }
+    this.entities.gold = {}
   }
 
   applyFire() {

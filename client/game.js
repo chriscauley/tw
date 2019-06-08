@@ -59,6 +59,7 @@ export default class Game extends uR.db.Model {
       this.board.reset()
       this.makePlayer()
       this.bindKeys()
+      this.board.consumeGold()
       this.spawnPieces()
       this.makeRenderer()
     })
@@ -164,6 +165,7 @@ export default class Game extends uR.db.Model {
       dxy: [0, 1],
       xy: this.board.rooms[0].center,
     })
+    this.player.combo = 0
     this.board.setPlayer(this.player)
   }
 
@@ -190,7 +192,14 @@ export default class Game extends uR.db.Model {
       }
       if (input.dxy) {
         if (this.player.health > 0 && !this.player.dead) {
-          movePlayer(this.player, input)
+          const move = movePlayer(this.player, input)
+          const old_combo = this.player.combo
+          this.player.combo += move.damages || move.gold ? 1 : -1
+          this.player.combo = Math.max(this.player.combo, 0)
+          if (old_combo && !this.player.combo) {
+            // players combo just broke, consume all gold on board
+            this.board.consumeGold()
+          }
         }
         this.nextTurn()
         this.board.renderer.update()

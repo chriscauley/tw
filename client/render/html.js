@@ -33,11 +33,18 @@ const base_layer = {
     })
     return results
   },
+  getSprite(value, _renderer) {
+    return this.sprite + value
+  },
 }
 
 const layers = {
-  wall: {},
-  path: {},
+  wall: {
+    sprite: 'dirt-',
+  },
+  path: {
+    sprite: 'vine',
+  },
   piece: {
     getResults(xys, board, renderer) {
       const results = []
@@ -57,6 +64,7 @@ const layers = {
     },
   },
   square: {
+    sprite: 'floor',
     getValue(xy, board) {
       // any layer with full sprites should not show squares
       if (!board.getOne('square', xy) || board.getOne('wall', xy)) {
@@ -111,13 +119,29 @@ const layers = {
     },
   },
   floor_dxy: {
+    sprite: 'greenarrow',
     getValue(xy, board) {
       const value = this._getValue(xy, board)
       return value && value.join('')
     },
   },
-  ash: {},
-  gold: {},
+  ash: {
+    sprite: 'ash-',
+  },
+  gold: {
+    sprite: 'gold-',
+    getSprite(value, renderer) {
+      let sprite = this.sprite + value
+      // #! TODO cache these conditionals on renderer for each turn
+      if (renderer.board.isGoldOverThreshold()) {
+        sprite += ' red-outline'
+        if (renderer.board.player.combo === 1) {
+          sprite += ' red-inner'
+        }
+      }
+      return sprite
+    },
+  },
 }
 
 Object.entries(layers).forEach(([name, layer]) => {
@@ -400,7 +424,7 @@ export class RenderBoard extends uR.db.Model {
         sprite = source.damage_animation
       }
     } else {
-      sprite = this.sprites[name] + value
+      sprite = layers[name].getSprite(value, this)
     }
 
     const opts = { w: 1, h: 1, x: xy[0], y: xy[1], sprite, dxy }

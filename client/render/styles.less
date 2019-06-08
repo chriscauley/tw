@@ -329,7 +329,14 @@
   }
   .gold {
     background: #883;
+    border: 0.1em solid #888;
     color: white;
-    .spriteloop(gold, 16)
+    .spriteloop(gold, 16);
+    &.red-inner {
+      background: red;
+    }
+    &.red-outline {
+      border-color: red;
+    }
   }
 }
