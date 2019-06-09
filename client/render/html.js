@@ -19,6 +19,7 @@ const OVERFLOW = 2
 const MIRRORS = [[0, 0], [0, 2], [2, 0], [2, 2]]
 
 const base_layer = {
+  sprite: '',
   getValue(xy, board) {
     return this._getValue(xy, board)
   },
@@ -75,7 +76,6 @@ const layers = {
   },
   item: {},
   animation: {
-    map: {},
     getResults(xys, board, renderer) {
       const visible = {}
       const results = []
@@ -318,24 +318,15 @@ export class RenderBoard extends uR.db.Model {
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
 
     const results = {}
-    layers.animation.map = {} // #! TODO layer.reset?
 
     this.names.forEach(name => {
-      // #! TODO This loop should be in layer.getResults
       results[name] = layers[name].getResults(xys, this.board, this)
-      if (name === 'box') {
-        // handled outside of this because there's only 0-4 of them
-        return
-      }
-      if (name === 'animation') {
-        // animations are in an array, need a map for lookup
-        // must run after pieces to get task animations
-        this.animations.forEach(opts => (layers.animation.map[opts.xy] = opts))
-      }
     })
 
     // reset animations for next time
-    // #! add to animations.getResults?
+    // #! TODO this should be in a reset method only called when each turn starts
+    // otherwise animations are excluded from replayed moves
+    // calls to renderer.animations.push should be refactored
     this.animations = []
 
     this.all_divs.forEach(d => (d.className = ''))
@@ -354,7 +345,7 @@ export class RenderBoard extends uR.db.Model {
         }
         if (!this.cache[name][index]) {
           this.cache[name][index] = this.newDiv(`${name}-${index}`)
-          if (name !== 'enegy') {
+          if (name !== 'fire') {
             this.all_divs.push(this.cache[name][index])
           }
         }
