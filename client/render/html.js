@@ -128,7 +128,7 @@ const layers = {
     sprite: 'greenarrow',
     getValue(xy, board) {
       const value = this._getValue(xy, board)
-      return value && ' room-0'
+      return value && value.join('')
     },
   },
   ash: {
@@ -152,7 +152,7 @@ const layers = {
     sprite: 'room-',
     getValue(xy, board) {
       const value = board.getOne('room', xy)
-      return value && 'room'
+      return value && ' room-0'
     },
   },
 }
