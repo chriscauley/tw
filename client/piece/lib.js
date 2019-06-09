@@ -30,7 +30,8 @@ export const applyMove = (piece, move, turn) => {
   }
 }
 
-export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
+export const applyDamage = (piece, damage) => {
+  const { count, xy, dxy, sprite, source } = damage
   piece.health -= count
   piece.board.renderer.animations.push({
     xy,
@@ -40,6 +41,7 @@ export const applyDamage = (piece, { count, xy, dxy, sprite, source }) => {
     damage_source: source && source.type,
   })
   if (piece.health <= 0) {
+    damage.kill = true
     // #! TODO should also do death animation
     piece.dead = true
     piece.board._addGold(piece.board.xy2i(xy), 1)
@@ -87,5 +89,6 @@ export const respawn = player => {
     _respawn[id].remove = () => (_respawn[id] = undefined)
     player.lives--
     player.health = player.max_health
+    player.combo = player.combo_parts = 0
   }
 }

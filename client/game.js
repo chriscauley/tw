@@ -169,6 +169,8 @@ export default class Game extends uR.db.Model {
     this.player.combo = 0
     this.player.combo_parts = 0
     this.player.gold = 0
+    this.player.ash = 0
+    this.player.kills = 0
     this.board.setPlayer(this.player)
   }
 
@@ -195,9 +197,8 @@ export default class Game extends uR.db.Model {
       }
       if (input.dxy) {
         if (this.player.health > 0 && !this.player.dead) {
-          const old_combo = this.player.combo
           movePlayer(this.player, input)
-          if (old_combo && !this.player.combo) {
+          if (!this.player.combo && !this.player.combo_parts) {
             // players combo just broke, consume all gold on board
             this.board.consumeGold()
           }

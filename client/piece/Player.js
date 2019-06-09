@@ -12,7 +12,7 @@ const addMoves = moves => {
   return {
     dxy: vector.sum(dxys),
     xy: _.reverse(moves).find(m => m.xy), // use last xy
-    damages: _.flatten(moves.map(m => m.damages)),
+    damages: _.flatten(moves.map(m => m.damages).filter(Boolean)),
   }
 }
 
@@ -121,6 +121,19 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
     player.board.removeOne('gold', player.xy)
     move.gold = gold
   }
+  const ash = player.board.getOne('ash', player.xy)
+  if (ash) {
+    player.ash += ash
+    player.board.removeOne('ash', player.xy)
+    move.ash = ash
+  }
+  if (move.damages) {
+    move.damages.forEach(damage => {
+      if (damage.kill) {
+        player.kills++
+      }
+    })
+  }
   applyCombo(player, move)
   player.board.game.ui.update()
   return move
@@ -129,7 +142,7 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
 const applyCombo = (player, move) => {
   const next_combo = player.combo + 2
   let gained_combo = 0
-  move.damages && gained_combo++
+  move.damages && move.damages.length && gained_combo++
   move.gold && gained_combo++
   if (gained_combo) {
     player.combo_parts += gained_combo

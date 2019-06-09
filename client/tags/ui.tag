@@ -12,6 +12,12 @@
         {combo}
       </div>
     </div>
+    <div class="scores w-1 h-1">
+      <div each={score in scores} class="row">
+        <div class="sprite {score[0]}"></div>
+        {score[1]}
+      </div>
+    </div>
   </div>
   <script>
 this.on("mount",() => {
@@ -24,6 +30,11 @@ this.on("update", () => {
   this.lives = player.lives
   this.combo = player.combo
   this.combo_progress = `${player.combo_parts}/${player.combo+2}`
+  this.scores = [
+    ['gold', player.gold],
+    ['ash', player.ash],
+    ['sprite-kills', player.kills],
+  ]
 })
 getClass(item) {
   const { slot, name } = item
