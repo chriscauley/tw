@@ -7,6 +7,11 @@
     </div>
     <div class="box sprite sprite-reincarnation w-1 h-1 badge" data-badge={lives}>
     </div>
+    <div class="box h-1 w-1 badge" data-badge={combo_progress}>
+      <div class="text">
+        {combo}
+      </div>
+    </div>
   </div>
   <script>
 this.on("mount",() => {
@@ -17,6 +22,8 @@ this.on("update", () => {
   const { player } = this.opts.game
   this.equipment = Object.values(player.equipment)
   this.lives = player.lives
+  this.combo = player.combo
+  this.combo_progress = `${player.combo_parts}/${player.combo+2}`
 })
 getClass(item) {
   const { slot, name } = item

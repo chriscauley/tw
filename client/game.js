@@ -165,7 +165,10 @@ export default class Game extends uR.db.Model {
       dxy: [0, 1],
       xy: this.board.rooms[0].center,
     })
+    // #! TODO the following attributes should be options on newPlayer
     this.player.combo = 0
+    this.player.combo_parts = 0
+    this.player.gold = 0
     this.board.setPlayer(this.player)
   }
 
@@ -192,10 +195,8 @@ export default class Game extends uR.db.Model {
       }
       if (input.dxy) {
         if (this.player.health > 0 && !this.player.dead) {
-          const move = movePlayer(this.player, input)
           const old_combo = this.player.combo
-          this.player.combo += move.damages || move.gold ? 1 : -1
-          this.player.combo = Math.max(this.player.combo, 0)
+          movePlayer(this.player, input)
           if (old_combo && !this.player.combo) {
             // players combo just broke, consume all gold on board
             this.board.consumeGold()

@@ -87,6 +87,5 @@ export const respawn = player => {
     _respawn[id].remove = () => (_respawn[id] = undefined)
     player.lives--
     player.health = player.max_health
-    board.game.ui.update()
   }
 }

@@ -6,12 +6,13 @@ import { applyMove, canAttack, canMoveOn } from './lib'
 const { vector, look } = geo
 
 // #! TODO move to move when used by any other unit
-const addMoves = (...moves) => {
+const addMoves = moves => {
   // add all moves together to make one big move
   const dxys = moves.map(move => move.dxy).filter(dxy => dxy)
   return {
     dxy: vector.sum(dxys),
     xy: _.reverse(moves).find(m => m.xy), // use last xy
+    damages: _.flatten(moves.map(m => m.damages)),
   }
 }
 
@@ -112,7 +113,35 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
       player.board.setOne('floor_dxy', move.xy, dxy)
       move.flip_floor = dxy
     }
-    move = addMoves(move, move2)
+    move = addMoves([move, move2])
   }
+  const gold = player.board.getOne('gold', player.xy)
+  if (gold) {
+    player.gold += gold
+    player.board.removeOne('gold', player.xy)
+    move.gold = gold
+  }
+  applyCombo(player, move)
+  player.board.game.ui.update()
   return move
+}
+
+const applyCombo = (player, move) => {
+  const next_combo = player.combo + 2
+  let gained_combo = 0
+  move.damages && gained_combo++
+  move.gold && gained_combo++
+  if (gained_combo) {
+    player.combo_parts += gained_combo
+    if (player.combo_parts >= next_combo) {
+      player.combo_parts = 0
+      player.combo++
+    }
+  } else {
+    if (player.combo_parts) {
+      player.combo_parts = 0
+    } else {
+      player.combo = Math.max(player.combo - 1, 0)
+    }
+  }
 }
