@@ -76,8 +76,14 @@ const layers = {
   item: {},
   animation: {
     map: {},
-    getValue(xy, _board) {
-      return this.map[xy]
+    getResults(xys, board, renderer) {
+      const visible = {}
+      const results = []
+      xys.forEach(xy => (visible[xy] = true))
+      renderer.animations.forEach(value => {
+        visible[value.xy] && results.push([value.xy, value])
+      })
+      return results
     },
   },
   box: {
@@ -122,7 +128,7 @@ const layers = {
     sprite: 'greenarrow',
     getValue(xy, board) {
       const value = this._getValue(xy, board)
-      return value && value.join('')
+      return value && ' room-0'
     },
   },
   ash: {
@@ -133,13 +139,20 @@ const layers = {
     getSprite(value, renderer) {
       let sprite = this.sprite + value
       // #! TODO cache these conditionals on renderer for each turn
-      if (renderer.board.isGoldOverThreshold()) {
+      if (renderer.board.player && renderer.board.isGoldOverThreshold()) {
         sprite += ' red-outline'
         if (renderer.board.player.combo === 1) {
           sprite += ' red-inner'
         }
       }
       return sprite
+    },
+  },
+  room: {
+    sprite: 'room-',
+    getValue(xy, board) {
+      const value = board.getOne('room', xy)
+      return value && 'room'
     },
   },
 }
@@ -200,6 +213,7 @@ export class RenderBoard extends uR.db.Model {
       'floor_dxy',
       'ash',
       'gold',
+      'room',
     ]
     this.fire_counter = 0
     this.names.forEach(name => (this.cache[name] = {}))

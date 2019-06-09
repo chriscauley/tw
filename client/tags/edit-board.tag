@@ -73,23 +73,12 @@ const XYMixin = {
         this.board.renderer.click({ target: { xy: [x,y] } })
       }
     }
-    if (this.selected_tool.name === 'room') {
-      this.drawRooms()
-    }
     this.board.renderer.update()
   },
 
   onMouseUp(e) {
     this.mouse_down = false
   },
-
-  drawRooms(room) {
-    this.board.rooms.forEach(
-      (room,index) => room.xys.forEach(
-        xy => this.board.renderer.animations.push({ xy, sprite: 'red'})
-      )
-    )
-  }
 }
 
 <edit-board>

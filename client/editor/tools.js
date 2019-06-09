@@ -91,6 +91,16 @@ class PieceTool extends CycleTool {
   }
 }
 
+class RoomTool extends AbstractTool {
+  static opts = {
+    layer: 'room',
+  }
+  _click(xy, _event) {
+    this.board.setOne('room', xy, { xy })
+    this.board.regenerateRooms()
+  }
+}
+
 export default [
   new BaseTool({
     layer: 'square',
@@ -119,21 +129,5 @@ export default [
     type: 'spitter',
   }),
 
-  /*{
-    name: 'room',
-    click: (xy, board) => {
-      start_xy = xy
-      end_xy = undefined
-    },
-    drag: (xy, board) => {
-      end_xy = xy
-      const [x0, y0] = start_xy
-      const [x1, y1] = end_xy
-      range(y0,y1+1).forEach( y => {
-        range(x0,x1+1).forEach( x => {
-          board.renderer.animations.push({xy: [x,y], sprite: 'red'})
-        })
-      })
-    },
-  },*/
+  new RoomTool({}),
 ]

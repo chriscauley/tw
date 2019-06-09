@@ -113,7 +113,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.H = 100
     this._xy2i = {}
     this._i2xy = {}
-    _.range(-this.H, this.H + 1).forEach(x => (this._xy2i[x] = {}))
+
+    // "overflow", so that getting this.xy2i for an out of bounds x
+    // does not throw an error
+    _.range(-this.H * 2, 2 * this.H + 1).forEach(x => (this._xy2i[x] = {}))
 
     _.range(-this.W, this.W + 1).forEach(x => {
       _.range(-this.H, this.H + 1).forEach(y => {
@@ -141,6 +144,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       ash: {},
       gold: {},
       floor_dxy: {}, // arrow tiles
+      room: {},
     }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
@@ -170,6 +174,47 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.item_generators.forEach(name => {
       Item.generators.get(name)(this)
     })
+  }
+
+  regenerateRooms() {
+    const max_range = 5
+    const used_ranges = {}
+    this.entities.square = {}
+    this.entities.wall = {}
+    Object.keys(this.entities.room).forEach(i => {
+      const xy = this.i2xy(i)
+      this.entities.square[i] = 1
+      used_ranges[xy] = -1
+    })
+    _.range(1, max_range).forEach(range => {
+      Object.keys(this.entities.room).forEach(i => {
+        const xy = this.i2xy(i)
+        geo.look._square['0,1'][range].forEach(dxy => {
+          const target_xy = geo.vector.add(xy, dxy)
+          if (used_ranges[target_xy]) {
+            if (range - used_ranges[target_xy] < 2) {
+              this.setOne('wall', target_xy, 1)
+            }
+          } else {
+            this.setOne('square', target_xy, 1)
+            used_ranges[target_xy] = range
+          }
+        })
+      })
+    })
+    Object.keys(this.entities.room).forEach(i => {
+      const xy = this.i2xy(i)
+      geo.look._square['0,1'][max_range].forEach(dxy => {
+        const target_xy = geo.vector.add(xy, dxy)
+        if (!this.getOne('square', target_xy)) {
+          this.setOne('wall', target_xy, 1)
+        }
+        if (max_range - used_ranges[target_xy] < 2) {
+          this.setOne('wall', target_xy, 1)
+        }
+      })
+    })
+    this.renderer.update()
   }
 
   listPieces() {
