@@ -263,7 +263,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
           this.entities.ash[index]--
           this.newPiece({
             xy,
-            type: 'drifter',
+            type: 'pot',
           })
         }
       }
@@ -284,7 +284,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         if (!this.entities.piece[entry[0]]) {
           this.newPiece({
             xy: this.i2xy(entry[0]),
-            type: 'drifter',
+            type: 'pot',
           })
         }
       })

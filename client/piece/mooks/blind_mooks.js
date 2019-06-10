@@ -5,6 +5,11 @@ import move from '../../move'
 const opts = { sight: 0 }
 
 export default {
+  pot: {
+    sprite: 'pot',
+    opts,
+    tasks: [],
+  },
   walker: {
     sprite: 'zombie',
     opts,
