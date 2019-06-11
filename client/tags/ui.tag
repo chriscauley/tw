@@ -5,9 +5,9 @@
         <i data-energy={ e } each={ e,i in item.energy }></i>
       </div>
     </div>
-    <div class="box sprite sprite-reincarnation w-1 h-1 badge" data-badge={lives}>
+    <div class="box sprite sprite-reincarnation badge" data-badge={lives}>
     </div>
-    <div class="box h-1 w-1 badge" data-badge={combo_progress}>
+    <div class="box badge" data-badge={combo_progress}>
       <div class="text">
         {combo}
       </div>
@@ -18,6 +18,10 @@
         {score[1]}
       </div>
     </div>
+  </div>
+  <div class="kills">
+    <div each={k in kill_list} class="sprite sprite-{k.type} box badge"
+         data-badge={k.count}></div>
   </div>
   <script>
 this.on("mount",() => {
@@ -35,6 +39,10 @@ this.on("update", () => {
     ['ash', player.ash],
     ['sprite-kills', player.kills],
   ]
+  this.kill_list = Object.entries(player.kill_map).map(([type,count]) => ({
+    type, count
+}))
+console.log(this.kill_list)
 })
 getClass(item) {
   const { slot, name } = item

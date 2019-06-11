@@ -51,20 +51,25 @@ tw-ui .scores {
   }
 }
 
-tw-ui .equipment {
+tw-ui {
   display: flex;
   font-size: 3rem;
-  margin: 0.5rem;
+  justify-content: space-between;
+  left: 0;
+  padding-left: 2rem;
   position: fixed;
-  right: 0;
   top: 0;
   z-index: 1000;
-  .box {
-    border: 0.1em solid #5755d9;
-    border-radius: 0.1em;
-    margin-right: 0.5rem;
-  }
-  .badge {
+  width: 100%;
+}
+
+tw-ui .box {
+  border: 0.1em solid #5755d9;
+  border-radius: 0.1em;
+  height: 1em;
+  margin-right: 0.5rem;
+  width: 1em;
+  &.badge {
     position: relative;
     &:after {
       border-bottom-left-radius: 0;
@@ -76,6 +81,11 @@ tw-ui .equipment {
       transform: none;
     }
   }
+}
+
+tw-ui .equipment, tw-ui .kills {
+  display: flex;
+  margin: 0.5rem;
 }
 
 tw-gameover {

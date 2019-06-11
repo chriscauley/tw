@@ -131,6 +131,8 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
     move.damages.forEach(damage => {
       if (damage.kill) {
         player.kills++
+        player.kill_map[damage.kill.type] =
+          (player.kill_map[damage.kill.type] || 0) + 1
       }
     })
   }

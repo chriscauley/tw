@@ -171,6 +171,7 @@ export default class Game extends uR.db.Model {
     this.player.gold = 0
     this.player.ash = 0
     this.player.kills = 0
+    this.player.kill_map = {}
     this.board.setPlayer(this.player)
   }
 
