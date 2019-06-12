@@ -10,7 +10,8 @@ import geo from '../geo'
 import { newPiece } from '../piece/entity'
 import types from '../piece/types'
 import { RenderBoard } from '../render/html'
-
+import move from '../move'
+import { applyMove } from '../piece/lib'
 const { Model, APIManager, List, Int, String, Field } = uR.db
 
 class Board extends DialogMixin(Random.Mixin(Model)) {
@@ -314,7 +315,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
 
   applyFloor() {
     // #! TODO apply to pieces as well
-    const { floor_dxy, fire, _piece } = this.entities
+    const { floor_dxy, fire, piece } = this.entities
     Object.entries(floor_dxy).forEach(([index, dxy]) => {
       if (fire[index]) {
         // #! TODO this is copypasta from moveFire
@@ -325,6 +326,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         }
         this.addFire(fire[index], xy, dxy)
         delete fire[index]
+      }
+      if (piece[index]) {
+        const _move = move.forward(piece[index], {}, dxy)
+        applyMove(piece[index], _move)
       }
     })
   }
