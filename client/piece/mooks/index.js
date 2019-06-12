@@ -15,7 +15,13 @@ export default {
   ...blind_mooks,
   seeker: {
     sprite: 'skeleton',
+    opts: { health: 2 },
     tasks: [move.wait(1), move.follow],
+  },
+  runner: {
+    sprite: 'skeleton-legs',
+    opts: { sight: 0 },
+    tasks: [move.forward, move.flip],
   },
   drifter: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
