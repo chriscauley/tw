@@ -348,6 +348,12 @@ export class RenderBoard extends uR.db.Model {
           if (name !== 'fire') {
             this.all_divs.push(this.cache[name][index])
           }
+          if (name === 'piece') {
+            this.cache[name][index].insertAdjacentHTML(
+              'afterbegin',
+              '<span class="look">👀</span>',
+            )
+          }
         }
         const element = this.cache[name][index]
 
@@ -444,14 +450,28 @@ const objToClassString = obj => {
     if (value === undefined) {
       return
     }
-    items.push(`${key}-${value}`)
+    if (value === true) {
+      items.push(key)
+    } else {
+      items.push(`${key}-${value}`)
+    }
   })
   return items.join(' ')
 }
 
 // pieces and anything which is not a primative needs fancy rendering
 const renderEntity = (entity, extras = {}) => {
-  const { xy, color, name, type, dxy, follow_order, _sprite, moved } = entity
+  const {
+    xy,
+    color,
+    name,
+    type,
+    dxy,
+    follow_order,
+    following,
+    _sprite,
+    moved,
+  } = entity
   let { sprite } = types[type]
   if (_sprite) {
     sprite += _sprite
@@ -462,6 +482,7 @@ const renderEntity = (entity, extras = {}) => {
     sprite,
     color,
     follow_order,
+    following: !!following,
     dxy: dxy.join(''),
     x: xy[0],
     y: xy[1],

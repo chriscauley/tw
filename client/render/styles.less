@@ -161,6 +161,16 @@
       width: 1.2 * @scale;
     }
   }
+  .look {
+    display: none;
+  }
+  .piece.following .look {
+    display: block;
+    font-size: 0.35em;
+    position: absolute;
+    top: -0.75em;
+    left: 0.05em;
+  }
   .piece {
     border: 0.1 * @scale solid transparent;
   }
@@ -210,11 +220,11 @@
     &:before {
       background-image: url('./img/sprites/heart64.png');
       background-size: auto 100%;
-      bottom: 100%;
       content: "";
       height: 0.25em;
       left: -0.1em; /* for border */
       position: absolute;
+      top: 80%;
       width: 1em; /* 4 and above */
     }
   }
