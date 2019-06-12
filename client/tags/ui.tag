@@ -1,3 +1,5 @@
+import types from '../piece/types'
+
 <tw-ui>
   <div class="equipment">
     <div each={ item,_i in equipment } class={getClass(item)} onclick={ showHelp }>
@@ -20,7 +22,7 @@
     </div>
   </div>
   <div class="kills">
-    <div each={k in kill_list} class="sprite sprite-{k.type} box badge"
+    <div each={k in kill_list} class="sprite sprite-{k.type.sprite} box badge"
          data-badge={k.count}></div>
   </div>
   <script>
@@ -39,10 +41,9 @@ this.on("update", () => {
     ['ash', player.ash],
     ['sprite-kills', player.kills],
   ]
-  this.kill_list = Object.entries(player.kill_map).map(([type,count]) => ({
-    type, count
-}))
-console.log(this.kill_list)
+  this.kill_list = Object.entries(player.kill_map).map(
+    ([type,count]) => ({ type: types[type], count })
+  )
 })
 getClass(item) {
   const { slot, name } = item
