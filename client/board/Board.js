@@ -255,22 +255,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     Object.assign(this.entities, new_state)
   }
 
-  resolveAsh() {
-    Object.keys(this.entities.ash).forEach(index => {
-      const value = this.entities.ash[index]
-      if (value > this.MAX_ASH) {
-        const xy = this.i2xy(index)
-        if (!this.entities.piece[index]) {
-          this.entities.ash[index]--
-          this.newPiece({
-            xy,
-            type: 'pot',
-          })
-        }
-      }
-    })
-  }
-
   isGoldOverThreshold() {
     const values = Object.values(this.entities.gold)
     const total = _.sum(values)
@@ -285,7 +269,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         if (!this.entities.piece[entry[0]]) {
           this.newPiece({
             xy: this.i2xy(entry[0]),
-            type: 'pot',
+            type: 'runner',
           })
         }
       })
@@ -313,25 +297,57 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     })
   }
 
-  applyFloor() {
+  resolveFloor() {
     // #! TODO apply to pieces as well
     const { floor_dxy, fire, piece } = this.entities
+    const dirty = {
+      ash: [],
+      piece: [],
+      fire: [],
+    }
+
+    // move pieces or fire on floor_dxy
     Object.entries(floor_dxy).forEach(([index, dxy]) => {
       if (fire[index]) {
         // #! TODO this is copypasta from moveFire
-        const xy = geo.vector.add(this.i2xy(index), dxy)
-        if (!this.canAddFire(xy)) {
+        const new_xy = geo.vector.add(this.i2xy(index), dxy)
+        if (!this.canAddFire(new_xy)) {
           // #! TODO drop ash
           return
         }
-        this.addFire(fire[index], xy, dxy)
+        this.addFire(fire[index], new_xy, dxy)
         delete fire[index]
+        dirty.fire.push(new_xy)
       }
       if (piece[index]) {
         const _move = move.forward(piece[index], {}, dxy)
-        applyMove(piece[index], _move)
+        if (_move.done) {
+          applyMove(piece[index], _move)
+          dirty.piece.push(piece.xy)
+        }
       }
     })
+
+    this.applyFire()
+
+    // onto the ash
+    Object.keys(this.entities.ash).forEach(index => {
+      const value = this.entities.ash[index]
+      if (value > this.MAX_ASH) {
+        const xy = this.i2xy(index)
+        if (!this.entities.piece[index]) {
+          dirty.ash.push(xy)
+          dirty.piece.push(xy)
+          this.entities.ash[index]--
+          this.newPiece({
+            xy,
+            type: 'runner',
+          })
+        }
+      }
+    })
+
+    return dirty
   }
 
   removePiece(piece) {

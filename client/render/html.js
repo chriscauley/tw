@@ -114,13 +114,15 @@ const layers = {
         return
       }
       const dxy = board.getOne('dxy_fire', xy)
+      const moved = board.renderer.moved_fire[xy] ? undefined : dxy.join('')
+      board.renderer.moved_fire[xy] = true
       return {
         xy,
         dxy,
         value,
         type: 'fireball',
         name: 'piece',
-        moved: dxy.join(''),
+        moved,
       }
     },
   },
@@ -187,7 +189,7 @@ export class RenderBoard extends uR.db.Model {
     if (typeof this.parent === 'string') {
       this.parent = document.querySelector(this.parent)
     }
-
+    this.moved_fire = {}
     this.sprites = {
       wall: 'dirt-',
       path: 'vine',
@@ -291,6 +293,10 @@ export class RenderBoard extends uR.db.Model {
       this.center_xy = player.xy
       this.health_divisor = player.damage
     }
+  }
+
+  reset() {
+    this.moved_fire = {}
   }
 
   update = instant => {

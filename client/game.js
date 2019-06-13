@@ -122,6 +122,7 @@ export default class Game extends uR.db.Model {
   }
 
   nextTurn = () => {
+    this.busy = true
     if (this.checkVictory()) {
       this.spawnPieces()
     } else {
@@ -144,11 +145,13 @@ export default class Game extends uR.db.Model {
       this.board.moveFire()
       this.board.applyFire()
       this.doTurns(pieces, true)
-      this.board.applyFloor()
-      this.board.checkDialog()
-      this.board.applyFire()
-      this.board.resolveAsh()
     }
+    setTimeout(this.finishTurn, this.ANIMATION_TIME || 250)
+  }
+
+  finishTurn = () => {
+    const _dirty_layers = this.board.resolveFloor()
+    this.board.checkDialog()
     if (this.player.health <= 0) {
       if (!this.player.lives > 0) {
         return this.gameover()
@@ -157,6 +160,8 @@ export default class Game extends uR.db.Model {
     }
     this.trigger('nextturn')
     this.turn++
+    this.board.renderer.update()
+    this.busy = false
   }
 
   makePlayer() {
@@ -190,6 +195,9 @@ export default class Game extends uR.db.Model {
     }
 
     this.keydown = e => {
+      if (this.busy) {
+        return
+      }
       const input = {
         dxy: this.key_map[e.key],
         shiftKey: e.shiftKey,
@@ -204,6 +212,7 @@ export default class Game extends uR.db.Model {
             this.board.consumeGold()
           }
         }
+        this.board.renderer.reset()
         this.nextTurn()
         this.board.renderer.update()
       }
