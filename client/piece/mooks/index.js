@@ -16,12 +16,19 @@ export default {
   seeker: {
     sprite: 'skeleton',
     opts: { health: 2 },
-    tasks: [move.wait(1), move.follow],
+    tasks: [
+      move
+        .energy('health')
+        .equals(1)
+        .then(move.chain([move.forward.fromHit, move.morph('runner')])),
+      move.wait(1),
+      move.follow,
+    ],
   },
   runner: {
     sprite: 'skeleton-legs',
     opts: { sight: 0 },
-    tasks: [move.forward, move.flip],
+    tasks: [move.combineWith('seeker', 'jumper'), move.forward, move.flip],
   },
   drifter: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
@@ -43,7 +50,7 @@ export default {
 
   jumper: {
     tasks: [move.wait(1), move.follow, move.forwardRandomly],
-    sprite: 'goblin',
+    sprite: 'legsfordays',
     opts: { speed: 2 },
   },
 }

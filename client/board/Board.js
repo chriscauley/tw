@@ -64,7 +64,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   getMany(type, xys) {
-    return xys.map(xy => this.getOne(type, xy)).filter(i => i)
+    return xys.map(xy => this.getOne(type, xy)).filter(i => i !== undefined)
   }
 
   setOne(type, xy, obj) {
@@ -269,7 +269,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         if (!this.entities.piece[entry[0]]) {
           this.newPiece({
             xy: this.i2xy(entry[0]),
-            type: 'runner',
+            type: 'seeker',
           })
         }
       })
@@ -341,7 +341,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
           this.entities.ash[index]--
           this.newPiece({
             xy,
-            type: 'runner',
+            type: 'seeker',
           })
         }
       }

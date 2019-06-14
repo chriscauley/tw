@@ -26,7 +26,7 @@ import cycle from './cycle'
 
 import summon from './summon'
 import shoot from './shoot'
-import morph from './morph'
+import morph, { combineWith } from './morph'
 
 import energy from './energy'
 import setAfter from './setAfter'
@@ -61,6 +61,7 @@ export default {
   shoot,
   summon,
   morph,
+  combineWith,
   ultimate,
   respawn,
 }
