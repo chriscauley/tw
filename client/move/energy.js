@@ -32,12 +32,16 @@ const has = (energy_type, amount) =>
 const hasNot = (energy_type, amount) =>
   ifThen(piece => piece[energy_type] < amount)
 
+const equals = (energy_type, amount) =>
+  ifThen(piece => piece[energy_type] === amount)
+
 const energy = energy_type => ({
   use: curry(use)(energy_type),
   has: curry(has)(energy_type),
   hasNot: curry(hasNot)(energy_type),
   add: curry(add)(energy_type),
   set: curry(set)(energy_type),
+  equals: curry(equals)(energy_type),
 })
 
 Object.assign(energy, energy('energy'))
