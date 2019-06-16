@@ -240,7 +240,17 @@ export class RenderBoard extends uR.db.Model {
     this.parent.style.fontSize = this.scale + 'px'
     this.parent.style.height = this.visible_size + 'em'
     this.parent.style.width = this.visible_size + 'em'
-    this.draw()
+
+    if (!this.container) {
+      this.container = uR.element.create('div', {
+        parent: this.parent,
+      })
+
+      this.parent.addEventListener('mousedown', this.click)
+    }
+
+    this.container.className = this.getClass()
+    this.update()
   }
 
   eventToXY = e => {
@@ -265,19 +275,6 @@ export class RenderBoard extends uR.db.Model {
     }
   }
 
-  draw = () => {
-    if (!this.container) {
-      this.container = uR.element.create('div', {
-        parent: this.parent,
-      })
-
-      this.parent.addEventListener('mousedown', this.click)
-    }
-
-    this.container.className = this.getClass()
-    this.update()
-  }
-
   getClass() {
     const { W, H } = this.board
     if (window.location.search.includes('huge')) {
@@ -299,69 +296,29 @@ export class RenderBoard extends uR.db.Model {
     this.moved_fire = {}
   }
 
-  update = instant => {
-    if (!this.container || !this.board.entities || !this.board.rooms) {
-      return
-    }
-    this.normalize()
-    const xy = this.center_xy
+  redraw(instant) {
     const { style } = this.container
+    if (!window.lock) {
+      const left = this.visible_size / 2 - this.center_xy[0]
+      const top = this.visible_size / 2 - this.center_xy[1]
+      style.marginLeft = `${left - this.offset}em`
+      style.marginTop = `${top - this.offset}em`
+      //window.lock = true
+    }
     if (instant) {
       style.transition = '0s'
       setTimeout(() => (style.transition = null), 0)
     }
-    if (!window.lock) {
-      style.marginLeft = `${this.visible_size / 2 -
-        this.center_xy[0] -
-        this.offset}em`
-      style.marginTop = `${this.visible_size / 2 -
-        this.center_xy[1] -
-        this.offset}em`
-      //window.lock = true
-    }
-
-    // get lists of all the items to draw by entity name
-    const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
-
-    const results = {}
 
     this.names.forEach(name => {
-      results[name] = layers[name].getResults(xys, this.board, this)
-    })
-
-    // reset animations for next time
-    // #! TODO this should be in a reset method only called when each turn starts
-    // otherwise animations are excluded from replayed moves
-    // calls to renderer.animations.push should be refactored
-    this.animations = []
-
-    this.all_divs.forEach(d => (d.className = ''))
-
-    // because fire is handled similarly to pieces there's a problem associated with re-using divs
-    Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
-    this.cache.fire = {}
-
-    this.names.forEach(name => {
-      results[name].forEach(([xy, value], index) => {
+      this.results[name].forEach(([xy, value], index) => {
         if (name === 'fire') {
           index = this.fire_counter++
         }
         if (name === 'piece') {
           index = value.id
         }
-        if (!this.cache[name][index]) {
-          this.cache[name][index] = this.newDiv(`${name}-${index}`)
-          if (name !== 'fire') {
-            this.all_divs.push(this.cache[name][index])
-          }
-          if (name === 'piece') {
-            this.cache[name][index].insertAdjacentHTML(
-              'afterbegin',
-              '<span class="look">👀</span>',
-            )
-          }
-        }
-        const element = this.cache[name][index]
+        const element = this.getDiv(name, index)
 
         // This is currently used in the click handler to determine clicked element
         // #! TODO remove and use click mask exclusively
@@ -393,6 +350,37 @@ export class RenderBoard extends uR.db.Model {
     setTimeout(() => observer.trigger('animate'), 0)
   }
 
+  update = () => {
+    if (!this.container || !this.board.entities || !this.board.rooms) {
+      return
+    }
+    this.normalize()
+    const xy = this.center_xy
+
+    // get lists of all the items to draw by entity name
+    const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
+
+    const results = (this.results = {})
+
+    this.names.forEach(name => {
+      results[name] = layers[name].getResults(xys, this.board, this)
+    })
+
+    // reset animations for next time
+    // #! TODO this should be in a reset method only called when each turn starts
+    // otherwise animations are excluded from replayed moves
+    // calls to renderer.animations.push should be refactored
+    this.animations = []
+
+    this.all_divs.forEach(d => (d.className = ''))
+
+    // because fire is handled similarly to pieces there's a problem associated with re-using divs
+    Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
+    this.cache.fire = {}
+
+    this.redraw() // #! TODO should be externally triggered
+  }
+
   setHoverXY = xy => {
     const [hover_x, hover_y] = xy
     const dx_center = hover_x - this.center_xy[0]
@@ -403,9 +391,27 @@ export class RenderBoard extends uR.db.Model {
     ])
   }
 
-  newDiv(id) {
-    return uR.element.create('div', { parent: this.container, id })
+  getDiv(name, index) {
+    if (!this.cache[name][index]) {
+      const id = `${name}-${index}`
+      this.cache[name][index] = uR.element.create('div', {
+        parent: this.container,
+        id,
+      })
+      if (name !== 'fire') {
+        this.all_divs.push(this.cache[name][index])
+      }
+      if (name === 'piece') {
+        this.cache[name][index].insertAdjacentHTML(
+          'afterbegin',
+          '<span class="look">👀</span>',
+        )
+      }
+    }
+
+    return this.cache[name][index]
   }
+
   removePiece = piece => {
     if (!piece.health) {
       const element = this.cache.piece[piece.id]

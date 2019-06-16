@@ -102,7 +102,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     // sets the board is now set to the players perspective
     this.player = player
     this.setPiece(player.xy, player)
-    this.renderer.update(true)
+    this.renderer.redraw(true)
   }
 
   getOne = (type, xy) => {
