@@ -14,6 +14,23 @@ import move from '../move'
 import { applyMove } from '../piece/lib'
 const { Model, APIManager, List, Int, String, Field } = uR.db
 
+export const getEmptyEntities = () => {
+  return {
+    square: {}, // it exists!
+    wall: {},
+    piece: {},
+    color: {}, // used in debug only... for now
+    path: {}, // path to walk down
+    item: {},
+    fire: {},
+    dxy_fire: {},
+    ash: {},
+    gold: {},
+    floor_dxy: {}, // arrow tiles
+    room: {},
+  }
+}
+
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
   static editable_fieldnames = [
@@ -39,17 +56,46 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     mook_count: Int(3, { choices: _.range(1, 10) }),
     mooks: List('', { choices: types.mook_map }),
     boss: String('', { choices: types.boss_map }),
-    _entities: Field({}),
+    _entities: Field(undefined),
+    W: Int(100),
+    H: Int(100),
   }
   __str__() {
     return this.name
   }
   i2xy = i => this._i2xy[i]
   xy2i = xy => this._xy2i[xy[0]][xy[1]]
+  dxy2dindex = dxy => dxy[0] + this.W * dxy[1]
 
   constructor(opts) {
     super(opts)
     this.MAX_ASH = this.MAX_ASH || 8
+    this._entities = {
+      ...getEmptyEntities(),
+      ...this._entities,
+    }
+
+    // these methods are identical to their Board.XXX counterparts
+    // but they modify the core _entities of the board
+    this._ = {
+      getOne: (type, xy) => this._entities[type][this.xy2i(xy)],
+      setOne: (type, xy, obj) => {
+        this.entities[type][this.xy2i(xy)] = obj
+        this._entities[type][this.xy2i(xy)] = obj
+      },
+      removeOne: (type, xy) => {
+        delete this.entities[type][this.xy2i(xy)]
+        delete this._entities[type][this.xy2i(xy)]
+      },
+      newPiece: opts => {
+        opts._PRNG = opts._PRNG || this.random.int()
+        const piece = newPiece(opts)
+        piece._turn = this.game.turn
+        this.setPiece(piece.xy, piece)
+        this._.setOne('piece', piece.xy, piece)
+        return piece
+      },
+    }
   }
 
   setPlayer = player => {
@@ -110,8 +156,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   cacheCoordinates() {
-    this.W = 100
-    this.H = 100
     this._xy2i = {}
     this._i2xy = {}
 
@@ -133,87 +177,66 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         board: this,
       })
     }
-    this.entities = {
-      square: {}, // it exists!
-      wall: {},
-      piece: {},
-      color: {}, // used in debug only... for now
-      path: {}, // path to walk down
-      item: {},
-      fire: {},
-      dxy_fire: {},
-      ash: {},
-      gold: {},
-      floor_dxy: {}, // arrow tiles
-      room: {},
-    }
 
     this.rooms = Room.generators.get(this.room_generator)(this)
-    if (this._entities && this._entities.piece) {
-      Object.assign(this.entities, this._entities)
-      this.cacheCoordinates()
-      Object.values(this._entities.piece).forEach(piece => {
-        this.setOne('piece', piece.xy, undefined)
-        this.newPiece(piece)
-      })
-      return
+    this.entities = {
+      ...getEmptyEntities(),
+      ..._.cloneDeep(this._entities),
     }
-    this.walls = {}
-    this.W = 0
-    this.H = 0
-    this.rooms.forEach(({ x_max, y_max }) => {
-      this.W = Math.max(x_max + 1, this.W)
-      this.H = Math.max(y_max + 1, this.H)
-    })
     this.cacheCoordinates()
-    this.rooms.forEach(({ xys, walls }) => {
-      xys.forEach(xy => this.setOne('square', xy, 1))
-      walls.forEach(xy => this.setOne('wall', xy, 1))
-    })
-    Room.connectRooms(this)
-    //this.resetDialog()
-    this.item_generators.forEach(name => {
-      Item.generators.get(name)(this)
+    Object.values(this._entities.piece).forEach(piece => {
+      this.setOne('piece', piece.xy, undefined)
+      this.newPiece(piece)
     })
   }
 
   regenerateRooms() {
-    const max_range = 5
+    this.reset()
+    const max_range = 4
     const used_ranges = {}
-    this.entities.square = {}
-    this.entities.wall = {}
-    Object.keys(this.entities.room).forEach(i => {
-      const xy = this.i2xy(i)
-      this.entities.square[i] = 1
-      used_ranges[xy] = -1
-    })
-    _.range(1, max_range).forEach(range => {
-      Object.keys(this.entities.room).forEach(i => {
-        const xy = this.i2xy(i)
-        geo.look._square['0,1'][range].forEach(dxy => {
-          const target_xy = geo.vector.add(xy, dxy)
-          if (used_ranges[target_xy]) {
-            if (range - used_ranges[target_xy] < 2) {
-              this.setOne('wall', target_xy, 1)
-            }
-          } else {
-            this.setOne('square', target_xy, 1)
-            used_ranges[target_xy] = range
-          }
+
+    Object.keys(this.entities.square)
+      .map(Number)
+      .forEach(index => {
+        used_ranges[index] = -2
+      })
+
+    Object.keys(this.entities.room)
+      .map(Number)
+      .forEach(index => {
+        // mark the center of each room as belonging to it
+        this.entities.square[index] = 1
+        used_ranges[index] = -1
+      })
+
+    const getOpenIndexes = (center_index, dindexes) => {
+      return dindexes
+        .map(dindex => {
+          const target_index = dindex + center_index
+          this.entities.square[target_index] = 1
+          return target_index
         })
-      })
-    })
-    Object.keys(this.entities.room).forEach(i => {
-      const xy = this.i2xy(i)
-      geo.look._square['0,1'][max_range].forEach(dxy => {
-        const target_xy = geo.vector.add(xy, dxy)
-        if (!this.getOne('square', target_xy)) {
-          this.setOne('wall', target_xy, 1)
-        }
-        if (max_range - used_ranges[target_xy] < 2) {
-          this.setOne('wall', target_xy, 1)
-        }
-      })
+        .filter(ti => ti !== undefined)
+    }
+
+    _.range(1, max_range + 1).forEach(range => {
+      const dindexes = geo.look._square['0,1'][range].map(this.dxy2dindex)
+      Object.keys(this.entities.room)
+        .map(Number)
+        .forEach(center_index => {
+          getOpenIndexes(center_index, dindexes).forEach(target_index => {
+            if (!used_ranges[target_index]) {
+              // square hasn't been used before, mark it as used
+              used_ranges[target_index] = range
+              if (range === max_range) {
+                this.entities.wall[target_index] = 1
+              }
+            } else if (range - used_ranges[target_index] < 2) {
+              // square has been used but is close enough to be a wall
+              this.entities.wall[target_index] = 1
+            }
+          })
+        })
     })
     this.renderer.update()
   }
@@ -356,15 +379,13 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   serialize(keys) {
-    const out = super.serialize(keys)
-    out._entities = JSON.parse(
-      JSON.stringify(this.entities, (key, value) => {
-        if (key === 'board' || key === '_type') {
-          return
-        }
-        return value
-      }),
-    )
+    const out = _.cloneDeep(super.serialize(keys))
+    out.piece &&
+      Object.values(out.piece).forEach(piece => {
+        // need to remove board and type because they are shortcut references
+        delete piece.board
+        delete piece._type
+      })
     return out
   }
 }

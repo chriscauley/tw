@@ -17,7 +17,7 @@ class AbstractTool extends uR.db.Model {
     this.board = board
   }
   remove(xy) {
-    this.board.removeOne(this.layer, xy)
+    this.board._.removeOne(this.layer, xy)
   }
   click(xy, event) {
     // general behavior of all tools
@@ -25,14 +25,14 @@ class AbstractTool extends uR.db.Model {
       return this.remove(xy)
     }
     // all tools need a square, even square
-    this.board.setOne('square', xy, 1)
+    this.board._.setOne('square', xy, 1)
     this._click(xy, event)
   }
 
   _click(xy, _event) {
     // tool specific click functionality
     // by default it just sets the square value to the default value
-    this.board.setOne(this.layer, xy, this.default_value)
+    this.board._.setOne(this.layer, xy, this.default_value)
   }
 }
 
@@ -61,7 +61,7 @@ class CycleTool extends AbstractTool {
     delete this.state[xy]
   }
   _click(xy, _event) {
-    this.board.setOne(this.layer, xy, this.getNextValue(xy))
+    this.board._.setOne(this.layer, xy, this.getNextValue(xy))
   }
 }
 
@@ -71,11 +71,11 @@ class PieceTool extends CycleTool {
     type: uR.REQUIRED,
   }
   _click(xy, _event) {
-    const piece = this.board.getOne('piece', xy)
+    const piece = this.board._.getOne('piece', xy)
     if (piece) {
       piece.dxy = this.getNextValue(xy)
     } else {
-      this.board.newPiece({
+      this.board._.newPiece({
         xy,
         type: this.type,
         dxy: this.getNextValue(xy),
@@ -96,7 +96,8 @@ class RoomTool extends AbstractTool {
     layer: 'room',
   }
   _click(xy, _event) {
-    this.board.setOne('room', xy, { xy })
+    this.board._.setOne('room', xy, { xy })
+    this.board.reset()
     this.board.regenerateRooms()
   }
 }

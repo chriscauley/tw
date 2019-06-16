@@ -41,7 +41,7 @@ const base_layer = {
 
 const layers = {
   wall: {
-    sprite: 'dirt-',
+    sprite: 'wall-',
   },
   path: {
     sprite: 'vine',
@@ -174,7 +174,7 @@ export class RenderBoard extends uR.db.Model {
     offset: 0.5,
     box_count: 0,
     scale: 32,
-    center_xy: [0, 0],
+    center_xy: uR.db.Field([0, 0]),
   }
   static editable_fieldnames = ['radius', 'box_count', 'scale']
 

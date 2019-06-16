@@ -1,7 +1,7 @@
 import { range } from 'lodash'
 
 import uR from 'unrest.io'
-import Board from '../board/Board'
+import Board, { getEmptyEntities } from '../board/Board'
 import geo from '../geo'
 import TOOLS from '../editor/tools'
 
@@ -33,7 +33,7 @@ const XYMixin = {
   },
 
   clear() {
-    this.board._entities = {piece:{}}
+    this.board._entities = getEmptyEntities()
     this.board.reset()
     this.board.renderer.update()
   },

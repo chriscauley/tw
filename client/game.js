@@ -57,6 +57,7 @@ export default class Game extends uR.db.Model {
     this.ready(() => {
       this.makeVictoryContition()
       this.board.reset()
+      this.board.regenerateRooms()
       this.makePlayer()
       this.bindKeys()
       this.board.consumeGold()
