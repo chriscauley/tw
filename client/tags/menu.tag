@@ -79,17 +79,28 @@ const MenuMixin = {
       <div class={theme.header_title}>Choose a board</div>
     </div>
     <div class={theme.content}>
+      <!--
       <div data-is="board-list" boards={boards}></div>
       <div data-is="mook-list" mooksets={mooksets}></div>
       <div data-is="boss-list" bosssets={bosssets}></div>
       <div if={error} class={css.error}>{error}</div>
       <button class={css.btn.primary} onClick={startGame}>Start</button>
+      -->
+      <div if={uR.auth.user && uR.auth.user.is_superuser}>
+        <div each={board in boards}>
+          <a class="edit btn btn-primary fa fa-pencil" href="#/board/edit/{board.id}/"/>
+          <a class="edit btn btn-primary fa fa-play" href="#/board/{board.id}/1/1/"/>
+          <span class="name">{board.name}</span>
+        </div>
+      </div>
     </div>
   </div>
 <script>
 this.mixin(MenuMixin)
+this.on("mount", () => {
+  uR.router.one('route', this.unmount)
+})
 startGame() {
-  console.log(this.css)
   const { board_id, mookset_id, bossset_id } = shared
   if (!board_id || !mookset_id || !bossset_id) {
     this.error = "Please select a board, mook set, and boss set to continue"
