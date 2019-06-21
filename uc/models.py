@@ -6,6 +6,6 @@ class TestResult(AbstractModel):
     params = self.data.get('params', {})
     if hasattr(params, 'items'):
       return " | ".join(
-        [': '.join([k, repr(v)]) for k, v in params.items()]
+        sorted([': '.join([k, repr(v)]) for k, v in params.items()])
       )
     return '"{}"'.format(params)
