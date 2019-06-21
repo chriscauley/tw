@@ -63,6 +63,7 @@ export class TestResult extends Model {
   }
 }
 new APIManager(TestResult)
+
 uR.db.ready(() => {
   TestResult.validate({
     params: 'Empty Object',

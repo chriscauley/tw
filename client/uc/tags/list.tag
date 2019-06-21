@@ -98,12 +98,17 @@ this.on('mount',() => this.update())
 this.on("mount", () => {
   const test = this.test = this.opts.active_test
   this.status = this.test.status
-  const a = JSON.stringify(test.results,null,2)
-  const b = JSON.stringify(test.failed_results,null,2)
-  this.blocks = diff.diffJson(test.results, test.failed_results)
-  this.blocks.forEach(block => {
-    block.lines = block.value.replace(/\n$/,'').split("\n")
-   })
+  if (test.failed_results) {
+    this.blocks = diff.diffJson(test.results, test.failed_results)
+    this.blocks.forEach(block => {
+      block.lines = block.value.replace(/\n$/,'').split("\n")
+    })
+  } else {
+    this.blocks = [{
+      lines: JSON.stringify(test.results,null,2).split("\n"),
+      active: true,
+    }]
+  }
   this.update()
 })
 getClass(block) {
