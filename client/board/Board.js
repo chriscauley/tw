@@ -13,6 +13,10 @@ import { RenderBoard } from '../render/html'
 import move from '../move'
 import { applyMove } from '../piece/lib'
 const { Model, APIManager, List, Int, String, Field } = uR.db
+import { TestResult } from '../uc'
+
+// javascript's % is remainder, not modulus
+const mod = (n, m) => ((n % m) + m) % m
 
 export const getEmptyEntities = () => {
   return {
@@ -187,6 +191,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     Object.values(this._entities.piece).forEach(piece => {
       this.setOne('piece', piece.xy, undefined)
       this.newPiece(piece)
+    })
+    TestResult.validate({
+      params: { board_id: this.id, state: 'reset' },
+      results: this.getCurrentState(),
     })
   }
 

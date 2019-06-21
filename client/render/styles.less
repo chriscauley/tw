@@ -72,24 +72,27 @@
 }
 
 .html-renderer {
-  .path, .wall {
+  .path, .floor_dxy, .ash, .gold {
     z-index: 10;
   }
   .item {
     z-index: 20;
   }
-  .piece {
+  .wall {
     z-index: 30;
+  }
+  .piece {
+    z-index: 40;
     &.sprite1x2- {
       &bluedragon, &purpledragon, &greydragon, &reddragon {
-        z-index: 31;
+        z-index: 41;
       }
     }
   }
   .animation {
-    z-index: 40;
+    z-index: 50;
     &.sprite-wait, &.sprite-wait-ready {
-      z-index: 29;
+      z-index: 39;
     }
   }
   &[tabindex]:not(:focus):before,
@@ -118,11 +121,18 @@
 }
 
 .html-renderer {
+  .oob { opacity: 0.5; }
   .board {
     position: absolute;
     top: 0;
     left: 0;
     transition: margin 0.25s linear;
+    .piece {
+      transition: 0.25s;
+    }
+    &.no-transition .piece {
+      transition: none;
+    }
   }
   .square {
     background-size: cover;
@@ -143,7 +153,6 @@
     margin: 0.1 * @scale;
     height: 0.8 * @scale;
     text-align: center;
-    transition: 0.25s;
     width: 0.8 * @scale;
     &.sprite1x2- {
       &bluedragon, &purpledragon, &greydragon, &reddragon {
