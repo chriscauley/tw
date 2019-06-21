@@ -86,8 +86,9 @@ this.on('mount',() => this.update())
   <div>
     <h3>
       {test}
-      <div if={status === "fail"} class="float-right btn btn-primary"
+      <div if={!accepted && status === "fail"} class="float-right btn btn-primary"
            onclick={accept}>Accept</div>
+      <div if={accepted} class="float-right btn btn-disabled">Accepted!</div>
     </h3>
     <div each={block in blocks} class={getClass(block)} onclick={toggle}>
       <pre each={line in block.lines}>{line}</pre>
@@ -122,6 +123,11 @@ toggle(e) {
 
 accept() {
   this.test.accept(this.test.failed_results)
+    .then(() => {
+      this.accepted = true
+      this.update()
+    })
+    //.then(() => this.parent.unmount())
 }
 </script>
 <style>

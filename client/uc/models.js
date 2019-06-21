@@ -59,7 +59,7 @@ export class TestResult extends Model {
   accept(results) {
     this.result_hash = objectHash(results)
     this.results = results
-    this.constructor.objects.create(this)
+    return this.constructor.objects.create(this)
   }
 }
 new APIManager(TestResult)

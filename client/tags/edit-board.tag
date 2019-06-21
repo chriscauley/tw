@@ -110,12 +110,13 @@ this.on('mount', () => {
   this.board.game = {turn: 0} // necessary for board.newPiece
   this.board.reset()
   this.tools.forEach(tool => tool.bindBoard(this.board))
+  const center_xy = [Math.floor(this.board.W/2), Math.floor(this.board.H/2)]
   this.board.renderer.setZoom({
-    radius: 20,
+    radius: Math.max(...center_xy),
     offset: 0,
     box_count: 1,
     scale: 16,
-    center_xy: this.board.rooms[0].center
+    center_xy,
   })
   this.board.renderer.onClick = (_xy, event) => {
     const done = {}
@@ -128,6 +129,7 @@ this.on('mount', () => {
     })
   }
   this.renderer = this.board.renderer
+  this.renderer.update()
   this.update()
 })
 success() {

@@ -5,7 +5,8 @@ const morph = (type, piece) => {
   const { board, xy, dxy, team } = piece
   piece.dead = true
   board.removePiece(piece)
-  board.newPiece({ xy, type, dxy, team })
+  const new_piece = board.newPiece({ xy, type, dxy, team })
+  board.renderer.__next = [xy, new_piece]
 }
 
 export default type => (piece, move) => {

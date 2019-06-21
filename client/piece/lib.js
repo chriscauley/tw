@@ -11,10 +11,14 @@ export const applyMove = (piece, move, turn) => {
       target._last_damage = damage
     })
   }
+  move._from = piece.board.xy2i(piece.xy)
   if (xy && xy !== piece.xy) {
     piece.board.setPiece(xy, piece)
   }
-  piece.dxy = dxy
+  if (dxy) {
+    piece.dxy = dxy
+    move.dindex = piece.dindex = piece.board.dxy2dindex(piece.dxy)
+  }
   after.forEach(f => piece.board.game.one('nextturn', () => f(piece, move)))
   piece.last_move = move
   piece.preMove = preMove

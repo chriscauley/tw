@@ -8,7 +8,6 @@ import Item from '../item'
 import DialogMixin from './dialog'
 import geo from '../geo'
 import { newPiece } from '../piece/entity'
-import types from '../piece/types'
 import { RenderBoard } from '../render/html'
 import move from '../move'
 import { applyMove } from '../piece/lib'
@@ -37,13 +36,7 @@ export const getEmptyEntities = () => {
 
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
-  static editable_fieldnames = [
-    'name',
-    'room_generator',
-    'item_generators',
-    'room_count',
-    'mook_count',
-  ]
+  static editable_fieldnames = ['name', 'W', 'H']
   static opts = {
     mookset: undefined,
     bossset: undefined,
@@ -56,10 +49,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       choices: Item.generators,
       initial: ['randomWeapon'],
     }),
-    room_count: Int(1, { choices: _.range(1, 5) }),
-    mook_count: Int(3, { choices: _.range(1, 10) }),
-    mooks: List('', { choices: types.mook_map }),
-    boss: String('', { choices: types.boss_map }),
     _entities: Field(undefined),
     W: Int(100),
     H: Int(100),
@@ -67,8 +56,8 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   __str__() {
     return this.name
   }
-  i2xy = i => this._i2xy[i]
-  xy2i = xy => this._xy2i[xy[0]][xy[1]]
+  i2xy = i => this._i2xy[mod(i, this.LENGTH)]
+  xy2i = xy => mod(xy[0] + xy[1] * this.W, this.LENGTH)
   dxy2dindex = dxy => dxy[0] + this.W * dxy[1]
 
   constructor(opts) {
@@ -105,6 +94,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   setPlayer = player => {
     // sets the board is now set to the players perspective
     this.player = player
+    player.id = ++this._piece_id
     this.setPiece(player.xy, player)
     this.renderer.redraw(true)
   }
@@ -126,9 +116,10 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   setPiece(xy, piece) {
-    const i = this.xy2i(xy)
+    const index = this.xy2i(xy)
+    xy = this.i2xy(index)
 
-    const old = this.entities.piece[i]
+    const old = this.entities.piece[index]
     if (old && old !== piece) {
       throw 'Pauli Exclusion error'
     }
@@ -140,7 +131,8 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
 
     piece.board = this
     piece.xy = xy
-    this.entities.piece[i] = piece
+    piece.index = index
+    this.entities.piece[index] = piece
   }
 
   getPieces() {
@@ -160,46 +152,53 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   cacheCoordinates() {
-    this._xy2i = {}
     this._i2xy = {}
+    this.LENGTH = this.W * this.H
 
-    // "overflow", so that getting this.xy2i for an out of bounds x
-    // does not throw an error
-    _.range(-this.H * 2, 2 * this.H + 1).forEach(x => (this._xy2i[x] = {}))
-
-    _.range(-this.W, this.W + 1).forEach(x => {
-      _.range(-this.H, this.H + 1).forEach(y => {
-        const i = (this._xy2i[x][y] = x + y * this.W)
+    _.range(0, this.W).forEach(x => {
+      _.range(0, this.H).forEach(y => {
+        const i = this.xy2i([x, y])
         this._i2xy[i] = [x, y]
       })
     })
+    this.MIN_X = 0
+    this.MIN_Y = 0
+    this.MAX_X = this.W
+    this.MAX_Y = this.H
   }
 
   reset() {
+    this.entities = {
+      ...getEmptyEntities(),
+      ..._.cloneDeep(this._entities),
+    }
+    this._piece_id = 0
+    this.cacheCoordinates()
+    this._regenerateRooms()
+    Object.values(this._entities.piece).forEach(piece => {
+      this.setOne('piece', piece.xy, undefined)
+      this.newPiece(piece)
+    })
+
     if (!this.renderer) {
       this.renderer = new RenderBoard({
         board: this,
       })
     }
 
-    this.rooms = Room.generators.get(this.room_generator)(this)
-    this.entities = {
-      ...getEmptyEntities(),
-      ..._.cloneDeep(this._entities),
-    }
-    this.cacheCoordinates()
-    Object.values(this._entities.piece).forEach(piece => {
-      this.setOne('piece', piece.xy, undefined)
-      this.newPiece(piece)
-    })
     TestResult.validate({
       params: { board_id: this.id, state: 'reset' },
       results: this.getCurrentState(),
     })
   }
 
-  regenerateRooms() {
-    this.reset()
+  getCenter() {
+    return this.W === 100
+      ? [12, 12]
+      : [Math.floor(this.W / 2), Math.floor(this.H / 2)]
+  }
+
+  _regenerateRooms() {
     const max_range = 4
     const used_ranges = {}
 
@@ -246,7 +245,6 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
           })
         })
     })
-    this.renderer.update()
   }
 
   listPieces() {
@@ -257,6 +255,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   newPiece(opts) {
     opts._PRNG = opts._PRNG || this.random.int()
     const piece = newPiece(opts)
+    piece.id = ++this._piece_id
     piece._turn = this.game.turn
     this.setPiece(piece.xy, piece)
     return piece
@@ -351,10 +350,11 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         dirty.fire.push(new_xy)
       }
       if (piece[index]) {
-        const _move = move.forward(piece[index], {}, dxy)
+        const target_piece = piece[index]
+        const _move = move.forward(target_piece, {}, dxy)
         if (_move.done) {
-          applyMove(piece[index], _move)
-          dirty.piece.push(piece.xy)
+          applyMove(target_piece, _move)
+          dirty.piece.push(target_piece.xy)
         }
       }
     })
@@ -386,15 +386,26 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.renderer.removePiece(piece)
   }
 
-  serialize(keys) {
-    const out = _.cloneDeep(super.serialize(keys))
-    out.piece &&
-      Object.values(out.piece).forEach(piece => {
+  _sanitize(data) {
+    // this.entities has keys
+    data = _.cloneDeep(data)
+    data.piece &&
+      Object.values(data.piece).forEach(piece => {
         // need to remove board and type because they are shortcut references
         delete piece.board
         delete piece._type
       })
-    return out
+    return data
+  }
+
+  getCurrentState() {
+    return this._sanitize(this.entities)
+  }
+
+  serialize(keys) {
+    // #! TODO this may be unecessary since Board.fields uses _entities
+    // which has no circular references
+    return this._sanitize(super.serialize(keys))
   }
 }
 

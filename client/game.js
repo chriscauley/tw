@@ -57,7 +57,6 @@ export default class Game extends uR.db.Model {
     this.ready(() => {
       this.makeVictoryContition()
       this.board.reset()
-      this.board.regenerateRooms()
       this.makePlayer()
       this.bindKeys()
       this.board.consumeGold()
@@ -147,11 +146,11 @@ export default class Game extends uR.db.Model {
       this.board.applyFire()
       this.doTurns(pieces, true)
     }
-    setTimeout(this.finishTurn, this.ANIMATION_TIME || 250)
+    this.finishTurn()
   }
 
   finishTurn = () => {
-    const _dirty_layers = this.board.resolveFloor()
+    const dirty_layers = this.board.resolveFloor()
     this.board.checkDialog()
     if (this.player.health <= 0) {
       if (!this.player.lives > 0) {
@@ -161,7 +160,7 @@ export default class Game extends uR.db.Model {
     }
     this.trigger('nextturn')
     this.turn++
-    this.board.renderer.update()
+    this.board.renderer.captureFrame(dirty_layers)
     this.busy = false
   }
 
@@ -169,7 +168,7 @@ export default class Game extends uR.db.Model {
     this.player = newPlayer({
       type: 'player',
       dxy: [0, 1],
-      xy: this.board.rooms[0].center,
+      xy: this.board.getCenter(),
     })
     // #! TODO the following attributes should be options on newPlayer
     this.player.combo = 0

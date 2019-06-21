@@ -224,6 +224,8 @@ export class RenderBoard extends uR.db.Model {
 
   setZoom = (opts = {}) => {
     this.deserialize(opts)
+    this.radius = Math.min(this.board.W + 2, this.board.H + 2, this.radius)
+    this.scale = 32
     this.size = this.radius * 2 + 1
 
     this.visible_size = 2 * (this.radius - OVERFLOW)
@@ -250,7 +252,7 @@ export class RenderBoard extends uR.db.Model {
     }
 
     this.container.className = this.getClass()
-    this.update()
+    //this.redraw()
   }
 
   eventToXY = e => {
@@ -270,9 +272,7 @@ export class RenderBoard extends uR.db.Model {
       this.onClick(xy, event)
     }
     this.update()
-    if (this.board._xy2i[xy[0]]) {
-      console.log("CLICKED:",this.board.getOne('piece', xy)) // eslint-disable-line
-    }
+    console.log("CLICKED:", xy, this.board.getOne('piece', xy)) // eslint-disable-line
   }
 
   getClass() {
@@ -297,6 +297,16 @@ export class RenderBoard extends uR.db.Model {
   }
 
   redraw(instant) {
+    this.all_divs.forEach(d => (d.className = ''))
+    this.container.classList.add('no-transition')
+    observer.one('animate', () => {
+      this.container.classList.remove('no-transition')
+    })
+
+    // because fire is handled similarly to pieces there's a problem associated with re-using divs
+    Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
+    this.cache.fire = {}
+
     const { style } = this.container
     if (!window.lock) {
       const left = this.visible_size / 2 - this.center_xy[0]
@@ -310,48 +320,62 @@ export class RenderBoard extends uR.db.Model {
       setTimeout(() => (style.transition = null), 0)
     }
 
-    this.names.forEach(name => {
-      this.results[name].forEach(([xy, value], index) => {
-        if (name === 'fire') {
-          index = this.fire_counter++
-        }
-        if (name === 'piece') {
-          index = value.id
-        }
-        const element = this.getDiv(name, index)
+    if (!(this.frames && this.frames.length)) {
+      return
+    }
 
-        // This is currently used in the click handler to determine clicked element
-        // #! TODO remove and use click mask exclusively
-        element.xy = xy
+    this.frame_no = -1
+    this.nextFrame()
+  }
 
-        if (name === 'piece') {
-          element.piece_id = value.id
-          const { last_move, dxy } = value
-          if (last_move) {
-            if (last_move.damages) {
-              observer.one('animate', () =>
-                element.classList.add(`damage-${dxy.join('')}`),
-              )
-            }
-          }
+  _drawLayer(name, results = []) {
+    const piece_counts = {}
+    results.forEach(([xy, value], id_numbr) => {
+      if (name === 'fire') {
+        id_numbr = this.fire_counter++
+      }
+      if (name === 'piece') {
+        piece_counts[value.id] = piece_counts[value.id] || 0
+        id_numbr = value.id + '_' + piece_counts[value.id]++
+      }
+      const element = this.getDiv(name, id_numbr)
+
+      // This is currently used in the click handler to determine clicked element
+      // #! TODO remove and use click mask exclusively
+      element.xy = xy
+
+      if (name === 'piece') {
+        element.piece_id = value.id
+        const { last_move, dxy } = value
+        value.moved = undefined
+        if (last_move && last_move._from && last_move._from !== value.index) {
+          value.moved = dxy.join('')
         }
-        if (value.moved) {
+        if (last_move && last_move.damages) {
+          observer.one('animate', () =>
+            element.classList.add(`damage-${dxy.join('')}`),
+          )
+        }
+      }
+      if (value.moved) {
+        element.classList.remove(`moved-${value.moved}`)
+        observer.one('animate', () => {
           element.classList.remove(`moved-${value.moved}`)
-          observer.one('animate', () => {
-            element.classList.remove(`moved-${value.moved}`)
-          })
-        }
-        element.className = this.renderOne(name)([xy, value])
-        if (name === 'animation' && value.className) {
-          observer.one('animate', () => element.classList.add(value.className))
-        }
-      })
+        })
+      }
+      element.className = this.renderOne(name)(xy, value)
+      if (this.oob[xy]) {
+        element.className += ' oob'
+      }
+      if (name === 'animation' && value.className) {
+        observer.one('animate', () => element.classList.add(value.className))
+      }
     })
-    setTimeout(() => observer.trigger('animate'), 0)
   }
 
   update = () => {
-    if (!this.container || !this.board.entities || !this.board.rooms) {
+    // #! TODO rename as capture
+    if (!this.container || !this.board.entities) {
       return
     }
     this.normalize()
@@ -359,8 +383,18 @@ export class RenderBoard extends uR.db.Model {
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
+    this.oob = {}
+    xys.forEach(xy => {
+      if (
+        !_.inRange(xy[1], this.board.MIN_X, this.board.MAX_X) ||
+        !_.inRange(xy[0], this.board.MIN_Y, this.board.MAX_Y)
+      ) {
+        this.oob[xy] = true
+      }
+    })
 
-    const results = (this.results = {})
+    const results = {}
+    this.frames = [results]
 
     this.names.forEach(name => {
       results[name] = layers[name].getResults(xys, this.board, this)
@@ -372,13 +406,36 @@ export class RenderBoard extends uR.db.Model {
     // calls to renderer.animations.push should be refactored
     this.animations = []
 
-    this.all_divs.forEach(d => (d.className = ''))
-
-    // because fire is handled similarly to pieces there's a problem associated with re-using divs
-    Object.values(this.cache.fire).forEach(e => e.parentNode.removeChild(e))
-    this.cache.fire = {}
-
     this.redraw() // #! TODO should be externally triggered
+  }
+
+  captureFrame(dirty_layers) {
+    const frame = {}
+    this.names.forEach(name => {
+      const xys = dirty_layers[name]
+      if (xys && xys.length) {
+        frame[name] = layers[name].getResults(xys, this.board, this)
+      }
+    })
+    if (this.__next) {
+      frame.piece = frame.piece || []
+      frame.piece.push(this.__next)
+    }
+    this.frames.push(frame)
+  }
+
+  nextFrame = () => {
+    this.frame_no++
+    const frame = this.frames[this.frame_no]
+    clearTimeout(this.frame_timeout)
+    if (!frame) {
+      return
+    }
+    this.names.forEach(name => {
+      frame[name] && this._drawLayer(name, frame[name])
+    })
+    setTimeout(() => observer.trigger('animate'), 0)
+    this.frame_timeout = setTimeout(this.nextFrame, 250)
   }
 
   setHoverXY = xy => {
@@ -400,6 +457,8 @@ export class RenderBoard extends uR.db.Model {
       })
       if (name !== 'fire') {
         this.all_divs.push(this.cache[name][index])
+      } else {
+        console.log('fire') // eslint-disable-line
       }
       if (name === 'piece') {
         this.cache[name][index].insertAdjacentHTML(
@@ -422,7 +481,7 @@ export class RenderBoard extends uR.db.Model {
       }
     }
   }
-  renderOne = name => ([xy, value]) => {
+  renderOne = name => (xy, value) => {
     if (name === 'piece') {
       const { health, max_health } = value
       const extras = {}
@@ -430,10 +489,10 @@ export class RenderBoard extends uR.db.Model {
         extras.health = Math.ceil(health / this.health_divisor)
         extras.health = Math.min(extras.health, 5)
       }
-      return renderEntity(value, extras)
+      return renderEntity(xy, value, extras)
     }
     if (name === 'fire') {
-      return renderEntity(value)
+      return renderEntity(xy, value)
     }
 
     let sprite
@@ -472,9 +531,8 @@ const objToClassString = obj => {
 }
 
 // pieces and anything which is not a primative needs fancy rendering
-const renderEntity = (entity, extras = {}) => {
+const renderEntity = (xy, entity, extras = {}) => {
   const {
-    xy,
     color,
     name,
     type,

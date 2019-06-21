@@ -98,7 +98,6 @@ class RoomTool extends AbstractTool {
   _click(xy, _event) {
     this.board._.setOne('room', xy, { xy })
     this.board.reset()
-    this.board.regenerateRooms()
   }
 }
 

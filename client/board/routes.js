@@ -1,13 +1,10 @@
 import uR from 'unrest.io'
 import Board from './Board'
 import Game from '../game'
-import { MookSet, BossSet } from '../piece/generator'
 
 const playBoard = (path, data) => {
   const game = new Game({
     board: Board.objects.get(data.matches[1]),
-    mookset: MookSet.objects.get(data.matches[2]),
-    bossset: BossSet.objects.get(data.matches[3]),
   })
 
   game.ready.start()
