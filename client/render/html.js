@@ -47,16 +47,28 @@ const layers = {
     sprite: 'vine',
   },
   piece: {
+    prop_names: [
+      'color',
+      'name',
+      'type',
+      'dxy',
+      'follow_order',
+      'following',
+      '_sprite',
+      'moved',
+    ],
     getResults(xys, board, renderer) {
       const results = []
       xys.forEach(xy => {
-        const value = board.getOne('piece', xy)
-        if (value) {
+        const piece = board.getOne('piece', xy)
+        if (piece) {
+          const value = _.pick(piece, this.prop_names)
+          value.following = !!value.following
           results.push([xy, value])
 
           // Pieces need thier tasks rendered as animations
           paint
-            .paintTasks(value._type.tasks, value)
+            .paintTasks(piece._type.tasks, piece)
             .filter(Boolean)
             .forEach(result => renderer.animations.push(result))
         }
