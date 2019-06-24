@@ -394,6 +394,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         // need to remove board and type because they are shortcut references
         delete piece.board
         delete piece._type
+        delete piece.following
       })
     return data
   }

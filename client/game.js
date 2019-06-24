@@ -1,5 +1,6 @@
 import uR from 'unrest.io'
 import riot from 'riot'
+import { pick } from 'lodash'
 
 import { applyMove, movePlayer, respawn } from './lib'
 import { newPlayer } from './piece/entity'
@@ -39,6 +40,7 @@ export default class Game extends uR.db.Model {
     mookset: uR.REQUIRED,
     bossset: uR.REQUIRED,
     enemies: true,
+    _PRNG: undefined,
   }
   constructor(opts) {
     super(opts)
@@ -46,6 +48,7 @@ export default class Game extends uR.db.Model {
     this.boss_generator = randomBoss
     window.GAME = this
     riot.observable(this)
+    this.player_moves = []
     this.board.game = this
     this.board.mookset = this.mookset
     this.board.bossset = this.bossset
@@ -56,6 +59,7 @@ export default class Game extends uR.db.Model {
 
     this.ready(() => {
       this.makeVictoryContition()
+      this.board.setPRNG(this._PRNG) // random if undefined
       this.board.reset()
       this.makePlayer()
       this.bindKeys()
@@ -194,17 +198,19 @@ export default class Game extends uR.db.Model {
       ' ': [0, 0],
     }
 
-    this.keydown = e => {
+    this.keydown = event => {
+      event = pick(event, ['key', 'shiftKey', 'ctrlKey'])
       if (this.busy) {
         return
       }
       const input = {
-        dxy: this.key_map[e.key],
-        shiftKey: e.shiftKey,
-        ctrlKey: e.ctrlKey,
+        dxy: this.key_map[event.key],
+        shiftKey: event.shiftKey,
+        ctrlKey: event.ctrlKey,
         turn: this.turn,
       }
       if (input.dxy) {
+        this.player_moves.push(event)
         if (this.player.health > 0 && !this.player.dead) {
           movePlayer(this.player, input)
           if (!this.player.combo && !this.player.combo_parts) {
