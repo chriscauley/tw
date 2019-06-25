@@ -8,8 +8,9 @@
   "source": true,
   "scripts": {
     "lint": "eslint client/",
-    "serve": "yarn img && yarn parcel client/index.html -p 6473 --public-url /static/ --no-hmr",
+    "serve": "yarn img && yarn parcel client/index.html client/tests/index.html -p 6473 --public-url /static/ --no-hmr",
     "test": "parcel client/tests/index.html -p 2324",
+    "test-circle": "yarn madge client/tests/tests.js  client/app.js --circular --warning",
     "img": "cp client/img/sprites/*.png dist"
   },
   "repository": {
