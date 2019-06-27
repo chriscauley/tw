@@ -41,6 +41,7 @@ export default class Game extends uR.db.Model {
     bossset: uR.REQUIRED,
     enemies: true,
     _PRNG: undefined,
+    use_ui: false,
   }
   constructor(opts) {
     super(opts)
@@ -185,7 +186,9 @@ export default class Game extends uR.db.Model {
   }
 
   makeRenderer = () => {
-    uR.element.create('tw-ui', { parent: this.parent }, { game: this })
+    if (this.use_ui) {
+      uR.element.create('tw-ui', { parent: this.parent }, { game: this })
+    }
     this.board.renderer.update()
   }
 
@@ -199,6 +202,7 @@ export default class Game extends uR.db.Model {
     }
 
     this.keydown = event => {
+      event.preventDefault && event.preventDefault()
       event = pick(event, ['key', 'shiftKey', 'ctrlKey'])
       if (this.busy) {
         return

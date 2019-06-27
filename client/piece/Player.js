@@ -90,7 +90,6 @@ export const swapItem = player => {
       const old_item = equipment[slot]
       player.equipment[slot] = floor_item
       board.setOne('item', xy, old_item)
-      board.game.ui.update()
     })
   }
   return move
@@ -137,7 +136,6 @@ export const movePlayer = (player, { dxy, shiftKey, _ctrlKey, turn }) => {
     })
   }
   applyCombo(player, move)
-  player.board.game.ui.update()
   return move
 }
 

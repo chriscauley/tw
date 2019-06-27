@@ -5,6 +5,7 @@ import Game from '../game'
 const playBoard = (path, data) => {
   const game = new Game({
     board: Board.objects.get(data.matches[1]),
+    use_ui: true,
   })
 
   game.ready.start()
