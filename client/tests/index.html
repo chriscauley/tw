@@ -5,7 +5,8 @@
     <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-
+    <link rel="stylesheet" href="../../node_modules/unrest.io/less/base.less">
+    <link rel="stylesheet" href="../styles.less">
   </head>
   <body>
     <div id="snaps"></div>
@@ -17,8 +18,10 @@
     <script>mocha.setup('bdd')</script>
     <script src="./tests.js"></script>
     <script>
-      mocha.checkLeaks();
-      mocha.run();
+      uR.db.ready(() => {
+        // mocha.checkLeaks();
+        mocha.run();
+      })
     </script>
   </body>
 </html>

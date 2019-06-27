@@ -15,7 +15,6 @@ const mod = (n, m) => {
 }
 
 // how many squares are rendered outside of view (radially)
-const OVERFLOW = 2
 const MIRRORS = [[0, 0], [0, 2], [2, 0], [2, 2]]
 
 const base_layer = {
@@ -113,7 +112,7 @@ const layers = {
 
       renderer.hover_xys.forEach(xy => boxy(xy, 'hover0'))
       if (!board.player) {
-        boxy(renderer.center_xy, 'hover1')
+        boxy(renderer.origin, 'hover1')
         boxy([0, 0], 'hover1')
       }
       return results
@@ -182,25 +181,24 @@ Object.entries(layers).forEach(([name, layer]) => {
 export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
   static fields = {
-    radius: 8,
+    diameter: 8,
     offset: 0.5,
+    overflow: 0,
     box_count: 0,
     scale: 32,
-    center_xy: uR.db.Field([0, 0]),
+    origin: uR.db.Field([0, 0]),
+    follow_player: true,
   }
-  static editable_fieldnames = ['radius', 'box_count', 'scale']
+  static editable_fieldnames = ['diameter', 'box_count', 'scale']
 
   static opts = {
     board: uR.REQURIED,
-    parent: '.html-renderer',
   }
   constructor(opts) {
-    opts.center_xy = opts.center_xy || opts.board.start
+    opts.origin = opts.origin || opts.board.start
     super(opts)
     this.board.renderer = this
-    if (typeof this.parent === 'string') {
-      this.parent = document.querySelector(this.parent)
-    }
+    this.parent = this.board.game.parent
     this.moved_fire = {}
     this.sprites = {
       wall: 'dirt-',
@@ -236,14 +234,12 @@ export class RenderBoard extends uR.db.Model {
 
   setZoom = (opts = {}) => {
     this.deserialize(opts)
-    this.radius = Math.min(this.board.W + 2, this.board.H + 2, this.radius)
+    this._d = Math.min(this.board.W, this.board.H, this.diameter)
     this.scale = 32
-    this.size = this.radius * 2 + 1
 
-    this.visible_size = 2 * (this.radius - OVERFLOW)
     this.dxys = []
     this.animations = []
-    const dimension = _.range(-this.radius, this.radius + 1)
+    const dimension = _.range(this._d + (this._d % 2 ? 0 : 1))
     this.health_divisor = 1
 
     dimension.forEach(dx => {
@@ -252,8 +248,8 @@ export class RenderBoard extends uR.db.Model {
       })
     })
     this.parent.style.fontSize = this.scale + 'px'
-    this.parent.style.height = this.visible_size + 'em'
-    this.parent.style.width = this.visible_size + 'em'
+    this.parent.style.height = this._d - 2 * this.overflow + 'em'
+    this.parent.style.width = this._d - 2 * this.overflow + 'em'
 
     if (!this.container) {
       this.container = uR.element.create('div', {
@@ -263,23 +259,21 @@ export class RenderBoard extends uR.db.Model {
       this.parent.addEventListener('mousedown', this.click)
     }
 
-    this.container.className = this.getClass()
-    //this.redraw()
+    this.moveBoard()
+    this.update()
   }
 
   eventToXY = e => {
+    const offset = this._d / 2 - this.overflow + this.offset
     const mouse_xy = [
-      Math.floor(e.offsetX / this.scale - this.radius + OVERFLOW - this.offset),
-      Math.floor(e.offsetY / this.scale - this.radius + OVERFLOW - this.offset),
+      Math.floor(e.offsetX / this.scale - offset),
+      Math.floor(e.offsetY / this.scale - offset),
     ]
-    return geo.vector.add(mouse_xy, this.center_xy)
+    return geo.vector.add(mouse_xy, this.origin)
   }
 
   click = e => {
-    let xy = e.target.xy
-    if (!xy) {
-      xy = this.eventToXY(e)
-    }
+    const xy = this.eventToXY(e)
     if (this.onClick) {
       this.onClick(xy, event)
     }
@@ -287,19 +281,22 @@ export class RenderBoard extends uR.db.Model {
     console.log("CLICKED:", xy, this.board.getOne('piece', xy)) // eslint-disable-line
   }
 
-  getClass() {
+  moveBoard() {
     const { W, H } = this.board
     if (window.location.search.includes('huge')) {
       this.parent.classList.add('huge')
     }
-    return `board w-${W} h-${H}`
+    this.container.className = `board w-${W} h-${H}`
   }
 
   normalize() {
     // base parameters to normalize all sprites too
     const { player } = this.board
-    if (player) {
-      this.center_xy = player.xy
+    if (player && this.follow_player) {
+      this.origin = geo.vector.subtract(player.xy, [
+        Math.floor(this._d / 2) - this.overflow,
+        Math.floor(this._d / 2) - this.overflow,
+      ])
       this.health_divisor = player.damage
     }
   }
@@ -321,15 +318,20 @@ export class RenderBoard extends uR.db.Model {
 
     const { style } = this.container
     if (!window.lock) {
-      const left = this.visible_size / 2 - this.center_xy[0]
-      const top = this.visible_size / 2 - this.center_xy[1]
-      style.marginLeft = `${left - this.offset}em`
-      style.marginTop = `${top - this.offset}em`
+      const offset = this.overflow + (this._d % 2 ? 0 : 0.5)
+      const left = -this.origin[0] - offset
+      const top = -this.origin[1] - offset
+      style.marginLeft = `${left}em`
+      style.marginTop = `${top}em`
       //window.lock = true
     }
     if (instant) {
       style.transition = '0s'
       setTimeout(() => (style.transition = null), 0)
+    }
+
+    if (this.board.game.ui) {
+      this.board.game.ui.update()
     }
 
     if (!(this.frames && this.frames.length)) {
@@ -391,7 +393,7 @@ export class RenderBoard extends uR.db.Model {
       return
     }
     this.normalize()
-    const xy = this.center_xy
+    const xy = this.origin
 
     // get lists of all the items to draw by entity name
     const xys = this.dxys.map(dxy => geo.vector.add(xy, dxy))
@@ -452,8 +454,8 @@ export class RenderBoard extends uR.db.Model {
 
   setHoverXY = xy => {
     const [hover_x, hover_y] = xy
-    const dx_center = hover_x - this.center_xy[0]
-    const dy_center = hover_y - this.center_xy[1]
+    const dx_center = hover_x - this.origin[0]
+    const dy_center = hover_y - this.origin[1]
     this.hover_xys = _.range(this.box_count).map(i => [
       hover_x - dx_center * MIRRORS[i][0],
       hover_y - dy_center * MIRRORS[i][1],
@@ -469,8 +471,6 @@ export class RenderBoard extends uR.db.Model {
       })
       if (name !== 'fire') {
         this.all_divs.push(this.cache[name][index])
-      } else {
-        console.log('fire') // eslint-disable-line
       }
       if (name === 'piece') {
         this.cache[name][index].insertAdjacentHTML(

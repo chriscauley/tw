@@ -14,9 +14,9 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns.append(re_path('app/', unrest.views.index))
     urlpatterns.append(re_path(
         'tests/',
         unrest.views.index,
         kwargs={'path': 'dist/tests/index.html'},
     ))
+    urlpatterns.append(re_path('app/(?:.*)', unrest.views.index))

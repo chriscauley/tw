@@ -1,1 +1,2 @@
 import './geo'
+import './render'
