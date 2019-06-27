@@ -12,11 +12,11 @@ const dir_tests = {
 
 describe('Testing that NESW are turns of each in geo', function() {
   Object.entries(dir_tests).forEach(([direction, tests]) => {
-    it('Test rotation: ' + direction, function() {
-      tests.forEach(([s, start, result]) => {
-        it(s, function() {
-          expect(turn(start, direction)).to.deepEqual(result)
-        })
+    it(`Test Rotation: ${direction}`, function() {
+      tests.forEach(([_s, start, result]) => {
+        const actual = turn(start, direction)
+        expect(actual[0]).to.equal(result[0])
+        expect(actual[1]).to.equal(result[1])
       })
     })
   })
