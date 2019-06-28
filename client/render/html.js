@@ -182,7 +182,6 @@ export class RenderBoard extends uR.db.Model {
   static slug = 'render_html.Board'
   static fields = {
     diameter: 8,
-    offset: 0.5,
     overflow: 0,
     box_count: 0,
     scale: 32,
@@ -235,11 +234,12 @@ export class RenderBoard extends uR.db.Model {
   setZoom = (opts = {}) => {
     this.deserialize(opts)
     this._d = Math.min(this.board.W, this.board.H, this.diameter)
+    this.offset = this._d % 2 ? 0 : 0.5
     this.scale = 32
 
     this.dxys = []
     this.animations = []
-    const dimension = _.range(this._d + (this._d % 2 ? 0 : 1))
+    const dimension = _.range(this._d + this.offset)
     this.health_divisor = 1
 
     dimension.forEach(dx => {
@@ -318,7 +318,7 @@ export class RenderBoard extends uR.db.Model {
 
     const { style } = this.container
     if (!window.lock) {
-      const offset = this.overflow + (this._d % 2 ? 0 : 0.5)
+      const offset = this.overflow + this.offset
       const left = -this.origin[0] - offset
       const top = -this.origin[1] - offset
       style.marginLeft = `${left}em`

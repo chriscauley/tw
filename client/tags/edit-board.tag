@@ -14,15 +14,21 @@ const XYMixin = {
     this.boxes = []
 
     if (this.opts.continuous) {
-      this.getXY = ({ offsetX, offsetY }) => [
-        Math.floor(offsetX / this.zoom)/this.board.renderer.scale,
-        Math.floor(offsetY / this.zoom)/this.board.renderer.scale,
-      ]
+      this.getXY = ({ offsetX, offsetY }) => {
+        const { offset, scale } = this.board.renderer
+        return [
+          Math.floor(Math.floor(offsetX / this.zoom)/scale+offset),
+          Math.floor(Math.floor(offsetY / this.zoom)/scale+offset),
+        ]
+      }
     } else {
-      this.getXY = ({ offsetX, offsetY }) => [
-        Math.floor(offsetX / (this.zoom*this.board.renderer.scale)),
-        Math.floor(offsetY / (this.zoom*this.board.renderer.scale)),
-      ]
+      this.getXY = ({ offsetX, offsetY }) => {
+        const { offset, scale } = this.board.renderer
+        return [
+          Math.floor(offsetX / (this.zoom*scale)+offset),
+          Math.floor(offsetY / (this.zoom*scale)+offset),
+        ]
+      }
     }
   },
 
@@ -59,11 +65,11 @@ const XYMixin = {
     }
     this.mouseX = x
     this.mouseY = y
-    const { setHoverXY, visible_size, center_xy } = this.board.renderer
+    const { setHoverXY, visible_size, origin, offset } = this.board.renderer
 
     setHoverXY([
-      x - visible_size/2 + center_xy[0],
-      y - visible_size/2 + center_xy[1],
+      x + origin[0],
+      y + origin[1],
     ])
     if (this.mouse_down) {
       if (this.selected_tool.drag) {
@@ -107,16 +113,14 @@ this.mixin(XYMixin)
 window.B = this.board = Board.objects.get(this.opts.matches[1])
 this.on('mount', () => {
   this.board.parent = this.root.querySelector(".html-renderer")
-  this.board.game = {turn: 0} // necessary for board.newPiece
+  this.board.game = {turn: 0, parent: this.board.parent } // necessary for board.newPiece
   this.board.reset()
   this.tools.forEach(tool => tool.bindBoard(this.board))
-  const center_xy = [Math.floor(this.board.W/2), Math.floor(this.board.H/2)]
   this.board.renderer.setZoom({
-    radius: Math.max(...center_xy),
-    offset: 0,
+    diameter: 100,
+    origin: [-10,-10],
     box_count: 1,
     scale: 16,
-    center_xy,
   })
   this.board.renderer.onClick = (_xy, event) => {
     const done = {}
