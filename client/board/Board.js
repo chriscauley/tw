@@ -172,6 +172,14 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       ...getEmptyEntities(),
       ..._.cloneDeep(this._entities),
     }
+    Object.entries(this._entities).forEach(([key, entry_map]) => {
+      if (['square'].includes(key)) {
+        return
+      }
+      Object.keys(entry_map).forEach(index => {
+        this.entities.square[index] = 1
+      })
+    })
     this._piece_id = 0
     this.cacheCoordinates()
     this._regenerateRooms()
@@ -199,7 +207,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
   }
 
   _regenerateRooms() {
-    const max_range = 4
+    const max_range = 8
     const used_ranges = {}
 
     Object.keys(this.entities.square)
@@ -231,11 +239,15 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
       Object.keys(this.entities.room)
         .map(Number)
         .forEach(center_index => {
+          const room = this.entities.room[center_index]
+          if (room.radius < range) {
+            return
+          }
           getOpenIndexes(center_index, dindexes).forEach(target_index => {
             if (!used_ranges[target_index]) {
               // square hasn't been used before, mark it as used
               used_ranges[target_index] = range
-              if (range === max_range) {
+              if (range === room.radius) {
                 this.entities.wall[target_index] = 1
               }
             } else if (range - used_ranges[target_index] < 2) {

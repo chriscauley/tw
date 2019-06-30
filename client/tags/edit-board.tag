@@ -92,18 +92,19 @@ const XYMixin = {
     <div class={theme.content}>
       <div style="overflow:scroll">
         <div class="html-renderer editor" onmousemove={onMouseMove} onmouseup={onMouseUp}>
-          <div class="hover-mask"></div>
         </div>
       </div>
       <div>
-        <div class="mb-2">
-          <div each={tool in tools} class={tool.className} onclick={selectTool}>
-            {tool.name}
+        <div class="controls">
+          <div class="mb-2">
+            <div each={tool in tools} class={tool.className} onclick={selectTool}>
+              {tool.name}
+            </div>
           </div>
+          <button class={css.btn.primary} onclick={save}>Save</button>
+          <button class={css.btn.cancel} onclick={clear}>Clear</button>
+          <ur-form if={renderer} object={renderer} success={success} />
         </div>
-        <button class={css.btn.primary} onclick={save}>Save</button>
-        <button class={css.btn.cancel} onclick={clear}>Clear</button>
-        <ur-form if={renderer} object={renderer} success={success} />
       </div>
     </div>
   </div>
@@ -118,7 +119,7 @@ this.on('mount', () => {
   this.tools.forEach(tool => tool.bindBoard(this.board))
   this.board.renderer.setZoom({
     diameter: 100,
-    origin: [-10,-10],
+    origin: [0, 0],
     box_count: 1,
     scale: 16,
   })

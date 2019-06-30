@@ -3,6 +3,8 @@ import { range, isEqual } from 'lodash'
 import uR from 'unrest.io'
 import geo from '../geo'
 
+const mod = (n, m) => ((n % m) + m) % m
+
 class AbstractTool extends uR.db.Model {
   static slug = 'none.BaseTool'
   static opts = {
@@ -25,7 +27,7 @@ class AbstractTool extends uR.db.Model {
       return this.remove(xy)
     }
     // all tools need a square, even square
-    this.board._.setOne('square', xy, 1)
+    this.board.setOne('square', xy, 1)
     this._click(xy, event)
   }
 
@@ -55,6 +57,10 @@ class CycleTool extends AbstractTool {
   getNextValue(xy) {
     this.state[xy] = this.state[xy] === undefined ? 0 : this.state[xy] + 1
     return this.values[this.state[xy] % this.values.length]
+  }
+  getPrevValue(xy) {
+    this.state[xy] = (this.state[xy] === undefined ? 0 : this.state[xy]) - 1
+    return this.values[mod(this.state[xy], this.values.length)]
   }
   remove(xy) {
     super.remove(xy)
@@ -91,12 +97,27 @@ class PieceTool extends CycleTool {
   }
 }
 
-class RoomTool extends AbstractTool {
+class RoomTool extends CycleTool {
   static opts = {
     layer: 'room',
+    values: range(0, 9),
   }
   _click(xy, _event) {
-    this.board._.setOne('room', xy, { xy })
+    let radius = this.getNextValue(xy)
+    if (!radius) {
+      radius = this.getNextValue(xy)
+    }
+    this.board._.setOne('room', xy, { xy, radius })
+    this.board.reset()
+  }
+  remove(xy) {
+    const radius = this.getPrevValue(xy)
+    if (radius === 0) {
+      this.board._.removeOne('room', xy)
+      delete this.state[xy]
+    } else {
+      this.board._.setOne('room', xy, { xy, radius })
+    }
     this.board.reset()
   }
 }
