@@ -167,6 +167,37 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.MAX_Y = this.H
   }
 
+  shift(dx, dy) {
+    const oldIndexToXy = {}
+    const oldIndexToIndex = {}
+    _.range(this.W).forEach(x => {
+      _.range(this.H).forEach(y => {
+        const old_index = x + this.W * y
+        const new_xy = [x + dx, y + dy]
+        oldIndexToXy[old_index] = new_xy
+      })
+    })
+    this.W += dx
+    this.H += dy
+    this.cacheCoordinates()
+    Object.entries(oldIndexToXy).forEach(([old_index, new_xy]) => {
+      oldIndexToIndex[old_index] = this.xy2i(new_xy)
+    })
+    const new_entities = getEmptyEntities()
+    Object.entries(this._entities).forEach(([name, values]) => {
+      Object.entries(values).forEach(([old_index, entity]) => {
+        const new_index = oldIndexToIndex[old_index]
+        new_entities[name][new_index] = entity
+        if (name === 'piece') {
+          entity.xy = this.i2xy(parseInt(new_index))
+        }
+      })
+    })
+    this._entities = new_entities
+    this.reset()
+    this.renderer.update()
+  }
+
   reset() {
     this.entities = {
       ...getEmptyEntities(),
@@ -184,7 +215,7 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
     this.cacheCoordinates()
     this._regenerateRooms()
     Object.values(this._entities.piece).forEach(piece => {
-      this.setOne('piece', piece.xy, undefined)
+      this.removeOne('piece', piece.xy)
       this.newPiece(piece)
     })
 

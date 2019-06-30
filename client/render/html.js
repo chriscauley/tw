@@ -400,8 +400,8 @@ export class RenderBoard extends uR.db.Model {
     this.oob = {}
     xys.forEach(xy => {
       if (
-        !_.inRange(xy[1], this.board.MIN_X, this.board.MAX_X) ||
-        !_.inRange(xy[0], this.board.MIN_Y, this.board.MAX_Y)
+        !_.inRange(xy[0], this.board.MIN_X, this.board.MAX_X) ||
+        !_.inRange(xy[1], this.board.MIN_Y, this.board.MAX_Y)
       ) {
         this.oob[xy] = true
       }

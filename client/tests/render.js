@@ -51,7 +51,7 @@ import uR from 'unrest.io'
 //   })
 // ]
 
-const startSquareGame = (W, H) => {
+const startSquareGame = ({ W, H, _entities = {} }) => {
   const parent = document.createElement('div')
   parent.className = 'html-renderer'
   document.body.appendChild(parent)
@@ -60,7 +60,10 @@ const startSquareGame = (W, H) => {
   const game = new Game({
     parent,
     board: new Board({
-      _entities: { square },
+      _entities: {
+        square,
+        ..._entities,
+      },
       W,
       H,
     }),
@@ -72,8 +75,8 @@ const startSquareGame = (W, H) => {
 uR.db.ready(() => {
   slicer.css.createAllSpriteCSS()
   describe('Renderer', function() {
-    const game1 = startSquareGame(5, 5)
     it('Zooming in and out gives the correct number of squares ', function() {
+      const game1 = startSquareGame({ W: 5, H: 5 })
       const renderer = (window.R = game1.board.renderer)
 
       expect(renderer.frames[0].square.length).to.equal(25)
@@ -83,8 +86,8 @@ uR.db.ready(() => {
       expect(renderer.dxys.length).to.equal(9)
     })
 
-    const game2 = startSquareGame(4, 4)
     it('Moving the player only changes origin if renderer.follow_player', function() {
+      const game2 = startSquareGame({ W: 4, H: 4 })
       const renderer = (window.R2 = game2.board.renderer)
       renderer.setZoom({ origin: [0, 0], follow_player: false })
       expect(renderer.origin).to.deep.equal([0, 0])
@@ -97,11 +100,27 @@ uR.db.ready(() => {
       expect(renderer.origin).to.deep.equal([-1, -1])
     })
 
-    const game3 = startSquareGame(8, 8)
     it('Even and odd diameters both show ', function() {
+      const game3 = startSquareGame({ W: 8, H: 8 })
       const renderer = (window.R3 = game3.board.renderer)
       renderer.setZoom({ origin: [0, 0], follow_player: false })
       expect(renderer.origin).to.deep.equal([0, 0])
+    })
+
+    it('Board.shift', function() {
+      const game4 = startSquareGame({ W: 3, H: 3 })
+      const board = (window.BOARD = game4.board)
+      /*board.newPiece({
+        xy: [1,1],
+        type: 'spitter',
+      })*/
+      board.renderer.update()
+      const getSquares = b => Object.keys(b.entities.square).map(Number)
+      expect(getSquares(board)).to.deep.equal(range(9))
+      board.shift(1, 2)
+      board.renderer.setZoom({})
+      const shifted = [9, 10, 11, 13, 14, 15, 17, 18, 19]
+      expect(getSquares(board)).to.deep.equal(shifted)
     })
   })
 })
