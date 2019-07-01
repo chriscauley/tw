@@ -90,5 +90,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../dist'),
+    os.path.join(BASE_DIR, '../client/img/sprites/'),
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
