@@ -55,7 +55,6 @@ const layers = {
       'following',
       '_sprite',
       'health',
-      'moved',
     ],
     getResults(xys, board, renderer) {
       const results = []
@@ -64,6 +63,12 @@ const layers = {
         if (piece) {
           const value = _.pick(piece, this.prop_names)
           value.following = !!value.following
+
+          // if the piece has moved, moved-dxy handles the animation
+          const { last_move, dxy } = piece
+          if (last_move && last_move._from !== piece.index) {
+            value.moved = dxy.join('')
+          }
           results.push([xy, value])
 
           // Pieces need thier tasks rendered as animations
@@ -360,17 +365,13 @@ export class RenderBoard extends uR.db.Model {
       element.xy = xy
 
       if (name === 'piece') {
-        element.piece_id = value.id
-        const { last_move, dxy } = value
-        value.moved = undefined
-        if (last_move && last_move._from && last_move._from !== value.index) {
-          value.moved = dxy.join('')
-        }
-        if (last_move && last_move.damages) {
-          observer.one('animate', () =>
-            element.classList.add(`damage-${dxy.join('')}`),
-          )
-        }
+        // #! TODO this needs to operate off an attribute on value, last move is on piece only
+        //const { last_move, dxy } = value
+        //if (last_move && last_move.damages) {
+        //  observer.one('animate', () =>
+        //    element.classList.add(`damage-${dxy.join('')}`),
+        //  )
+        //}
       }
       if (value.moved) {
         element.classList.remove(`moved-${value.moved}`)
@@ -496,7 +497,7 @@ export class RenderBoard extends uR.db.Model {
   }
   renderOne = name => (xy, value) => {
     if (name === 'piece') {
-      const { health, max_health } = value
+      const { health } = value
       const extras = {}
       if (health > 1) {
         extras.health = Math.ceil(health / this.health_divisor)
