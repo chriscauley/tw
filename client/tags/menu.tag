@@ -86,12 +86,11 @@ const MenuMixin = {
       <div if={error} class={css.error}>{error}</div>
       <button class={css.btn.primary} onClick={startGame}>Start</button>
       -->
-      <div if={uR.auth.user && uR.auth.user.is_superuser}>
-        <div each={board in boards}>
-          <a class="edit btn btn-primary fa fa-pencil" href="#/board/edit/{board.id}/"/>
-          <a class="edit btn btn-primary fa fa-play" href="#/board/{board.id}/1/1/"/>
-          <span class="name">{board.name}</span>
-        </div>
+      <div each={board in boards}>
+        <a if={show_edit}
+           class="edit btn btn-primary fa fa-pencil" href="#/board/edit/{board.id}/"/>
+        <a class="edit btn btn-primary fa fa-play" href="#/board/{board.id}/1/1/"/>
+        <span class="name">{board.name}</span>
       </div>
     </div>
   </div>
