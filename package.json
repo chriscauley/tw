@@ -26,7 +26,7 @@
     "parcel-plugin-riot": "^2.1.0",
     "riot": "^3.13.2",
     "unrest.io": "^0.0.4",
-    "ur-random": "^0.0.4"
+    "ur-random": "^0.0.5"
   },
   "devDependencies": {
     "@babel/core": "7.2.2",

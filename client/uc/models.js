@@ -26,6 +26,9 @@ export class TestResult extends Model {
       .join(' | ')
   }
   static validate({ params, results }) {
+    if (!uR.auth.user) {
+      return
+    }
     const param_hash = objectHash(params)
     const obj = this.objects.filter({ param_hash }).find(Boolean)
     if (obj) {
@@ -40,6 +43,9 @@ export class TestResult extends Model {
       .then(obj => obj.validate(results))
   }
   validate(results) {
+    if (!uR.auth.user) {
+      return
+    }
     const new_hash = objectHash(results)
     this.last_run = new Date()
     if (!this.result_hash) {

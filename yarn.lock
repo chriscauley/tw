@@ -6003,9 +6003,10 @@ upath@^1.1.1:
   resolved "https://registry.yarnpkg.com/upath/-/upath-1.1.2.tgz#3db658600edaeeccbe6db5e684d67ee8c2acd068"
   integrity sha512-kXpym8nmDmlCBr7nKdIx8P2jNBa+pBpIUFRnKJ4dr8htyYGJFokkr2ZvERRtUN+9SY+JqXouNgUPtv6JQva/2Q==
 
-ur-random@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/ur-random/-/ur-random-0.0.4.tgz#b49e42c1ea20f14a4c92227bb4a7ccd893d0c6a9"
+ur-random@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/ur-random/-/ur-random-0.0.5.tgz#178f77740b736ead91e6212af0b015639a58b7bd"
+  integrity sha512-g0+Y5UO6Gwx//fI5RXU4OH0FyQYHMyN4PEyUjBHE/hFR8vLkhvIZj+nxgCbuBxMuCv47dWGgUQpjyxRJgFKQ5g==
 
 uri-js@^4.2.2:
   version "4.2.2"
