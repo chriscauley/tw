@@ -54,6 +54,7 @@ const layers = {
       'follow_order',
       'following',
       '_sprite',
+      'health',
       'moved',
     ],
     getResults(xys, board, renderer) {
@@ -497,7 +498,7 @@ export class RenderBoard extends uR.db.Model {
     if (name === 'piece') {
       const { health, max_health } = value
       const extras = {}
-      if (max_health > 1) {
+      if (health > 1) {
         extras.health = Math.ceil(health / this.health_divisor)
         extras.health = Math.min(extras.health, 5)
       }
