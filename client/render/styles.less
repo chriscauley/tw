@@ -32,8 +32,11 @@
   overflow: hidden;
   position: relative;
   .loop(60);
+  .test & {
+    margin: 0;
+  }
   &:empty { display: none; }
-  &[tabindex]:not(:focus):before {
+  [tabindex]:not(:focus) > &:before {
     @size: 6em;
     align-items: center;
     background: rgba(255,255,255,0.75);
@@ -94,7 +97,7 @@
       z-index: 39;
     }
   }
-  &[tabindex]:not(:focus):before,
+  [tabindex]:not(:focus) > &:before,
   &.editor:before {
     z-index: 100;
   }

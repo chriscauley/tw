@@ -198,12 +198,17 @@ export class RenderBoard extends uR.db.Model {
 
   static opts = {
     board: uR.REQURIED,
+    renderer_class: '',
   }
+
   constructor(opts) {
     opts.origin = opts.origin || opts.board.start
     super(opts)
     this.board.renderer = this
-    this.parent = this.board.game.parent
+    this.parent = uR.element.create('div', {
+      parent: this.board.game.parent,
+      className: 'html-renderer ' + opts.renderer_class,
+    })
     this.moved_fire = {}
     this.sprites = {
       wall: 'dirt-',

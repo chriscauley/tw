@@ -51,10 +51,14 @@ import uR from 'unrest.io'
 //   })
 // ]
 
+const wrapper = document.createElement('div')
+wrapper.className = 'card'
+document.body.appendChild(wrapper)
+
 const startSquareGame = ({ W, H, _entities = {} }) => {
   const parent = document.createElement('div')
-  parent.className = 'html-renderer'
-  document.body.appendChild(parent)
+  parent.className = 'test card-body'
+  wrapper.appendChild(parent)
   const square = {}
   range(W).map(x => range(H).map(y => (square[x + y * W] = 1)))
   const game = new Game({

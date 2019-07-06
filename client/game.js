@@ -33,7 +33,7 @@ export default class Game extends uR.db.Model {
     turn: 0,
   }
   static opts = {
-    parent: '.html-renderer',
+    parent: '#main',
     victory_condition: killAllEnemies,
     room_count: 1,
     board: uR.REQUIRED,
