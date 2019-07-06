@@ -90,20 +90,21 @@ const XYMixin = {
 <edit-board>
   <div class={theme.outer}>
     <div class={theme.content}>
-      <div style="overflow:scroll">
-        <div class="html-renderer editor" onmousemove={onMouseMove} onmouseup={onMouseUp}>
-        </div>
+      <div style="overflow:scroll" class="editor"
+           onmousemove={onMouseMove} onmouseup={onMouseUp}>
       </div>
       <div>
         <div class="controls">
+          <div class={theme.header_title}>{board.name}</div>
           <div class="mb-2">
-            <div each={tool in tools} class={tool.className} onclick={selectTool}>
-              {tool.name}
+            <div each={tool in tools} class={tool.className} onclick={selectTool}
+                 title={tool.name}>
+              <div class="sprite sprite-{tool.sprite}"></div>
             </div>
           </div>
           <button class={css.btn.primary} onclick={save}>Save</button>
           <button class={css.btn.cancel} onclick={clear}>Clear</button>
-          <ur-form if={renderer} object={renderer} success={success} />
+          <button class={css.btn.primary} onclick={openRenderer}>Renderer</button>
         </div>
       </div>
     </div>
@@ -113,7 +114,7 @@ this.mixin(uR.css.ThemeMixin)
 this.mixin(XYMixin)
 window.B = this.board = Board.objects.get(this.opts.matches[1])
 this.on('mount', () => {
-  this.board.parent = this.root.querySelector(".html-renderer")
+  this.board.parent = this.root.querySelector("edit-board .editor")
   this.board.game = {turn: 0, parent: this.board.parent } // necessary for board.newPiece
   this.board.reset()
   this.tools.forEach(tool => tool.bindBoard(this.board))
@@ -137,8 +138,5 @@ this.on('mount', () => {
   this.renderer.update()
   this.update()
 })
-success() {
-  this.board.renderer.setZoom(this.board.renderer)
-}
 </script>
 </edit-board>

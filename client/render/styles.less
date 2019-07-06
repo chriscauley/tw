@@ -281,6 +281,8 @@
 .sprite {
   background: center no-repeat;
   background-size: .8 * @scale;
+  height: 1em;
+  width: 1em;
   &.hide {
     filter: grayscale(1);
     opacity: 0.5
@@ -351,38 +353,36 @@
   .spriteloop(@slug, @counter - 1)
 }
 
-.html-renderer .room {
+.sprite.room {
   background: #F88;
   opacity: 0.5;
 }
 
-.html-renderer {
-  .ash, .gold {
-    border-radius: 50%;
-    height: 0.8em;
-    line-height: 1;
-    margin: 0.1em;
-    text-align: center;
-    width: 0.8em;
-    &:before {
-      font-size: 0.75em;
-    }
+.sprite.ash, .sprite.gold {
+  border-radius: 50%;
+  height: 0.8em;
+  line-height: 1;
+  margin: 0.1em;
+  text-align: center;
+  width: 0.8em;
+  &:before {
+    font-size: 0.75em;
   }
-  .ash {
-    background: #333;
-    color: white;
-    .spriteloop(ash, 16)
+}
+.sprite.ash {
+  background: #333;
+  color: white;
+  .spriteloop(ash, 16)
+}
+.sprite.gold {
+  background: #883;
+  border: 0.1em solid #888;
+  color: white;
+  .spriteloop(gold, 16);
+  &.red-inner {
+    background: red;
   }
-  .gold {
-    background: #883;
-    border: 0.1em solid #888;
-    color: white;
-    .spriteloop(gold, 16);
-    &.red-inner {
-      background: red;
-    }
-    &.red-outline {
-      border-color: red;
-    }
+  &.red-outline {
+    border-color: red;
   }
 }

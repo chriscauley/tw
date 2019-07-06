@@ -5,11 +5,12 @@ import geo from '../geo'
 
 const mod = (n, m) => ((n % m) + m) % m
 
-class AbstractTool extends uR.db.Model {
+class BaseTool extends uR.db.Model {
   static slug = 'none.BaseTool'
   static opts = {
     layer: uR.REQUIRED,
     default_value: 1,
+    sprite: uR.REQUIRED,
   }
   constructor(opts) {
     super(opts)
@@ -38,9 +39,7 @@ class AbstractTool extends uR.db.Model {
   }
 }
 
-class BaseTool extends AbstractTool {}
-
-class CycleTool extends AbstractTool {
+class CycleTool extends BaseTool {
   static opts = {
     values: geo.dxy.list,
   }
@@ -75,6 +74,10 @@ class PieceTool extends CycleTool {
   static opts = {
     layer: 'piece',
     type: uR.REQUIRED,
+  }
+  constructor(opts) {
+    super(opts)
+    this.name = this.type
   }
   _click(xy, _event) {
     const piece = this.board._.getOne('piece', xy)
@@ -125,30 +128,38 @@ class RoomTool extends CycleTool {
 export default [
   new BaseTool({
     layer: 'square',
+    sprite: 'floor1',
   }),
 
   new BaseTool({
     layer: 'wall',
+    sprite: 'wall-1',
   }),
 
   new CycleTool({
     layer: 'floor_dxy',
     values: geo.dxy.list,
+    sprite: 'greenarrow01',
   }),
 
   new CycleTool({
     layer: 'ash',
+    sprite: 'ash-1 ash',
     values: range(1, 9),
   }),
 
   new CycleTool({
     layer: 'gold',
+    sprite: 'gold-1 gold',
     values: range(1, 9),
   }),
 
   new PieceTool({
     type: 'spitter',
+    sprite: 'o-eye  ',
   }),
 
-  new RoomTool({}),
+  new RoomTool({
+    sprite: ' room',
+  }),
 ]
