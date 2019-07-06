@@ -201,9 +201,8 @@ export default class Game extends uR.db.Model {
       ' ': [0, 0],
     }
 
-    this.keydown = event => {
-      event.preventDefault && event.preventDefault()
-      event = pick(event, ['key', 'shiftKey', 'ctrlKey'])
+    this.keydown = _event => {
+      const event = pick(_event, ['key', 'shiftKey', 'ctrlKey'])
       if (this.busy) {
         return
       }
@@ -214,6 +213,7 @@ export default class Game extends uR.db.Model {
         turn: this.turn,
       }
       if (input.dxy) {
+        _event.preventDefault && _event.preventDefault()
         this.player_moves.push(event)
         if (this.player.health > 0 && !this.player.dead) {
           movePlayer(this.player, input)
