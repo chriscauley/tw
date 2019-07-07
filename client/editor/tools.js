@@ -2,6 +2,7 @@ import { range, isEqual } from 'lodash'
 
 import uR from 'unrest.io'
 import geo from '../geo'
+import types from '../piece/types'
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -125,7 +126,7 @@ class RoomTool extends CycleTool {
   }
 }
 
-export default [
+const tools = [
   new BaseTool({
     layer: 'square',
     sprite: 'floor1',
@@ -154,12 +155,18 @@ export default [
     values: range(1, 9),
   }),
 
-  new PieceTool({
-    type: 'spitter',
-    sprite: 'o-eye  ',
-  }),
-
   new RoomTool({
     sprite: ' room',
   }),
 ]
+
+types.mook_map.forEach((value, key) => {
+  tools.push(
+    new PieceTool({
+      type: key,
+      sprite: value.sprite,
+    }),
+  )
+})
+
+export default tools
