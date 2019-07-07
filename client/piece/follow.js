@@ -23,7 +23,7 @@ const _canStillFollow = (piece, target, match) => {
 
 export default pieces => {
   // pieces without sight cannot see
-  pieces = pieces.filter(p => p.sight)
+  pieces = pieces.filter(p => p.sight && !p._type.no_follow)
 
   // order is useful in optimizing performance as it tracks iterations of follow
   // currently not in use anywhere
