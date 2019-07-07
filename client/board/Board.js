@@ -81,11 +81,11 @@ class Board extends DialogMixin(Random.Mixin(Model)) {
         delete this._entities[type][this.xy2i(xy)]
       },
       newPiece: opts => {
+        this._entities.piece[this.xy2i(opts.xy)] = opts
         opts._PRNG = opts._PRNG || this.random.int()
         const piece = newPiece(opts)
         piece._turn = this.game.turn
         this.setPiece(piece.xy, piece)
-        this._.setOne('piece', piece.xy, piece)
         return piece
       },
     }

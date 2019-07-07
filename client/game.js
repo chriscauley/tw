@@ -42,6 +42,7 @@ export default class Game extends uR.db.Model {
     enemies: true,
     _PRNG: undefined,
     use_ui: false,
+    player: undefined,
   }
   constructor(opts) {
     super(opts)
@@ -170,6 +171,9 @@ export default class Game extends uR.db.Model {
   }
 
   makePlayer() {
+    if (this.player !== undefined) {
+      return
+    }
     this.player = newPlayer({
       type: 'player',
       dxy: [0, 1],

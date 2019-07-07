@@ -55,7 +55,7 @@ const wrapper = document.createElement('div')
 wrapper.className = 'card'
 document.body.appendChild(wrapper)
 
-const startSquareGame = ({ W, H, _entities = {} }) => {
+const startSquareGame = ({ W, H, _entities = {}, game_opts = {} }) => {
   const parent = document.createElement('div')
   parent.className = 'test card-body'
   wrapper.appendChild(parent)
@@ -71,6 +71,7 @@ const startSquareGame = ({ W, H, _entities = {} }) => {
       W,
       H,
     }),
+    ...game_opts,
   })
   game.ready.start()
   return game
@@ -125,6 +126,25 @@ uR.db.ready(() => {
       board.renderer.setZoom({})
       const shifted = [9, 10, 11, 13, 14, 15, 17, 18, 19]
       expect(getSquares(board)).to.deep.equal(shifted)
+    })
+  })
+
+  describe('Game.battle', function() {
+    it('skeleton vs pot', function() {
+      const game_opts = { player: null }
+      const _entities = {
+        piece: {
+          1: { type: 'seeker', xy: [1, 0] },
+          7: { type: 'pot', xy: [1, 2], team: 1 },
+        },
+      }
+      const game5 = startSquareGame({ W: 4, H: 3, game_opts, _entities })
+      const seeker = game5.board.getOne('piece', [1, 0])
+      const pot = game5.board.getOne('piece', [1, 2])
+      expect(seeker.xy).to.deep.equal([1, 0])
+      expect(pot.xy).to.deep.equal([1, 2])
+      expect(seeker.team).to.equal(0)
+      expect(pot.team).to.equal(1)
     })
   })
 })
