@@ -36,6 +36,8 @@ export default class Game extends uR.db.Model {
     victory_condition: undefined,
     room_count: 1,
     board: uR.REQUIRED,
+    level: 0,
+    mook_count: 3,
     mook_set: undefined,
     boss_set: undefined,
     enemies: true,
@@ -48,7 +50,6 @@ export default class Game extends uR.db.Model {
     window.GAME = this
     riot.observable(this)
     this.player_moves = []
-    this.mook_count = 5
     this.board.game = this
     this.ready = new uR.Ready()
     if (typeof this.parent === 'string') {
@@ -113,7 +114,9 @@ export default class Game extends uR.db.Model {
   nextTurn = () => {
     this.busy = true
     if (goals.check(this)) {
-      this.gamewon()
+      //this.gamewon()
+      this.level++
+      goals.prep(this)
     } else {
       // #! TODO do priority tasks before (balls colliding head on)
       // pieces.filter(p => types[piece.type].priority_tasks)

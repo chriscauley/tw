@@ -11,7 +11,7 @@ const spawnIfNoPieces = game => {
 
 const spawnBoardPieces = game => {
   const { board } = game
-  randomPiece(board, 5, generators[game.mook_set])
+  randomPiece(board, game.mook_count + game.level, generators[game.mook_set])
 }
 
 const preps = {

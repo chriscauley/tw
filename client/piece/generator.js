@@ -40,7 +40,6 @@ export const randomPiece = (board, mook_count, mookset) => {
       _PRNG: board.random.int(),
     })
   })
-  board.mook_count++
 }
 
 export const randomBoss = ({ board }) => {
