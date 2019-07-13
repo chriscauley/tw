@@ -1,4 +1,4 @@
-import { randomPiece } from '../piece/generator'
+import generators, { randomPiece } from '../piece/generator'
 
 const noPieces = ({ board }) =>
   !board.getPieces().find(piece => piece.team === 0)
@@ -11,7 +11,7 @@ const spawnIfNoPieces = game => {
 
 const spawnBoardPieces = game => {
   const { board } = game
-  randomPiece(board, 5, ['walker'])
+  randomPiece(board, 5, generators[game.mook_set])
 }
 
 const preps = {

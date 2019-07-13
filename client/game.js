@@ -36,8 +36,8 @@ export default class Game extends uR.db.Model {
     victory_condition: undefined,
     room_count: 1,
     board: uR.REQUIRED,
-    mookset: uR.REQUIRED,
-    bossset: uR.REQUIRED,
+    mook_set: undefined,
+    boss_set: undefined,
     enemies: true,
     _PRNG: undefined,
     use_ui: false,
@@ -50,8 +50,6 @@ export default class Game extends uR.db.Model {
     this.player_moves = []
     this.mook_count = 5
     this.board.game = this
-    this.board.mookset = this.mookset
-    this.board.bossset = this.bossset
     this.ready = new uR.Ready()
     if (typeof this.parent === 'string') {
       this.parent = document.querySelector(this.parent)
@@ -63,6 +61,7 @@ export default class Game extends uR.db.Model {
       this.makePlayer()
       this.bindKeys()
       this.board.consumeGold()
+      goals.prep(this)
       this.makeRenderer()
     })
   }

@@ -37,10 +37,6 @@ export const getEmptyEntities = () => {
 class Board extends DialogMixin(Random.Mixin(Model)) {
   static slug = 'server.Board'
   static editable_fieldnames = ['name', 'W', 'H']
-  static opts = {
-    mookset: undefined,
-    bossset: undefined,
-  }
   static fields = {
     id: Int(),
     name: String(),
