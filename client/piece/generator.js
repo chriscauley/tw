@@ -27,15 +27,17 @@ export class BossSet extends NamedModel {
 new APIManager(BossSet)
 new APIManager(MookSet)
 
-export const randomPiece = ({ board }) => {
-  board.rooms.forEach(room => {
-    _.range(board.mook_count).forEach(() => {
-      const name = board.random.choice(board.mookset.mooks)
-      board.newPiece({
-        xy: randomEmptyXY(board, room.xys),
-        type: name,
-        _PRNG: board.random.int(),
-      })
+export const randomPiece = (board, mook_count, mookset) => {
+  const xys = Object.keys(board.entities.square)
+    .filter(i => !board.entities.wall[i])
+    .filter(i => !board.entities.piece[i])
+    .map(board.i2xy)
+  _.range(mook_count).forEach(() => {
+    const name = board.random.choice(mookset)
+    board.newPiece({
+      xy: randomEmptyXY(board, xys),
+      type: name,
+      _PRNG: board.random.int(),
     })
   })
   board.mook_count++
@@ -49,4 +51,8 @@ export const randomBoss = ({ board }) => {
     type: name,
     _PRNG: board.random.int(),
   })
+}
+
+export default {
+  'bats-n-bones': ['drifter', 'seeker'],
 }

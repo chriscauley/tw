@@ -6,6 +6,8 @@ const playBoard = (path, data) => {
   const game = new Game({
     board: Board.objects.get(data.matches[1]),
     use_ui: true,
+    victory_condition: data.matches[2],
+    mook_set: data.matches[3],
   })
 
   game.ready.start()
@@ -13,7 +15,7 @@ const playBoard = (path, data) => {
 }
 
 export default {
-  '^#/board/(\\d+)/(\\d+)/(\\d+)/$': playBoard,
+  '^#/board/(\\d+)/([^/]+)/([^/]+)/$': playBoard,
   '^#/board/edit/(\\d+)/$': uR.router.routeElement('edit-board'),
   '^$': uR.router.routeElement('board-menu'),
   '^#!/board/new/$': uR.router.routeElement('ur-form', {

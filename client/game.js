@@ -4,9 +4,8 @@ import { pick } from 'lodash'
 
 import { applyMove, movePlayer, respawn } from './lib'
 import { newPlayer } from './piece/entity'
+import goals from './board/goals'
 import follow from './piece/follow'
-import { randomPiece, randomBoss } from './piece/generator'
-import { killAllEnemies } from './board/goal'
 
 // moved these imports down because getMove should probably be in it's own file
 // getMove is originally from piece/lib, but was causing circular import
@@ -34,7 +33,7 @@ export default class Game extends uR.db.Model {
   }
   static opts = {
     parent: '#main',
-    victory_condition: killAllEnemies,
+    victory_condition: undefined,
     room_count: 1,
     board: uR.REQUIRED,
     mookset: uR.REQUIRED,
@@ -46,11 +45,10 @@ export default class Game extends uR.db.Model {
   }
   constructor(opts) {
     super(opts)
-    this.piece_generator = randomPiece
-    this.boss_generator = randomBoss
     window.GAME = this
     riot.observable(this)
     this.player_moves = []
+    this.mook_count = 5
     this.board.game = this
     this.board.mookset = this.mookset
     this.board.bossset = this.bossset
@@ -60,27 +58,13 @@ export default class Game extends uR.db.Model {
     }
 
     this.ready(() => {
-      this.makeVictoryContition()
       this.board.setPRNG(this._PRNG) // random if undefined
       this.board.reset()
       this.makePlayer()
       this.bindKeys()
       this.board.consumeGold()
-      this.spawnPieces()
       this.makeRenderer()
     })
-  }
-
-  makeVictoryContition() {
-    this.checkVictory = this.victory_condition(this)
-  }
-
-  spawnPieces = () => {
-    if (!this.enemies) {
-      return
-    }
-    // this.piece_generator(this)
-    // this.boss_generator(this)
   }
 
   _doTurn(piece) {
@@ -129,8 +113,8 @@ export default class Game extends uR.db.Model {
 
   nextTurn = () => {
     this.busy = true
-    if (this.checkVictory()) {
-      this.spawnPieces()
+    if (goals.check(this)) {
+      this.gamewon()
     } else {
       // #! TODO do priority tasks before (balls colliding head on)
       // pieces.filter(p => types[piece.type].priority_tasks)
@@ -247,6 +231,10 @@ export default class Game extends uR.db.Model {
 
   gameover() {
     this.controller.unmount()
-    uR.element.create('tw-gameover', { parent: this.parent }, { game: this })
+    uR.element.alert('tw-gameover', {}, { game: this })
+  }
+  gamewon() {
+    this.controller.unmount()
+    uR.element.alert('tw-gamewon', {}, { game: this })
   }
 }
