@@ -41,13 +41,14 @@ import { loadImage, fillBucket, changePixel } from '../../canvas'
     <div if={show_output}>
       x: {sprite_data.x/sprite_data.scale}
       y: {sprite_data.y/sprite_data.scale}
-      <ur-form model={uR.db.server.Sprite} initial={sprite_data} submit={saveSprite}></ur-form>
+      <ur-form model={Sprite} initial={sprite_data} submit={saveSprite}></ur-form>
     </div>
   </div>
 
 <script>
 let getXY, scale, zoom, zoom2
 this.mouseX = this.mouseY = 0
+this.Sprite = uR.db.server.Sprite
 
 this.on("update", () => {
   scale = parseInt(this.refs.scale.value)
