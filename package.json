@@ -4,7 +4,7 @@
   "description": "A open source rogue-lite.",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-less": "^4.0.1",
     "gulp-rev": "^8.1.1"
